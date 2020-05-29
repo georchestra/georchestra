@@ -977,6 +977,52 @@
       </dependencies>
     </profile>
     <profile>
+        <!-- this profile adds every plugins needed by the mapstore2 viewer as dependencies -->
+        <id>mapstore2</id>
+        <dependencies>
+          <dependency>
+            <groupId>org.geoserver.community</groupId>
+            <artifactId>gs-wmts-multi-dimensional</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-querylayer</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-wps-core</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-dxf-core</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-dxf-wps</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-excel</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-css</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.community</groupId>
+            <artifactId>gs-dds</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>debianPackage</id>
       <build>
         <plugins>
