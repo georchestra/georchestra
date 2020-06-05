@@ -69,8 +69,8 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
          * Get next PointSymbolizer
          */
         public PointSymbolizer next() {
-            Mark mark = _styleBuilder.createMark(_styleBuilder.attributeExpression(_knownSymbol),
-                    _styleBuilder.createFill(_color, _opacity), // color, opacity
+            Mark mark = _styleBuilder.createMark(_knownSymbol, _styleBuilder.createFill(_color, _opacity), // color,
+                                                                                                           // opacity
                     null);
             Graphic graph = _styleBuilder.createGraphic(null, new Mark[] { mark }, null,
                     _styleBuilder.literalExpression(_opacity), // opacity
@@ -112,8 +112,8 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
          * Get next PointSymbolizer
          */
         public PointSymbolizer next() {
-            Mark mark = _styleBuilder.createMark(_styleBuilder.attributeExpression(_knownSymbol),
-                    _styleBuilder.createFill(_it.next(), _opacity), // color, opacity
+            Mark mark = _styleBuilder.createMark(_knownSymbol, _styleBuilder.createFill(_it.next(), _opacity), // color,
+                                                                                                               // opacity
                     null);
             Graphic graph = _styleBuilder.createGraphic(null, new Mark[] { mark }, null,
                     _styleBuilder.literalExpression(_opacity), // opacity
