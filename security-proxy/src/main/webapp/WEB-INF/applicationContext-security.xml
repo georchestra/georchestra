@@ -32,6 +32,7 @@
         <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
         <s:custom-filter ref="casFilter" after="CAS_FILTER" />
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
+        <s:custom-filter ref="urlFormEncodedPostFilter" after="CHANNEL_FILTER" />
         <!--  <s:http-basic />  -->
         <s:headers>
           <s:frame-options disabled="true"/>
@@ -40,6 +41,8 @@
         <s:logout logout-success-url="${logout-success-url:${scheme}://${domainName}/cas/logout?fromgeorchestra}" />
         <s:csrf disabled="true" />
      </s:http>
+
+    <bean id="urlFormEncodedPostFilter" class="org.georchestra.security.UrlFormEncodedPostFilter" />
 
 	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<property name="authenticationManager" ref="authenticationManager" />

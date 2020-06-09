@@ -19,85 +19,14 @@
 
 package org.georchestra.security;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
-import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
-import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.DeflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolException;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
@@ -105,7 +34,6 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.IOControl;
 import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
@@ -130,7 +58,26 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.annotations.VisibleForTesting;
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.io.*;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * This proxy provides an indirect access to a remote host to retrieve data.
@@ -967,34 +914,11 @@ public class Proxy {
             }
             case POST: {
                 logger.debug("New request is: " + sURL + "\nRequest is POST");
-
                 HttpPost post = new HttpPost(uri);
-                HttpEntity entity;
-                request.setCharacterEncoding("UTF8");
-                if (isFormContentType(request)) {
-                    logger.debug("Post is a x-www-form-urlencoded POST");
-                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-                    for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-                        String name = (String) e.nextElement();
-                        String[] v = request.getParameterValues(name);
-                        for (String value : v) {
-                            NameValuePair nv = new BasicNameValuePair(name, value);
-                            parameters.add(nv);
-                        }
-                    }
-                    String charset = request.getCharacterEncoding();
-                    try {
-                        Charset.forName(charset);
-                    } catch (Throwable t) {
-                        charset = defaultCharset;
-                    }
-                    entity = new UrlEncodedFormEntity(parameters, charset);
-                } else {
-                    logger.debug("Post is a raw POST request");
-                    int contentLength = request.getContentLength();
-                    ServletInputStream inputStream = request.getInputStream();
-                    entity = new InputStreamEntity(inputStream, contentLength);
-                }
+
+                int contentLength = request.getContentLength();
+                ServletInputStream inputStream = request.getInputStream();
+                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
                 post.setEntity(entity);
                 targetRequest = post;
                 break;
@@ -1062,21 +986,6 @@ public class Proxy {
         }
 
         return targetRequest;
-    }
-
-    /**
-     * Returns if the request is a POST x-www-form-urlencoded or not.
-     *
-     * @return true if this is the case, else false.
-     *
-     */
-    private boolean isFormContentType(HttpServletRequest request) {
-        if (request.getContentType() == null) {
-            return false;
-        }
-        String contentType = request.getContentType().split(";")[0].trim();
-
-        return "application/x-www-form-urlencoded".equalsIgnoreCase(contentType);
     }
 
     protected String[] filter(String[] one) {
