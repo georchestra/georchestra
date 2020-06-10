@@ -61,15 +61,9 @@ public class UrlFormEncodedPostFilter extends OncePerRequestFilter {
          */
         public WrappedRequest(HttpServletRequest request) {
             super(request);
-            String charset = request.getCharacterEncoding();
+
             try {
-                Charset.forName(charset);
-            } catch (Throwable t) {
-                charset = "UTF-8";
-            }
-            try {
-                String payload = IOUtils.toString(request.getInputStream(), charset);
-                this.content = payload.getBytes();
+                this.content = IOUtils.toByteArray(request.getInputStream());
             } catch (IOException e) {
                 Logger.error("Unable to extract body payload", e);
             }
