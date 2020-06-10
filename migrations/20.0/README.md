@@ -7,6 +7,12 @@ For the console, related to the GDPR compliance API [#2613](https://github.com/g
 GRANT geonetwork TO georchestra;
 ```
 
+For Geonetwork, since we now sync LDAP Organizations with GeoNetwork groups: 
+```
+ALTER TABLE geonetwork.groups ALTER COLUMN name TYPE VARCHAR(256);
+ALTER TABLE geonetwork.groupsdes ALTER COLUMN label TYPE VARCHAR(256); 
+```
+
 No other manual changes on the model are required to upgrade to the new version, since hibernate will take care of it.
 
 ## LDAP upgrade
