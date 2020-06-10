@@ -89,12 +89,12 @@ GEOR.getfeatureinfo = (function() {
         OpenLayers.Element.addClass(map.viewPortDiv, "olDrawBox");
         // Note: the data models are no more computed and cached in here ! see
         // https://github.com/georchestra/georchestra/commit/dc31ca03815555abcc4de4750ac7d5eae7057fc5
-        // 
-        // Test case: we want a particular column (eg:postal code) 
+        //
+        // Test case: we want a particular column (eg:postal code)
         // to be interpreted as STRING, not as INT,
         // to prevent 02100 from being displayed as 2100.
         // If the first query matches one result only with postal code = 80100,
-        // the second query will display 02100 as 2100, 
+        // the second query will display 02100 as 2100,
         // because the stored datamodel will permanently identify the column as INT.
         // As a result, the computation has to be done on each query.
 
@@ -108,7 +108,7 @@ GEOR.getfeatureinfo = (function() {
 
         // Features on-the-fly client-side reprojection (this is a hack, OK)
         // Discussion happened in https://github.com/georchestra/georchestra/issues/254
-        
+
         /*
          * We're typically getting this kind of string in the GML:
          *  gml:MultiPolygon srsName="http://www.opengis.net/gml/srs/epsg.xml#3948"
@@ -135,7 +135,7 @@ GEOR.getfeatureinfo = (function() {
              * EPSG:2154
              */
             var srsName = srsString.replace(/.+[#:\/](\d+)$/, "EPSG:$1");
-            
+
             if (map.getProjection() !== srsName) {
                 var sourceSRS = new OpenLayers.Projection(srsName),
                     destSRS = map.getProjectionObject();
@@ -224,7 +224,7 @@ GEOR.getfeatureinfo = (function() {
         if (Xsearch) {
             layers = [];
             layerStore.each(function(layerRecord) {
-                if (layerRecord.get("queryable") && 
+                if (layerRecord.get("queryable") &&
                     layerRecord.getLayer().visibility == true) {
 
                     layers.push(layerRecord.getLayer());
@@ -305,7 +305,7 @@ GEOR.getfeatureinfo = (function() {
         map.events.un({
             "removelayer": onLayerRemoved,
             scope: this
-        });  
+        });
     };
 
     /*
@@ -363,7 +363,7 @@ GEOR.getfeatureinfo = (function() {
             } else if (record === false) {
                 type = "WMS"; // XXX assume all layers queried are WMS ?
                 layerStore.each(function(layerRecord) {
-                    if (layerRecord.get("queryable") && 
+                    if (layerRecord.get("queryable") &&
                         layerRecord.getLayer().visibility == true) {
 
                         layers.push(layerRecord.getLayer());
@@ -395,7 +395,7 @@ GEOR.getfeatureinfo = (function() {
                     ctrl.events.un(ctrlEventsConfig);
                     ctrl.destroy();
                 }
-                var controlClass = (type === "WMS") ? 
+                var controlClass = (type === "WMS") ?
                     OpenLayers.Control.WMSGetFeatureInfo :
                     OpenLayers.Control.WMTSGetFeatureInfo;
 
@@ -451,5 +451,3 @@ GEOR.getfeatureinfo = (function() {
         }
     };
 })();
-
-
