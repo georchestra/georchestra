@@ -172,8 +172,9 @@ GEOR.getfeatureinfo = (function() {
         // harmonized layer names:
         // http://boundlessgeo.com/2012/04/inspire-harmonized-layer-names-in-geoserver/
         Ext.each(info.features, function (feature) {
-            var featureType, gml = feature.gml, layerName;
-            if (gml) { // set by OpenLayers.Format.GML's parseFeature
+            var gml = feature.gml, layerName;
+            if (gml &&
+              (results.hasOwnProperty(gml.featureType) || gml.featureNSPrefix)) { // set by OpenLayers.Format.GML's parseFeature
                 // GeoServer
                 if (results.hasOwnProperty(gml.featureType)) {
                     results[gml.featureType].features.push(feature);
@@ -195,6 +196,10 @@ GEOR.getfeatureinfo = (function() {
             } else if (feature.type) { // set by OpenLayers.Format.WMSGetFeatureInfo's read_msGMLOutput
                 // MapServer
                 results[feature.type].features.push(feature);
+            } else if (feature.fid) {
+                // QGIS Server
+                layerName = feature.fid.split('.')[0];
+                results[layerName].features.push(feature);
             }
         });
 
