@@ -765,7 +765,7 @@
       <id>authkey</id>
       <dependencies>
         <dependency>
-          <groupId>org.geoserver.community</groupId>
+          <groupId>org.geoserver.extension</groupId>
           <artifactId>gs-authkey</artifactId>
           <version>${gs.version}</version>
         </dependency>
