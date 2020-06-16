@@ -41,10 +41,6 @@ public class GeotoolsFeatureReaderTest {
         reader = new GeotoolsFeatureReader();
     }
 
-    public static @BeforeClass void setUpGeoToolsReferencing() {
-        System.setProperty("org.geotools.referencing.forceXY", "true");
-    }
-
     @Test
     public void testSHPFormat() throws Exception {
 

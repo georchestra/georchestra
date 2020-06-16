@@ -45,7 +45,7 @@ jobs:
 
     - name: "Running tests"
       working-directory: mapfishapp/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dorg.geotools.referencing.forceXY=true
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'

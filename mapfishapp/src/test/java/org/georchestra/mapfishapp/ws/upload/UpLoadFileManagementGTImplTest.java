@@ -33,10 +33,6 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class UpLoadFileManagementGTImplTest {
 
-    public UpLoadFileManagementGTImplTest() {
-        System.setProperty("org.geotools.referencing.forceXY", "true");
-    }
-
     /**
      * Test method for
      * {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}
