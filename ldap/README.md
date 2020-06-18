@@ -49,6 +49,7 @@ The roles:
  * ```GN_ADMIN``` is for GeoNetwork administrators,
  * ```GN_EDITOR``` is for metadata editors,
  * ```GN_REVIEWER``` is for metadata reviewers,
+ * ```REFERENT``` allows users to edit their own organisation (basic information only),
  * ```USER``` is for the basic SDI users.
 
 Other roles can be defined by the platform administrator, using eg the console.
