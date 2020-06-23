@@ -26,10 +26,12 @@
     },
     "i18n": {
         "en": {
-            "addon_extractor_popup_title": "Extraction"
+            "addon_extractor_popup_title": "Extraction",
+            "addon_extractor_help": "For more information regarding the use of the extraction module, please have a look at the <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>"
         },
         "es": {
             "addon_extractor_popup_title": "Extracción",
+            "addon_extractor_help": "For more information regarding the use of the extraction module, please have a look at the <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>",
             "Close": "Cerrar",
             "Extract": "Extraer",
             "The extraction request succeeded, check your email.": "Extracción solicitada, verifique su correo electrónico.",
@@ -43,6 +45,7 @@
         },
         "fr": {
             "addon_extractor_popup_title": "Extraction",
+            "addon_extractor_help": "Pour plus d'information sur l'utilisation du module d'extraction, veuillez consulter la <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>",
             "Close": "Fermer",
             "Extract": "Extraire",
             "The extraction request succeeded, check your email.": "La demande d'extraction a été prise en compte. Surveillez votre courriel.",
@@ -56,6 +59,7 @@
         },
          "de": {
             "addon_extractor_popup_title": "Extraktion",
+            "addon_extractor_help": "For more information regarding the use of the extraction module, please have a look at the <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>",
             "Close": "Schließen",
             "Extract": "extrahieren",
             "The extraction request succeeded, check your email.": "erfolgreiche Extraktion. E-mail folgt.",
@@ -69,6 +73,7 @@
         },
          "nl": {
             "addon_extractor_popup_title": "Extractie",
+            "addon_extractor_help": "For more information regarding the use of the extraction module, please have a look at the <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>",
             "Close": "Sluiten",
             "Extract": "Extract",
             "The extraction request succeeded, check your email.": "Het extractie-verzoek is geslaagd, controleer uw e-mail.",
