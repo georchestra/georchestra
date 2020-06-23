@@ -151,22 +151,37 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
             closable: true,
             closeAction: 'close',
             width: 330,
-            height: 270,
+            height: 290,
+            resizable: false,
             title: title,
             border: false,
             buttonAlign: 'left',
-            layout: 'fit',
+            layout: 'border',
+            defaults: {
+                border: false,
+            },
             items: [{
-                xtype: 'form',
-                labelWidth: 120,
-                bodyStyle: "padding:5px;",
-                items: [
-                    this.srsField,
-                    this.vectorFormatField,
-                    this.rasterFormatField,
-                    this.resField,
-                    this.emailField
-                ]
+                region: 'north',
+                height: 40,
+                bodyStyle: 'padding: 5px;font: 12px tahoma,arial,helvetica,sans-serif;',
+                html: OpenLayers.i18n("addon_extractor_help")
+            },{
+                region: 'center',
+                layout: 'fit',
+                height: 250,
+                items: [{
+                    xtype: 'form',
+                    labelWidth: 120,
+                    border: false,
+                    bodyStyle: "padding:5px;",
+                    items: [
+                        this.srsField,
+                        this.vectorFormatField,
+                        this.rasterFormatField,
+                        this.resField,
+                        this.emailField
+                    ]
+                }]
             }],
             fbar: ['->', {
                 text: OpenLayers.i18n("Close"),
