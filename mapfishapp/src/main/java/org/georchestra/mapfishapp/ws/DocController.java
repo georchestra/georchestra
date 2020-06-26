@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
@@ -86,6 +88,8 @@ public class DocController {
 
     @Autowired
     public GeorchestraConfiguration georchestraConfiguration;
+
+    private static final Log LOG = LogFactory.getLog(DocController.class.getPackage().getName());
 
     /** the connection pool used by the document services */
     @Autowired
@@ -455,9 +459,9 @@ public class DocController {
             out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + SLD_URL + fileName + "\"}");
         } catch (DocServiceException e) {
             sendErrorToClient(response, e.getErrorCode(), e.getMessage());
-            e.printStackTrace();
+            LOG.error("Error occured while doing a classification", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O exception encountered while doing a classification", e);
         }
     }
 
@@ -527,9 +531,9 @@ public class DocController {
             out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + docUrl + fileName + "\"}");
         } catch (DocServiceException e) {
             sendErrorToClient(response, e.getErrorCode(), e.getMessage());
-            e.printStackTrace();
+            LOG.error("Error occured while storing an uploaded file", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O exception encountered while storing an uploaded file", e);
         }
     }
 
@@ -570,10 +574,10 @@ public class DocController {
             out.println(docService.getContent());
         } catch (DocServiceException docExc) {
             sendErrorToClient(response, docExc.getErrorCode(), docExc.toString());
-            docExc.printStackTrace();
+            LOG.error("Error occured while storing an uploaded file", docExc);
         } catch (Exception e) {
             sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "");
-            e.printStackTrace();
+            LOG.error("I/O exception encountered while storing an uploaded file", e);
         }
     }
 
@@ -665,12 +669,9 @@ public class DocController {
             while ((sLine = reader.readLine()) != null) {
                 strBuilder.append(sLine);
             }
-        } catch (IOException ioExc) {
-            ioExc.printStackTrace();
-        } catch (Exception exc) {
-            exc.printStackTrace();
+        } catch (Exception e) {
+            LOG.error("exception occured while trying to get the request body", e);
         }
-
         return strBuilder.toString();
     }
 
@@ -686,7 +687,7 @@ public class DocController {
             try {
                 response.sendError(status, message);
             } catch (IOException ioExc) {
-                ioExc.printStackTrace();
+                LOG.error("Exception occured while sending the error status to the client", ioExc);
             }
         }
     }
