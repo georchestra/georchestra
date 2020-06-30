@@ -57,7 +57,7 @@ class AreaController {
       target: document.querySelector('.map'),
       layers: [
         new ol.layer.Tile({
-          source: new ol.source.OSM({ attributions: null })
+          source: new ol.source.OSM()
         }),
         vector
       ],
