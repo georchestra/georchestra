@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.georchestra.mapfishapp.ws.DocServiceException;
@@ -81,6 +83,8 @@ public class SLDClassifier {
     private Map<String, UsernamePasswordCredentials> _credentials;
 
     private WFSDataStoreFactory _factory = new WFSDataStoreFactory();
+
+    private static final Log LOG = LogFactory.getLog(SLDClassifier.class.getPackage().getName());
 
     public void setWFSDataStoreFactory(WFSDataStoreFactory f) {
         _factory = f;
@@ -267,7 +271,7 @@ public class SLDClassifier {
             // Use FeatureTypeStyle to generate a complete SLD object
             _sld = createSLD(fts);
         } catch (IOException e) {
-            e.printStackTrace(); // could happened when communicating with WFS
+            LOG.error("Error occured while trying to do a classification", e);
         }
     }
 
@@ -339,7 +343,7 @@ public class SLDClassifier {
             schema = wfs.getSchema(_wfsngTypeName); // get schema
             clazz = schema.getType(_command.getPropertyName()).getBinding(); // get data type as Class
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Unable to get the WFS schema", e);
         }
         if (clazz == null) {
             throw new RuntimeException("Should never happen, we need to know what type is the attribute of");
@@ -395,7 +399,8 @@ public class SLDClassifier {
             // happens when wfs url is wrong (missing request or service parameters...)
             throw new DocServiceException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error occured while connecting to the WFS url", e);
+            throw new DocServiceException("Error while creating a WFS object", HttpServletResponse.SC_BAD_REQUEST);
         }
         return wfs;
     }

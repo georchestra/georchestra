@@ -410,7 +410,7 @@ public abstract class A_DocService {
             throw new DocServiceException("File is not valid. " + ex.getMessage(),
                     HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error while checking validity of the document", e);
         }
         return false;
     }
@@ -580,9 +580,9 @@ public abstract class A_DocService {
                 content = new String(bytes);
 
             } catch (FileNotFoundException fnfExc) {
-                fnfExc.printStackTrace();
+                LOG.error("file not found", fnfExc);
             } catch (IOException ioExc) {
-                ioExc.printStackTrace();
+                LOG.error("Error accessing file", ioExc);
             } finally {
                 if (fis != null) {
                     try {
