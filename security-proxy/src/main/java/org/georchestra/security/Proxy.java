@@ -20,9 +20,14 @@
 package org.georchestra.security;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -87,6 +92,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -364,7 +370,8 @@ public class Proxy {
      * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
-    @RequestMapping(value = "/**", params = { "!login" })
+    @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
+            TRACE })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
@@ -1032,6 +1039,14 @@ public class Proxy {
                 HttpDelete delete = new HttpDelete(uri);
 
                 targetRequest = delete;
+                break;
+            }
+            case PATCH: {
+                logger.debug("New request is: " + sURL + "\nRequest is PATCH");
+
+                HttpPatch patch = new HttpPatch(uri);
+
+                targetRequest = patch;
                 break;
             }
             default: {
