@@ -13,14 +13,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -255,6 +257,20 @@ public class ProxyTest {
             thrown = true;
         }
         assertTrue(thrown);
+    }
+
+    @Test
+    public void testVerb() throws UnsupportedEncodingException {
+
+        for (RequestMethod e : RequestMethod.values()) {
+            request = new MockHttpServletRequest(e.toString(), "/extractorapp/home");
+            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), e.toString() + " worked");
+            response.setHeader("X-Test-Header", e.toString() + " worked");
+            httpResponse = new MockHttpServletResponse();
+            proxy.handleRequest(request, httpResponse);
+            assertEquals(HttpStatus.OK.value(), httpResponse.getStatus());
+            assertEquals(e.toString() + " worked", httpResponse.getHeader("X-Test-Header"));
+        }
     }
 
 }
