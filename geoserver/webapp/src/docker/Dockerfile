@@ -2,7 +2,7 @@ FROM jetty:9-jre8
 
 ENV XMS=1536M XMX=8G
 
-RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,jndi,http-forwarded
+RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,jndi,http-forwarded,servlets
 
 COPY --chown=jetty:jetty . /
 
@@ -28,14 +28,6 @@ RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mn
 
 # add a tweaked configuration. First use case is support of OPTIONS.
 ADD web.xml /var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
-
-# This is needed to activate the CrossOriginFilter in web.xml
-RUN ln -s /usr/local/jetty/lib/jetty-servlets-*.jar        \
-        /usr/local/jetty/lib/jetty-continuation-*.jar   \
-        /usr/local/jetty/lib/jetty-http-*.jar           \
-        /usr/local/jetty/lib/jetty-util-*.jar           \
-        /usr/local/jetty/lib/jetty-io-*.jar             \
-        /var/lib/jetty/webapps/geoserver/WEB-INF/lib/
 
 USER jetty
 
