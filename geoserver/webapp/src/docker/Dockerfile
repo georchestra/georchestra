@@ -26,6 +26,17 @@ RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.4/libjpeg-t
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
+# add a tweaked configuration. First use case is support of OPTIONS.
+ADD web.xml /var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
+
+# This is needed to activate the CrossOriginFilter in web.xml
+RUN ln -s /usr/local/jetty/lib/jetty-servlets-*.jar        \
+        /usr/local/jetty/lib/jetty-continuation-*.jar   \
+        /usr/local/jetty/lib/jetty-http-*.jar           \
+        /usr/local/jetty/lib/jetty-util-*.jar           \
+        /usr/local/jetty/lib/jetty-io-*.jar             \
+        /var/lib/jetty/webapps/geoserver/WEB-INF/lib/
+
 USER jetty
 
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/mnt/geoserver_native_libs", "/tmp", "/run/jetty" ]
