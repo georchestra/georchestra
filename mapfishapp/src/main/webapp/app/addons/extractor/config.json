@@ -1,30 +1,47 @@
 [{
-        "id": "extractor_0",
-        "name": "Extractor",
-        "enabled": true,
-        "title": {
-            "en": "Extractor",
-            "es": "Extractor",
-            "fr": "Extracteur",
-            "nl": "Afzuigkap"
-        },
-        "description": {
-            "en": "This addon allows one to download data from the layers visible on the map",
-            "es": "Este addon permite descargar datos de las capas visibles en el mapa",
-            "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte",
-            "nl": "Met deze addon kunnen de gegevens van de zichtbare lagen op de kaart worden gedownload"
-        },
-        "roles": [
-            "ROLE_EXTRACTORAPP"
+    "id": "extractor_0",
+    "name": "Extractor",
+    "enabled": true,
+    "title": {
+        "en": "Extractor",
+        "es": "Extractor",
+        "fr": "Extracteur",
+        "nl": "Afzuigkap"
+    },
+    "description": {
+        "en": "This addon allows one to download data from the layers visible on the map",
+        "es": "Este addon permite descargar datos de las capas visibles en el mapa",
+        "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte",
+        "nl": "Met deze addon kunnen de gegevens van de zichtbare lagen op de kaart worden gedownload"
+    },
+    "roles": [
+        "ROLE_EXTRACTORAPP"
+    ],
+    "options": {
+        "srsData": [
+            ["EPSG:4326", "WGS84 (EPSG:4326)"],
+            ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
         ],
-        "options": {
-            "srsData": [
-                ["EPSG:4326", "WGS84 (EPSG:4326)"],
-                ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
-            ],
-            "defaultSRS": "EPSG:4326",
-            "defaultVectorFormat": "shp",
-            "defaultRasterFormat": "geotiff",
-            "defaultRasterResolution": 50
+        "defaultSRS": "EPSG:4326",
+        "defaultVectorFormat": "shp",
+        "defaultRasterFormat": "geotiff",
+        "defaultRasterResolution": 50
+    },
+    "i18n": {
+        "en": {
+            "addon_extractor_help": "For more information regarding the use of the extraction module, please have a look at the <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>"
+        },
+        "es": {
+            "addon_extractor_help": "Para obtener más información sobre el uso del módulo de extracción, consulte la <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentación</a>"
+        },
+        "fr": {
+            "addon_extractor_help": "Pour plus d'information sur l'utilisation du module d'extraction, veuillez consulter la <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentation</a>"
+        },
+         "de": {
+            "addon_extractor_help": "Weitere Informationen zur Verwendung des Extraktionsmoduls finden Sie in der <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">Dokumentation</a>"
+        },
+         "nl": {
+            "addon_extractor_help": "Raadpleeg de <a href=\"https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md\" target=\"_blank\">documentatie</a> voor meer informatie over het gebruik van de extractiemodule"
         }
+    }
 }]
