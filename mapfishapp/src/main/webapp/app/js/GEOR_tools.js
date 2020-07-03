@@ -211,6 +211,13 @@ GEOR.tools = (function() {
                                 r.get("options") || {},
                                 o.default_options || {}
                             ));
+                            // handle i18n overrides
+                            if (r.get("i18n")) {
+                                Ext.iterate(r.get("i18n"), function(k, v) {
+                                    OpenLayers.Lang[k] =
+                                        OpenLayers.Util.extend(OpenLayers.Lang[k], v);
+                                });
+                            }
                             addonsCache[r.id] = addon;
                             // we're passing the record to the init method
                             // so that the addon has access to the administrator's strings
@@ -464,7 +471,7 @@ GEOR.tools = (function() {
                 }
             });
             store = new Ext.data.JsonStore({
-                fields: ["id", "name", "title", "thumbnail", "description", "group", "options", {
+                fields: ["id", "name", "title", "thumbnail", "description", "group", "options", "i18n", {
                     name: "_loaded", defaultValue: false, type: "boolean"
                 }, {
                     name: "preloaded", defaultValue: false, type: "boolean"
