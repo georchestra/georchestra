@@ -15,6 +15,15 @@ for groups). Some organizations still want to stick with the previous
   synchronization behaviour. This is still possible: by modifying the datadir
   consequently:
 
+First, we need to edit the
+[geonetwork.properties](https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L60)
+to tell the synchronization process to use the `ou=roles` branch of the LDAP:
+
+```diff
+-ldap.groups.search.base=ou=orgs
++ldap.groups.search.base=ou=roles
+```
+
 In the
 [config-security-georchestra.xml](https://github.com/georchestra/datadir/blob/master/geonetwork/config/config-security-georchestra.xml#L117)
 file, one have to change the filter to get the groups prefixed by `EL_`:
@@ -34,15 +43,6 @@ map the label of the group onto the `description` attribute from the ldap:
 -      <entry key="ldapGroupLabelAttribute" value="o"/>
 +     <entry key="ldapGroupSearchPattern" value="EL_(.*)"/>
 +     <entry key="ldapGroupLabelAttribute" value="description"/>
-```
-
-Finally, we need to edit the
-[geonetwork.properties](https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L60)
-to tell the synchronization process to use the `ou=roles` branch of the LDAP:
-
-```diff
--ldap.groups.search.base=ou=orgs
-+ldap.groups.search.base=ou=roles
 ```
 
 # Automatic creation of groups
