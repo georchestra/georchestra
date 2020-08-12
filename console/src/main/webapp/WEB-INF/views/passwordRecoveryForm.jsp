@@ -65,6 +65,11 @@
 			</div>
 			</c:if>
 			</s:bind>
+			<c:if test="${isPasswordExternal}">
+				<div id="externalPassword" class="alert alert-danger">
+					<s:message code="passwordRecoveryForm.externalPasswordWarningMessage" />
+				</div>
+			</c:if>
 
 			<fieldset>
 				<legend><s:message code="passwordRecoveryForm.fieldset.email"/></legend>

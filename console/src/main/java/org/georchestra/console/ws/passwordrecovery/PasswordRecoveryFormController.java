@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.PasswordType;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
@@ -115,7 +116,7 @@ public class PasswordRecoveryFormController {
 
     @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.GET)
     public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
-            Model model) throws IOException {
+            Model model) throws DataServiceException {
 
         HttpSession session = request.getSession();
         PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
@@ -123,6 +124,7 @@ public class PasswordRecoveryFormController {
 
         model.addAttribute(formBean);
         model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
+        model.addAttribute("isPasswordExternal", isPasswordExternal(email));
         session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 
         return "passwordRecoveryForm";
@@ -226,5 +228,11 @@ public class PasswordRecoveryFormController {
 
     public void setPublicContextPath(String publicContextPath) {
         this.publicContextPath = publicContextPath;
+    }
+
+    private boolean isPasswordExternal(String email) throws DataServiceException {
+        Account a = this.accountDao.findByEmail(email);
+        PasswordType pt = this.accountDao.getPasswordType(a);
+        return pt == PasswordType.SASL;
     }
 }

@@ -36,6 +36,7 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
+import org.springframework.ldap.support.LdapEncoder;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
@@ -43,6 +44,7 @@ import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
 import javax.naming.Name;
+import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 import java.time.LocalDate;
@@ -328,6 +330,22 @@ public final class AccountDaoImpl implements AccountDao {
         }
 
         ldapTemplate.modifyAttributes(context);
+    }
+
+    /*
+     * return the password type according to the one present in userPassword of the
+     * provided account
+     */
+    public PasswordType getPasswordType(Account account) {
+        String passwordType = ldapTemplate.lookup(buildUserDn(account.getUid().toLowerCase(), false),
+                new String[] { "userPassword" }, (ContextMapper<String>) ctx -> {
+                    DirContextAdapter context = (DirContextAdapter) ctx;
+                    byte[] rawPassword = (byte[]) context.getObjectAttribute("userPassword");
+                    String password = new String(rawPassword);
+                    int typeIndexLast = password.lastIndexOf("}");
+                    return password.substring(1, typeIndexLast);
+                });
+        return PasswordType.valueOf(passwordType);
     }
 
     /**

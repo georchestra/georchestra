@@ -21,10 +21,16 @@ package org.georchestra.console.ws.changepassword;
 
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.PasswordType;
+import org.georchestra.console.dto.Account;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -87,12 +93,9 @@ public class ChangePasswordFormController {
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
     public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,
-            Model model) throws IOException {
-        try {
-            if (!request.getHeader("sec-username").equals(uid)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } catch (NullPointerException e) {
+            Model model) throws IOException, DataServiceException {
+
+        if (!checkPermission(uid)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
 
@@ -104,6 +107,8 @@ public class ChangePasswordFormController {
 
         return "changePasswordForm";
     }
+
+
 
     /**
      * Changes the password in the ldap store.
@@ -119,16 +124,10 @@ public class ChangePasswordFormController {
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
     public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute ChangePasswordFormBean formBean, BindingResult result, SessionStatus sessionStatus)
-            throws IOException {
+            throws IOException, DataServiceException {
         String uid = formBean.getUid();
-        try {
-            if (!request.getHeader("sec-username").equals(uid)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return null;
-            }
-        } catch (NullPointerException e) {
+        if (!checkPermission(uid)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null;
         }
 
         passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
@@ -162,5 +161,15 @@ public class ChangePasswordFormController {
     @ModelAttribute("changePasswordFormBean")
     public ChangePasswordFormBean getChangePasswordFormBean() {
         return new ChangePasswordFormBean();
+    }
+
+    private boolean checkPermission(String uid) throws DataServiceException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!user.getUsername().equals(uid)) {
+            return false;
+        }
+        // check if the user is managed by an external service. if so, then forbid access to change password.
+        Account d = this.accountDao.findByUID(uid);
+        return this.accountDao.getPasswordType(d) == PasswordType.SASL;
     }
 }

@@ -167,4 +167,5 @@ public interface AccountDao {
 
     String buildFullUserDn(Account account);
 
+    PasswordType getPasswordType(Account account);
 }
