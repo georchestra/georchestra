@@ -108,8 +108,6 @@ public class ChangePasswordFormController {
         return "changePasswordForm";
     }
 
-
-
     /**
      * Changes the password in the ldap store.
      *
@@ -168,7 +166,8 @@ public class ChangePasswordFormController {
         if (!user.getUsername().equals(uid)) {
             return false;
         }
-        // check if the user is managed by an external service. if so, then forbid access to change password.
+        // check if the user is managed by an external service. if so, then forbid
+        // access to change password.
         Account d = this.accountDao.findByUID(uid);
         return this.accountDao.getPasswordType(d) == PasswordType.SASL;
     }
