@@ -57,8 +57,8 @@ public class NewPasswordFormController {
     @Autowired
     protected PasswordUtils passwordUtils;
 
-    private AccountDao accountDao;
-    private UserTokenDao userTokenDao;
+    private final AccountDao accountDao;
+    private final UserTokenDao userTokenDao;
 
     @Autowired
     private boolean reCaptchaActivated;
@@ -71,7 +71,7 @@ public class NewPasswordFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields(new String[] { "password", "confirmPassword" });
+        dataBinder.setAllowedFields("password", "confirmPassword");
     }
 
     /**

@@ -21,9 +21,7 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.filter.Filter;
-
-import javax.naming.ldap.LdapName;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -139,7 +137,7 @@ public interface AccountDao {
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
-    Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
+    Account findByUID(@NotNull final String uid) throws DataServiceException, NameNotFoundException;
 
     /**
      * Add the new password. This method is part of the "lost password" workflow to

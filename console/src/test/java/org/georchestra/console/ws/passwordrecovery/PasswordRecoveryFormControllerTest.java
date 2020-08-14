@@ -1,8 +1,11 @@
 package org.georchestra.console.ws.passwordrecovery;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +22,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.ws.changepassword.ChangePasswordFormController;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -91,7 +95,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.setupForm(request, "test@localhost.com", model);
 
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        assertEquals("passwordRecoveryForm", ret);
     }
 
     @Test
@@ -116,7 +120,7 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
 
         String ret = ctrl.generateToken(request, formBean, result, status);
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        assertEquals("passwordRecoveryForm", ret);
     }
 
     @Test
@@ -126,7 +130,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        assertEquals("passwordRecoveryForm", ret);
     }
 
     @Test
@@ -134,7 +138,7 @@ public class PasswordRecoveryFormControllerTest {
         prepareLegitRequest();
 
         String ret = ctrl.generateToken(request, formBean, result, status);
-        assertTrue(ret.equals("emailWasSent"));
+        assertEquals("emailWasSent", ret);
     }
 
     @Test
@@ -145,7 +149,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        assertEquals("passwordRecoveryForm", ret);
     }
 
     /**
@@ -159,9 +163,9 @@ public class PasswordRecoveryFormControllerTest {
         b.setEmail("test@localhost.com");
         b.setRecaptcha_response_field("valid");
 
-        assertTrue(b.getEmail().equals("test@localhost.com"));
-        assertTrue(b.toString()
-                .equals("PasswordRecoveryFormBean [email=test@localhost.com, " + "recaptcha_response_field=valid]"));
+        assertEquals("test@localhost.com", b.getEmail());
+        assertEquals(b.toString(),
+                "PasswordRecoveryFormBean [email=test@localhost.com, " + "recaptcha_response_field=valid]");
 
     }
 
@@ -176,6 +180,26 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        assertEquals("passwordRecoveryForm", ret);
+    }
+
+    @Test
+    public void testMakeChangePasswordURLOk()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method privateMethodGetInfo = PasswordRecoveryFormController.class.getDeclaredMethod("makeChangePasswordURL",
+                String.class, String.class, String.class);
+        privateMethodGetInfo.setAccessible(true);
+        String res = (String) privateMethodGetInfo.invoke(ctrl, "https://georchestra.org", "console", "1234");
+        assertEquals(res, "https://georchestra.org/console/account/newPassword?token=1234");
+    }
+
+    @Test(expected = InvocationTargetException.class)
+    public void testMakeChangePasswordURLWronglyformated()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method privateMethodGetInfo = PasswordRecoveryFormController.class.getDeclaredMethod("makeChangePasswordURL",
+                String.class, String.class, String.class);
+        privateMethodGetInfo.setAccessible(true);
+        String res = (String) privateMethodGetInfo.invoke(ctrl, "pompom", "https://blabla.com", "https://pompom");
+        assertEquals(res, "pompom/https://blabla.com?token=https://pompom");
     }
 }

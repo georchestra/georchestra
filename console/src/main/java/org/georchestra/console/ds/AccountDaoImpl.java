@@ -36,7 +36,6 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
-import org.springframework.ldap.support.LdapEncoder;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
@@ -44,11 +43,10 @@ import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
 import javax.naming.Name;
-import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -223,28 +221,20 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Account findByUID(final String uid) throws NameNotFoundException {
-        if (uid == null) {
-            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
-        }
-        try {
-            Account a = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false),
+    public Account findByUID(@NotNull final String uid) throws NameNotFoundException {
+
+            Account user = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false),
                     UserSchema.ATTR_TO_RETRIEVE, attributMapper);
-            if (a != null) {
-                return a;
-            }
-        } catch (NameNotFoundException e) {
-            try {
-                Account a = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), true),
+            if (user != null) {
+                return user;
+            } else {
+                Account userPending = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), true),
                         UserSchema.ATTR_TO_RETRIEVE, attributMapper);
-                if (a != null) {
-                    return a;
+                if (userPending != null) {
+                    return userPending;
                 }
-            } catch (Exception ex) {
+                throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
             }
-            ;
-        }
-        throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
     }
 
     @Override

@@ -101,6 +101,9 @@ public class RolesControllerTest {
         ((AccountDaoImpl) accountDao).setUserSearchBaseDN("ou=users");
         ((AccountDaoImpl) accountDao).setOrgSearchBaseDN("ou=orgs");
         ((AccountDaoImpl) accountDao).setRoleSearchBaseDN("ou=roles");
+        ((AccountDaoImpl) accountDao).setPendingOrgSearchBaseDN("ou=pending");
+        ((AccountDaoImpl) accountDao).setPendingUserSearchBaseDN("ou=pending");
+
         orgsDao.setAccountDao(accountDao);
         roleDao.setAccountDao(accountDao);
         roleCtrl = new RolesController(roleDao, userRule);

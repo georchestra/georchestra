@@ -61,7 +61,7 @@ import java.io.IOException;
 @SessionAttributes(types = ChangePasswordFormBean.class)
 public class ChangePasswordFormController {
 
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
 
     @Autowired
     protected PasswordUtils passwordUtils;
@@ -84,19 +84,17 @@ public class ChangePasswordFormController {
      * Initializes the {@link ChangePasswordFormBean} with the uid provided as
      * parameter. The changePasswordForm view is provided as result of this method.
      *
-     * @param uid   user id
-     * @param model
+     * @param uid user id
      *
      * @return changePasswordForm view to display
      *
-     * @throws IOException
+     * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,
-            Model model) throws IOException, DataServiceException {
+    public String setupForm(@RequestParam("uid") String uid, Model model) throws DataServiceException {
 
         if (!checkPermission(uid)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return "userManagedBySASL";
         }
 
         ChangePasswordFormBean formBean = new ChangePasswordFormBean();
@@ -111,21 +109,20 @@ public class ChangePasswordFormController {
     /**
      * Changes the password in the ldap store.
      *
+     * @param model
      * @param formBean
-     * @param result
      * @param sessionStatus
      *
      * @return the next view
      *
-     * @throws IOException
+     * @throws IOException,DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
-    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute ChangePasswordFormBean formBean, BindingResult result, SessionStatus sessionStatus)
-            throws IOException, DataServiceException {
+    public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result,
+            SessionStatus sessionStatus) throws IOException, DataServiceException {
         String uid = formBean.getUid();
         if (!checkPermission(uid)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return "userManagedBySASL";
         }
 
         passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
@@ -169,6 +166,6 @@ public class ChangePasswordFormController {
         // check if the user is managed by an external service. if so, then forbid
         // access to change password.
         Account d = this.accountDao.findByUID(uid);
-        return this.accountDao.getPasswordType(d) == PasswordType.SASL;
+        return this.accountDao.getPasswordType(d) != PasswordType.SASL;
     }
 }

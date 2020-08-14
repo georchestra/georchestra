@@ -1,9 +1,12 @@
 package org.georchestra.console.ws.changepassword;
 
+import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDaoImpl;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.junit.Before;
@@ -13,6 +16,11 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -25,7 +33,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 public class ChangePasswordControllerTest {
 
@@ -38,6 +49,7 @@ public class ChangePasswordControllerTest {
     private ChangePasswordFormBean formBean;
     private BindingResult result;
     private SessionStatus sessionStatus;
+    private AccountDaoImpl dao;
 
     @Before
     public void setUp() {
@@ -50,10 +62,11 @@ public class ChangePasswordControllerTest {
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgSearchBaseDN("ou=orgs");
 
-        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate);
+        dao = new AccountDaoImpl(ldapTemplate);
         dao.setUserSearchBaseDN("ou=users");
         dao.setOrgSearchBaseDN("ou=orgs");
         dao.setOrgSearchBaseDN("ou=orgs");
+        dao.setPendingUserSearchBaseDN("ou=pending");
         ctrl = new ChangePasswordFormController(dao);
         ctrl.passwordUtils = new PasswordUtils();
 
@@ -80,45 +93,49 @@ public class ChangePasswordControllerTest {
     @Test
     public void testSetupFormForbidden() throws Exception {
         // No header
-        ctrl.setupForm(request, response, "notme", model);
+        ctrl.setupForm("notme", model);
 
-        assertTrue(response.getStatus() == HttpServletResponse.SC_FORBIDDEN);
+        assertEquals(response.getStatus(), HttpServletResponse.SC_FORBIDDEN);
 
         // With security header, but no match (NPE caught)
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
         request.addHeader("sec-username", "me");
 
-        ctrl.setupForm(request, response, "notme", model);
+        ctrl.setupForm("notme", model);
 
-        assertTrue(response.getStatus() == HttpServletResponse.SC_FORBIDDEN);
+        assertEquals(response.getStatus(), HttpServletResponse.SC_FORBIDDEN);
     }
 
     @Test
     public void testSetupForm() throws Exception {
+        addUserForTests("me");
         request.addHeader("sec-username", "me");
 
         // regular case
-        String ret = ctrl.setupForm(request, response, "me", model);
+        String ret = ctrl.setupForm("me", model);
 
-        assertTrue(ret.equals("changePasswordForm"));
+        assertEquals("changePasswordForm", ret);
     }
 
     @Test
     public void testChangePasswordFormInvalid() throws Exception {
+        addUserForTests("pmauduit");
+
         formBean.setUid("pmauduit");
         formBean.setPassword("monkey12");
         formBean.setConfirmPassword("monkey123");
         request.addHeader("sec-username", "pmauduit");
         Mockito.when(result.hasErrors()).thenReturn(true);
 
-        String ret = ctrl.changePassword(request, response, model, formBean, result, sessionStatus);
+        String ret = ctrl.changePassword(model, formBean, result, sessionStatus);
 
-        assertTrue(ret.equals("changePasswordForm"));
+        assertEquals("changePasswordForm", ret);
     }
 
     @Test
     public void testChangePasswordSuccess() throws Exception {
+        addUserForTests("pmauduit");
         formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
@@ -130,14 +147,16 @@ public class ChangePasswordControllerTest {
         Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any()))
                 .thenReturn(Mockito.mock(DirContextOperations.class));
 
-        String ret = ctrl.changePassword(request, response, model, formBean, result, sessionStatus);
+        String ret = ctrl.changePassword(model, formBean, result, sessionStatus);
 
-        assertTrue(ret.equals("changePasswordForm"));
-        assertTrue(((Boolean) model.asMap().get("success")).booleanValue() == true);
+        assertEquals("changePasswordForm", ret);
+        assertTrue((Boolean) model.asMap().get("success"));
     }
 
-    @Test
+    @Test(expected = IOException.class)
     public void testChangePasswordDataServiceException() throws Exception {
+        addUserForTests("pmauduit");
+
         formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
@@ -145,11 +164,20 @@ public class ChangePasswordControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-        try {
-            ctrl.changePassword(request, response, model, formBean, result, sessionStatus);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-        }
+        ctrl.changePassword(model, formBean, result, sessionStatus);
+    }
+
+    private void addUserForTests(String username) {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        UserDetails user = User.builder().username(username).password("none").authorities("USER").build();
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(securityContext.getAuthentication().getPrincipal()).thenReturn(user);
+        SecurityContextHolder.setContext(securityContext);
+        Account a = new AccountImpl();
+        a.setUid(username);
+        a.setPassword("none");
+        //Mockito.when(ldapTemplate.lookup(dao.buildFullUserDn(username))).thenReturn(a);
     }
 
     @Test
@@ -158,16 +186,17 @@ public class ChangePasswordControllerTest {
 
         request.addHeader("sec-username", "pmauduit");
 
-        String ret = ctrl.changePassword(request, response, model, formBean, result, sessionStatus);
-        assertTrue(ret == null);
+        String ret = ctrl.changePassword(model, formBean, result, sessionStatus);
+        assertNull(ret);
     }
 
     @Test
     public void testChangePasswordMissingHeaders() throws Exception {
+        addUserForTests("pmauduit");
         formBean.setUid("pmauduit1");
 
-        String ret = ctrl.changePassword(request, response, model, formBean, result, sessionStatus);
-        assertTrue(ret == null);
+        String ret = ctrl.changePassword(model, formBean, result, sessionStatus);
+        assertNull(ret);
     }
 
     @Test
