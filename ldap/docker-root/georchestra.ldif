@@ -239,7 +239,7 @@ dn: cn=MAPSTORE_ADMIN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: MAPSTORE_ADMIN
-description: This role grants administrative access to Mapstore2
+description: This role grants administrative access to MapStore2
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # EMAILPROXY, roles, georchestra.org
