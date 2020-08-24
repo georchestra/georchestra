@@ -7,10 +7,10 @@ For the console, related to the GDPR compliance API [#2613](https://github.com/g
 GRANT geonetwork TO georchestra;
 ```
 
-For Geonetwork, since we now sync LDAP Organizations with GeoNetwork groups: 
+For Geonetwork, since we now sync LDAP Organizations with GeoNetwork groups:
 ```
 ALTER TABLE geonetwork.groups ALTER COLUMN name TYPE VARCHAR(255);
-ALTER TABLE geonetwork.groupsdes ALTER COLUMN label TYPE VARCHAR(255); 
+ALTER TABLE geonetwork.groupsdes ALTER COLUMN label TYPE VARCHAR(255);
 ```
 
 No other manual changes on the model are required to upgrade to the new version, since hibernate will take care of it.
@@ -76,6 +76,28 @@ ldapmodify -H ldap://localhost:389 -D "cn=admin,dc=georchestra,dc=org" -W -f /tm
 ```
 
 If anything goes wrong during the upgrade process, you can rollback thanks to the above backup (always inserting users first, or the `memberOf` overlay won't work !).
+
+## MAPSTORE_ADMIN role
+
+The `20.0.6` release introduces the `MAPSTORE_ADMIN` role in the LDAP, granting administrative access to its members, on the new viewer based on Mapstore2. It can be inserted in
+an existing OpenLDAP tree considering the following LDIF specification:
+
+```
+# cat mapstore-admin-role.ldif
+# MAPSTORE_ADMIN, roles, georchestra.org
+dn: cn=MAPSTORE_ADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: MAPSTORE_ADMIN
+description: This role grants administrative access to Mapstore2
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+```
+
+Using the following command:
+
+```
+$ ldapadd -H ldap://localhost:389 -D "cn=admin,dc=georchestra,dc=org" -W -f mapstore-admin-role.ldif
+```
 
 ## Datadir migration
 
