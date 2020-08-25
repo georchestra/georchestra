@@ -234,6 +234,14 @@ cn: ORGADMIN
 description: This role is automatically granted to all users holding an admin delegation
 member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
 
+# MAPSTORE_ADMIN, roles, georchestra.org
+dn: cn=MAPSTORE_ADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: MAPSTORE_ADMIN
+description: This role grants administrative access to MapStore2
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
 # EMAILPROXY, roles, georchestra.org
 dn: cn=EMAILPROXY,ou=roles,dc=georchestra,dc=org
 objectClass: top
