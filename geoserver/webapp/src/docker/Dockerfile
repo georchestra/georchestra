@@ -18,10 +18,10 @@ RUN echo "deb http://httpredir.debian.org/debian buster main contrib" > /etc/apt
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.4/libjpeg-turbo-official_2.0.4_amd64.deb \
-    && dpkg -i libjpeg-turbo-official_2.0.4_amd64.deb \
+RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.5/libjpeg-turbo-official_2.0.5_amd64.deb \
+    && dpkg -i libjpeg-turbo-official_2.0.5_amd64.deb \
     && apt-get -f install \
-    && rm libjpeg-turbo-official_2.0.4_amd64.deb
+    && rm libjpeg-turbo-official_2.0.5_amd64.deb
 
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
