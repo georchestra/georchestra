@@ -45,6 +45,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -76,8 +77,7 @@ public class ChangePasswordFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-
-        dataBinder.setAllowedFields(new String[] { "password", "confirmPassword" });
+        dataBinder.setAllowedFields("password", "confirmPassword");
     }
 
     /**
@@ -94,15 +94,15 @@ public class ChangePasswordFormController {
     public String setupForm(@RequestParam("uid") String uid, Model model) throws DataServiceException {
 
         if (!checkPermission(uid)) {
+            return "forbidden";
+        }
+        if(isUserAuthenticatedBySASL(uid)) {
             return "userManagedBySASL";
         }
 
         ChangePasswordFormBean formBean = new ChangePasswordFormBean();
-
         formBean.setUid(uid);
-
         model.addAttribute(formBean);
-
         return "changePasswordForm";
     }
 
@@ -121,14 +121,17 @@ public class ChangePasswordFormController {
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result,
             SessionStatus sessionStatus) throws IOException, DataServiceException {
         String uid = formBean.getUid();
+        // check if user
         if (!checkPermission(uid)) {
+            return "forbidden";
+        }
+        if(isUserAuthenticatedBySASL(uid)) {
             return "userManagedBySASL";
         }
 
         passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
         if (result.hasErrors()) {
-
             return "changePasswordForm";
         }
 
@@ -136,20 +139,15 @@ public class ChangePasswordFormController {
         try {
 
             String password = formBean.getPassword();
-
             this.accountDao.changePassword(uid, password);
-
             model.addAttribute("success", true);
 
             // log that password was changed for this user
             logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
 
             return "changePasswordForm";
-
         } catch (DataServiceException e) {
-
             throw new IOException(e);
-
         }
     }
 
@@ -158,14 +156,16 @@ public class ChangePasswordFormController {
         return new ChangePasswordFormBean();
     }
 
-    private boolean checkPermission(String uid) throws DataServiceException {
+    private boolean checkPermission(String uid) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!user.getUsername().equals(uid)) {
-            return false;
-        }
+        return user.getUsername().equals(uid);
+    }
+
+    private boolean isUserAuthenticatedBySASL(String uid) throws DataServiceException {
         // check if the user is managed by an external service. if so, then forbid
         // access to change password.
         Account d = this.accountDao.findByUID(uid);
-        return this.accountDao.getPasswordType(d) != PasswordType.SASL;
+        return this.accountDao.getPasswordType(d) == PasswordType.SASL;
     }
+
 }
