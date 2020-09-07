@@ -203,7 +203,7 @@ ProxyPass /geonetwork/ http://localhost:8180/geonetwork/
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 
-Optionally, to preserve permalinks generated with a previous GeoNetwork 3.0 instance:
+Optionally, to preserve permalinks generated with a previous GeoNetwork 2.x instance:
 ```
 <Location "/geonetwork">
 	RewriteEngine on
