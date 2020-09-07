@@ -203,6 +203,15 @@ ProxyPass /geonetwork/ http://localhost:8180/geonetwork/
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 
+Optionally, to preserve permalinks generated with a previous GeoNetwork 3.0 instance:
+```
+<Location "/geonetwork">
+	RewriteEngine on
+	RewriteCond "%{REQUEST_URI}" "/geonetwork/apps/georchestra/"
+	RewriteCond "%{QUERY_STRING}" "(.*(?:^|&))uuid=([^&]*)&?(.*)&?$"
+	RewriteRule "(.*)" "/geonetwork/srv/eng/catalog.search#/metadata/%2" [R=302,NE,QSD,L]
+</Location>
+```
 
 * ```geoserver.conf```:
 
