@@ -72,3 +72,15 @@ RewriteCond %{REQUEST_URI} !^/ldapadmin/console/public/.*$
 RewriteCond %{REQUEST_URI} ^/ldapadmin/console/([home|users|org|orgs|groups|logs|analytics].*)$
 RewriteRule .* /ldapadmin/console/#/%1 [NE,R,L]
 ```
+
+## GeoNetwork
+
+To preserve permalinks, an Apache 2.4 configuration:
+```
+<Location "/geonetwork">
+	RewriteEngine on
+	RewriteCond "%{REQUEST_URI}" "/geonetwork/apps/georchestra/"
+	RewriteCond "%{QUERY_STRING}" "(.*(?:^|&))uuid=([^&]*)&?(.*)&?$"
+	RewriteRule "(.*)" "/geonetwork/srv/eng/catalog.search#/metadata/%2" [R=302,NE,QSD,L]
+</Location>
+```
