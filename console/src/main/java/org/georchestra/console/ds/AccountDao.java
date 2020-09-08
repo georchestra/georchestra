@@ -137,7 +137,7 @@ public interface AccountDao {
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
-    Account findByUID(@NotNull final String uid) throws DataServiceException, NameNotFoundException;
+    Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
 
     /**
      * Add the new password. This method is part of the "lost password" workflow to

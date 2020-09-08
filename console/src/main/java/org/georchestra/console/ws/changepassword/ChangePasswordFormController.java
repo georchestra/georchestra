@@ -96,7 +96,7 @@ public class ChangePasswordFormController {
         if (!checkPermission(uid)) {
             return "forbidden";
         }
-        if(isUserAuthenticatedBySASL(uid)) {
+        if (isUserAuthenticatedBySASL(uid)) {
             return "userManagedBySASL";
         }
 
@@ -111,21 +111,20 @@ public class ChangePasswordFormController {
      *
      * @param model
      * @param formBean
-     * @param sessionStatus
      *
      * @return the next view
      *
      * @throws IOException,DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
-    public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result,
-            SessionStatus sessionStatus) throws IOException, DataServiceException {
+    public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
+            throws IOException, DataServiceException {
         String uid = formBean.getUid();
         // check if user
         if (!checkPermission(uid)) {
-            return "forbidden";
+            return null;
         }
-        if(isUserAuthenticatedBySASL(uid)) {
+        if (isUserAuthenticatedBySASL(uid)) {
             return "userManagedBySASL";
         }
 
@@ -157,8 +156,12 @@ public class ChangePasswordFormController {
     }
 
     private boolean checkPermission(String uid) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getUsername().equals(uid);
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return user.getUsername().equals(uid);
+        } catch (NullPointerException ex) {
+            return false;
+        }
     }
 
     private boolean isUserAuthenticatedBySASL(String uid) throws DataServiceException {
