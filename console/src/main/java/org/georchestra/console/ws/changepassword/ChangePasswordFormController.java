@@ -84,7 +84,8 @@ public class ChangePasswordFormController {
      * Initializes the {@link ChangePasswordFormBean} with the uid provided as
      * parameter. The changePasswordForm view is provided as result of this method.
      *
-     * @param uid user id
+     * @param uid   user id
+     * @param model
      *
      * @return changePasswordForm view to display
      *
@@ -111,14 +112,15 @@ public class ChangePasswordFormController {
      *
      * @param model
      * @param formBean
+     * @param result
      *
      * @return the next view
      *
-     * @throws IOException,DataServiceException
+     * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
-            throws IOException, DataServiceException {
+            throws DataServiceException {
         String uid = formBean.getUid();
         // check if user
         if (!checkPermission(uid)) {
@@ -135,19 +137,14 @@ public class ChangePasswordFormController {
         }
 
         // change the user's password
-        try {
+        String password = formBean.getPassword();
+        this.accountDao.changePassword(uid, password);
+        model.addAttribute("success", true);
 
-            String password = formBean.getPassword();
-            this.accountDao.changePassword(uid, password);
-            model.addAttribute("success", true);
+        // log that password was changed for this user
+        logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
 
-            // log that password was changed for this user
-            logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
-
-            return "changePasswordForm";
-        } catch (DataServiceException e) {
-            throw new IOException(e);
-        }
+        return "changePasswordForm";
     }
 
     @ModelAttribute("changePasswordFormBean")

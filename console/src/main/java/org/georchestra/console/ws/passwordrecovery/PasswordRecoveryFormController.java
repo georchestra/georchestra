@@ -201,7 +201,7 @@ public class PasswordRecoveryFormController {
      *
      * @return a new URL to change password
      */
-    private String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
+    protected String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
         String url = UriComponentsBuilder.fromHttpUrl(publicUrl).path(contextPath).path("/account/newPassword")
                 .query("token={token}").buildAndExpand(token).toUriString();
 

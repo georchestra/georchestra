@@ -21,7 +21,6 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

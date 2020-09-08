@@ -23,8 +23,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 
 <!DOCTYPE html>
-<!--TODO: set appropriate lang-->
-<!--TODO: favicon-->
 <html lang="en">
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>

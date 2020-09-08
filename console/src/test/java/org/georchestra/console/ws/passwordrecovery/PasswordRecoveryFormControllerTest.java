@@ -164,8 +164,8 @@ public class PasswordRecoveryFormControllerTest {
         b.setRecaptcha_response_field("valid");
 
         assertEquals("test@localhost.com", b.getEmail());
-        assertEquals(b.toString(),
-                "PasswordRecoveryFormBean [email=test@localhost.com, " + "recaptcha_response_field=valid]");
+        assertEquals("PasswordRecoveryFormBean [email=test@localhost.com, recaptcha_response_field=valid]",
+                b.toString());
 
     }
 
@@ -184,22 +184,13 @@ public class PasswordRecoveryFormControllerTest {
     }
 
     @Test
-    public void testMakeChangePasswordURLOk()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method privateMethodGetInfo = PasswordRecoveryFormController.class.getDeclaredMethod("makeChangePasswordURL",
-                String.class, String.class, String.class);
-        privateMethodGetInfo.setAccessible(true);
-        String res = (String) privateMethodGetInfo.invoke(ctrl, "https://georchestra.org", "console", "1234");
+    public void testMakeChangePasswordURLOk() {
+        String res = ctrl.makeChangePasswordURL("https://georchestra.org", "console", "1234");
         assertEquals(res, "https://georchestra.org/console/account/newPassword?token=1234");
     }
 
-    @Test(expected = InvocationTargetException.class)
-    public void testMakeChangePasswordURLWronglyformated()
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method privateMethodGetInfo = PasswordRecoveryFormController.class.getDeclaredMethod("makeChangePasswordURL",
-                String.class, String.class, String.class);
-        privateMethodGetInfo.setAccessible(true);
-        String res = (String) privateMethodGetInfo.invoke(ctrl, "pompom", "https://blabla.com", "https://pompom");
-        assertEquals(res, "pompom/https://blabla.com?token=https://pompom");
+    @Test(expected = IllegalArgumentException.class)
+    public void testMakeChangePasswordURLWronglyformated() {
+        ctrl.makeChangePasswordURL("pompom", "https://blabla.com", "https://pompom");
     }
 }

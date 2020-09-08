@@ -45,7 +45,6 @@ import javax.annotation.PostConstruct;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Iterator;
@@ -222,7 +221,6 @@ public final class AccountDaoImpl implements AccountDao {
 
     @Override
     public Account findByUID(final String uid) throws NameNotFoundException {
-
         if (uid == null) {
             throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
         }
