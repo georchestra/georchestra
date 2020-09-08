@@ -15,6 +15,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 import java.util.HashMap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
@@ -48,7 +49,7 @@ public class AccountDaoTest {
         contextSource.setBaseEnvironmentProperties(new HashMap<String, Object>());
         contextSource.setUserDn(ldapAdminDn);
         contextSource.setPassword(ldapAdminDnPw);
-        contextSource.setAnonymousReadOnly(true);
+        contextSource.setAnonymousReadOnly(false);
         contextSource.setCacheEnvironmentProperties(false);
         AuthenticationSource authsrc = Mockito.mock(AuthenticationSource.class);
         Mockito.when(authsrc.getPrincipal()).thenReturn(ldapAdminDn);
@@ -133,5 +134,17 @@ public class AccountDaoTest {
 
         assertTrue("testpendinguser".equals(testpending.getUid()));
         assertTrue(testpending.isPending());
+    }
+
+    @Test
+    public void getPasswordType() throws Exception {
+        Account testpending = toTest.findByUID("testadmin");
+        assertEquals(PasswordType.SHA, toTest.getPasswordType(testpending));
+    }
+
+    @Test
+    public void getPasswordTypePendingUser() throws Exception {
+        Account testpending = toTest.findByUID("testpendinguser");
+        assertEquals(PasswordType.SHA, toTest.getPasswordType(testpending));
     }
 }

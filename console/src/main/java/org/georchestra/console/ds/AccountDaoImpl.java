@@ -334,8 +334,8 @@ public final class AccountDaoImpl implements AccountDao {
      * provided account
      */
     public PasswordType getPasswordType(Account account) {
-        String passwordType = ldapTemplate.lookup(buildUserDn(account.getUid().toLowerCase(), false),
-                new String[] { "userPassword" }, (ContextMapper<String>) ctx -> {
+        String passwordType = ldapTemplate.lookup(buildUserDn(account), new String[] { "userPassword" },
+                (ContextMapper<String>) ctx -> {
                     DirContextAdapter context = (DirContextAdapter) ctx;
                     byte[] rawPassword = (byte[]) context.getObjectAttribute("userPassword");
                     String password = new String(rawPassword);

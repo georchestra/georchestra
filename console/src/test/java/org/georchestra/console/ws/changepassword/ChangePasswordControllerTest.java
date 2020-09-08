@@ -134,7 +134,7 @@ public class ChangePasswordControllerTest {
         assertTrue((Boolean) model.asMap().get("success"));
     }
 
-    @Test(expected = IOException.class)
+    @Test(expected = DataServiceException.class)
     public void changePasswordDataServiceException() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
         formBean.setUid("pmauduit");
@@ -174,7 +174,7 @@ public class ChangePasswordControllerTest {
 
         assertEquals("1", tested.getUid());
         assertEquals("monkey123", tested.getPassword());
-        assertEquals("monkey123", tested.getConfirmPassword());
+        assertEquals("monkey123x", tested.getConfirmPassword());
         assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123x, password=monkey123]",
                 tested.toString());
     }
