@@ -45,6 +45,7 @@ import javax.annotation.PostConstruct;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Iterator;
@@ -113,10 +114,8 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void insert(final Account account, final String originLogin)
+    public synchronized void insert(@NotNull final Account account, final String originLogin)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
-
-        assert account != null;
 
         checkMandatoryFields(account);
 
@@ -154,7 +153,7 @@ public final class AccountDaoImpl implements AccountDao {
             mapToContext(account, context);
 
             // Maps the password separately
-            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+            mapPasswordToContext(account, context);
 
             this.ldapTemplate.bind(dn, context, null);
 
@@ -500,6 +499,19 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.NOTE_KEY, account.getNote());
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
+
+        if (account.getSASLUser() != null) {
+            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, "{SASL}" + account.getSASLUser());
+        }
+
+    }
+
+    private void mapPasswordToContext(Account account, DirContextAdapter context) {
+        if (account.getSASLUser() != null) {
+            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, "{SASL}" + account.getSASLUser());
+        } else {
+            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+        }
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -557,7 +569,7 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
                     context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
-                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]));
+                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null);
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {
@@ -600,8 +612,22 @@ public final class AccountDaoImpl implements AccountDao {
             }
 
             account.setPending(context.getDn().startsWith(pendingUserSearchBaseDN));
-
+            // deals with sasl user (external authentication)
+            tryToGuessSaslUser(context, account);
             return account;
+        }
+
+        private void tryToGuessSaslUser(DirContextAdapter context, Account account) {
+            try {
+                byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
+                String password = new String(rawPassword);
+                int typeIndexLast = password.indexOf("}");
+                if (PasswordType.valueOf(password.substring(1, typeIndexLast)) == PasswordType.SASL) {
+                    account.setSASLUser(password.substring(typeIndexLast + 1));
+                }
+            } catch (IllegalArgumentException | NullPointerException e) {
+                return;
+            }
         }
     }
 

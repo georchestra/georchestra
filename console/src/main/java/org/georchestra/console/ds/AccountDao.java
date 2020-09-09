@@ -21,6 +21,8 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
+
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -87,7 +89,7 @@ public interface AccountDao {
      * @throws DataServiceException
      * @throws DuplicatedEmailException
      */
-    void insert(final Account account, final String originLogin)
+    void insert(@NotNull final Account account, final String originLogin)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
     /**

@@ -137,6 +137,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.SSH_KEY)
     private String[] sshKeys;
 
+    @JsonProperty("saslUser")
+    private String saslUser;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -155,7 +158,8 @@ public class AccountImpl implements Serializable, Account {
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
                 + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "'}";
+                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
+                + "saslUser" + saslUser + "'}";
     }
 
     @Override
@@ -541,5 +545,15 @@ public class AccountImpl implements Serializable, Account {
     public void setSshKeys(String[] sshKeys) {
         this.sshKeys = sshKeys;
 
+    }
+
+    @Override
+    public String getSASLUser() {
+        return this.saslUser;
+    }
+
+    @Override
+    public void setSASLUser(String user) {
+        this.saslUser = user;
     }
 }

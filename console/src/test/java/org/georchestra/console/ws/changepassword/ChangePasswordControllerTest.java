@@ -168,14 +168,14 @@ public class ChangePasswordControllerTest {
     @Test
     public void changePasswordFormBean() {
         ChangePasswordFormBean tested = new ChangePasswordFormBean();
-        tested.setConfirmPassword("monkey123x");
+        tested.setConfirmPassword("monkey123");
         tested.setUid("1");
         tested.setPassword("monkey123");
 
         assertEquals("1", tested.getUid());
         assertEquals("monkey123", tested.getPassword());
-        assertEquals("monkey123x", tested.getConfirmPassword());
-        assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123x, password=monkey123]",
+        assertEquals("monkey123", tested.getConfirmPassword());
+        assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123, password=monkey123]",
                 tested.toString());
     }
 

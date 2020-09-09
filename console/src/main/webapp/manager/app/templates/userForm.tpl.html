@@ -126,8 +126,9 @@
           <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" ng-required="required.uid" ng-pattern="/^[a-z][a-z0-9_\\\\.\\\\-]*$/i">
         </div>
       </div>
+      <hr>
 
-      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.preferredLanguage}">
+      <div class="form-group form-group-sm" ng-if="model.$promise" ng-class="{required: required.preferredLanguage}">
         <label class="col-sm-4" for="givenName" translate>user.password</label>
         <a href="/console/account/passwordRecovery?email={{user.user.mail | encodeURIComponent}}"
           target="_blank" class="col-sm-8 password">
@@ -135,9 +136,18 @@
           <i class="glyphicon glyphicon-new-window"></i>
         </a>
       </div>
-
+      <div ng-if="platformInfos.saslEnabled">
+        <div class="form-group form-group-sm" ng-if="model.$promise">
+          <label class="col-sm-4" for="saslUser">
+            <span translate>sasl.remote.user</span>
+            {{ platformInfos.saslServer }}
+          </label>
+          <div class="col-sm-8">
+            <input id="saslUser" type="text" class="form-control" ng-model="model.saslUser">
+          </div>
+        </div>
+      </div>
     </div>
-
   </div>
 
 </form>

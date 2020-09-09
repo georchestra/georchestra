@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
@@ -67,6 +68,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ldap.NameNotFoundException;
@@ -77,6 +79,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -222,7 +225,7 @@ public class UsersController {
     @RequestMapping(value = REQUEST_MAPPING
             + "/{uid:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     @ResponseBody
-    public AccountImpl findByUid(@PathVariable String uid)
+    public Account findByUid(@PathVariable String uid)
             throws AccessDeniedException, NameNotFoundException, DataServiceException {
 
         // Check for protected accounts
@@ -232,7 +235,7 @@ public class UsersController {
         // Check delegation
         this.checkAuthorization(uid);
 
-        return (AccountImpl) this.accountDao.findByUID(uid);
+        return this.accountDao.findByUID(uid);
 
     }
 
@@ -253,22 +256,18 @@ public class UsersController {
      * }
      * </pre>
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/profile", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/profile", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public String myProfile(HttpServletRequest request) throws DataServiceException, JSONException {
+    public String myProfile(HttpServletRequest request) throws JSONException, DataServiceException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .map(s -> s.replaceFirst("ROLE_", "")).collect(Collectors.toList());
+        Account a = accountDao.findByUID(auth.getName());
 
-        String[] rolesHeader = StringUtils.isEmpty(request.getHeader("sec-roles")) ? new String[0]
-                : request.getHeader("sec-roles").split(";");
-
-        rolesHeader = Arrays.stream(rolesHeader).map(s -> s.replaceFirst("ROLE_", "")).toArray(String[]::new);
-
-        String orgHeader = StringUtils.isEmpty(request.getHeader("sec-org")) ? "" : request.getHeader("sec-org");
         JSONObject res = new JSONObject();
         res.put("uid", auth.getName());
-        res.put("roles", rolesHeader);
-        res.put("org", orgHeader);
+        res.put("roles", roles);
+        res.put("org", a.getOrg());
 
         return res.toString();
     }
@@ -295,7 +294,7 @@ public class UsersController {
      *  "org": "the_organization"
      * }
      *
-     * where <b>sn, givenName, mail</b> are mandatories
+    8     * where <b>sn, givenName, mail</b> are mandatories
      * </pre>
      * 
      * <pre>
@@ -673,6 +672,10 @@ public class UsersController {
         if (context != null) {
             account.setContext(context);
         }
+        String saslUser = RequestUtil.getFieldValue(json, "saslUser");
+        if (saslUser != null) {
+            account.setSASLUser(saslUser);
+        }
 
         String commonName = AccountFactory.formatCommonName(account.getGivenName(), account.getSurname());
         account.setCommonName(commonName);
@@ -747,6 +750,7 @@ public class UsersController {
         String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
         String sshKeys = RequestUtil.getFieldValue(json, UserSchema.SSH_KEY);
         String[] sshKeysA = new String[0];
+        String saslUser = RequestUtil.getFieldValue(json, "saslUser");
 
         if (!StringUtils.isEmpty(sshKeys)) {
             sshKeysA = sshKeys.split("\n"); // TODO what would be the most convenient delimiter ?
@@ -775,7 +779,7 @@ public class UsersController {
 
         Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
                 postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
-                note, context, org, sshKeysA);
+                note, context, org, sshKeysA, saslUser);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {

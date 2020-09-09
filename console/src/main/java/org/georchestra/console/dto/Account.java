@@ -163,4 +163,8 @@ public interface Account extends Comparable<Account> {
     String[] getSshKeys();
 
     void setSshKeys(String[] sshKeys);
+
+    String getSASLUser();
+
+    void setSASLUser(String user);
 }

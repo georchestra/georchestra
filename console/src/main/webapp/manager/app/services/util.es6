@@ -30,3 +30,11 @@ angular.module('manager')
 
     }
   })
+  .factory('PlatformInfos', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
+    $resource(baseUri + 'platform/infos', {}, {
+      query: {
+        method: 'GET',
+        isArray: false
+      }
+    })
+  ])

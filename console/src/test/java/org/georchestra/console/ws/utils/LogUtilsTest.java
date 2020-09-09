@@ -1,5 +1,6 @@
 package org.georchestra.console.ws.utils;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,11 @@ import org.json.JSONObject;
 public class LogUtilsTest {
 
     private AdminLogEntry log;
+
+    @Before
+    public void resetSecurityContext() {
+        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+    }
 
     @Test
     public void createLogNoAuth() {

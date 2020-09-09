@@ -1,6 +1,8 @@
 package org.georchestra.console.ws.backoffice.users;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -59,6 +61,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 public class UsersControllerTest {
@@ -215,6 +219,15 @@ public class UsersControllerTest {
     }
 
     @Test
+    public void testCreateSaslUser() {
+        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
+                .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
+                .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
+                .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
+
+    }
+
+    @Test
     public void createUser() throws Exception {
         JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
@@ -244,7 +257,7 @@ public class UsersControllerTest {
         assertEquals(res.getStateOrProvince(), "");
         assertEquals(res.getPostOfficeBox(), "1234");
         assertEquals(res.getMobile(), "");
-        assertEquals(res.isPending(), false);
+        assertFalse(res.isPending());
         assertEquals(res.getPrivacyPolicyAgreementDate(), LocalDate.of(2019, 3, 12));
     }
 
@@ -411,9 +424,9 @@ public class UsersControllerTest {
         assertEquals("pmauduit@georchestra.org", ret.getEmail());
         assertEquals("newPierre newPmauduit", ret.getCommonName());
         assertEquals("pMaUdUiT", ret.getUid());
-        assertEquals(true, ret.isPending());
+        assertTrue(ret.isPending());
         assertEquals("new_org", ret.getOrg());
-        assertEquals(null, ret.getPrivacyPolicyAgreementDate());
+        assertNull(ret.getPrivacyPolicyAgreementDate());
 
         ArgumentCaptor<String> delDnCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(mockDirCtxForPsc).removeAttributeValue(anyString(), delDnCaptor.capture());
@@ -551,44 +564,54 @@ public class UsersControllerTest {
 
     @Test
     public void testGetProfileAnonymous() throws Exception {
+        // reset any spring security context that may have been set in previous test.
+        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+
+        // Set user connected through spring security
+        List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin", null, role);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        mockLookup("testadmin", false);
+
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         String ret = usersCtrl.myProfile(request);
 
         JSONObject parsed = new JSONObject(ret);
-        // note: uid = testadmin because of the setUp() call
-        assertEquals(parsed.get("org"), StringUtils.EMPTY);
         assertTrue(parsed.getJSONArray("roles").isEmpty());
     }
 
     @Test
     public void testGetProfileEmptyRole() throws Exception {
+        // reset any spring security context that may have been set in previous test.
+        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("sec-org", "camptocamp");
-        request.addHeader("sec-roles", ";");
+
+        // Set user connected through spring security
+        List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin", null, role);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        mockLookup("testadmin", false);
 
         String ret = usersCtrl.myProfile(request);
 
         JSONObject parsed = new JSONObject(ret);
         assertEquals(parsed.get("uid"), "testadmin");
-        assertEquals(parsed.get("org"), "camptocamp");
         assertTrue(parsed.getJSONArray("roles").isEmpty());
     }
 
     @Test
     public void testGetProfile() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("sec-org", "camptocamp");
-        request.addHeader("sec-roles", "ROLE_SUPERUSER;ROLE_ADMINISTRATOR;ROLE_USER");
-
+        mockLookup("testadmin", false);
         String ret = usersCtrl.myProfile(request);
 
         JSONObject parsed = new JSONObject(ret);
         assertEquals(parsed.get("uid"), "testadmin");
-        assertEquals(parsed.get("org"), "camptocamp");
-        assertTrue(parsed.getJSONArray("roles").length() == 3 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER")
-                && parsed.getJSONArray("roles").get(1).equals("ADMINISTRATOR")
-                && parsed.getJSONArray("roles").get(2).equals("USER"));
+        assertTrue(
+                parsed.getJSONArray("roles").length() == 1 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER"));
     }
 
     private void mockLookup(String uuid, boolean pending) {
