@@ -153,7 +153,9 @@ public final class AccountDaoImpl implements AccountDao {
             mapToContext(account, context);
 
             // Maps the password separately
-            mapPasswordToContext(account, context);
+            if (account.getSASLUser() == null) {
+                context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+            }
 
             this.ldapTemplate.bind(dn, context, null);
 
@@ -288,46 +290,6 @@ public final class AccountDaoImpl implements AccountDao {
         }
     }
 
-    /**
-     * Adds the new password in the user password array. The new password is
-     * maintained in array with two userPassword attributes.
-     *
-     * <pre>
-     * Format:
-     * userPassword[0] : old password
-     * userPassword[1] : new password
-     * </pre>
-     *
-     * @see {@link AccountDao#addNewPassword(String, String)}
-     */
-    @Override
-    public void addNewPassword(String uid, String newPassword) {
-        if (StringUtils.isEmpty(uid)) {
-            throw new IllegalArgumentException("uid is required");
-        }
-        if (StringUtils.isEmpty(newPassword)) {
-            throw new IllegalArgumentException("password is required");
-        }
-        // update the entry in the LDAP tree
-        DirContextOperations context = ldapTemplate.lookupContext(buildUserDn(uid, false));
-
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
-
-        final String pwd = "userPassword";
-        Object[] pwdValues = context.getObjectAttributes(pwd);
-        if (pwdValues.length < 2) {
-            // adds the new password
-            context.addAttributeValue(pwd, encrypted, false);
-        } else {
-            // update the last password with the new password
-            pwdValues[1] = newPassword;
-            context.setAttributeValues(pwd, pwdValues);
-        }
-
-        ldapTemplate.modifyAttributes(context);
-    }
-
     /*
      * return the password type according to the one present in userPassword of the
      * provided account
@@ -391,7 +353,7 @@ public final class AccountDaoImpl implements AccountDao {
         LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
         String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
 
-        context.setAttributeValue("userPassword", encrypted);
+        context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, encrypted);
 
         ldapTemplate.modifyAttributes(context);
     }
@@ -504,14 +466,6 @@ public final class AccountDaoImpl implements AccountDao {
             context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, "{SASL}" + account.getSASLUser());
         }
 
-    }
-
-    private void mapPasswordToContext(Account account, DirContextAdapter context) {
-        if (account.getSASLUser() != null) {
-            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, "{SASL}" + account.getSASLUser());
-        } else {
-            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
-        }
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {

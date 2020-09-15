@@ -141,16 +141,6 @@ public interface AccountDao {
     Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
 
     /**
-     * Add the new password. This method is part of the "lost password" workflow to
-     * maintan the old password and the new password until the user can confirm that
-     * he had asked for a new password.
-     * 
-     * @param uid
-     * @param newPassword
-     */
-    void addNewPassword(String uid, String newPassword);
-
-    /**
      * Generates a new Id based on the uid provided as parameter.
      * 
      * @param uid
