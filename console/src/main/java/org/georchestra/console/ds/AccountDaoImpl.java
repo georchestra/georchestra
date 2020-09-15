@@ -621,7 +621,7 @@ public final class AccountDaoImpl implements AccountDao {
                 byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
                 String password = new String(rawPassword);
                 int typeIndexLast = password.lastIndexOf("}");
-                passwordType = PasswordType.valueOf(password.substring(1, typeIndexLast));
+                passwordType = PasswordType.valueOf(password.substring(1, typeIndexLast).toUpperCase());
                 if (passwordType == PasswordType.SASL) {
                     userName = password.substring(typeIndexLast + 1);
                 }
