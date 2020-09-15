@@ -446,9 +446,12 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
 
-        String saslAccountAsPassword = StringUtils.isEmpty(account.getSASLUser()) ? null
-                : "{SASL}" + account.getSASLUser();
-        setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
+        if (new SASLPasswordWrapper(context).getPasswordType().equals(PasswordType.SASL)
+                || !StringUtils.isEmpty(account.getSASLUser())) {
+            String saslAccountAsPassword = StringUtils.isEmpty(account.getSASLUser()) ? null
+                    : "{SASL}" + account.getSASLUser();
+            setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
+        }
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -554,17 +557,9 @@ public final class AccountDaoImpl implements AccountDao {
         }
 
         private void tryToSetPasswordTypeAndGuessSaslUser(DirContextAdapter context, Account account) {
-            try {
-                byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
-                String password = new String(rawPassword);
-                int typeIndexLast = password.lastIndexOf("}");
-                account.setPasswordType(PasswordType.valueOf(password.substring(1, typeIndexLast)));
-                if (account.getPasswordType() == PasswordType.SASL) {
-                    account.setSASLUser(password.substring(typeIndexLast + 1));
-                }
-            } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
-                account.setPasswordType(PasswordType.UNKNOWN);
-            }
+            SASLPasswordWrapper saslPasswordWrapper = new SASLPasswordWrapper(context);
+            account.setPasswordType(saslPasswordWrapper.getPasswordType());
+            account.setSASLUser(saslPasswordWrapper.getUserName());
         }
     }
 
@@ -614,6 +609,33 @@ public final class AccountDaoImpl implements AccountDao {
             sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
             sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
             return sc;
+        }
+    }
+
+    static class SASLPasswordWrapper {
+        private PasswordType passwordType;
+        private String userName;
+
+        public SASLPasswordWrapper(DirContextOperations context) {
+            try {
+                byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
+                String password = new String(rawPassword);
+                int typeIndexLast = password.lastIndexOf("}");
+                passwordType = PasswordType.valueOf(password.substring(1, typeIndexLast));
+                if (passwordType == PasswordType.SASL) {
+                    userName = password.substring(typeIndexLast + 1);
+                }
+            } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+                passwordType = PasswordType.UNKNOWN;
+            }
+        }
+
+        public PasswordType getPasswordType() {
+            return passwordType;
+        }
+
+        public String getUserName() {
+            return userName;
         }
     }
 }
