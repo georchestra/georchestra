@@ -294,7 +294,7 @@ public class UsersController {
      *  "org": "the_organization"
      * }
      *
-    8     * where <b>sn, givenName, mail</b> are mandatories
+     * where <b>sn, givenName, mail</b> are mandatories
      * </pre>
      * 
      * <pre>

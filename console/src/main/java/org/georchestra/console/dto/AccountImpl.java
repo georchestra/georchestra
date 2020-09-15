@@ -159,7 +159,7 @@ public class AccountImpl implements Serializable, Account {
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
                 + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
                 + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
-                + "saslUser" + saslUser + "'}";
+                + "', saslUser='" + saslUser + "'}";
     }
 
     @Override
