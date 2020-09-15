@@ -231,6 +231,6 @@ public class PasswordRecoveryFormController {
 
     private PasswordType getPasswordType(String email) throws DataServiceException {
         Account a = this.accountDao.findByEmail(email);
-        return this.accountDao.getPasswordType(a);
+        return a.getPasswordType();
     }
 }

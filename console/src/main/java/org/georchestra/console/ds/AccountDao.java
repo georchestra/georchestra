@@ -155,6 +155,4 @@ public interface AccountDao {
     boolean hasUserLoginChanged(Account account, Account modified);
 
     String buildFullUserDn(Account account);
-
-    PasswordType getPasswordType(Account account);
 }

@@ -290,22 +290,6 @@ public final class AccountDaoImpl implements AccountDao {
         }
     }
 
-    /*
-     * return the password type according to the one present in userPassword of the
-     * provided account
-     */
-    public PasswordType getPasswordType(Account account) {
-        String passwordType = ldapTemplate.lookup(buildUserDn(account), new String[] { "userPassword" },
-                (ContextMapper<String>) ctx -> {
-                    DirContextAdapter context = (DirContextAdapter) ctx;
-                    byte[] rawPassword = (byte[]) context.getObjectAttribute("userPassword");
-                    String password = new String(rawPassword);
-                    int typeIndexLast = password.lastIndexOf("}");
-                    return password.substring(1, typeIndexLast);
-                });
-        return PasswordType.valueOf(passwordType);
-    }
-
     /**
      * Generate a new uid based on the provided uid
      *
@@ -462,10 +446,9 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
 
-        if (account.getSASLUser() != null) {
-            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, "{SASL}" + account.getSASLUser());
-        }
-
+        String saslAccountAsPassword = StringUtils.isEmpty(account.getSASLUser()) ? null
+                : "{SASL}" + account.getSASLUser();
+        setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -566,21 +549,21 @@ public final class AccountDaoImpl implements AccountDao {
             }
 
             account.setPending(context.getDn().startsWith(pendingUserSearchBaseDN));
-            // deals with sasl user (external authentication)
-            tryToGuessSaslUser(context, account);
+            tryToSetPasswordTypeAndGuessSaslUser(context, account);
             return account;
         }
 
-        private void tryToGuessSaslUser(DirContextAdapter context, Account account) {
+        private void tryToSetPasswordTypeAndGuessSaslUser(DirContextAdapter context, Account account) {
             try {
                 byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
                 String password = new String(rawPassword);
-                int typeIndexLast = password.indexOf("}");
-                if (PasswordType.valueOf(password.substring(1, typeIndexLast)) == PasswordType.SASL) {
+                int typeIndexLast = password.lastIndexOf("}");
+                account.setPasswordType(PasswordType.valueOf(password.substring(1, typeIndexLast)));
+                if (account.getPasswordType() == PasswordType.SASL) {
                     account.setSASLUser(password.substring(typeIndexLast + 1));
                 }
-            } catch (IllegalArgumentException | NullPointerException e) {
-                return;
+            } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+                account.setPasswordType(PasswordType.UNKNOWN);
             }
         }
     }

@@ -133,12 +133,12 @@ public class AccountDaoTest {
     @Test
     public void getPasswordType() throws Exception {
         Account testpending = toTest.findByUID("testadmin");
-        assertEquals(PasswordType.SHA, toTest.getPasswordType(testpending));
+        assertEquals(PasswordType.SHA, testpending.getPasswordType());
     }
 
     @Test
     public void getPasswordTypePendingUser() throws Exception {
         Account testpending = toTest.findByUID("testpendinguser");
-        assertEquals(PasswordType.SHA, toTest.getPasswordType(testpending));
+        assertEquals(PasswordType.SHA, testpending.getPasswordType());
     }
 }

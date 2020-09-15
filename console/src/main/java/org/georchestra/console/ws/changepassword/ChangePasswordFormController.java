@@ -165,7 +165,7 @@ public class ChangePasswordFormController {
         // check if the user is managed by an external service. if so, then forbid
         // access to change password.
         Account d = this.accountDao.findByUID(uid);
-        return this.accountDao.getPasswordType(d) == PasswordType.SASL;
+        return d.getPasswordType() == PasswordType.SASL;
     }
 
 }

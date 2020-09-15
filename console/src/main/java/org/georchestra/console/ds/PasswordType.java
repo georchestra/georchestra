@@ -5,5 +5,5 @@ package org.georchestra.console.ds;
  * Storage"
  */
 public enum PasswordType {
-    SHA, SASL, CRYPT, MD5, SMD5, SSHA,
+    SHA, SASL, CRYPT, MD5, SMD5, SSHA, UNKNOWN
 }
