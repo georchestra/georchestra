@@ -19,18 +19,7 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import lombok.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -47,7 +36,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.NonNull;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 public class UsersExport {
@@ -56,12 +52,15 @@ public class UsersExport {
 
     private UserInfoExporter accountInfoExporter;
 
-    @VisibleForTesting
-    @Value("${gdpr.enable}")
-    String gdprEnable;
+    @Value("${gdpr.enable:true}")
+    private Boolean gdprEnable;
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
+
+    public void setGdprEnable(Boolean gdprEnable) {
+        this.gdprEnable = gdprEnable;
+    }
 
     public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
         this.accountInfoExporter = accountInfoExporter;
@@ -76,11 +75,9 @@ public class UsersExport {
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
         /*
-         * Disabling this endpoint is the gdpr.enable property is set to false. we are
-         * not using spring boot, so we cannot disable this endpoint with
-         * the @ConditionalOnProperty annotation.
+         * Disabling this endpoint if the gdpr.enable property is set to false.
          */
-        if (!Boolean.parseBoolean(gdprEnable)) {
+        if (!gdprEnable) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }

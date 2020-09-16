@@ -19,43 +19,13 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import java.io.IOException;
-import java.text.Normalizer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.mail.MessagingException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import com.google.common.annotations.VisibleForTesting;
-
+import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.DuplicatedUidException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.ds.RoleDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.SimpleAccount;
-import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.ds.*;
+import org.georchestra.console.dto.*;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogType;
@@ -80,13 +50,20 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.Setter;
+import javax.mail.MessagingException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Web Services to maintain the User information.
@@ -110,9 +87,8 @@ public class UsersController {
     private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
     private static GrantedAuthority ROLE_SUPERUSER = AdvancedDelegationDao.ROLE_SUPERUSER;
 
-    @VisibleForTesting
-    @Value("${gdpr.enable}")
-    String gdprEnable;
+    @Value("${gdpr.enable:true}")
+    private Boolean gdprEnable;
 
     private AccountDao accountDao;
 
@@ -160,6 +136,10 @@ public class UsersController {
 
     public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
         this.warnUserIfUidModified = warnUserIfUidModified;
+    }
+
+    public void setGdprEnable(Boolean gdprEnable) {
+        this.gdprEnable = gdprEnable;
     }
 
     @Autowired
@@ -540,22 +520,18 @@ public class UsersController {
      * @return summary of records anonymized as a result
      */
     @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
-    public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(//
-            HttpServletRequest request, //
-            HttpServletResponse response) throws DataServiceException {
+    public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(HttpServletResponse response)
+            throws DataServiceException {
 
         /*
-         * Disabling this endpoint is the gdpr.enable property is set to false.
+         * Disabling this endpoint if the gdpr.enable property is set to false.
          */
-        if (!Boolean.parseBoolean(gdprEnable)) {
+        if (!gdprEnable) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
 
-        String accountId = uid;
-        if (accountId == null) {
-            accountId = SecurityContextHolder.getContext().getAuthentication().getName();
-        }
+        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         final Account account = accountDao.findByUID(accountId);
 

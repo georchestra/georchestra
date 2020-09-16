@@ -183,6 +183,7 @@ public class UsersExportTest {
 
         UserInfoExporterImpl exporter = new UserInfoExporterImpl(accDao, orgDao);
         us = new UsersExport(exporter);
+        us.setGdprEnable(true);
     }
 
     @Test
@@ -445,7 +446,7 @@ public class UsersExportTest {
 
     @Test
     public void testEndpointDisableWhenGDPR() throws Exception {
-        us.gdprEnable = "false";
+        us.setGdprEnable(false);
         MockHttpServletResponse response = new MockHttpServletResponse();
         us.downloadUserData(response);
         assertEquals(response.SC_NOT_FOUND, response.getStatus());

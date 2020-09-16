@@ -64,7 +64,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.test.context.TestPropertySource;
 
 public class UsersControllerTest {
     private LdapTemplate ldapTemplate;
@@ -129,6 +128,7 @@ public class UsersControllerTest {
         mockGDPR = Mockito.mock(GDPRAccountWorker.class);
         when(mockGDPR.deleteAccountRecords(any(Account.class))).thenReturn(DeletedAccountSummary.builder().build());
         usersCtrl.setGdprInfoWorker(mockGDPR);
+        usersCtrl.setGdprEnable(true);
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -616,9 +616,9 @@ public class UsersControllerTest {
     }
 
     public void testGDPRDisabled() throws DataServiceException {
-      usersCtrl.gdprEnable = "false";
-      usersCtrl.deleteUserSensitiveData("test", request, response);
-      assertEquals(response.SC_NOT_FOUND, response.getStatus());
+        usersCtrl.setGdprEnable(false);
+        usersCtrl.deleteCurrentUserAndGDPRData(response);
+        assertEquals(response.SC_NOT_FOUND, response.getStatus());
     }
 
     private void mockLookup(String uuid, boolean pending) {
