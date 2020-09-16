@@ -526,7 +526,7 @@
           <webApp>
             <contextPath>/console</contextPath>
           </webApp>
-          <scanIntervalSeconds>-1</scanIntervalSeconds>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java/</scanTarget>
             <scanTarget>src/main/resources/</scanTarget>
