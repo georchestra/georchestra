@@ -170,6 +170,11 @@
       <version>${gt.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>9.4.18.v20190429</version>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
       <version>1.2.17</version>
@@ -239,35 +244,6 @@
           <groupId>org.geotools</groupId>
           <artifactId>gt-kml</artifactId>
           <version>${gt.version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>arcsde</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.geoserver.extension</groupId>
-          <artifactId>gs-arcsde</artifactId>
-          <version>${gs.version}</version>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>sdeLibs</id>
-      <dependencies>
-        <dependency>
-          <groupId>com.esri</groupId>
-          <artifactId>jsde_sdk</artifactId>
-          <version>${sde.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.esri</groupId>
-          <artifactId>jpe_sdk</artifactId>
-          <version>${sde.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>com.ibm.icu</groupId>
-          <artifactId>icu4j</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -448,6 +424,12 @@
           <groupId>org.geoserver.importer</groupId>
           <artifactId>gs-importer-core</artifactId>
           <version>${gs.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-arcsde</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.geoserver.importer</groupId>
@@ -765,7 +747,7 @@
       <id>authkey</id>
       <dependencies>
         <dependency>
-          <groupId>org.geoserver.community</groupId>
+          <groupId>org.geoserver.extension</groupId>
           <artifactId>gs-authkey</artifactId>
           <version>${gs.version}</version>
         </dependency>
@@ -974,6 +956,52 @@
           <artifactId>gs-vectortiles</artifactId>
           <version>${gs.version}</version>
         </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+        <!-- this profile adds every plugins needed by the mapstore2 viewer as dependencies -->
+        <id>mapstore2</id>
+        <dependencies>
+          <dependency>
+            <groupId>org.geoserver.community</groupId>
+            <artifactId>gs-wmts-multi-dimensional</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-querylayer</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-wps-core</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-dxf-core</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-dxf-wps</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-excel</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.extension</groupId>
+            <artifactId>gs-css</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.geoserver.community</groupId>
+            <artifactId>gs-dds</artifactId>
+            <version>${gs.version}</version>
+          </dependency>
       </dependencies>
     </profile>
     <profile>
