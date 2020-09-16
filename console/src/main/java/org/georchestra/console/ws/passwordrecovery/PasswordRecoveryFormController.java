@@ -119,10 +119,13 @@ public class PasswordRecoveryFormController {
     public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
             Model model) throws DataServiceException {
 
-        PasswordType pt = getPasswordType(email);
-        if (pt == PasswordType.SASL) {
-            return "userManagedBySASL";
+        if (email != null) {
+            PasswordType pt = getPasswordType(email);
+            if (pt == PasswordType.SASL) {
+                return "userManagedBySASL";
+            }
         }
+
         HttpSession session = request.getSession();
         PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
         formBean.setEmail(email);
