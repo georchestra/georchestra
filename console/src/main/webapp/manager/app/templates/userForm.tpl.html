@@ -138,7 +138,7 @@
       </div>
       <div ng-if="platformInfos.saslEnabled">
         <div class="form-group form-group-sm" ng-if="model.$promise">
-          <label class="col-sm-4" for="saslUser">
+          <label class="col-sm-4" for="saslUser" data-toggle="tooltip" title="{{'sasl.tooltip' | translate}}">
             <span translate>sasl.remote.user</span>
             {{ platformInfos.saslServer }}
           </label>

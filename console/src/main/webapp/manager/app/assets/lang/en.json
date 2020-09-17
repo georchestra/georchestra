@@ -285,6 +285,6 @@
   "date.year"             : "Last year",
   "date.custom"           : "Custom range",
   "date.to"               : "to",
-  "sasl.externallogin"    : "External login",
-  "sasl.remote.user"      : "Remote user on"
+  "sasl.remote.user"      : "Remote user on",
+  "sasl.tooltip"          : "set here the username which should be used for cascading authentication. Set to an empty string to get back to a classic LDAP authentication."
 }

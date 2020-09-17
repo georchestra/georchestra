@@ -285,6 +285,6 @@
   "date.year"             : "Dernière année",
   "date.custom"           : "Choisir un intervalle",
   "date.to"               : "à",
-  "sasl.externallogin"    : "Login distant",
-  "sasl.remote.user"      : "Utilisateur distant sur"
+  "sasl.remote.user"      : "Utilisateur distant sur",
+  "sasl.tooltip"          : "Définissez ici le nom d'utilisateur sur le système distant. Laisser vide pour revenir à une authentication LDAP classique."
 }

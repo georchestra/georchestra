@@ -284,5 +284,7 @@
   "date.3month"           : "Letzte 3 Monate",
   "date.year"             : "Letztes Jahr",
   "date.custom"           : "benutzerdefinierter Zeitraum",
-  "date.to"               : "bis"
+  "date.to"               : "bis",
+  "sasl.remote.user"      : "Remote user on",
+  "sasl.tooltip"          : "set here the username which should be used for cascading authentication. Set to an empty string to get back to a classic LDAP authentication."
 }
