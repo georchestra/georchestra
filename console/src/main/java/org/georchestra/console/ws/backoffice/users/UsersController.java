@@ -19,42 +19,13 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import java.io.IOException;
-import java.text.Normalizer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.mail.MessagingException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.DuplicatedUidException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.ds.RoleDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.SimpleAccount;
-import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.ds.*;
+import org.georchestra.console.dto.*;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogType;
@@ -79,13 +50,20 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import lombok.Setter;
+import javax.mail.MessagingException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Web Services to maintain the User information.
@@ -108,6 +86,9 @@ public class UsersController {
     private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
     private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
     private static GrantedAuthority ROLE_SUPERUSER = AdvancedDelegationDao.ROLE_SUPERUSER;
+
+    @Value("${gdpr.enable:true}")
+    private Boolean gdprEnable;
 
     private AccountDao accountDao;
 
@@ -157,6 +138,10 @@ public class UsersController {
         this.warnUserIfUidModified = warnUserIfUidModified;
     }
 
+    public void setGdprEnable(Boolean gdprEnable) {
+        this.gdprEnable = gdprEnable;
+    }
+
     @Autowired
     public UsersController(AccountDao dao, UserRule userRule) {
         this.accountDao = dao;
@@ -165,7 +150,7 @@ public class UsersController {
 
     /**
      * Returns array of users using json syntax.
-     * 
+     *
      * <pre>
      *
      *	[
@@ -296,7 +281,7 @@ public class UsersController {
      *
      * where <b>sn, givenName, mail</b> are mandatories
      * </pre>
-     * 
+     *
      * <pre>
      * <b>Response</b>
      *
@@ -384,7 +369,7 @@ public class UsersController {
      * <p>
      * Example:
      * </p>
-     * 
+     *
      * <pre>
      * <b>Request</b>
      * [BASE_MAPPING]/users/hsimpson
@@ -402,7 +387,7 @@ public class UsersController {
      * }
      *
      * </pre>
-     * 
+     *
      * @param request
      *
      * @throws IOException           if the uid does not exist or fails to access to
@@ -489,7 +474,7 @@ public class UsersController {
      * user.
      * <p>
      * The request format is:
-     * 
+     *
      * <pre>
      * [BASE_MAPPING]/users/{uid}
      * </pre>
@@ -531,21 +516,29 @@ public class UsersController {
     /**
      * Deletes the account of the calling user and obfuscates records of GDPR
      * sensitive information.
-     * 
+     *
      * @return summary of records anonymized as a result
      */
     @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
-    public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(//
-            HttpServletRequest request, //
-            HttpServletResponse response) throws DataServiceException {
+    public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(HttpServletResponse response)
+            throws DataServiceException {
 
-        final String accountId = request.getHeader("sec-username");
-        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
+        /*
+         * Disabling this endpoint if the gdpr.enable property is set to false.
+         */
+        if (!gdprEnable) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+
+        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
 
         final Account account = accountDao.findByUID(accountId);
 
         if (this.userRule.isProtected(account.getUid()))
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + account.getUid());
+
+        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
 
         deleteAccount(account, accountId);
 
@@ -829,7 +822,7 @@ public class UsersController {
      * Check Authorization of current logged user against specified uid and throw a
      * AccessDeniedException if current user is not SUPERUSER and user 'uid' is not
      * under the delegation.
-     * 
+     *
      * @param uid Identifier of user to search in delegation of connected user
      *
      * @throws AccessDeniedException if current user does not have permission to

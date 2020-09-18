@@ -19,22 +19,14 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.servlet.http.HttpServletResponse;
-
+import lombok.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.ldap.NameNotFoundException;
@@ -44,7 +36,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.NonNull;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 public class UsersExport {
@@ -53,8 +52,15 @@ public class UsersExport {
 
     private UserInfoExporter accountInfoExporter;
 
+    @Value("${gdpr.enable:true}")
+    private Boolean gdprEnable;
+
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
+
+    public void setGdprEnable(Boolean gdprEnable) {
+        this.gdprEnable = gdprEnable;
+    }
 
     public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
         this.accountInfoExporter = accountInfoExporter;
@@ -68,6 +74,13 @@ public class UsersExport {
     @RequestMapping(method = RequestMethod.GET, value = "/account/gdpr/download", produces = "application/zip")
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
+        /*
+         * Disabling this endpoint if the gdpr.enable property is set to false.
+         */
+        if (!gdprEnable) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String userId = auth.getName();

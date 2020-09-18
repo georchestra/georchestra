@@ -36,6 +36,7 @@ import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,8 +70,14 @@ public class EditUserDetailsFormController {
 
     private Validation validation;
 
+    private @Value("${gdpr.enable:true}") Boolean gdprEnable;
+
     @Autowired
     protected LogUtils logUtils;
+
+    public void setGdprEnable(Boolean gdprEnable) {
+        this.gdprEnable = gdprEnable;
+    }
 
     @Autowired
     public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, RoleDao roleDao, Validation validation) {
@@ -107,6 +114,7 @@ public class EditUserDetailsFormController {
             Org org = orgsDao.findByCommonNameWithExt(userAccount);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(userAccount));
+            model.addAttribute("gdprEnabled", gdprEnable);
 
             HttpSession session = request.getSession();
             for (String f : fields) {

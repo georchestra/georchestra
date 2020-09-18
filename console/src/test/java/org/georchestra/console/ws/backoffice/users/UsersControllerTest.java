@@ -128,6 +128,7 @@ public class UsersControllerTest {
         mockGDPR = Mockito.mock(GDPRAccountWorker.class);
         when(mockGDPR.deleteAccountRecords(any(Account.class))).thenReturn(DeletedAccountSummary.builder().build());
         usersCtrl.setGdprInfoWorker(mockGDPR);
+        usersCtrl.setGdprEnable(true);
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -612,6 +613,12 @@ public class UsersControllerTest {
         assertEquals(parsed.get("uid"), "testadmin");
         assertTrue(
                 parsed.getJSONArray("roles").length() == 1 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER"));
+    }
+
+    public void testGDPRDisabled() throws DataServiceException {
+        usersCtrl.setGdprEnable(false);
+        usersCtrl.deleteCurrentUserAndGDPRData(response);
+        assertEquals(response.SC_NOT_FOUND, response.getStatus());
     }
 
     private void mockLookup(String uuid, boolean pending) {

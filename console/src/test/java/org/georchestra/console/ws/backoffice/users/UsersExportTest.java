@@ -119,6 +119,7 @@ import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSV
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -182,6 +183,7 @@ public class UsersExportTest {
 
         UserInfoExporterImpl exporter = new UserInfoExporterImpl(accDao, orgDao);
         us = new UsersExport(exporter);
+        us.setGdprEnable(true);
     }
 
     @Test
@@ -440,6 +442,14 @@ public class UsersExportTest {
         assertTrue("CSV should contain both email address for testadmin and testuser",
                 csv.contains("psc+testuser@georchestra.org") && csv.contains("psc+testadmin@georchestra.org"));
         assertEquals("CSV should contain 3 lines", 3, csv.split("\r\n").length);
+    }
+
+    @Test
+    public void testEndpointDisableWhenGDPR() throws Exception {
+        us.setGdprEnable(false);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        us.downloadUserData(response);
+        assertEquals(response.SC_NOT_FOUND, response.getStatus());
     }
 
 }
