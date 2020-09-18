@@ -87,8 +87,8 @@ public class UsersController {
     private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
     private static GrantedAuthority ROLE_SUPERUSER = AdvancedDelegationDao.ROLE_SUPERUSER;
 
-    @Value("${gdpr.enable:true}")
-    private Boolean gdprEnable;
+    @Value("${gdpr.allowAccountDeletion:true}")
+    private Boolean gdprAllowAccountDeletion;
 
     private AccountDao accountDao;
 
@@ -138,8 +138,8 @@ public class UsersController {
         this.warnUserIfUidModified = warnUserIfUidModified;
     }
 
-    public void setGdprEnable(Boolean gdprEnable) {
-        this.gdprEnable = gdprEnable;
+    public void setGdprAllowAccountDeletion(Boolean gdprAllowAccountDeletion) {
+        this.gdprAllowAccountDeletion = gdprAllowAccountDeletion;
     }
 
     @Autowired
@@ -524,9 +524,10 @@ public class UsersController {
             throws DataServiceException {
 
         /*
-         * Disabling this endpoint if the gdpr.enable property is set to false.
+         * Disabling this endpoint if the gdpr.allowAccountDeletion property is set to
+         * false.
          */
-        if (!gdprEnable) {
+        if (!gdprAllowAccountDeletion) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }

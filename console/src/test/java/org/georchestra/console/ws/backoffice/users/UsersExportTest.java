@@ -183,7 +183,6 @@ public class UsersExportTest {
 
         UserInfoExporterImpl exporter = new UserInfoExporterImpl(accDao, orgDao);
         us = new UsersExport(exporter);
-        us.setGdprEnable(true);
     }
 
     @Test
@@ -443,13 +442,4 @@ public class UsersExportTest {
                 csv.contains("psc+testuser@georchestra.org") && csv.contains("psc+testadmin@georchestra.org"));
         assertEquals("CSV should contain 3 lines", 3, csv.split("\r\n").length);
     }
-
-    @Test
-    public void testEndpointDisableWhenGDPR() throws Exception {
-        us.setGdprEnable(false);
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        us.downloadUserData(response);
-        assertEquals(response.SC_NOT_FOUND, response.getStatus());
-    }
-
 }

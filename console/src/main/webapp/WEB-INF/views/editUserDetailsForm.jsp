@@ -45,7 +45,7 @@
 
 <script>var org = ${org};
 var isReferentOrSuperUser = ${isReferentOrSuperUser};
-var gdprEnabled = ${gdprEnabled};
+var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
 </script>
 
 <div class="container">
@@ -229,7 +229,7 @@ var gdprEnabled = ${gdprEnabled};
 
       <dir-pagination-controls></dir-pagination-controls>
     </fieldset>
-    <fieldset class="gdpr" ng-if="gdprEnabled">
+    <fieldset class="gdpr">
       <legend><s:message code="editUserDetailsForm.gdpr"/></legend>
       <div
           class="panel panel-default">
@@ -246,7 +246,7 @@ var gdprEnabled = ${gdprEnabled};
           </p>
         </div>
       </div>
-      <div class="panel panel-default">
+      <div class="panel panel-default" ng-if="gdprAllowAccountDeletion">
         <div class="panel-body">
           <p>
             <s:message code="editUserDetailsForm.deleteMsg"/>
