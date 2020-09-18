@@ -23,7 +23,6 @@ import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 
-import org.apache.commons.lang.StringUtils;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
@@ -61,8 +60,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 public class UsersControllerTest {
@@ -128,7 +125,7 @@ public class UsersControllerTest {
         mockGDPR = Mockito.mock(GDPRAccountWorker.class);
         when(mockGDPR.deleteAccountRecords(any(Account.class))).thenReturn(DeletedAccountSummary.builder().build());
         usersCtrl.setGdprInfoWorker(mockGDPR);
-        usersCtrl.setGdprEnable(true);
+        usersCtrl.setGdprAllowAccountDeletion(true);
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -616,7 +613,7 @@ public class UsersControllerTest {
     }
 
     public void testGDPRDisabled() throws DataServiceException {
-        usersCtrl.setGdprEnable(false);
+        usersCtrl.setGdprAllowAccountDeletion(false);
         usersCtrl.deleteCurrentUserAndGDPRData(response);
         assertEquals(response.SC_NOT_FOUND, response.getStatus());
     }

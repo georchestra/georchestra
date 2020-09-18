@@ -70,13 +70,13 @@ public class EditUserDetailsFormController {
 
     private Validation validation;
 
-    private @Value("${gdpr.enable:true}") Boolean gdprEnable;
+    private @Value("${gdpr.allowAccountDeletion:true}") Boolean gdprAllowAccountDeletion;
 
     @Autowired
     protected LogUtils logUtils;
 
-    public void setGdprEnable(Boolean gdprEnable) {
-        this.gdprEnable = gdprEnable;
+    public void setGdprAllowAccountDeletion(Boolean gdprAllowAccountDeletion) {
+        this.gdprAllowAccountDeletion = gdprAllowAccountDeletion;
     }
 
     @Autowired
@@ -114,7 +114,7 @@ public class EditUserDetailsFormController {
             Org org = orgsDao.findByCommonNameWithExt(userAccount);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(userAccount));
-            model.addAttribute("gdprEnabled", gdprEnable);
+            model.addAttribute("gdprAllowAccountDeletion", gdprAllowAccountDeletion);
 
             HttpSession session = request.getSession();
             for (String f : fields) {

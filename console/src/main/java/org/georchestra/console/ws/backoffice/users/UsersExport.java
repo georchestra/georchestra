@@ -52,15 +52,8 @@ public class UsersExport {
 
     private UserInfoExporter accountInfoExporter;
 
-    @Value("${gdpr.enable:true}")
-    private Boolean gdprEnable;
-
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
-
-    public void setGdprEnable(Boolean gdprEnable) {
-        this.gdprEnable = gdprEnable;
-    }
 
     public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
         this.accountInfoExporter = accountInfoExporter;
@@ -74,13 +67,6 @@ public class UsersExport {
     @RequestMapping(method = RequestMethod.GET, value = "/account/gdpr/download", produces = "application/zip")
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
-        /*
-         * Disabling this endpoint if the gdpr.enable property is set to false.
-         */
-        if (!gdprEnable) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String userId = auth.getName();
