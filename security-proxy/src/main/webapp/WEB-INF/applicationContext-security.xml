@@ -13,6 +13,7 @@
 
     <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:annotation-config />
 
 	<bean id="allowSemicolonHttpFirewall" class="org.springframework.security.web.firewall.StrictHttpFirewall">
 		<!-- 

@@ -21,9 +21,8 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.filter.Filter;
 
-import javax.naming.ldap.LdapName;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -90,7 +89,7 @@ public interface AccountDao {
      * @throws DataServiceException
      * @throws DuplicatedEmailException
      */
-    void insert(final Account account, final String originLogin)
+    void insert(@NotNull final Account account, final String originLogin)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
     /**
@@ -142,16 +141,6 @@ public interface AccountDao {
     Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
 
     /**
-     * Add the new password. This method is part of the "lost password" workflow to
-     * maintan the old password and the new password until the user can confirm that
-     * he had asked for a new password.
-     * 
-     * @param uid
-     * @param newPassword
-     */
-    void addNewPassword(String uid, String newPassword);
-
-    /**
      * Generates a new Id based on the uid provided as parameter.
      * 
      * @param uid
@@ -166,5 +155,4 @@ public interface AccountDao {
     boolean hasUserLoginChanged(Account account, Account modified);
 
     String buildFullUserDn(Account account);
-
 }

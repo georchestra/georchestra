@@ -21,10 +21,16 @@ package org.georchestra.console.ws.changepassword;
 
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.PasswordType;
+import org.georchestra.console.dto.Account;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,6 +45,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 /**
@@ -55,7 +62,7 @@ import java.io.IOException;
 @SessionAttributes(types = ChangePasswordFormBean.class)
 public class ChangePasswordFormController {
 
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
 
     @Autowired
     protected PasswordUtils passwordUtils;
@@ -70,8 +77,7 @@ public class ChangePasswordFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-
-        dataBinder.setAllowedFields(new String[] { "password", "confirmPassword" });
+        dataBinder.setAllowedFields("password", "confirmPassword");
     }
 
     /**
@@ -83,84 +89,83 @@ public class ChangePasswordFormController {
      *
      * @return changePasswordForm view to display
      *
-     * @throws IOException
+     * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,
-            Model model) throws IOException {
-        try {
-            if (!request.getHeader("sec-username").equals(uid)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } catch (NullPointerException e) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+    public String setupForm(@RequestParam("uid") String uid, Model model) throws DataServiceException {
+
+        if (!checkPermission(uid)) {
+            return "forbidden";
+        }
+        if (isUserAuthenticatedBySASL(uid)) {
+            return "userManagedBySASL";
         }
 
         ChangePasswordFormBean formBean = new ChangePasswordFormBean();
-
         formBean.setUid(uid);
-
         model.addAttribute(formBean);
-
         return "changePasswordForm";
     }
 
     /**
      * Changes the password in the ldap store.
      *
+     * @param model
      * @param formBean
      * @param result
-     * @param sessionStatus
      *
      * @return the next view
      *
-     * @throws IOException
+     * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
-    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute ChangePasswordFormBean formBean, BindingResult result, SessionStatus sessionStatus)
-            throws IOException {
+    public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
+            throws DataServiceException {
         String uid = formBean.getUid();
-        try {
-            if (!request.getHeader("sec-username").equals(uid)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return null;
-            }
-        } catch (NullPointerException e) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        // check if user
+        if (!checkPermission(uid)) {
             return null;
+        }
+        if (isUserAuthenticatedBySASL(uid)) {
+            return "userManagedBySASL";
         }
 
         passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
         if (result.hasErrors()) {
-
             return "changePasswordForm";
         }
 
         // change the user's password
-        try {
+        String password = formBean.getPassword();
+        this.accountDao.changePassword(uid, password);
+        model.addAttribute("success", true);
 
-            String password = formBean.getPassword();
+        // log that password was changed for this user
+        logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
 
-            this.accountDao.changePassword(uid, password);
-
-            model.addAttribute("success", true);
-
-            // log that password was changed for this user
-            logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
-
-            return "changePasswordForm";
-
-        } catch (DataServiceException e) {
-
-            throw new IOException(e);
-
-        }
+        return "changePasswordForm";
     }
 
     @ModelAttribute("changePasswordFormBean")
     public ChangePasswordFormBean getChangePasswordFormBean() {
         return new ChangePasswordFormBean();
     }
+
+    private boolean checkPermission(String uid) {
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return user.getUsername().equals(uid);
+        } catch (NullPointerException ex) {
+            return false;
+        }
+    }
+
+    private boolean isUserAuthenticatedBySASL(String uid) throws DataServiceException {
+        // check if the user is managed by an external service. if so, then forbid
+        // access to change password.
+        Account d = this.accountDao.findByUID(uid);
+        return d.getPasswordType() == PasswordType.SASL;
+    }
+
 }

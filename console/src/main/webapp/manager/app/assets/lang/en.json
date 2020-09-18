@@ -52,7 +52,7 @@
   "user.expire"           : "Expire",
   "user.context"          : "Context",
   "user.reset"            : "Reset",
-  "user.password"         : "Password",
+  "user.password"         : "Local Password",
   "user.sn"               : "Second Name",
   "user.gn"               : "First Name",
   "user.givenName"        : "First Name",
@@ -284,5 +284,7 @@
   "date.3month"           : "Last 3 months",
   "date.year"             : "Last year",
   "date.custom"           : "Custom range",
-  "date.to"               : "to"
+  "date.to"               : "to",
+  "sasl.remote.user"      : "Remote user on",
+  "sasl.tooltip"          : "set here the username which should be used for cascading authentication. Set to an empty string to get back to a classic LDAP authentication."
 }

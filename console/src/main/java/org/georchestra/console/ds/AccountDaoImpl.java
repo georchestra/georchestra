@@ -45,8 +45,8 @@ import javax.annotation.PostConstruct;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -114,10 +114,8 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void insert(final Account account, final String originLogin)
+    public synchronized void insert(@NotNull final Account account, final String originLogin)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
-
-        assert account != null;
 
         checkMandatoryFields(account);
 
@@ -155,7 +153,9 @@ public final class AccountDaoImpl implements AccountDao {
             mapToContext(account, context);
 
             // Maps the password separately
-            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+            if (account.getSASLUser() == null) {
+                context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+            }
 
             this.ldapTemplate.bind(dn, context, null);
 
@@ -291,46 +291,6 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     /**
-     * Adds the new password in the user password array. The new password is
-     * maintained in array with two userPassword attributes.
-     *
-     * <pre>
-     * Format:
-     * userPassword[0] : old password
-     * userPassword[1] : new password
-     * </pre>
-     *
-     * @see {@link AccountDao#addNewPassword(String, String)}
-     */
-    @Override
-    public void addNewPassword(String uid, String newPassword) {
-        if (StringUtils.isEmpty(uid)) {
-            throw new IllegalArgumentException("uid is required");
-        }
-        if (StringUtils.isEmpty(newPassword)) {
-            throw new IllegalArgumentException("password is required");
-        }
-        // update the entry in the LDAP tree
-        DirContextOperations context = ldapTemplate.lookupContext(buildUserDn(uid, false));
-
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
-
-        final String pwd = "userPassword";
-        Object[] pwdValues = context.getObjectAttributes(pwd);
-        if (pwdValues.length < 2) {
-            // adds the new password
-            context.addAttributeValue(pwd, encrypted, false);
-        } else {
-            // update the last password with the new password
-            pwdValues[1] = newPassword;
-            context.setAttributeValues(pwd, pwdValues);
-        }
-
-        ldapTemplate.modifyAttributes(context);
-    }
-
-    /**
      * Generate a new uid based on the provided uid
      *
      * @param
@@ -377,7 +337,7 @@ public final class AccountDaoImpl implements AccountDao {
         LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
         String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
 
-        context.setAttributeValue("userPassword", encrypted);
+        context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, encrypted);
 
         ldapTemplate.modifyAttributes(context);
     }
@@ -485,6 +445,13 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.NOTE_KEY, account.getNote());
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
+
+        if (new SASLPasswordWrapper(context).getPasswordType().equals(PasswordType.SASL)
+                || !StringUtils.isEmpty(account.getSASLUser())) {
+            String saslAccountAsPassword = StringUtils.isEmpty(account.getSASLUser()) ? null
+                    : "{SASL}" + account.getSASLUser();
+            setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
+        }
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -495,7 +462,7 @@ public final class AccountDaoImpl implements AccountDao {
             Object[] values = context.getObjectAttributes(fieldName);
             if (values != null) {
                 if (values.length == 1) {
-                    LOG.info("Removing attribue " + fieldName);
+                    LOG.info("Removing attribute " + fieldName);
                     context.removeAttributeValue(fieldName, values[0]);
                 } else {
                     LOG.error("Multiple values encountered for field " + fieldName + ", expected a single value");
@@ -542,7 +509,7 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
                     context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
-                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]));
+                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null);
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {
@@ -585,8 +552,14 @@ public final class AccountDaoImpl implements AccountDao {
             }
 
             account.setPending(context.getDn().startsWith(pendingUserSearchBaseDN));
-
+            tryToSetPasswordTypeAndGuessSaslUser(context, account);
             return account;
+        }
+
+        private void tryToSetPasswordTypeAndGuessSaslUser(DirContextAdapter context, Account account) {
+            SASLPasswordWrapper saslPasswordWrapper = new SASLPasswordWrapper(context);
+            account.setPasswordType(saslPasswordWrapper.getPasswordType());
+            account.setSASLUser(saslPasswordWrapper.getUserName());
         }
     }
 
@@ -636,6 +609,33 @@ public final class AccountDaoImpl implements AccountDao {
             sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
             sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
             return sc;
+        }
+    }
+
+    static class SASLPasswordWrapper {
+        private PasswordType passwordType;
+        private String userName;
+
+        public SASLPasswordWrapper(DirContextOperations context) {
+            try {
+                byte[] rawPassword = (byte[]) context.getObjectAttribute(UserSchema.USER_PASSWORD_KEY);
+                String password = new String(rawPassword);
+                int typeIndexLast = password.lastIndexOf("}");
+                passwordType = PasswordType.valueOf(password.substring(1, typeIndexLast).toUpperCase());
+                if (passwordType == PasswordType.SASL) {
+                    userName = password.substring(typeIndexLast + 1);
+                }
+            } catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+                passwordType = PasswordType.UNKNOWN;
+            }
+        }
+
+        public PasswordType getPasswordType() {
+            return passwordType;
+        }
+
+        public String getUserName() {
+            return userName;
         }
     }
 }

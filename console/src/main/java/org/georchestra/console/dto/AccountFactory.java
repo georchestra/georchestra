@@ -96,6 +96,7 @@ public class AccountFactory {
      * @param context
      * @param org
      * @param sshKeys
+     * @param saslUser
      *
      * @return {@link Account}
      */
@@ -103,7 +104,8 @@ public class AccountFactory {
             String title, String phone, String description, String postalAddress, String postalCode,
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
-            String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys) {
+            String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys,
+            String saslUser) {
 
         Account a = new AccountImpl();
 
@@ -132,6 +134,7 @@ public class AccountFactory {
         a.setContext(context);
         a.setOrg(org);
         a.setSshKeys(sshKeys);
+        a.setSASLUser(saslUser);
 
         return a;
     }
@@ -173,7 +176,7 @@ public class AccountFactory {
         a.setOrg(o.getOrg());
         a.setPending(o.isPending());
         a.setSshKeys(o.getSshKeys());
-
+        a.setSASLUser(o.getSASLUser());
         return a;
     }
 

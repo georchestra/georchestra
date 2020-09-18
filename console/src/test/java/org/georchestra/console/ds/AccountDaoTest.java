@@ -15,13 +15,13 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 import java.util.HashMap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 public class AccountDaoTest {
 
     private AccountDao toTest;
-    private RoleDaoImpl roleDao;
     private LdapContextSource contextSource;
     private Account adminAccount;
 
@@ -37,18 +37,13 @@ public class AccountDaoTest {
         String ldapAdminDn = System.getProperty("console.test.openldap.binddn");
         String ldapAdminDnPw = System.getProperty("console.test.openldap.password");
 
-//        String ldapUrl = "ldap://127.0.0.1:389";
-//        String baseDn = "dc=georchestra,dc=org";
-//        String ldapAdminDn = "cn=admin,dc=georchestra,dc=org";
-//        String ldapAdminDnPw = "";
-
         contextSource = new LdapContextSource();
         contextSource.setBase(baseDn);
         contextSource.setUrl(ldapUrl);
         contextSource.setBaseEnvironmentProperties(new HashMap<String, Object>());
         contextSource.setUserDn(ldapAdminDn);
         contextSource.setPassword(ldapAdminDnPw);
-        contextSource.setAnonymousReadOnly(true);
+        contextSource.setAnonymousReadOnly(false);
         contextSource.setCacheEnvironmentProperties(false);
         AuthenticationSource authsrc = Mockito.mock(AuthenticationSource.class);
         Mockito.when(authsrc.getPrincipal()).thenReturn(ldapAdminDn);
@@ -57,7 +52,7 @@ public class AccountDaoTest {
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
-        roleDao = new RoleDaoImpl();
+        RoleDaoImpl roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoleSearchBaseDN("ou=roles");
 
@@ -96,7 +91,7 @@ public class AccountDaoTest {
         Account testadminAc = toTest.findByUID("testadmin");
 
         Account newTestAdminAc = AccountFactory.create(testadminAc);
-        assertTrue(newTestAdminAc.getUid().equals(testadminAc.getUid()));
+        assertEquals(newTestAdminAc.getUid(), testadminAc.getUid());
 
         newTestAdminAc.setUid("testadminblah");
 
@@ -131,7 +126,19 @@ public class AccountDaoTest {
     public void findPendingUser() throws Exception {
         Account testpending = toTest.findByUID("testpendinguser");
 
-        assertTrue("testpendinguser".equals(testpending.getUid()));
+        assertEquals("testpendinguser", testpending.getUid());
         assertTrue(testpending.isPending());
+    }
+
+    @Test
+    public void getPasswordType() throws Exception {
+        Account testpending = toTest.findByUID("testadmin");
+        assertEquals(PasswordType.SHA, testpending.getPasswordType());
+    }
+
+    @Test
+    public void getPasswordTypePendingUser() throws Exception {
+        Account testpending = toTest.findByUID("testpendinguser");
+        assertEquals(PasswordType.SHA, testpending.getPasswordType());
     }
 }

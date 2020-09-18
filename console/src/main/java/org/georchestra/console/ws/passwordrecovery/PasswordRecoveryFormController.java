@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.PasswordType;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
@@ -53,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Manage the user interactions required to implement the lost password
@@ -79,11 +81,11 @@ public class PasswordRecoveryFormController {
     protected static final Log LOG = LogFactory.getLog(PasswordRecoveryFormController.class.getName());
 
     // collaborations
-    private AccountDao accountDao;
-    private RoleDao roleDao;
+    private final AccountDao accountDao;
+    private final RoleDao roleDao;
     private EmailFactory emailFactory;
-    private UserTokenDao userTokenDao;
-    private ReCaptchaParameters reCaptchaParameters;
+    private final UserTokenDao userTokenDao;
+    private final ReCaptchaParameters reCaptchaParameters;
 
     @Autowired
     private boolean reCaptchaActivated;
@@ -110,12 +112,19 @@ public class PasswordRecoveryFormController {
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
 
-        dataBinder.setAllowedFields(new String[] { "email", "recaptcha_response_field" });
+        dataBinder.setAllowedFields("email", "recaptcha_response_field");
     }
 
     @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.GET)
     public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
-            Model model) throws IOException {
+            Model model) throws DataServiceException {
+
+        if (email != null) {
+            PasswordType pt = getPasswordType(email);
+            if (pt == PasswordType.SASL) {
+                return "userManagedBySASL";
+            }
+        }
 
         HttpSession session = request.getSession();
         PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
@@ -182,13 +191,11 @@ public class PasswordRecoveryFormController {
 
             return "emailWasSent";
 
-        } catch (DataServiceException e) {
+        } catch (DataServiceException | MessagingException e) {
             throw new IOException(e);
         } catch (NameNotFoundException e) {
             resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
             return "passwordRecoveryForm";
-        } catch (MessagingException e) {
-            throw new IOException(e);
         }
     }
 
@@ -197,12 +204,9 @@ public class PasswordRecoveryFormController {
      *
      * @return a new URL to change password
      */
-    private String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
-
-        StringBuilder strBuilder = new StringBuilder(publicUrl);
-        strBuilder.append(contextPath);
-        strBuilder.append("/account/newPassword?token=").append(token);
-        String url = strBuilder.toString();
+    protected String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
+        String url = UriComponentsBuilder.fromHttpUrl(publicUrl).path(contextPath).path("/account/newPassword")
+                .query("token={token}").buildAndExpand(token).toUriString();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("generated url:" + url);
@@ -226,5 +230,10 @@ public class PasswordRecoveryFormController {
 
     public void setPublicContextPath(String publicContextPath) {
         this.publicContextPath = publicContextPath;
+    }
+
+    private PasswordType getPasswordType(String email) throws DataServiceException {
+        Account a = this.accountDao.findByEmail(email);
+        return a.getPasswordType();
     }
 }

@@ -52,7 +52,7 @@
   "user.expire"           : "Date d'expiration",
   "user.context"          : "Contexte",
   "user.reset"            : "Régénérer",
-  "user.password"         : "Mot de passe",
+  "user.password"         : "Mot de passe local",
   "user.sn"               : "Nom",
   "user.gn"               : "Prénom",
   "user.givenName"        : "Prénom",
@@ -284,5 +284,7 @@
   "date.3month"           : "Derniers 3 mois",
   "date.year"             : "Dernière année",
   "date.custom"           : "Choisir un intervalle",
-  "date.to"               : "à"
+  "date.to"               : "à",
+  "sasl.remote.user"      : "Utilisateur distant sur",
+  "sasl.tooltip"          : "Définissez ici le nom d'utilisateur sur le système distant. Laisser vide pour revenir à une authentication LDAP classique."
 }

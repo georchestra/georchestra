@@ -19,6 +19,8 @@
 
 package org.georchestra.console.dto;
 
+import org.georchestra.console.ds.PasswordType;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -163,4 +165,12 @@ public interface Account extends Comparable<Account> {
     String[] getSshKeys();
 
     void setSshKeys(String[] sshKeys);
+
+    String getSASLUser();
+
+    void setSASLUser(String user);
+
+    PasswordType getPasswordType();
+
+    void setPasswordType(PasswordType passwordType);
 }
