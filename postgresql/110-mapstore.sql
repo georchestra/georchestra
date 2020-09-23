@@ -1,9 +1,15 @@
-CREATE SCHEMA geostore;
+-- CREATE SCHEMA mapstore
 
-GRANT USAGE ON SCHEMA geostore TO georchestra ;
-GRANT ALL ON SCHEMA geostore TO georchestra ;
+BEGIN;
 
-create table geostore.gs_attribute (
+CREATE SCHEMA mapstore;
+
+GRANT USAGE ON SCHEMA mapstore TO georchestra ;
+GRANT ALL ON SCHEMA mapstore TO georchestra ;
+
+SET search_path TO mapstore,public,pg_catalog;
+
+create table gs_attribute (
     id int8 not null,
     attribute_date timestamp,
     name varchar(255) not null,
@@ -15,14 +21,14 @@ create table geostore.gs_attribute (
     unique (name, resource_id)
 );
 
-create table geostore.gs_category (
+create table gs_category (
     id int8 not null,
     name varchar(255) not null,
     primary key (id),
     unique (name)
 );
 
-create table geostore.gs_resource (
+create table gs_resource (
     id int8 not null,
     creation timestamp not null,
     description varchar(10000),
@@ -34,7 +40,7 @@ create table geostore.gs_resource (
     unique (name)
 );
 
-create table geostore.gs_security (
+create table gs_security (
     id int8 not null,
     canRead bool not null,
     canWrite bool not null,
@@ -48,7 +54,7 @@ create table geostore.gs_security (
     unique (resource_id, group_id)
 );
 
-create table geostore.gs_stored_data (
+create table gs_stored_data (
     id int8 not null,
     stored_data varchar(10000000) not null,
     resource_id int8 not null,
@@ -56,7 +62,7 @@ create table geostore.gs_stored_data (
     unique (resource_id)
 );
 
-create table geostore.gs_user (
+create table gs_user (
     id int8 not null,
     name varchar(255) not null,
     user_password varchar(255),
@@ -67,7 +73,7 @@ create table geostore.gs_user (
     unique (name)
 );
 
-create table geostore.gs_user_attribute (
+create table gs_user_attribute (
     id int8 not null,
     name varchar(255) not null,
     string varchar(255),
@@ -76,7 +82,7 @@ create table geostore.gs_user_attribute (
     unique (name, user_id)
 );
 
-create table geostore.gs_usergroup (
+create table gs_usergroup (
     id int8 not null,
     groupName varchar(255) not null,
     description varchar(255),
@@ -85,123 +91,127 @@ create table geostore.gs_usergroup (
     unique (groupName)
 );
 
-create table geostore.gs_usergroup_members (
-    user_id int8 not null, 
-    group_id int8 not null, 
+create table gs_usergroup_members (
+    user_id int8 not null,
+    group_id int8 not null,
     primary key (user_id, group_id)
 );
 
-alter table geostore.gs_usergroup_members 
-    add constraint FKFDE460DB62224F72 
+alter table gs_usergroup_members
+    add constraint FKFDE460DB62224F72
     foreign key (user_id) 
-    references geostore.gs_user;
-    
-alter table geostore.gs_usergroup_members 
-    add constraint FKFDE460DB9EC981B7 
-    foreign key (group_id) 
-    references geostore.gs_usergroup;
+    references gs_user;
 
-create index idx_attribute_name on geostore.gs_attribute (name);
+alter table gs_usergroup_members
+    add constraint FKFDE460DB9EC981B7
+    foreign key (group_id)
+    references gs_usergroup;
 
-create index idx_attribute_resource on geostore.gs_attribute (resource_id);
+create index idx_attribute_name on gs_attribute (name);
 
-create index idx_attribute_text on geostore.gs_attribute (attribute_text);
+create index idx_attribute_resource on gs_attribute (resource_id);
 
-create index idx_attribute_type on geostore.gs_attribute (attribute_type);
+create index idx_attribute_text on gs_attribute (attribute_text);
 
-create index idx_attribute_date on geostore.gs_attribute (attribute_date);
+create index idx_attribute_type on gs_attribute (attribute_type);
 
-create index idx_attribute_number on geostore.gs_attribute (attribute_number);
+create index idx_attribute_date on gs_attribute (attribute_date);
 
-alter table geostore.gs_attribute 
+create index idx_attribute_number on gs_attribute (attribute_number);
+
+alter table gs_attribute 
     add constraint fk_attribute_resource 
     foreign key (resource_id) 
-    references geostore.gs_resource;
+    references gs_resource;
 
-create index idx_category_type on geostore.gs_category (name);
+create index idx_category_type on gs_category (name);
 
-create index idx_resource_name on geostore.gs_resource (name);
+create index idx_resource_name on gs_resource (name);
 
-create index idx_resource_description on geostore.gs_resource (description);
+create index idx_resource_description on gs_resource (description);
 
-create index idx_resource_metadata on geostore.gs_resource (metadata);
+create index idx_resource_metadata on gs_resource (metadata);
 
-create index idx_resource_update on geostore.gs_resource (lastUpdate);
+create index idx_resource_update on gs_resource (lastUpdate);
 
-create index idx_resource_creation on geostore.gs_resource (creation);
+create index idx_resource_creation on gs_resource (creation);
 
-create index idx_resource_category on geostore.gs_resource (category_id);
+create index idx_resource_category on gs_resource (category_id);
 
-alter table geostore.gs_resource 
+alter table gs_resource 
     add constraint fk_resource_category 
     foreign key (category_id) 
-    references geostore.gs_category;
+    references gs_category;
 
-create index idx_security_resource on geostore.gs_security (resource_id);
+create index idx_security_resource on gs_security (resource_id);
 
-create index idx_security_user on geostore.gs_security (user_id);
+create index idx_security_user on gs_security (user_id);
 
-create index idx_security_group on geostore.gs_security (group_id);
+create index idx_security_group on gs_security (group_id);
 
-create index idx_security_write on geostore.gs_security (canWrite);
+create index idx_security_write on gs_security (canWrite);
 
-create index idx_security_read on geostore.gs_security (canRead);
+create index idx_security_read on gs_security (canRead);
 
-create index idx_security_username on geostore.gs_security (username);
+create index idx_security_username on gs_security (username);
 
-create index idx_security_groupname on geostore.gs_security (groupname);
+create index idx_security_groupname on gs_security (groupname);
 
-alter table geostore.gs_security 
+alter table gs_security 
     add constraint fk_security_user 
     foreign key (user_id) 
-    references geostore.gs_user;
+    references gs_user;
 
-alter table geostore.gs_security 
+alter table gs_security 
     add constraint fk_security_group 
     foreign key (group_id) 
-    references geostore.gs_usergroup;
+    references gs_usergroup;
 
-alter table geostore.gs_security 
+alter table gs_security 
     add constraint fk_security_resource 
     foreign key (resource_id) 
-    references geostore.gs_resource;
+    references gs_resource;
 
-alter table geostore.gs_stored_data 
+alter table gs_stored_data 
     add constraint fk_data_resource 
     foreign key (resource_id) 
-    references geostore.gs_resource;
+    references gs_resource;
 
-create index idx_user_group on geostore.gs_user (group_id);
+create index idx_user_group on gs_user (group_id);
 
-create index idx_user_password on geostore.gs_user (user_password);
+create index idx_user_password on gs_user (user_password);
 
-create index idx_user_name on geostore.gs_user (name);
+create index idx_user_name on gs_user (name);
 
-create index idx_user_role on geostore.gs_user (user_role);
+create index idx_user_role on gs_user (user_role);
 
-alter table geostore.gs_user 
+alter table gs_user 
     add constraint fk_user_ugroup 
     foreign key (group_id) 
-    references geostore.gs_usergroup;
+    references gs_usergroup;
 
-create index idx_user_attribute_name on geostore.gs_user_attribute (name);
+create index idx_user_attribute_name on gs_user_attribute (name);
 
-create index idx_user_attribute_text on geostore.gs_user_attribute (string);
+create index idx_user_attribute_text on gs_user_attribute (string);
 
-create index idx_attribute_user on geostore.gs_user_attribute (user_id);
+create index idx_attribute_user on gs_user_attribute (user_id);
 
-alter table geostore.gs_user_attribute 
+alter table gs_user_attribute 
     add constraint fk_uattrib_user 
     foreign key (user_id) 
-    references geostore.gs_user;
+    references gs_user;
 
-create index idx_usergroup_name on geostore.gs_usergroup (groupName);
+create index idx_usergroup_name on gs_usergroup (groupName);
 
-create sequence geostore.hibernate_sequence;
+create sequence hibernate_sequence;
 
-insert into geostore.gs_category (id, name) values (1, 'MAP');
-insert into geostore.gs_category (id, name) values (2, 'THUMBNAIL');
-insert into geostore.gs_category (id, name) values (3, 'DETAILS');
-insert into geostore.gs_category (id, name) values (4, 'DASHBOARD');
-insert into geostore.gs_category (id, name) values (5, 'GEOSTORY');
-insert into geostore.gs_category (id, name) values (6, 'CONTEXT');
+insert into gs_category (id, name) values (1, 'MAP');
+insert into gs_category (id, name) values (2, 'THUMBNAIL');
+insert into gs_category (id, name) values (3, 'DETAILS');
+insert into gs_category (id, name) values (4, 'DASHBOARD');
+insert into gs_category (id ,name) values (5, 'TEMPLATE');
+INSERT into gs_category (id ,name) values (6, 'USERSESSION');
+INSERT into gs_category (id ,name) values (7, 'GEOSTORY');
+INSERT into gs_category (id ,name) values (8, 'CONTEXT');
+
+COMMIT;
