@@ -75,6 +75,7 @@ Boolean catadmin = false;
 Boolean console = false;
 Boolean analyticsadmin = false;
 Boolean extractorappadmin = false;
+Boolean msadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
@@ -97,6 +98,10 @@ if(sec_roles != null) {
         if (roles[i].equals("ROLE_ADMINISTRATOR")) {
             admin = true;
             extractorappadmin = true;
+        }
+        if (roles[i].equals("ROLE_MAPSTORE_ADMIN")) {
+            admin = true;
+            msadmin = true;
         }
     }
 }
@@ -280,6 +285,15 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
+            <c:when test='<%= active.equals("mapstore") %>'>
+            <li class="active"><a><fmt:message key="mapstore"/></a></li>
+            </c:when>
+            <c:otherwise>
+            <li><a href="/mapstore/"><fmt:message key="mapstore"/></a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
             <c:when test='<%= admin == true %>'>
             <li class="group"> 
                 <a href="#admin"><fmt:message key="admin"/></a>
@@ -310,6 +324,19 @@ if(sec_roles != null) {
                             </c:when>
                             <c:otherwise>
                         <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test='<%= msadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("msadmin") %>'>
+                        <li class="active"><a><fmt:message key="mapstore"/></a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="/mapstore/#/admin"><fmt:message key="mapstore"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
