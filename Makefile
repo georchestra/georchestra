@@ -12,7 +12,7 @@ docker-build-ldap:
 	docker build -t georchestra/ldap:${BTAG} .
 
 docker-build-database:
-	docker pull postgres:11
+	docker pull postgres:12
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
