@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
@@ -52,31 +53,40 @@ public class AreaControllerTest {
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
         assertEquals(ret, "{\"error\": \"specifed file (area.geojson) could not be parsed server side\"}");
+        assertEquals(response.getStatus(), 500);
     }
 
     @Test
     public void testAreaUrlInDatadir() throws IOException {
+        JSONObject expectedJSON = new JSONObject(
+                "{ \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [125.6, 10.1]  },\"properties\": {\"name\": \"Dinagat Islands\"}}");
         String datadir = tempFolder.getRoot().toString();
         File areaJson = tempFolder.newFile("xyz.json");
-        FileUtils.writeStringToFile(areaJson, "{\"hello\": \"world\" }", "UTF-8");
+        FileUtils.writeStringToFile(areaJson, expectedJSON.toString(), "UTF-8");
         MockHttpServletResponse response = new MockHttpServletResponse();
         ReflectionTestUtils.setField(ctrl, "areasUrl", areaJson.toString());
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
-        assertEquals(ret, "{\"hello\":\"world\"}");
+        // instead of comparing string (which might fail, order etc...). Comparing
+        // objects.
+        assertEquals(new JSONObject(ret).toMap(), expectedJSON.toMap());
+        assertEquals(response.getStatus(), 200);
     }
 
     @Test
     public void testAreaUrlInDatadirConsole() throws IOException {
+        JSONObject expectedJSON = new JSONObject(
+                "{ \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [125.6, 10.1]  },\"properties\": {\"name\": \"Dinagat Islands\"}}");
         String datadir = tempFolder.getRoot().toString();
         tempFolder.newFolder("console");
         File areaJson = tempFolder.newFile("console/xyz.json");
-        FileUtils.writeStringToFile(areaJson, "{\"hello\": \"world\" }", "UTF-8");
+        FileUtils.writeStringToFile(areaJson, expectedJSON.toString(), "UTF-8");
         MockHttpServletResponse response = new MockHttpServletResponse();
         ReflectionTestUtils.setField(ctrl, "areasUrl", areaJson.toString());
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
-        assertEquals(ret, "{\"hello\":\"world\"}");
+        assertEquals(new JSONObject(ret).toMap(), expectedJSON.toMap());
+        assertEquals(response.getStatus(), 200);
     }
 
     @Test
@@ -90,5 +100,4 @@ public class AreaControllerTest {
         assertEquals(response.getStatus(), 404);
 
     }
-
 }

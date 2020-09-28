@@ -103,12 +103,19 @@ orgTypeValues=Association,Company,NGO,Individual,Other
 Organisations may have an area of competence, built from a collection of
 features.
 
-Features are loaded from a custom URL serving a GeoJSON FeatureCollection
-using EPSG:4326. The native SRS of the layer MUST be in EPSG:4326 (no on-the-fly transformation).
+Features are loaded from a custom endpoint, `/public/area.geojson` which will:
+ * serve a GeoJSON file from the datadir
+    * From the filesystem (beware of rights on file)
+    * from the datadir roots folder
+    * from the console directory in datadir. 
+ * redirect to a URL if `AreaUrl` starts with `http`.
+ 
+The geojson FeatureCollection need to be in EPSG:4326 projection. The native SRS of the layer MUST be in EPSG:4326 
+ (no on-the-fly transformation).
 
-It defaults to:
+Area default url is:
 ```
-AreasUrl=https://www.geopicardie.fr/public/communes_simplified.json
+AreasUrl=area.geojson
 ```
 
 Note that it can be set to a custom WFS request like this one:

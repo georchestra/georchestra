@@ -81,5 +81,4 @@ public class AreaController {
     private boolean isURL(String possibleUrl) {
         return possibleUrl.startsWith("http");
     }
-
 }
