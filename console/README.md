@@ -109,8 +109,8 @@ Features are loaded from a custom endpoint, `/public/area.geojson` which will:
     * from the datadir roots folder
     * from the console directory in datadir. 
  * redirect to a URL if `AreaUrl` starts with `http`.
- 
-The geojson FeatureCollection need to be in EPSG:4326 projection. The native SRS of the layer MUST be in EPSG:4326 
+
+The geojson FeatureCollection has to be in EPSG:4326 projection. The native SRS of the layer MUST be in EPSG:4326 
  (no on-the-fly transformation).
 
 Area default url is:
