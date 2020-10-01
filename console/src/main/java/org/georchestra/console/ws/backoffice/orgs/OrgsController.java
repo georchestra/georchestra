@@ -109,17 +109,6 @@ public class OrgsController {
     @Value("${AreaMapZoom:6}")
     private String areaMapZoom;
 
-    /*
-     * URL of a static file or a service with a GeoJSON FeatureCollection object
-     * string in EPSG:4326.
-     *
-     * Example of a "dynamic" areasUrl:
-     * https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=
-     * gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA' or ISO='BEL'
-     */
-    @Value("${AreasUrl:https://www.geo2france.fr/public/communes_zones_competence.geojson}")
-    private String areasUrl;
-
     /* The following properties are used to configure the map widget behavior */
 
     /* Key stored in the org LDAP record to uniquely identify a feature. */
@@ -386,7 +375,7 @@ public class OrgsController {
             LOG.info("Could not parse value", e);
         }
         JSONObject areas = new JSONObject();
-        areas.put("url", areasUrl);
+        areas.put("url", "/console/public/area.geojson");
         areas.put("key", areasKey);
         areas.put("value", areasValue);
         areas.put("group", areasGroup);
