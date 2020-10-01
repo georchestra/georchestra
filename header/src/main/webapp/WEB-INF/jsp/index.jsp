@@ -276,20 +276,20 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("geoserver") %>'>
-            <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
-            </c:when>
-            <c:otherwise>
-            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
-            </c:otherwise>
-        </c:choose>
-
-        <c:choose>
             <c:when test='<%= active.equals("mapstore") %>'>
             <li class="active"><a><fmt:message key="mapstore"/></a></li>
             </c:when>
             <c:otherwise>
             <li><a href="/mapstore/"><fmt:message key="mapstore"/></a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
+            <c:when test='<%= active.equals("geoserver") %>'>
+            <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
+            </c:when>
+            <c:otherwise>
+            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
             </c:otherwise>
         </c:choose>
 
@@ -317,19 +317,6 @@ if(sec_roles != null) {
                     </c:choose>
 
                     <c:choose>
-                        <c:when test='<%= extractorappadmin == true %>'>
-                        <c:choose>
-                            <c:when test='<%= active.equals("extractorappadmin") %>'>
-                        <li class="active"><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
-                            </c:when>
-                            <c:otherwise>
-                        <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        </c:when>
-                    </c:choose>
-
-                    <c:choose>
                         <c:when test='<%= msadmin == true %>'>
                         <c:choose>
                             <c:when test='<%= active.equals("msadmin") %>'>
@@ -337,6 +324,19 @@ if(sec_roles != null) {
                             </c:when>
                             <c:otherwise>
                         <li><a href="/mapstore/#/admin"><fmt:message key="mapstore"/></a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test='<%= extractorappadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("extractorappadmin") %>'>
+                        <li class="active"><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
