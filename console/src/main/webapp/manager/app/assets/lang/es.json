@@ -285,6 +285,6 @@
   "date.year"             : "Último año",
   "date.custom"           : "Elegir un intervalo",
   "date.to"               : "a",
-  "sasl.remote.user"      : "Remote user on",
-  "sasl.tooltip"          : "set here the username which should be used for cascading authentication. Set to an empty string to get back to a classic LDAP authentication."
+  "sasl.remote.user"      : "Usuario remoto en",
+  "sasl.tooltip"          : "Este campo se utiliza para definir el nombre de usuario en el sistema remoto. Complete este campo para habilitar la autenticación de usuario remoto. Borre el campo para la autenticación local (se requerirá la regeneración de la contraseña)."
 }
