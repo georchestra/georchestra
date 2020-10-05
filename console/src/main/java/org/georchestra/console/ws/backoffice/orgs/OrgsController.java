@@ -358,7 +358,7 @@ public class OrgsController {
      * "value": "commune_name", "group": "department_name"} }
      */
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
+        @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
     public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
         JSONObject res = new JSONObject();
         JSONObject map = new JSONObject();
@@ -375,7 +375,6 @@ public class OrgsController {
             LOG.info("Could not parse value", e);
         }
         JSONObject areas = new JSONObject();
-        areas.put("url", "/console/public/area.geojson");
         areas.put("key", areasKey);
         areas.put("value", areasValue);
         areas.put("group", areasGroup);
