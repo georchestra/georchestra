@@ -83,7 +83,7 @@ class AreaController {
     const format = new ol.format.GeoJSON()
 
     this.loading = true
-    this.$injector.get('$http').get("/console/public/area.geojson").then(
+    this.$injector.get('$http').get('/console/public/area.geojson').then(
       response => response.data
     ).then(json => {
       const conf = {
@@ -95,7 +95,7 @@ class AreaController {
         f.id = f.properties[config.areas.key].toString()
       })
       vector.getSource().addFeatures(format.readFeatures(json, conf))
-      vector.getSource().forEachFeature(f  => {
+      vector.getSource().forEachFeature(f => {
         const group = f.get(config.areas.group)
         if (this.groups.indexOf(group) < 0) {
           this.groups.push(group)
@@ -121,7 +121,7 @@ class AreaController {
 
       this.updateSelection(selected)
       this.loading = false
-    }).catch(ex => console.log("Cannot display area. GeoJSON file is malformed or Area config is wrongly configured in the data", ex))
+    }).catch(ex => console.log('Cannot display area. GeoJSON file is malformed or Area config is wrongly configured in the data', ex))
 
     const dragBox = new ol.interaction.DragBox({
       condition: ol.events.condition.always
