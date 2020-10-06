@@ -462,6 +462,7 @@ public class Proxy {
                     || isRecursiveCallToProxy(url.getPath(), contextPath))) {
                 response.sendError(403,
                         forwardRequestURI + " is a recursive call to this service.  That is not a legal request");
+                return;
             }
 
             final String query = request.getQueryString();
