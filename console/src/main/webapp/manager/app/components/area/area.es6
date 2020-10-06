@@ -98,14 +98,14 @@ class AreaController {
       vector.getSource().forEachFeature(f => {
         const group = f.get(config.areas.group)
         if (group === undefined) {
-          throw new Error(`Cannot get AreaGroup ${config.areas.group} in provided geojson. Check datadir config.`)
+          throw new Error(`Cannot get AreaGroup "${config.areas.group}" in provided geojson. Check datadir config.`)
         }
         if (this.groups.indexOf(group) < 0) {
           this.groups.push(group)
         }
         const displayName = f.get(config.areas.value)
         if (displayName === undefined) {
-          throw new Error(`Cannot get AreaValue ${config.areas.value} in provided geojson. Check datadir config.`)
+          throw new Error(`Cannot get AreaValue "${config.areas.value}" in provided geojson. Check datadir config.`)
         }
         f.set('_label', displayName.toString() || '')
         f.set('_group', group)
