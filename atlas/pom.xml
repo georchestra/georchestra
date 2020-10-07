@@ -12,9 +12,10 @@
     <url>http://www.georchestra.org</url>
     <properties>
         <context.name>atlas</context.name>
-        <!-- override geotools & json versions to ensure compatibility with print-lib 3.5.0 -->
+        <!-- override versions to ensure compatibility with print-lib 3.5.0 -->
         <gt.version>14.3</gt.version>
         <json.version>20080701</json.version>
+        <guava.version>16.0.1</guava.version>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
