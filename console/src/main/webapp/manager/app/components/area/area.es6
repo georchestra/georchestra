@@ -83,7 +83,7 @@ class AreaController {
     const format = new ol.format.GeoJSON()
 
     this.loading = true
-    this.$injector.get('$http').get(config.areas.url).then(
+    this.$injector.get('$http').get('/console/public/area.geojson').then(
       response => response.data
     ).then(json => {
       const conf = {
@@ -95,12 +95,19 @@ class AreaController {
         f.id = f.properties[config.areas.key].toString()
       })
       vector.getSource().addFeatures(format.readFeatures(json, conf))
-      vector.getSource().getFeatures().forEach(f => {
+      vector.getSource().forEachFeature(f => {
         const group = f.get(config.areas.group)
+        if (group === undefined) {
+          throw new Error(`Cannot get AreaGroup "${config.areas.group}" in provided geojson. Check datadir config.`)
+        }
         if (this.groups.indexOf(group) < 0) {
           this.groups.push(group)
         }
-        f.set('_label', f.get(config.areas.value).toString() || '')
+        const displayName = f.get(config.areas.value)
+        if (displayName === undefined) {
+          throw new Error(`Cannot get AreaValue "${config.areas.value}" in provided geojson. Check datadir config.`)
+        }
+        f.set('_label', displayName.toString() || '')
         f.set('_group', group)
         if (this.ids.indexOf(f.getId()) >= 0) selected.push(f)
       })
@@ -121,7 +128,7 @@ class AreaController {
 
       this.updateSelection(selected)
       this.loading = false
-    })
+    }).catch(ex => console.error(ex))
 
     const dragBox = new ol.interaction.DragBox({
       condition: ol.events.condition.always
