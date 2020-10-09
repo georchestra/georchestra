@@ -1,0 +1,8 @@
+Dear {name}, 
+
+Your request for a new account will be processed very soon.
+
+Your login is: {uid}
+
+---
+Sent by {instanceName} ({publicUrl}/)

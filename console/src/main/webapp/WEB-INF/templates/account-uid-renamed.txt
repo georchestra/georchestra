@@ -1,0 +1,9 @@
+Dear {name}, 
+
+This message is intended to let you know that your identifier on the
+{instanceName} platform has been modified.
+
+Your new login is now: {uid}
+
+---
+Sent by {instanceName} ({publicUrl}/)
