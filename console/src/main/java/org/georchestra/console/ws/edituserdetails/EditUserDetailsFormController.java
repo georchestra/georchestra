@@ -181,6 +181,8 @@ public class EditUserDetailsFormController {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
 
+        model.addAttribute("gdprAllowAccountDeletion", gdprAllowAccountDeletion);
+
         // Validate first name and surname
         validation.validateUserFieldWithSpecificMsg("firstName", formBean.getFirstName(), resultErrors);
         validation.validateUserFieldWithSpecificMsg("surname", formBean.getSurname(), resultErrors);
