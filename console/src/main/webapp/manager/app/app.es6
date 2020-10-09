@@ -75,7 +75,7 @@ class AppController {
 class StandaloneController {
   static $inject = ['$scope', 'Orgs', 'User']
 
-  constructor ($scope, Org, User) {
+  constructor ($scope, Org) {
     if (!window.org) {
       $scope.org = new Org()
       return
@@ -129,7 +129,10 @@ angular.module('manager', [
         })
         .determinePreferredLanguage()
         .fallbackLanguage('en')
-      $location.html5Mode(true)
+      $location.html5Mode({
+        enabled: true,
+        requireBase: false
+      })
       paginationTemplate.setPath('templates/dirPagination.tpl.html')
       $qP.errorOnUnhandledRejections(false)
       // see https://github.com/georchestra/georchestra/issues/1695 {{{
