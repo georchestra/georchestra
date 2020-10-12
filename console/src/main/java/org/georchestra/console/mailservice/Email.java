@@ -119,23 +119,15 @@ public class Email {
                         + "Falling back on the default template provided by the webapp.", e);
             }
         }
-        /** Trying to resolve the templates from inside the webapp */
+        /* Trying to resolve the templates from inside the webapp */
         String tmplFromWebapp = this.servletContext
                 .getRealPath(Paths.get("/WEB-INF", "templates", fileName).toString());
 
-        BufferedReader reader = null;
         String body = null;
         try {
             body = FileUtils.readFileToString(new File(tmplFromWebapp), templateEncoding);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOG.error(e);
-        } finally {
-            try {
-                if (reader != null)
-                    reader.close();
-            } catch (IOException e) {
-                LOG.error(e);
-            }
         }
         return body;
     }
