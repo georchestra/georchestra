@@ -260,17 +260,17 @@
     <property name="bodyEncoding" value="UTF-8"/>
     <property name="subjectEncoding" value="UTF-8"/>
     <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
-    <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
+    <property name="accountWasCreatedEmailFile" value="newaccount-was-created-template.txt"/>
     <property name="accountWasCreatedEmailSubject" value="${subject.account.created:[${instanceName}] Your account has been created}"/>
-    <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
+    <property name="accountCreationInProcessEmailFile" value="account-creation-in-progress-template.txt"/>
     <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process:[${instanceName}] Your new account is waiting for validation}"/>
-    <property name="newAccountRequiresModerationEmailFile" value="/WEB-INF/templates/newaccount-requires-moderation-template.txt"/>
+    <property name="newAccountRequiresModerationEmailFile" value="newaccount-requires-moderation-template.txt"/>
     <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[${instanceName}] New account waiting for validation}"/>
-    <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
+    <property name="changePasswordEmailFile" value="changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="${subject.change.password:[${instanceName}] Update your password}"/>
-    <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
+    <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
-    <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
+    <property name="newAccountNotificationEmailFile" value="newaccount-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
     <property name="publicUrl" value="${scheme}://${domainName}"/>
     <property name="instanceName" value="${instanceName}"/>

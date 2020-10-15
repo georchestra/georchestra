@@ -59,15 +59,15 @@ public class EmailTest {
         this.georchestraConfiguration = Mockito.mock(GeorchestraConfiguration.class);
         this.publicUrl = "http://localhost:8080";
         this.instanceName = "geOrchestra";
-        Mockito.when(this.servletContext.getRealPath(this.simpleTemplate))
+        Mockito.when(this.servletContext.getRealPath("/WEB-INF/templates/" + this.simpleTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.simpleTemplate).getPath());
-        Mockito.when(this.servletContext.getRealPath(this.htmlTemplate))
+        Mockito.when(this.servletContext.getRealPath("/WEB-INF/templates/" + this.htmlTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.htmlTemplate).getPath());
-        Mockito.when(this.servletContext.getRealPath(this.utf8Template))
+        Mockito.when(this.servletContext.getRealPath("/WEB-INF/templates/" + this.utf8Template))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.utf8Template).getPath());
-        Mockito.when(this.servletContext.getRealPath(this.isoTemplate))
+        Mockito.when(this.servletContext.getRealPath("/WEB-INF/templates/" + this.isoTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.isoTemplate).getPath());
-        Mockito.when(this.servletContext.getRealPath(this.replaceTemplate))
+        Mockito.when(this.servletContext.getRealPath("/WEB-INF/templates/" + this.replaceTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.replaceTemplate).getPath());
     }
 

@@ -34,6 +34,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,6 +59,7 @@ public class Email {
     private String publicUrl;
     private String instanceName;
     private GeorchestraConfiguration georConfig;
+    private ServletContext servletContext;
 
     public Email(List<String> recipients, String emailSubject, String smtpHost, int smtpPort, boolean emailHtml,
             String replyTo, String from, String bodyEncoding, String subjectEncoding, String templateEncoding,
@@ -76,9 +79,9 @@ public class Email {
         this.georConfig = georConfig;
         this.publicUrl = publicUrl;
         this.instanceName = instanceName;
-
+        this.servletContext = servletContext;
         // Load template from filesystem
-        this.emailBody = this.loadBody(servletContext.getRealPath(fileTemplate));
+        this.emailBody = this.loadBody(fileTemplate);
     }
 
     public void set(String key, String value) {
@@ -97,7 +100,10 @@ public class Email {
     /**
      * Loads the body template.
      *
-     * @param fileName path + file name
+     * if available, the templates will be resolved from the geOrchestra datadir,
+     * and if not defined, a one inside the webapp will be used.
+     *
+     * @param fileName the filename to open, without the path to it.
      * @return
      * @throws IOException
      */
@@ -105,29 +111,23 @@ public class Email {
 
         if ((georConfig != null) && (georConfig.activated())) {
             try {
-                String basename = FilenameUtils.getName(fileName);
-                return FileUtils.readFileToString(new File(georConfig.getContextDataDir(), "templates/" + basename),
-                        templateEncoding);
+                File fileTmpl = Paths.get(georConfig.getContextDataDir(), "templates", fileName).toFile();
+
+                return FileUtils.readFileToString(fileTmpl, templateEncoding);
             } catch (IOException e) {
-                LOG.error(
-                        "Unable to get the template from geOrchestra datadir. Falling back on the default template provided by the webapp.",
-                        e);
+                LOG.error("Unable to get the template from geOrchestra datadir. "
+                        + "Falling back on the default template provided by the webapp.", e);
             }
         }
+        /* Trying to resolve the templates from inside the webapp */
+        String tmplFromWebapp = this.servletContext
+                .getRealPath(Paths.get("/WEB-INF", "templates", fileName).toString());
 
-        BufferedReader reader = null;
         String body = null;
         try {
-            body = FileUtils.readFileToString(new File(fileName), templateEncoding);
-        } catch (Exception e) {
+            body = FileUtils.readFileToString(new File(tmplFromWebapp), templateEncoding);
+        } catch (IOException e) {
             LOG.error(e);
-        } finally {
-            try {
-                if (reader != null)
-                    reader.close();
-            } catch (IOException e) {
-                LOG.error(e);
-            }
         }
         return body;
     }
