@@ -3,6 +3,7 @@
 ![security-proxy](https://github.com/georchestra/georchestra/workflows/security-proxy/badge.svg)
 
 The security-proxy (aka SP) belongs to geOrchestra core, since it is the component which :
+
  * handles user sessions
  * routes requests to webapps (except CAS)
 
@@ -27,11 +28,13 @@ In this file, the last line starting with `<intercept-url pattern=".*" access="I
 
 To restrict access to the backend, one just has to insert a new line before the last one.
 In the example below, we choose to restrict backend access to people having the `ADMINISTRATOR` role:
+
 ```xml
 <intercept-url pattern="/newapp/backend" access="ROLE_ADMINISTRATOR" />
 ```
 
 It is also possible to create a specific role which grants access to the backend, eg with role `NEWAPP_ADMIN`. The rule becomes:
+
 ```xml
 <intercept-url pattern="/newapp/backend" access="ROLE_NEWAPP_ADMIN" />
 ```
@@ -41,11 +44,13 @@ It is also possible to create a specific role which grants access to the backend
 #### Headers
 
 With every request, the proxy adds specific HTTP headers, allowing the application to know:
+
  * if the request comes from a registered user, or an anonymous one - this is `sec-username` (not provided if anonymous).
  * which roles the user holds - `sec-roles` is a semi-colon separated list of roles (not provided if anonymous).
  * which organisation the user belongs to - `sec-orgname` provides the human-readable organisation title while `sec-org` is mapped onto the organisation id (LDAP's `cn`).
 
 Several other user properties are also provided as headers:
+
  * `sec-email` is the user email
  * `sec-firstname` is the first name (LDAP `givenName`)
  * `sec-lastname` is the second name (LDAP `sn`)
@@ -94,6 +99,7 @@ By default, this property is set to '127.0.0.1, localhost'. Be careful to only a
 The SP2 `security-proxy.properties` file should have `trustedProxy` set to SP1 IP.
 
 The SP1 `targets-mapping.properties` configuration file should target SP2, eg with:
+
 ```properties
 geoserver=http://sp2:8080/geoserver/
 console=http://sp2:8080/console/
