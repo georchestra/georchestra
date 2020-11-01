@@ -55,5 +55,72 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/${project.artifactId}:${project.version}</dockerImageName>
+        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
+      </properties>
+      <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.11.2</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+              <pushChanges>false</pushChanges>
+              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
+            </configuration>
+            <executions>
+              <execution>
+                <id>checkout-docker-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>1.2.2</version>
+            <configuration>
+              <imageName>${dockerImageName}</imageName>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
+              <buildArgs>
+                <JAR_FILE>${project.artifactId}-bin.jar</JAR_FILE>
+              </buildArgs>
+              <resources>
+                <resource>
+                  <targetPath>/</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.artifactId}-bin.jar</include>
+                </resource>
+                <resource>
+                  <targetPath>/etc/georchestra</targetPath>
+                  <directory>${project.build.directory}/datadir</directory>
+                  <!-- include>${project.artifactId}/**</include-->
+                </resource>
+              </resources>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>28.2-jre</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
