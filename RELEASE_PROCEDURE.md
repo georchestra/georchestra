@@ -14,7 +14,7 @@ git checkout -b 20.1
 git push origin 20.1
 ```
 
-Same has to be done for the `docker` branch:
+Same has to be done for the `docker-master` branch:
 ```
 git checkout docker-master
 git pull origin docker-master
