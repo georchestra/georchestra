@@ -146,7 +146,10 @@ public class EditUserDetailsFormController {
         formBean.setFacsimile(account.getFacsimile());
         formBean.setDescription(account.getDescription());
         formBean.setPostalAddress(account.getPostalAddress());
-        formBean.setOrg(orgsDao.findByCommonName(account.getOrg()).getName());
+        String org = account.getOrg();
+        if (!org.equals("")) {
+            formBean.setOrg(orgsDao.findByCommonName(org).getName());
+        }
 
         return formBean;
     }
