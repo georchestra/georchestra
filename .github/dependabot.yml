@@ -1,0 +1,38 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  target-branch: master
+  assignees:
+  - RemiDesgrange
+  ignore:
+  - dependency-name: org.webjars:extjs
+    versions:
+    - "> 4.1.1a"
+- package-ecosystem: gitsubmodule
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: 20.0.x
+- package-ecosystem: gitsubmodule
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: "19.04"
+- package-ecosystem: gitsubmodule
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: "18.06"
+- package-ecosystem: gitsubmodule
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: master
