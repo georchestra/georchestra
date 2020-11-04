@@ -157,7 +157,7 @@ public class EditUserDetailsFormControllerTest {
     @Test
     public void testSetupFormNoOrg() throws Exception {
         request.addHeader("sec-username", "mtesterNoOrg");
-        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccount);
+        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccountNoOrg);
 
         String ret = ctrl.setupForm(request, response, model);
 
@@ -167,7 +167,7 @@ public class EditUserDetailsFormControllerTest {
     @Test
     public void testEditNoOrg() throws Exception {
         request.addHeader("sec-username", "mtesterNoOrg");
-
+        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccountNoOrg);
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 
         assertEquals("editUserDetailsForm", ret);
