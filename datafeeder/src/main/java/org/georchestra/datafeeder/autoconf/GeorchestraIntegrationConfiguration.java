@@ -1,7 +1,11 @@
 package org.georchestra.datafeeder.autoconf;
 
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 
 /**
@@ -11,6 +15,11 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("georchestra")
+@Import(GeorchestraDatadirConfiguration.class)
 public class GeorchestraIntegrationConfiguration {
 
+    @ConfigurationProperties
+    public @Bean DataFeederConfigurationProperties configProperties() {
+        return new DataFeederConfigurationProperties();
+    }
 }

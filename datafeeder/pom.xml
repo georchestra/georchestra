@@ -13,6 +13,7 @@
   <properties>
     <maven.test.skip>false</maven.test.skip>
     <context.name>${project.artifactId}</context.name>
+    <packageDatadirScmVersion>datafeeder</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -66,6 +67,7 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
           <plugin>
+            <!-- REVISIT: why don't have the datadir project as a submodule at the project's root folder instead of checking it out on each service module? -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
             <version>1.11.2</version>
@@ -96,20 +98,15 @@
               <buildArgs>
                 <JAR_FILE>${project.artifactId}-bin.jar</JAR_FILE>
               </buildArgs>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
               <resources>
                 <resource>
                   <targetPath>/</targetPath>
                   <directory>${project.build.directory}</directory>
                   <include>${project.artifactId}-bin.jar</include>
                 </resource>
-                <resource>
-                  <targetPath>/etc/georchestra</targetPath>
-                  <directory>${project.build.directory}/datadir</directory>
-                  <!-- include>${project.artifactId}/**</include-->
-                </resource>
               </resources>
-              <serverId>docker-hub</serverId>
-              <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>
             <dependencies>
               <dependency>

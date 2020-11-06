@@ -1,5 +1,6 @@
 spring:
   profiles.active: georchestra
+  application.name: datafeeder-service
   servlet:
     # configuration properties for javax.servlet.MultipartConfigElement
     multipart:
@@ -15,14 +16,19 @@ spring:
 datafeeder:
   file-upload:
     # maximum size allowed for uploaded files.
-    max-file-size: 1GB
+    max-file-size: ${file-upload.max-file-size:-1}
     # maximum size allowed for multipart/form-data requests
-    max-request-size: 1GB
+    max-request-size: ${file-upload.max-request-size:-1}
     # size threshold after which files will be written to disk.
-    file-size-threshold:
+    file-size-threshold: ${file-upload.max-size-threshold:}
     # directory location where files will be stored.
-    location:  
+    location: ${file-upload.location:}
 
 ---
 spring:
   profiles: georchestra
+georchestra.datadir: /etc/georchestra
+---
+spring:
+  profiles: test
+georchestra.datadir: src/test/resources/datadir

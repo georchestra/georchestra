@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.georchestra.datafeeder.autoconf.GeorchestraIntegrationConfiguration,\
+org.georchestra.datafeeder.autoconf.CloudNativeGeonetworkIntegrationConfiguration
