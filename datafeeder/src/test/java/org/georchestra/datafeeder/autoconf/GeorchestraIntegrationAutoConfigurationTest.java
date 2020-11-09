@@ -17,14 +17,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Test suite for {@link GeorchestraIntegrationConfiguration}, which shall be
- * enabled through the {@code georchestra} spring profile
+ * Test suite for {@link GeorchestraIntegrationAutoConfiguration}, which shall
+ * be enabled through the {@code georchestra} spring profile
  */
 @SpringBootTest(classes = BaseTestConfig.class)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
-public class GeorchestraIntegrationConfigurationTest {
+public class GeorchestraIntegrationAutoConfigurationTest {
 
     private @Autowired ApplicationContext context;
 
