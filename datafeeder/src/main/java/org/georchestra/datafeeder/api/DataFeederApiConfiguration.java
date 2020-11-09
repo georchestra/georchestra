@@ -20,10 +20,15 @@ package org.georchestra.datafeeder.api;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
 @ComponentScan
-public @Configuration class DataFeederApiConfiguration {
+@EnableGlobalMethodSecurity(//
+        jsr250Enabled = true // enable @RolesAlloed annotation in API methods
+)
+public @Configuration class DataFeederApiConfiguration extends GlobalMethodSecurityConfiguration {
 
 }
