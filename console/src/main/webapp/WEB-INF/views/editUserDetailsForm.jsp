@@ -239,7 +239,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
           </p>
           <p>
             <a class="btn btn-primary"
-               href="<c:out value="${publicContextPath}/account/gdpr/download" />">
+               href="<c:out value="${publicContextPath}/account/gdpr/download" />" target="_blank">
               <i class="glyphicon glyphicon-download-alt"></i> <s:message
                 code="editUserDetailsForm.download"/>
             </a>
