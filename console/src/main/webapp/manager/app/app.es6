@@ -73,19 +73,45 @@ class AppController {
 }
 
 class StandaloneController {
-  static $inject = ['$scope', 'Orgs', 'User']
+  static $inject = ['$injector', '$window', '$scope', 'Orgs', 'User']
 
-  constructor ($scope, Org) {
-    if (!window.org) {
+  constructor ($injector, $window, $scope, Org) {
+    if (!$window.org) {
       $scope.org = new Org()
       return
     }
 
-    $scope.org = window.org
-    $scope.users = window.org.members
-    $scope.isReferentOrSuperUser = window.isReferentOrSuperUser
-    $scope.gdprAllowAccountDeletion = window.gdprAllowAccountDeletion
+    this.$injector = $injector
+
+    $scope.org = $window.org
+    $scope.users = $window.org.members
+    $scope.isReferentOrSuperUser = $window.isReferentOrSuperUser
+    $scope.gdprAllowAccountDeletion = $window.gdprAllowAccountDeletion
+    const CONSOLE_BASE_PATH = this.$injector.get('CONSOLE_BASE_PATH')
+    $scope.deleteURI = CONSOLE_BASE_PATH + "account/gdpr/delete"
+
+    const i18n = {}
+    this.$injector.get('translate')('editUserDetailsForm.deleteConfirm', i18n)
+    this.$injector.get('translate')('editUserDetailsForm.deleteFail', i18n)
+
+    $scope.deleteUser = function() {
+      var isConfirmed = confirm(i18n.deleteConfirm);
+
+      if (!isConfirmed) return false
+      fetch($scope.deleteURI, {method: 'POST'})
+        .then(function (response) {
+          if (response.ok) {
+            $window.location.href = '/logout'
+          } else {
+            $window.alert(i18n.deleteFail)
+          }
+        })
+        .catch(function () {
+          $window.alert(i18n.deleteFail)
+        })
+    }
   }
+
 }
 
 angular.module('manager', [
