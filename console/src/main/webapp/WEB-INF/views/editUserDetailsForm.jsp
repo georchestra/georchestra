@@ -246,7 +246,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
           </p>
         </div>
       </div>
-      <div class="panel panel-default" *ng-if="gdprAllowAccountDeletion">
+      <div class="panel panel-default" ng-show="gdprAllowAccountDeletion">
         <div class="panel-body">
           <p>
             <s:message code="editUserDetailsForm.deleteMsg"/>
