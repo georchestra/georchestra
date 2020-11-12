@@ -246,13 +246,13 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
           </p>
         </div>
       </div>
-      <div class="panel panel-default" ng-show="gdprAllowAccountDeletion">
+      <div class="panel panel-default" ng-if="gdprAllowAccountDeletion">
         <div class="panel-body">
           <p>
             <s:message code="editUserDetailsForm.deleteMsg"/>
           </p>
           <p>
-            <button class="btn btn-danger">
+            <button class="btn btn-danger" ng-click="deleteUser()">
               <i class="glyphicon glyphicon-exclamation-sign"></i> <s:message
                 code="editUserDetailsForm.delete"/>
             </button>
@@ -266,23 +266,6 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
 <script src='js/bootstrap.min.js'></script>
 <%@ include file="validation.jsp" %>
 <script type="text/javascript">
-  (function () {
-    var deleteURI = "<c:out value="${publicContextPath}/account/gdpr/delete" />"
-    $('.gdpr .btn-danger').on('click', function () {
-      if (!window.confirm('<s:message code="editUserDetailsForm.deleteConfirm" />')) return false
-      fetch(deleteURI, {method: 'POST'})
-        .then(function (response) {
-          if (response.ok) {
-            window.location.href = '/logout'
-          } else {
-            alert('<s:message code="editUserDetailsForm.deleteFail" />')
-          }
-        })
-        .catch(function () {
-          alert('<s:message code="editUserDetailsForm.deleteFail" />')
-        })
-    })
-  })()
 
   /* Validate the form */
   function validate() {
