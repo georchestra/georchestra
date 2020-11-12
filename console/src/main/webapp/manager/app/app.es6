@@ -88,17 +88,17 @@ class StandaloneController {
     $scope.isReferentOrSuperUser = $window.isReferentOrSuperUser
     $scope.gdprAllowAccountDeletion = $window.gdprAllowAccountDeletion
     const CONSOLE_BASE_PATH = this.$injector.get('CONSOLE_BASE_PATH')
-    $scope.deleteURI = CONSOLE_BASE_PATH + "account/gdpr/delete"
+    $scope.deleteURI = CONSOLE_BASE_PATH + 'account/gdpr/delete'
 
     const i18n = {}
     this.$injector.get('translate')('editUserDetailsForm.deleteConfirm', i18n)
     this.$injector.get('translate')('editUserDetailsForm.deleteFail', i18n)
 
-    $scope.deleteUser = function() {
-      var isConfirmed = confirm(i18n.deleteConfirm);
+    $scope.deleteUser = function () {
+      var isConfirmed = $window.confirm(i18n.deleteConfirm)
 
       if (!isConfirmed) return false
-      fetch($scope.deleteURI, {method: 'POST'})
+      $window.fetch($scope.deleteURI, { method: 'POST' })
         .then(function (response) {
           if (response.ok) {
             $window.location.href = '/logout'
@@ -111,7 +111,6 @@ class StandaloneController {
         })
     }
   }
-
 }
 
 angular.module('manager', [
