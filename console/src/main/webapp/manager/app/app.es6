@@ -92,12 +92,12 @@ class StandaloneController {
     $injector.get('translate')('editUserDetailsForm.deleteFail', i18n)
 
     $scope.deleteUser = function () {
-      if ( !$window.confirm(i18n.deleteConfirm) ) return false
+      if (!$window.confirm(i18n.deleteConfirm)) return false
       $http.post($scope.deleteURI)
         .then(
-          function success(response) { $window.location.href = '/logout' },
-          function error() { $window.alert(i18n.deleteFail) }
-       )
+          function success (response) { $window.location.href = '/logout' },
+          function error () { $window.alert(i18n.deleteFail) }
+        )
     }
   }
 }
