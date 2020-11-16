@@ -34,6 +34,14 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <!-- test scoped for spring boot's (1.5.19.RELEASE) TestRestTemplate pass request headers (sec-* headers ignored with 
+        default java client) -->
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.13</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${server}</finalName>
@@ -71,7 +79,8 @@
         <finalName>${project.artifactId}</finalName>
         <plugins>
           <plugin>
-            <!-- REVISIT: why don't have the datadir project as a submodule at the project's root folder instead of checking it out on each service module? -->
+            <!-- REVISIT: why don't have the datadir project as a submodule at the project's root folder instead of checking 
+              it out on each service module? -->
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
             <version>1.11.2</version>
