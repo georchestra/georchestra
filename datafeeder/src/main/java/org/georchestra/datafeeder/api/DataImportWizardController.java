@@ -38,7 +38,7 @@ public @Controller class DataImportWizardController {
 
     @GetMapping("/test")
     public ResponseEntity<String> test() {
-        return ResponseEntity.ok("annonymous test OK. " + buildHeaders());
+        return ResponseEntity.ok("anonymous test OK. " + buildHeaders());
     }
 
     @GetMapping("/test/admin")

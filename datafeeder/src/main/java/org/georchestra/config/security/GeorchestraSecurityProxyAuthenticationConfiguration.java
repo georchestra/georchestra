@@ -27,7 +27,8 @@ public class GeorchestraSecurityProxyAuthenticationConfiguration extends WebSecu
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)//
                 .and()//
                 .csrf().disable()//
-                .authorizeRequests().antMatchers("/import/test").permitAll().and().authorizeRequests()//
+                // .authorizeRequests().antMatchers("/**").permitAll().and()//
+                .authorizeRequests()//
                 .anyRequest()//
                 .authenticated()//
                 .and()//
