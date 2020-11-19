@@ -286,5 +286,7 @@
   "date.custom"           : "Custom range",
   "date.to"               : "to",
   "sasl.remote.user"      : "Remote user on",
-  "sasl.tooltip"          : "This field is used to define the user name on the remote system. Fill in this field to enable remote user authentication. Clear the field for local authentication (password regeneration will be required)."
+  "sasl.tooltip"          : "This field is used to define the user name on the remote system. Fill in this field to enable remote user authentication. Clear the field for local authentication (password regeneration will be required).",
+  "editUserDetailsForm.deleteConfirm" : "Do you really want to delete your account?",
+  "editUserDetailsForm.deleteFail" : "Failed to delete account"
 }

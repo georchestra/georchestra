@@ -286,5 +286,7 @@
   "date.custom"           : "Choisir un intervalle",
   "date.to"               : "à",
   "sasl.remote.user"      : "Utilisateur distant sur",
-  "sasl.tooltip"          : "Ce champ permet de définir le nom d'utilisateur sur le système distant. Remplir ce champ pour activer l'authentification distante de l'utilisateur. Vider le champ pour une authentification locale (une régénération du mot de passe sera nécessaire)."
+  "sasl.tooltip"          : "Ce champ permet de définir le nom d'utilisateur sur le système distant. Remplir ce champ pour activer l'authentification distante de l'utilisateur. Vider le champ pour une authentification locale (une régénération du mot de passe sera nécessaire).",
+  "editUserDetailsForm.deleteConfirm" : "Êtes-vous sûr de vouloir supprimer votre compte ?",
+  "editUserDetailsForm.deleteFail" : "Échec de la suppression du compte"
 }
