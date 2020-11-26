@@ -286,5 +286,7 @@
   "date.custom"           : "Elegir un intervalo",
   "date.to"               : "a",
   "sasl.remote.user"      : "Usuario remoto en",
-  "sasl.tooltip"          : "Este campo se utiliza para definir el nombre de usuario en el sistema remoto. Complete este campo para habilitar la autenticación de usuario remoto. Borre el campo para la autenticación local (se requerirá la regeneración de la contraseña)."
+  "sasl.tooltip"          : "Este campo se utiliza para definir el nombre de usuario en el sistema remoto. Complete este campo para habilitar la autenticación de usuario remoto. Borre el campo para la autenticación local (se requerirá la regeneración de la contraseña).",
+  "editUserDetailsForm.deleteConfirm" : "¿Realmente quieres eliminar tu cuenta?",
+  "editUserDetailsForm.deleteFail" : "Error al eliminar cuenta"
 }
