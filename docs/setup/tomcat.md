@@ -403,8 +403,12 @@ In ```/var/lib/tomcat9-georchestra/conf/server.xml```:
     <Connector port="8280" protocol="HTTP/1.1"
                connectionTimeout="20000"
                URIEncoding="UTF-8"
+               scheme="https"
+               proxyName="georchestra.mydomain.org"
+               proxyPort="443"
                redirectPort="8443" />
 ```
+Set proxyName to your service's fqdn.
 
 ### Start the instance
 
@@ -542,7 +546,8 @@ JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 ```
 
-In case your connection to the internet needs to pass through a proxy, you should also add the ```-Dhttp.proxy*``` options here.
+In case your connection to the internet needs to pass through a proxy, you should also add the ```-Dhttp.proxyHost=xxxx -Dhttp.proxyPort=xxxx``` options here.
+
 
 ### Notes about the s3-geotiff module
 
@@ -589,16 +594,20 @@ export JAVA_OPTS
 For GeoServer, it is advised to lower the number of simultaneous threads handling incoming requests.
 By default Tomcat assumes 200 threads, but experiments show that 20 is a better value.
 
-In ```/var/lib/tomcat9-geoserver0/conf/server.xml```:
+It is also required to set the `scheme`, `proxyPort` & `proxyName` parameters, as follows in ```/var/lib/tomcat9-geoserver0/conf/server.xml```:
 ```
     <Connector port="8380" protocol="HTTP/1.1"
                connectionTimeout="20000"
                URIEncoding="UTF-8"
                maxThreads="20"
                minSpareThreads="20"
+               scheme="https"
+               proxyName="georchestra.mydomain.org"
+               proxyPort="443"
                redirectPort="8443" />
-
 ```
+... where `proxyName` is set to your service's fqdn.
+
 
 ### Start the instance
 
