@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("geonetwork")
-public class CloudNativeGeonetworkIntegrationConfiguration {
+public class CloudNativeGeonetworkIntegrationAutoConfiguration {
 
     public @PostConstruct void fail() {
         throw new ApplicationContextException("'geonetwork' profile auto-configuration not yet implemented");
