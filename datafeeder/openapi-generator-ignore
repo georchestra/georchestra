@@ -1,0 +1,3 @@
+target/generated-sources/openapi/README.md
+#target/generated-sources/openapi/pom.xml
+#target/generated-sources/openapi/src/org/openapitools/**

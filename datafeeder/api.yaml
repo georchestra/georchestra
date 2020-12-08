@@ -1,0 +1,39 @@
+openapi: 3.0.0
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://sample.url/import
+info:
+  title: DataFeeder API
+  description: This API covers the administration features of the application.
+  version: "1.0.0"
+  contact:
+    email: psc@georchestra.org
+tags:
+  - name: File Upload
+    description: 'API to control jobs related to form based file upload of geospatial datasets'
+
+paths:
+  /upload:
+    post:
+      tags:
+        - File Upload
+      description: 'Upload one or multiple files to the server, and get a handle to the job'
+      operationId: uploadFiles
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        202:
+          description: 'Accepted. Task accepted and running asynchronously'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges to upload files'
