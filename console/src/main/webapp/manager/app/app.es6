@@ -73,18 +73,32 @@ class AppController {
 }
 
 class StandaloneController {
-  static $inject = ['$scope', 'Orgs', 'User']
+  static $inject = ['$injector', '$window', '$http', '$scope', 'Orgs', 'User']
 
-  constructor ($scope, Org) {
-    if (!window.org) {
+  constructor ($injector, $window, $http, $scope, Org) {
+    if (!$window.org) {
       $scope.org = new Org()
       return
     }
 
-    $scope.org = window.org
-    $scope.users = window.org.members
-    $scope.isReferentOrSuperUser = window.isReferentOrSuperUser
-    $scope.gdprAllowAccountDeletion = window.gdprAllowAccountDeletion
+    $scope.org = $window.org
+    $scope.users = $window.org.members
+    $scope.isReferentOrSuperUser = $window.isReferentOrSuperUser
+    $scope.gdprAllowAccountDeletion = $window.gdprAllowAccountDeletion
+    $scope.deleteURI = $injector.get('CONSOLE_BASE_PATH') + 'account/gdpr/delete'
+
+    const i18n = {}
+    $injector.get('translate')('editUserDetailsForm.deleteConfirm', i18n)
+    $injector.get('translate')('editUserDetailsForm.deleteFail', i18n)
+
+    $scope.deleteUser = function () {
+      if (!$window.confirm(i18n.deleteConfirm)) return false
+      $http.post($scope.deleteURI)
+        .then(
+          function success (response) { $window.location.href = '/logout' },
+          function error () { $window.alert(i18n.deleteFail) }
+        )
+    }
   }
 }
 
