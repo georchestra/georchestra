@@ -18,16 +18,8 @@
  */
 package org.georchestra.datafeeder.api;
 
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.annotation.security.RolesAllowed;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -35,27 +27,4 @@ import org.springframework.web.context.request.NativeWebRequest;
 public @Controller class DataImportWizardController {
 
     private @Autowired NativeWebRequest currentRequest;
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("anonymous test OK. " + buildHeaders());
-    }
-
-    @GetMapping("/test/admin")
-    @RolesAllowed("ROLE_ADMINISTRATOR")
-    public ResponseEntity<String> testAdmin() {
-        return ResponseEntity.ok("admin role test OK. " + buildHeaders());
-    }
-
-    @GetMapping("/test/user")
-    @RolesAllowed("ROLE_USER")
-    public ResponseEntity<String> testUser() {
-        return ResponseEntity.ok("user role test OK. " + buildHeaders());
-    }
-
-    private String buildHeaders() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(currentRequest.getHeaderNames(), 0), false)
-                .map(name -> String.format("%s=%s", name, currentRequest.getHeader(name)))
-                .collect(Collectors.joining(", "));
-    }
 }

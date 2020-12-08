@@ -18,11 +18,17 @@
  */
 package org.georchestra.datafeeder.api;
 
-import org.georchestra.datafeeder.service.FileStorageService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import java.util.List;
 
-public @Controller class FileUploadController {
+import javax.annotation.security.RolesAllowed;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
+
+public @Controller class FileUploadApiController implements FileUploadApi {
 
 //    private final FileStorageService storageService;
 //
@@ -30,4 +36,9 @@ public @Controller class FileUploadController {
 //        this.storageService = storageService;
 //    }
 
+    @RolesAllowed("ROLE_USER")
+    public @Override ResponseEntity<Void> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> filename) {
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+
+    }
 }
