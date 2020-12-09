@@ -113,6 +113,11 @@ paths:
       operationId: publish
       parameters:
       - $ref: '#/components/parameters/jobId'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublishRequest'
       responses:
         202:
           $ref: '#/components/responses/PublishStatusResponse'
