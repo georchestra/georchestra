@@ -56,7 +56,7 @@ paths:
     get:
       tags:
         - File Upload
-      description: 'Poll the status of a given upload job by id'
+      description: 'Poll the status of all the upload jobs. Access restricted to administrators'
       operationId: findAllUploadJobs
       responses:
         200:
@@ -70,7 +70,7 @@ paths:
     get:
       tags:
         - File Upload
-      description: 'Poll the status of all the upload jobs. Access restricted to administrators'
+      description: 'Poll the status of a given upload job by id'
       operationId: findUploadJob
       parameters:
       - $ref: '#/components/parameters/jobId'
