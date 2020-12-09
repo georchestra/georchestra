@@ -36,8 +36,10 @@ public @Controller class FileUploadApiController implements FileUploadApi {
 //        this.storageService = storageService;
 //    }
 
+    @Override
     @RolesAllowed("ROLE_USER")
-    public @Override ResponseEntity<Void> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> filename) {
+    public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> filename) {
+
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

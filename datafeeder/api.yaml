@@ -4,13 +4,15 @@ servers:
     url: https://sample.url/import
 info:
   title: DataFeeder API
-  description: This API covers the administration features of the application.
+  description: This API covers dataset upload and publishing features of the application
   version: "1.0.0"
   contact:
     email: psc@georchestra.org
 tags:
   - name: File Upload
     description: 'API to control jobs related to form based file upload of geospatial datasets'
+  - name: Data Publishing
+    description: 'API to control jobs related to publishing geospatial datasets previously uploaded'
 
 paths:
   /upload:
@@ -32,8 +34,309 @@ paths:
                     format: binary
       responses:
         202:
-          description: 'Accepted. Task accepted and running asynchronously'
+          $ref: '#/components/responses/UploadStatusResponse'
         401:
           description: 'Not authenticated'
         403:
           description: 'Forbidden. User has no prviledges to upload files'
+    get:
+      tags:
+        - File Upload
+      description: 'Poll the status of all the upload jobs owned by the calling user'
+      operationId: findUserUploadJobs
+      responses:
+        200:
+          $ref: '#/components/responses/UploadStatusResponseList'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges to query other users jobs'
+
+  /upload/all:
+    get:
+      tags:
+        - File Upload
+      description: 'Poll the status of a given upload job by id'
+      operationId: findAllUploadJobs
+      responses:
+        200:
+          $ref: '#/components/responses/UploadStatusResponseList'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges to upload files'
+  
+  /upload/{jobId}:
+    get:
+      tags:
+        - File Upload
+      description: 'Poll the status of all the upload jobs. Access restricted to administrators'
+      operationId: findUploadJob
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/UploadStatusResponse'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges access the requested job'
+    delete:
+      tags:
+        - File Upload
+      description: 'Remove a job and all its resources (e.g. temporary files). Does not unpublish. Use abort=true to abort a running analysis or publishing job'
+      operationId: removeJob
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      - name: abort
+        in: query
+        description: If true, abort the dataset analysis or publishing, if running. Defaults to false
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        202:
+          description: 'Job removed.'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges access the requested job'
+        409:
+          description: 'Conflict. The abort=true parameter was not provided and the analysis or publishing job is running'
+  
+  /upload/{jobId}/publish:
+    post:
+      tags:
+        - Data Publishing
+      description: 'Publish the dataset(s) from the given upload'
+      operationId: publish
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      responses:
+        202:
+          $ref: '#/components/responses/PublishStatusResponse'
+        400:
+          description: 'Bad request. Some parameter is not acceptable or missing'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges access the requested job'
+        409:
+          description: 'Conflict. The upload is not ready for publishing.'
+    get:
+      tags:
+        - Data Publishing
+      description: 'Poll the publishing staus of the given job'
+      operationId: getPublishingStatus
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      responses:
+        200:
+          $ref: '#/components/responses/PublishStatusResponse'
+        400:
+          description: 'Bad request. Some parameter is not acceptable or missing'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no prviledges access the requested job'
+
+components:
+  parameters:
+    jobId:
+      name: jobId
+      in: path
+      description: Unique job identifier
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    UploadStatusResponseList:
+      description: Processing status of a list of dataset upload job
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UploadJobStatus'
+    UploadStatusResponse:
+      description: Processing status of a dataset upload job
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UploadJobStatus'
+    PublishStatusResponse:
+      description: Processing status of a dataset publishing job
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PublishJobStatus'
+  schemas:
+    UploadJobStatus:
+      type: object
+      description: Describes the status of processing a dataset upload
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          description: Identifier for the upload processing job
+        progress:
+          description: Estimated completion progress, from 0 to 1.
+          type: number
+          format: double
+          minimum: 0.0
+          maximum: 1.0
+          default: 0.0
+        status:
+          type: string
+          enum: [PENDING, ANALYZING, DONE, ERROR]
+          description: aggregate of status of all datasets in the upload package. If any dataset status is PENDING, ANALYZING, or ERROR, that's the job's status.
+                       If at least one dataset status is ERROR, then the job status is ERROR. If no datasets where recognized in the upload, status is ERROR. 
+        error:
+          type: string
+          description: short description of the error that prevents the job to complete successfully
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetUploadStatus'
+
+    DatasetUploadStatus:
+      type: object
+      description: Describes a recognized uploaded dataset
+      properties:
+        name:
+          type: string
+          description: Name of the dataset in the uploaded package
+        status:
+          type: string
+          enum: [PENDING, ANALYZING, DONE, ERROR]
+        error:
+          type: string
+          description: short description of the error that prevents the dataset to be analysed
+        sampleProperties:
+          type: object
+          additionalProperties: true
+          description: Associative array of property names and values for the sample feature
+        sampleGeometryWKT:
+          type: string
+          description: Well Known Text representation of an exemplar geometry extracted from the dataset
+        nativeBounds:
+          $ref: '#/components/schemas/BoundingBox'
+        encoding:
+          type: string
+          description: detected charset
+    
+    CRS:
+      type: object
+      description: Coordinate Reference System
+      properties:
+        srs:
+          type: string
+          description: Coordinate Reference System's EPSG identifier 
+        WKT:
+          type: string
+          description: Coordinate Reference System's Well Known Text representation
+    BoundingBox:
+      type: object
+      properties:
+        crs:
+          $ref: '#/components/schemas/CRS'
+        minx:
+          type: number
+          format: double
+        maxx:
+          type: number
+          format: double
+        miny:
+          type: number
+          format: double
+        maxy:
+          type: number
+          format: double
+
+    PublishRequest:
+      type: object
+      properties:
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetPublishRequest'
+
+    DatasetPublishRequest:
+      type: object
+      properties:
+        nativeName:
+          type: string
+        publishedName:
+          type: string
+        title:
+          type: string
+        abstract:
+          type: string
+        encoding:
+          type: string
+        tags:
+          type: array
+          items:           
+            type: string
+        crs:
+          description: Optional, Coordinate Reference System to publish the dataset in
+          $ref: '#/components/schemas/CRS'
+        creationDate:
+          description: Dataset creation date, in RFC3339 format
+          type: string
+          format: date
+          example: 2017-07-21
+        scale:
+          description: Optional, scale the data was created for (e.g. 500000 for a 1:500000 scale)
+          type: number
+          format: double
+          example: 25000
+        creationProcessDescription:
+          type: string
+
+    PublishJobStatus:
+      type: object
+      description: Describes the processing status of a publishing job for a given upload
+      properties:
+        jobId:
+          type: string
+          format: uuid
+          description: Identifier for the upload processing job
+        progress:
+          description: Estimated completion progress, from 0 to 1.
+          type: number
+          format: double
+          minimum: 0.0
+          maximum: 1.0
+          default: 0.0
+        status:
+          type: string
+          enum: [PENDING, RUNNING, DONE, ERROR]
+        error:
+          type: string
+          description: short description of the error that prevents the job to complete successfully
+        datasets:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetPublishingStatus'
+
+    DatasetPublishingStatus:
+      type: object
+      description: Describes the status of publishing a given dataset
+      properties:
+        nativeName:
+          type: string
+          description: Name of the dataset in the uploaded package
+        publishedName:
+          type: string
+          description: Name of the dataset in the uploaded package
+        title:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, IMPORTING, PUBLISHING, DONE, ERROR]
+        error:
+          type: string
+          description: short description of the error that prevents the dataset to be published
