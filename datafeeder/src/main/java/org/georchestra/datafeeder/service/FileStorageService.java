@@ -18,28 +18,80 @@
  */
 package org.georchestra.datafeeder.service;
 
-import java.time.Instant;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
 
+import org.springframework.util.Assert;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.Data;
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.NonNull;
 
-public interface FileStorageService {
+public class FileStorageService {
 
-    public static enum UploadStatus {
-        UPLOADING, FAILED, COMPLETE
+    private Path baseDirectory;
+
+    public FileStorageService(@NonNull Path baseDirectory) {
+        this.baseDirectory = baseDirectory;
+        Assert.isTrue(Files.isDirectory(baseDirectory), baseDirectory + " is not a directory");
+        Assert.isTrue(Files.isWritable(baseDirectory), baseDirectory + " is not writable");
     }
 
-    public static @Data class StoredFileInfo {
-        private @NonNull String id;
-        private @NonNull String fileName;
-        private @NonNull String location;
-        private @NonNull Instant uploadTime;
-        private @NonNull UploadStatus status;
-        private String uploadedBy;
-        private long fileSize;
+    /**
+     */
+    public UUID saveUploads(@NonNull List<MultipartFile> received) throws IOException {
+        UploadPackage pack = initializePackage();
+        try {
+            for (MultipartFile mpf : received) {
+                addFileToPackage(pack, mpf);
+            }
+        } catch (IllegalStateException | IOException e) {
+            deletePackage(pack.getId());
+            throw e;
+        }
+        return pack.getId();
     }
 
-    StoredFileInfo store(MultipartFile file);
+    public void addFileToPackage(@NonNull UploadPackage pack, @NonNull MultipartFile mpf) throws IOException {
+        String fileName = mpf.getName();
+        File dest = pack.resolve(fileName).toFile();
+        mpf.transferTo(dest);
+        if (pack.isArchive(fileName)) {
+            pack.unpack(fileName);
+        }
+    }
+
+    public UploadPackage initializePackage() throws IOException {
+        UUID packageId = UUID.randomUUID();
+        Path root = resolve(packageId);
+        Files.createDirectory(root);
+        return new UploadPackage(this, packageId);
+    }
+
+    public UploadPackage find(@NonNull UUID packageId) throws IOException {
+        Path path = resolve(packageId);
+        if (!Files.isDirectory(path)) {
+            throw new FileNotFoundException("Package " + packageId + " does not exist");
+        }
+        return new UploadPackage(this, packageId);
+    }
+
+    public void deletePackage(@NonNull UUID packageId) {
+        File root = resolve(packageId).toFile();
+        if (root.exists()) {
+            FileSystemUtils.deleteRecursively(root);
+        }
+    }
+
+    @VisibleForTesting
+    Path resolve(@NonNull UUID id) {
+        return baseDirectory.resolve(id.toString());
+    }
 }

@@ -16,15 +16,8 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.NativeWebRequest;
-
-@RequestMapping(path = "/import")
-public @Controller class DataImportWizardController {
-
-    private @Autowired NativeWebRequest currentRequest;
+public enum UploadStatus {
+    PENDING, ANALYZING, DONE, ERROR;
 }

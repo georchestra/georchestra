@@ -17,20 +17,41 @@
     <openapi-generator-maven-plugin.version>4.3.1</openapi-generator-maven-plugin.version>
     <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     <swagger.version>1.5.21</swagger.version>
-    <springfox-version>2.9.2</springfox-version>
+    <springfox.version>2.9.2</springfox.version>
+    <mapstruct.version>1.4.1.Final</mapstruct.version>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct</artifactId>
+        <version>${mapstruct.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct-processor</artifactId>
+        <version>${mapstruct.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-vfs2</artifactId>
+        <version>2.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-compress</artifactId>
+        <version>1.20</version>
+      </dependency>
       <!--SpringFox dependencies -->
       <dependency>
         <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger2</artifactId>
-        <version>${springfox-version}</version>
+        <version>${springfox.version}</version>
       </dependency>
       <dependency>
         <groupId>io.springfox</groupId>
         <artifactId>springfox-swagger-ui</artifactId>
-        <version>${springfox-version}</version>
+        <version>${springfox.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.xml.bind</groupId>
@@ -40,6 +61,7 @@
       <dependency>
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>2.11.3</version>
       </dependency>
       <dependency>
         <groupId>org.openapitools</groupId>
@@ -55,7 +77,23 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-batch</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-vfs2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
     </dependency>
     <!--SpringFox dependencies -->
     <dependency>
@@ -90,6 +128,11 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.5.13</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.batch</groupId>
+      <artifactId>spring-batch-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -159,10 +202,39 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/openapi/src</source>
+                <source>${project.build.directory}/generated-sources/mapstruct</source>
               </sources>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <generatedSourcesDirectory>${project.build.directory}/generated-sources/mapstruct</generatedSourcesDirectory>
+        </configuration>
       </plugin>
     </plugins>
   </build>

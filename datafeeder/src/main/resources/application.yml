@@ -1,28 +1,35 @@
 spring:
   profiles.active: georchestra
   application.name: datafeeder-service
-  servlet:
-    # configuration properties for javax.servlet.MultipartConfigElement
+  http:
+    # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
+    # spring 1.4+ style
     multipart:
-      # maximum size allowed for uploaded files.
       max-file-size: ${datafeeder.file-upload.max-file-size}
-      # maximum size allowed for multipart/form-data requests
       max-request-size: ${datafeeder.file-upload.max-request-size}
-      # size threshold after which files will be written to disk.
       file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
-      # directory location where files will be stored.
-      location:  ${datafeeder.file-upload.location}
+      location:  ${datafeeder.file-upload.temporary-location}
+  servlet:
+    # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
+    # spring 2.x style, for forward compatibility
+    multipart:
+      max-file-size: ${datafeeder.file-upload.max-file-size}
+      max-request-size: ${datafeeder.file-upload.max-request-size}
+      file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
+      location:  ${datafeeder.file-upload.temporary-location}
 
 datafeeder:
   file-upload:
-    # maximum size allowed for uploaded files.
-    max-file-size: ${file-upload.max-file-size:-1}
-    # maximum size allowed for multipart/form-data requests
-    max-request-size: ${file-upload.max-request-size:-1}
+    # maximum size allowed for uploaded files. (e.g. 128MB, GB can't be used, only KB or MB)
+    max-file-size: ${file-upload.max-file-size:30MB}
+    # maximum size allowed for multipart/form-data requests (e.g. 128MB, GB can't be used, only KB or MB)
+    max-request-size: ${file-upload.max-request-size:256MB}
     # size threshold after which files will be written to disk.
-    file-size-threshold: ${file-upload.max-size-threshold:}
+    file-size-threshold: ${file-upload.max-size-threshold:1MB}
+    # directory location where files will be stored by the servlet container once the request exceeds the {@link #fileSizeThreshold}
+    temporary-location: ${file-upload.temporary-location:${java.io.tmpdir}/datafeeder/tmp}
     # directory location where files will be stored.
-    location: ${file-upload.location:}
+    persistent-location: ${file-upload.persistent-location:${java.io.tmpdir}/datafeeder/uploads}
 
 ---
 spring:
