@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.test;
+package org.georchestra.datafeeder.model;
 
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
 
-public @Configuration class BaseTestConfig {
-
+public @Data class CoordinateReferenceSystemMetadata {
+    private String srs;
+    private String WKT;
 }

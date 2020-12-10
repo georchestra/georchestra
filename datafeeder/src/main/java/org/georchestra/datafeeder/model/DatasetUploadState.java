@@ -16,10 +16,21 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.test;
+package org.georchestra.datafeeder.model;
 
-import org.springframework.context.annotation.Configuration;
+import java.util.Map;
 
-public @Configuration class BaseTestConfig {
+import org.georchestra.datafeeder.api.BoundingBox;
 
+import lombok.Data;
+
+public @Data class DatasetUploadState {
+    private String name;
+
+    private UploadStatus status;
+    private String error;
+    private Map<String, Object> sampleProperties;
+    private String sampleGeometryWKT;
+    private BoundingBox nativeBounds;
+    private String encoding;
 }

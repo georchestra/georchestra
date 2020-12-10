@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2020 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.georchestra.config.security;
 
 import static org.junit.Assert.assertEquals;
@@ -6,14 +24,18 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
+import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,12 +53,16 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see SecurityTestController
  */
 @SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration
+@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
 public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
 
+    private @MockBean DataUploadService dataUploadService;
+    private @MockBean FileStorageService fileStorageService;
+
     private @LocalServerPort int port;
+
     private @Autowired TestRestTemplate template;
 
     private String baseURI;

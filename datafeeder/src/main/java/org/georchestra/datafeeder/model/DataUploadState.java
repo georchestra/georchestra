@@ -16,10 +16,19 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.test;
+package org.georchestra.datafeeder.model;
 
-import org.springframework.context.annotation.Configuration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-public @Configuration class BaseTestConfig {
+import lombok.Data;
 
+public @Data class DataUploadState {
+
+    private UUID jobId;
+    private double progress;
+    private UploadStatus status;
+    private String error;
+    private List<DatasetUploadState> datasets = new ArrayList<>();
 }

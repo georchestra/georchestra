@@ -16,10 +16,14 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.test;
+package org.georchestra.datafeeder.api;
 
-import org.springframework.context.annotation.Configuration;
+import org.georchestra.datafeeder.model.DataUploadState;
+import org.mapstruct.Mapper;
 
-public @Configuration class BaseTestConfig {
+@Mapper(componentModel = "spring")
+public interface ApiResponseMapper {
+
+    UploadJobStatus toApi(DataUploadState state);
 
 }
