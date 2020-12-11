@@ -186,7 +186,7 @@ var isReferentOrSuperUser = ${isReferentOrSuperUser};</script>
       <legend>
         <s:message code="editUserDetailsForm.organisation"/> «{{org.name}}»
 				<a ng-if="isReferentOrSuperUser"
-					 href="/console/account/orgdetails"
+					 href="/console/account/orgdetails" target="_self"
 					 title="<s:message code="editUserDetailsForm.editOrg"/>"
 					 class="small pull-right" aria-label="<s:message code="editUserDetailsForm.editOrg"/>"
 				>
