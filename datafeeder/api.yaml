@@ -38,7 +38,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges to upload files'
+          description: 'Forbidden. User has no priviledges to upload files'
     get:
       tags:
         - File Upload
@@ -50,7 +50,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges to query other users jobs'
+          description: 'Forbidden. User has no priviledges to query other users jobs'
 
   /upload/all:
     get:
@@ -64,7 +64,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges to upload files'
+          description: 'Forbidden. User has no priviledges to upload files'
   
   /upload/{jobId}:
     get:
@@ -80,7 +80,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges access the requested job'
+          description: 'Forbidden. User has no priviledges access the requested job'
     delete:
       tags:
         - File Upload
@@ -101,7 +101,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges access the requested job'
+          description: 'Forbidden. User has no priviledges access the requested job'
         409:
           description: 'Conflict. The abort=true parameter was not provided and the analysis or publishing job is running'
   
@@ -126,7 +126,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges access the requested job'
+          description: 'Forbidden. User has no priviledges access the requested job'
         409:
           description: 'Conflict. The upload is not ready for publishing.'
     get:
@@ -144,7 +144,7 @@ paths:
         401:
           description: 'Not authenticated'
         403:
-          description: 'Forbidden. User has no prviledges access the requested job'
+          description: 'Forbidden. User has no priviledges access the requested job'
 
 components:
   parameters:
