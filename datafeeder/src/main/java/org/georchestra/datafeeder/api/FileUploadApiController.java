@@ -61,7 +61,6 @@ public @Controller class FileUploadApiController implements FileUploadApi {
         DataUploadState state = uploadService.findJobState(uploadId);
         UploadJobStatus response = mapper.toApi(state);
         return ResponseEntity.ok(response);
-
     }
 
     @Override
@@ -103,6 +102,11 @@ public @Controller class FileUploadApiController implements FileUploadApi {
             @PathVariable("jobId") UUID jobId, //
             @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
 
+        if (Boolean.TRUE.equals(abort)) {
+            this.uploadService.abortAndRemove(jobId);
+        } else {
+            this.uploadService.remove(jobId);
+        }
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
