@@ -1,6 +1,6 @@
 # Docker related targets
 
-GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,authkey,mapstore2
+GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,authkey,mapstore2,mbstyle,ogcapi,web-resource,flatgeobuf
 BTAG=latest
 
 docker-pull-jetty:
@@ -61,15 +61,15 @@ docker-build: docker-build-gn3 docker-build-geoserver docker-build-georchestra
 # WAR related targets
 
 war-build-geoserver: build-deps
-	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES} ; \
-	cd ../../..; \
+	cd geoserver; \
+	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
+	cd ..; \
 	mvn clean install -pl geoserver/webapp -P${GEOSERVER_EXTENSION_PROFILES}
 
 war-build-geoserver-geofence: build-deps
-	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -DskipTests -Dfmt.skip=true -Dserver=geofence-generic -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
-	cd ../../..; \
+	cd geoserver; \
+	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES},geofence; \
+	cd ..; \
 	mvn clean install -pl geoserver/webapp -P${GEOSERVER_EXTENSION_PROFILES}
 
 war-build-geowebcache: build-deps
