@@ -67,4 +67,8 @@ public class DataFeederServiceConfiguration {
     public @Bean DataUploadService dataUploadService() {
         return new DataUploadService();
     }
+
+    public @Bean DatasetsService datasetsService() {
+        return new DatasetsService();
+    }
 }
