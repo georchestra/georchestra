@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
@@ -42,6 +43,34 @@ public class DataFeederServiceConfiguration {
     private @Autowired DataFeederConfigurationProperties properties;
 
     public @Bean FileStorageService fileStorageService() {
+        final Path baseDirectory = createPersistencyDirectoryIfNeeded();
+        createTemporaryDirectoryIfNeeded();
+        return new FileStorageService(baseDirectory);
+    }
+
+    private void createTemporaryDirectoryIfNeeded() {
+        FileUploadConfig fileUploadConfig = properties.getFileUpload();
+        String tmpDir = fileUploadConfig.getTemporaryLocation();
+        if (null == tmpDir || tmpDir.isEmpty()) {
+            return;
+        }
+        Path tmp = Paths.get(tmpDir);
+        if (!Files.isDirectory(tmp)) {
+            log.warn(
+                    "Temporary files directory does not exist, creating from property datafeeder.file-upload.temporary-location={}",
+                    tmpDir);
+            try {
+                Files.createDirectories(tmp);
+            } catch (IOException e) {
+                String msg = String.format(
+                        "Unable to create temporary files directory from property datafeeder.file-upload.temporary-location=%s",
+                        tmpDir);
+                throw new BeanExpressionException(msg, e);
+            }
+        }
+    }
+
+    private Path createPersistencyDirectoryIfNeeded() {
         FileUploadConfig fileUploadConfig = properties.getFileUpload();
         Path baseDirectory = fileUploadConfig.getPersistentLocation();
         if (null == baseDirectory || baseDirectory.toString().isEmpty()) {
@@ -61,7 +90,7 @@ public class DataFeederServiceConfiguration {
                 throw new BeanExpressionException(msg, e);
             }
         }
-        return new FileStorageService(baseDirectory);
+        return baseDirectory;
     }
 
     public @Bean DataUploadService dataUploadService() {
