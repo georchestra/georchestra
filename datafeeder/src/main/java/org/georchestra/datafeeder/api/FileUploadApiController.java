@@ -42,9 +42,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.Api;
 import lombok.NonNull;
 
-public @Controller class FileUploadApiController implements FileUploadApi {
+@Controller
+@Api(tags = { "File Upload" }) // hides the empty file-upload-api-controller entry in swagger-ui.html
+public class FileUploadApiController implements FileUploadApi {
 
     private @Autowired NativeWebRequest currentRequest;
     private @Autowired FileStorageService storageService;

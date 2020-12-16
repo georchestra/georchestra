@@ -30,5 +30,4 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         jsr250Enabled = true // enable @RolesAllowed annotation in API methods
 )
 public @Configuration class DataFeederApiConfiguration extends GlobalMethodSecurityConfiguration {
-
 }

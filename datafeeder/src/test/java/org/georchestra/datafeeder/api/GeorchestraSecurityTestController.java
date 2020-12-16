@@ -29,10 +29,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 /**
  *
  * @see GeorchestraSecurityProxyAuthenticationConfigurationTest
  */
+@ApiIgnore
 @RequestMapping(path = "/test/security/georchestra")
 public @Controller class GeorchestraSecurityTestController {
 
