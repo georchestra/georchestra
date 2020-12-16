@@ -20,10 +20,11 @@ package org.georchestra.datafeeder.app;
 
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
+import org.georchestra.datafeeder.swagger.SwaggerDocConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class })
+@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class, SwaggerDocConfig.class })
 public @Configuration class DataFeederApplicationConfiguration {
 
 }

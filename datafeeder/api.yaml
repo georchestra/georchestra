@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers:
   - description: SwaggerHub API Auto Mocking
-    url: https://sample.url/import
+    url: https://localhost:8080/
 info:
   title: DataFeeder API
   description: This API covers dataset upload and publishing features of the application

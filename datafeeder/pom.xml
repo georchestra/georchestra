@@ -15,7 +15,6 @@
     <context.name>${project.artifactId}</context.name>
     <packageDatadirScmVersion>datafeeder</packageDatadirScmVersion>
     <openapi-generator-maven-plugin.version>4.3.1</openapi-generator-maven-plugin.version>
-    <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
     <swagger.version>1.5.21</swagger.version>
     <springfox.version>2.9.2</springfox.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
