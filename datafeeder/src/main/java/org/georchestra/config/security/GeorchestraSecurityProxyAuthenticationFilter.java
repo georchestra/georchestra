@@ -35,9 +35,6 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
 
     @Override
     protected GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        for (String h : Collections.list(request.getHeaderNames())) {
-            System.err.printf("%s=%s%n", h, request.getHeader(h));
-        }
         final boolean preAuthenticated = Boolean.parseBoolean(request.getHeader("sec-proxy"));
         if (preAuthenticated) {
             String username = request.getHeader("sec-username");
