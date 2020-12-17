@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
@@ -62,6 +63,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     private @MockBean FileStorageService fileStorageService;
 
     private @LocalServerPort int port;
+    private @Value("${server.context-path}") String contextPath;
 
     private @Autowired TestRestTemplate template;
 
@@ -72,7 +74,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     private ResponseEntity<GeorchestraUserDetails> response;
 
     public @Before void before() {
-        baseURI = "http://localhost:" + port + "/test/security/georchestra";
+        baseURI = "http://localhost:" + port + contextPath + "/test/security/georchestra";
 
         requestHeaders = new HttpHeaders();
         requestHeaders.set("sec-proxy", "true");

@@ -19,6 +19,7 @@
 package org.georchestra.datafeeder.config;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -30,7 +31,7 @@ import lombok.Data;
  */
 public @Data class DataFeederConfigurationProperties {
 
-    private FileUploadConfig fileUpload;
+    private FileUploadConfig fileUpload = new FileUploadConfig();
 
     public static @Data class FileUploadConfig {
         /** maximum size allowed for uploaded files. */
@@ -49,6 +50,6 @@ public @Data class DataFeederConfigurationProperties {
         private String temporaryLocation = "";
 
         /** directory location where files will be stored. */
-        private Path persistentLocation;
+        private Path persistentLocation = Paths.get("/tmp/datafeeder/uploads");
     }
 }
