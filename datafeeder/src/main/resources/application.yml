@@ -1,6 +1,10 @@
+server:
+  context-path: /import
+
 spring:
   profiles.active: georchestra
-  application.name: datafeeder-service
+  application:
+    name: datafeeder-service
   http:
     # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
     # spring 1.4+ style
