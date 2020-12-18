@@ -8,7 +8,7 @@ There are major and patch releases:
  * Major releases are supported during 12 months.
  * Migrating from one patch release to another does not require any configuration change. It is highly recommended.
 
-Have a look at the [version numbering scheme](releases.md) and the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md) for more information.
+Have a look at the [version numbering scheme](releases.md) and the [release notes](https://github.com/georchestra/georchestra/releases) for more information.
 
 
 ## Install
