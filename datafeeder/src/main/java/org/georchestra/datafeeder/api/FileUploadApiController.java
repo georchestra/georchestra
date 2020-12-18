@@ -47,6 +47,7 @@ import lombok.NonNull;
 
 @Controller
 @Api(tags = { "File Upload" }) // hides the empty file-upload-api-controller entry in swagger-ui.html
+@RolesAllowed({ "ROLE_USER", "ROLE_ADMINISTRATOR" })
 public class FileUploadApiController implements FileUploadApi {
 
     private @Autowired NativeWebRequest currentRequest;
@@ -59,7 +60,6 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    @RolesAllowed("ROLE_USER")
     public ResponseEntity<UploadJobStatus> findUploadJob(@PathVariable("jobId") UUID uploadId) {
         DataUploadState state = uploadService.findJobState(uploadId);
         UploadJobStatus response = mapper.toApi(state);
@@ -67,19 +67,18 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    @RolesAllowed("ROLE_USER")
     public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> files) {
         UUID uploadId;
+        DataUploadState state;
         try {
             uploadId = storageService.saveUploads(files);
-            uploadService.analyze(uploadId);
+            state = uploadService.analyze(uploadId);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);// TODO translate to ResponseStatusException
         }
-        DataUploadState state = uploadService.findJobState(uploadId);
         UploadJobStatus response = mapper.toApi(state);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.accepted().body(response);
     }
 
     @Override
@@ -91,7 +90,6 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    @RolesAllowed("ROLE_USER")
     public ResponseEntity<List<UploadJobStatus>> findUserUploadJobs() {
         String userName = getUserName();
         List<DataUploadState> all = this.uploadService.findUserJobs(userName);
@@ -100,7 +98,6 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    @RolesAllowed("ROLE_USER")
     public ResponseEntity<Void> removeJob(//
             @PathVariable("jobId") UUID jobId, //
             @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
