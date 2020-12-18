@@ -19,11 +19,14 @@
 package org.georchestra.datafeeder.api;
 
 import org.georchestra.datafeeder.model.DataUploadState;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface ApiResponseMapper {
 
     UploadJobStatus toApi(DataUploadState state);
+
+    DatasetUploadStatus toApi(DatasetUploadState dataset);
 
 }

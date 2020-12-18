@@ -109,6 +109,7 @@ public class DataUploadService {
             Optional<Geometry> sampleGeometry = md.sampleGeometry();
             ds.setSampleGeometryWKT(sampleGeometry.map(Geometry::toText).orElse(null));
             ds.setSampleProperties(md.getSampleProperties());
+            ds.setFeatureCount(md.getFeatureCount());
             ds.setStatus(UploadStatus.ANALYZING);
         }
         return states;
@@ -118,15 +119,15 @@ public class DataUploadService {
         throw new UnsupportedOperationException("unimplemented");
     }
 
-    public List<DataUploadState> findUserJobs(String userName) {
+    public List<DataUploadState> findUserJobs(@NonNull String userName) {
         throw new UnsupportedOperationException("unimplemented");
     }
 
-    public void abortAndRemove(UUID jobId) {
+    public void abortAndRemove(@NonNull UUID jobId) {
         throw new UnsupportedOperationException("unimplemented");
     }
 
-    public void remove(UUID jobId) {
+    public void remove(@NonNull UUID jobId) {
         throw new UnsupportedOperationException("unimplemented");
     }
 }

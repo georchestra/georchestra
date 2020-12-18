@@ -20,7 +20,7 @@ package org.georchestra.datafeeder.model;
 
 import lombok.Data;
 
-public @Data class BoundingBox {
+public @Data class BoundingBoxMetadata {
     private CoordinateReferenceSystemMetadata crs;
     private Double minx;
     private Double maxx;

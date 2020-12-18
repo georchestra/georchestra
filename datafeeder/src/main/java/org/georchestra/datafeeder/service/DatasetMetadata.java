@@ -3,7 +3,7 @@ package org.georchestra.datafeeder.service;
 import java.util.Map;
 import java.util.Optional;
 
-import org.georchestra.datafeeder.api.BoundingBox;
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.locationtech.jts.geom.Geometry;
 
 import lombok.Data;
@@ -13,7 +13,8 @@ public class DatasetMetadata {
 
     private String encoding;
     private String typeName;
-    private BoundingBox nativeBounds;
+    private Integer featureCount;
+    private BoundingBoxMetadata nativeBounds;
     private Geometry sampleGeometry;
     private Map<String, Object> sampleProperties;
 

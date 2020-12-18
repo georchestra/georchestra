@@ -20,8 +20,6 @@ package org.georchestra.datafeeder.model;
 
 import java.util.Map;
 
-import org.georchestra.datafeeder.api.BoundingBox;
-
 import lombok.Data;
 
 public @Data class DatasetUploadState {
@@ -29,8 +27,10 @@ public @Data class DatasetUploadState {
 
     private UploadStatus status;
     private String error;
+    private Integer featureCount;
     private Map<String, Object> sampleProperties;
     private String sampleGeometryWKT;
-    private BoundingBox nativeBounds;
+    private BoundingBoxMetadata nativeBounds;
     private String encoding;
+    private CoordinateReferenceSystemMetadata nativeCrs;
 }
