@@ -77,6 +77,17 @@
         <artifactId>jackson-databind-nullable</artifactId>
         <version>0.1.0</version>
       </dependency>
+      <!-- test deps -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-sample-data</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>4.0.3</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -157,6 +168,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <!-- test scoped for spring boot's (1.5.19.RELEASE) TestRestTemplate pass request headers (sec-* headers ignored with 
         default java client) -->
       <groupId>org.apache.httpcomponents</groupId>
@@ -167,6 +183,16 @@
     <dependency>
       <groupId>org.springframework.batch</groupId>
       <artifactId>spring-batch-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -1,0 +1,123 @@
+/*
+ * Copyright (C) 2020 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.georchestra.datafeeder.test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.geotools.TestData;
+import org.junit.rules.ExternalResource;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.common.io.ByteStreams;
+
+import lombok.NonNull;
+
+public class MultipartTestSupport extends ExternalResource {
+
+    public List<MultipartFile> archSitesShapefile() {
+        return loadGeoToolsTestFiles("shapes/archsites.shp", "shapes/archsites.dbf", "shapes/archsites.prj",
+                "shapes/archsites.shx");
+    }
+
+    public List<MultipartFile> bugSitesShapefile() {
+        return loadGeoToolsTestFiles("shapes/bugsites.shp", "shapes/bugsites.dbf", "shapes/bugsites.prj",
+                "shapes/bugsites.shx");
+    }
+
+    public List<MultipartFile> roadsShapefile() {
+        return loadGeoToolsTestFiles("shapes/roads.shp", "shapes/roads.dbf", "shapes/roads.prj", "shapes/roads.shx");
+    }
+
+    public List<MultipartFile> statePopShapefile() {
+        return loadGeoToolsTestFiles("shapes/statepop.shp", "shapes/statepop.dbf", "shapes/statepop.prj",
+                "shapes/statepop.shx");
+    }
+
+    // test("shapes/chinese_poly.shp", Charset.forName("GB18030"));
+    public List<MultipartFile> chinesePolyShapefile() {
+        return loadGeoToolsTestFiles("shapes/chinese_poly.shp", "shapes/chinese_poly.dbf", "shapes/chinese_poly.prj",
+                "shapes/chinese_poly.shx");
+    }
+
+    private List<MultipartFile> loadGeoToolsTestFiles(String... names) {
+        List<MultipartFile> files = new ArrayList<>();
+        for (String name : names) {
+            try {
+                files.add(loadGeoToolsTestFile(name));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return files;
+    }
+
+    private MultipartFile loadGeoToolsTestFile(String testDataPath) throws IOException {
+        try (InputStream in = TestData.openStream(testDataPath)) {
+            byte[] contents = ByteStreams.toByteArray(in);
+            String name = Paths.get(testDataPath).getFileName().toString();
+            return createMultipartFile(name, contents);
+        }
+    }
+
+    public MultipartFile createFakeFile(@NonNull String name, int fileSize) {
+        byte[] content = createContents(fileSize);
+        return createMultipartFile(name, content);
+    }
+
+    public MultipartFile createMultipartFile(String name, byte[] content) {
+        String contentType = null;
+        String originalFilename = null;
+        return new MockMultipartFile(name, originalFilename, contentType, content);
+    }
+
+    public byte[] createContents(int fileSize) {
+        byte[] content = new byte[fileSize];
+        for (int i = 0; i < fileSize; content[i] = (byte) i, i++)
+            ;
+        return content;
+    }
+
+    @SafeVarargs
+    public final MultipartFile createZipFile(String zipfileName, List<MultipartFile>... filesets) throws IOException {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+            for (List<MultipartFile> files : filesets) {
+                for (MultipartFile zipped : files) {
+                    String name = zipped.getName();
+                    byte[] content = zipped.getBytes();
+                    ZipEntry entry = new ZipEntry(name);
+                    zos.putNextEntry(entry);
+                    zos.write(content);
+                    zos.closeEntry();
+                }
+            }
+        }
+        byte[] zipfileContent = baos.toByteArray();
+        return createMultipartFile(zipfileName, zipfileContent);
+    }
+}

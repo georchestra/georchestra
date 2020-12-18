@@ -33,6 +33,7 @@ import org.georchestra.datafeeder.model.UploadStatus;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -53,9 +54,22 @@ public class DataUploadService {
         return pack;
     }
 
-    public void analyze(UUID uploadId) {
-        getUploadPack(uploadId);
+    /**
+     * Asynchronously starts the analysis process for the upload pack given by its
+     * id, returns immediately with {@link DataUploadState#getStatus() status}
+     * {@link UploadStatus#PENDING} and an empty
+     * {@link DataUploadState#getDatasets() datasets} list.
+     * 
+     * @param uploadId
+     * @return
+     */
+    public DataUploadState analyze(@NonNull UUID uploadId) {
+        UploadPackage uploadPack = getUploadPack(uploadId);
         log.warn("TODO: implement analyze, job " + uploadId);
+        DataUploadState state = new DataUploadState();
+        state.setJobId(uploadId);
+        state.setStatus(UploadStatus.PENDING);
+        return state;
     }
 
     public DataUploadState findJobState(UUID uploadId) {

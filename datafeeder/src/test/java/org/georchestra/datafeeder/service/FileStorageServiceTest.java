@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,23 +36,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
+import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.collect.Sets;
 
-import lombok.NonNull;
-
 public class FileStorageServiceTest {
 
     public @Rule TemporaryFolder tmp = new TemporaryFolder();
+    public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
     private FileStorageService service;
 
@@ -142,17 +138,17 @@ public class FileStorageServiceTest {
     }
 
     public @Test void testSaveUploadsSingleFile() throws IOException {
-        List<MultipartFile> received = Arrays.asList(createMultipartFile("test.geojson", 1024));
+        List<MultipartFile> received = Arrays.asList(multipartSupport.createFakeFile("test.geojson", 1024));
         UUID id = service.saveUploads(received);
         verifyUploads(id, received);
     }
 
     public @Test void testSaveUploadsMultipleFiles() throws IOException {
         List<MultipartFile> received = Arrays.asList(//
-                createMultipartFile("test.shp", 4096), //
-                createMultipartFile("test.shx", 1024), //
-                createMultipartFile("test.prj", 128), //
-                createMultipartFile("test.dbf", 1024 * 1024)//
+                multipartSupport.createFakeFile("test.shp", 4096), //
+                multipartSupport.createFakeFile("test.shx", 1024), //
+                multipartSupport.createFakeFile("test.prj", 128), //
+                multipartSupport.createFakeFile("test.dbf", 1024 * 1024)//
         );
         UUID id = service.saveUploads(received);
         verifyUploads(id, received);
@@ -160,19 +156,19 @@ public class FileStorageServiceTest {
 
     public @Test void testSaveUploadsZipFileIsExtractedAutomatically() throws IOException {
         List<MultipartFile> zipped = Arrays.asList(//
-                createMultipartFile("test.shp", 4096), //
-                createMultipartFile("test.shx", 1024), //
-                createMultipartFile("test.prj", 128), //
-                createMultipartFile("test.dbf", 1024 * 1024), //
+                multipartSupport.createFakeFile("test.shp", 4096), //
+                multipartSupport.createFakeFile("test.shx", 1024), //
+                multipartSupport.createFakeFile("test.prj", 128), //
+                multipartSupport.createFakeFile("test.dbf", 1024 * 1024), //
 
-                createMultipartFile("test2.shp", 2048), //
-                createMultipartFile("test2.shx", 512), //
-                createMultipartFile("test2.prj", 256), //
-                createMultipartFile("test2.dbf", 2 * 1024 * 1024), //
+                multipartSupport.createFakeFile("test2.shp", 2048), //
+                multipartSupport.createFakeFile("test2.shx", 512), //
+                multipartSupport.createFakeFile("test2.prj", 256), //
+                multipartSupport.createFakeFile("test2.dbf", 2 * 1024 * 1024), //
 
-                createMultipartFile("test3.geojson", 1024)//
+                multipartSupport.createFakeFile("test3.geojson", 1024)//
         );
-        MultipartFile zipFile = createZipFile("test.zip", zipped);
+        MultipartFile zipFile = multipartSupport.createZipFile("test.zip", zipped);
         final UUID id = service.saveUploads(Collections.singletonList(zipFile));
 
         List<MultipartFile> expected = new ArrayList<>(zipped);
@@ -195,39 +191,5 @@ public class FileStorageServiceTest {
             byte[] actualContent = Files.readAllBytes(path);
             assertArrayEquals(expectedContent, actualContent);
         }
-    }
-
-    private MultipartFile createMultipartFile(@NonNull String name, int fileSize) {
-        byte[] content = createContents(fileSize);
-        return createMultipartFile(name, content);
-    }
-
-    private MultipartFile createMultipartFile(String name, byte[] content) {
-        String contentType = null;
-        String originalFilename = null;
-        return new MockMultipartFile(name, originalFilename, contentType, content);
-    }
-
-    private byte[] createContents(int fileSize) {
-        byte[] content = new byte[fileSize];
-        for (int i = 0; i < fileSize; content[i] = (byte) i, i++)
-            ;
-        return content;
-    }
-
-    private MultipartFile createZipFile(String zipfileName, List<MultipartFile> files) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-            for (MultipartFile zipped : files) {
-                String name = zipped.getName();
-                byte[] content = zipped.getBytes();
-                ZipEntry entry = new ZipEntry(name);
-                zos.putNextEntry(entry);
-                zos.write(content);
-                zos.closeEntry();
-            }
-        }
-        byte[] zipfileContent = baos.toByteArray();
-        return createMultipartFile(zipfileName, zipfileContent);
     }
 }

@@ -96,7 +96,7 @@ paths:
           type: boolean
           default: false
       responses:
-        202:
+        204:
           description: 'Job removed.'
         401:
           description: 'Not authenticated'
@@ -115,7 +115,30 @@ paths:
       - $ref: '#/components/parameters/jobId'
       requestBody:
         content:
-          multipart/form-data:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishRequest'
+      responses:
+        202:
+          $ref: '#/components/responses/PublishStatusResponse'
+        400:
+          description: 'Bad request. Some parameter is not acceptable or missing'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no priviledges access the requested job'
+        409:
+          description: 'Conflict. The upload is not ready for publishing.'
+    put:
+      tags:
+        - Data Publishing
+      description: 'Save a draft state for the publication of the dataset(s) from the given upload'
+      operationId: saveDraft
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      requestBody:
+        content:
+          application/json:
             schema:
               $ref: '#/components/schemas/PublishRequest'
       responses:
