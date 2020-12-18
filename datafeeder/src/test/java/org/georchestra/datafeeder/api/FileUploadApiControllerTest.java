@@ -383,6 +383,8 @@ public class FileUploadApiControllerTest {
             assertNotNull(datasetState.getSampleGeometryWKT());
             assertNotNull(datasetState.getSampleProperties());
             assertFalse(datasetState.getSampleProperties().isEmpty());
+            assertNotNull(datasetState.getNativeCrs());
+            assertNotNull(datasetState.getNativeCrs().getWKT());
         } else if (ERROR == expectedStatus || ANALYZING == expectedStatus) {
             assertNull(datasetState.getEncoding());
             assertNull(datasetState.getError());
@@ -390,6 +392,7 @@ public class FileUploadApiControllerTest {
             assertNull(datasetState.getSampleGeometryWKT());
             assertNotNull(datasetState.getSampleProperties());
             assertTrue(datasetState.getSampleProperties().isEmpty());
+            assertNull(datasetState.getNativeCrs());
         }
     }
 

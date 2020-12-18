@@ -242,6 +242,10 @@ components:
         error:
           type: string
           description: short description of the error that prevents the dataset to be analysed
+        featureCount:
+          type: integer
+          format: int32
+          description: Number of features in the dataset
         sampleProperties:
           type: object
           additionalProperties: true
@@ -261,10 +265,11 @@ components:
       properties:
         srs:
           type: string
-          description: Coordinate Reference System's EPSG identifier 
+          description: Coordinate Reference System's EPSG identifier.
+                       Can be null if a matching reference system couldn't be found in the EPSG database. 
         WKT:
           type: string
-          description: Coordinate Reference System's Well Known Text representation
+          description: Coordinate Reference System's Well Known Text representation. Despite the 'srs' identifier being found or not, the WKT representation is still available.
     BoundingBox:
       type: object
       properties:
