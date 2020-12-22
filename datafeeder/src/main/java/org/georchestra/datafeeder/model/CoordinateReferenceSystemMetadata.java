@@ -18,9 +18,17 @@
  */
 package org.georchestra.datafeeder.model;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 import lombok.Data;
 
-public @Data class CoordinateReferenceSystemMetadata {
+@Data
+@Embeddable
+public class CoordinateReferenceSystemMetadata {
+    @Column(name = "crs_srs")
     private String srs;
+
+    @Column(name = "crs_wkt")
     private String WKT;
 }

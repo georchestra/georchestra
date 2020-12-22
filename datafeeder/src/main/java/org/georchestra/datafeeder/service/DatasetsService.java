@@ -1,6 +1,25 @@
+/*
+ * Copyright (C) 2020 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.georchestra.datafeeder.service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +33,7 @@ import javax.annotation.Nullable;
 
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
+import org.georchestra.datafeeder.service.DataSourceMetadata.DataSourceType;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
@@ -37,27 +57,45 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DatasetsService {
 
-    public List<DatasetMetadata> describe(@NonNull Path path) {
+    /**
+     * Default encoding of shapefiles' dbf by spec
+     */
+    private static final String DEFAULT_SHAPEFILE_ENCODING = "ISO-8859-1";
+
+    static {
+        System.setProperty("org.geotools.referencing.forceXY", "true");
+    }
+
+    public DataSourceMetadata describe(@NonNull Path path) {
+        final Map<String, String> parameters = resolveConnectionParameters(path);
+        DataSourceType dataSourceType = resolveDataSourceType(path, parameters);
         DataStore ds;
         try {
-            ds = loadDataStore(path);
+            ds = loadDataStore(parameters);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        List<DatasetMetadata> mds = new ArrayList<>();
         try {
             String[] typeNames = ds.getTypeNames();
-            List<DatasetMetadata> mds = new ArrayList<>(typeNames.length);
             for (String typeName : typeNames) {
                 SimpleFeatureSource fs = ds.getFeatureSource(typeName);
                 DatasetMetadata md = describe(fs);
+                if (isShapefile(path)) {
+                    md.setEncoding(DEFAULT_SHAPEFILE_ENCODING);
+                }
                 mds.add(md);
             }
-            return mds;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             ds.dispose();
         }
+        DataSourceMetadata dsm = new DataSourceMetadata();
+        dsm.setConnectionParameters(parameters);
+        dsm.setDatasets(mds);
+        dsm.setType(dataSourceType);
+        return dsm;
     }
 
     private DatasetMetadata describe(SimpleFeatureSource fs) throws IOException {
@@ -108,7 +146,7 @@ public class DatasetsService {
 
         String srs = null;
         // potentially slow, but doesn't matter for the sake of this analysis process
-        final boolean fullScan = true;
+        final boolean fullScan = false;
         try {
             srs = CRS.lookupIdentifier(crs, fullScan);
         } catch (FactoryException e) {
@@ -146,23 +184,44 @@ public class DatasetsService {
     }
 
     public @NonNull DataStore loadDataStore(@NonNull Path path) throws IOException {
-        Map<Object, Object> params = resolveConnectionParameters(path);
+        Map<String, String> params = resolveConnectionParameters(path);
+        return loadDataStore(params);
+    }
+
+    public @NonNull DataStore loadDataStore(Map<String, String> params) throws IOException {
         DataStore ds = DataStoreFinder.getDataStore(params);
         if (ds == null) {
-            throw new IOException("Unable to resolve dataset " + path.getFileName());
+            throw new IOException("Unable to resolve dataset");
         }
         return ds;
     }
 
-    private @NonNull Map<Object, Object> resolveConnectionParameters(@NonNull Path path) throws IOException {
+    private @NonNull Map<String, String> resolveConnectionParameters(@NonNull Path path) {
         // TODO support other file types than shapefile
-        Map<Object, Object> params = new HashMap<>();
-        if (path.getFileName().toString().toLowerCase().endsWith(".shp")) {
-            URL url = path.toUri().toURL();
-            params.put(ShapefileDataStoreFactory.URLP.key, url);
-            params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX, Boolean.FALSE);
+        Map<String, String> params = new HashMap<>();
+        if (isShapefile(path)) {
+            URL url;
+            try {
+                url = path.toUri().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            params.put(ShapefileDataStoreFactory.FILE_TYPE.key, "shapefile");
+            params.put(ShapefileDataStoreFactory.URLP.key, url.toString());
+            params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, "false");
         }
         return params;
+    }
+
+    private boolean isShapefile(@NonNull Path path) {
+        return path.getFileName().toString().toLowerCase().endsWith(".shp");
+    }
+
+    private DataSourceType resolveDataSourceType(@NonNull Path path, Map<String, String> parameters) {
+        if (isShapefile(path)) {
+            return DataSourceType.SHAPEFILE;
+        }
+        throw new UnsupportedOperationException("Only shapefiles are supported so far");
     }
 
 }

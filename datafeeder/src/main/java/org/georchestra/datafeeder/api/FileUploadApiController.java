@@ -61,7 +61,7 @@ public class FileUploadApiController implements FileUploadApi {
 
     @Override
     public ResponseEntity<UploadJobStatus> findUploadJob(@PathVariable("jobId") UUID uploadId) {
-        DataUploadState state = uploadService.findJobState(uploadId);
+        DataUploadState state = uploadService.findJob(uploadId);
         UploadJobStatus response = mapper.toApi(state);
         return ResponseEntity.ok(response);
     }
@@ -70,9 +70,11 @@ public class FileUploadApiController implements FileUploadApi {
     public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> files) {
         UUID uploadId;
         DataUploadState state;
+        final String userName = getUserName();
         try {
             uploadId = storageService.saveUploads(files);
-            state = uploadService.analyze(uploadId);
+            state = uploadService.createJob(uploadId, userName);
+            uploadService.analyze(uploadId);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);// TODO translate to ResponseStatusException

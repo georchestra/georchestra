@@ -18,19 +18,43 @@
  */
 package org.georchestra.datafeeder.model;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
 
-public @Data class DatasetUploadState {
-    private String name;
+@Data
+@Entity
+@Table(name = "dataset")
+public class DatasetUploadState {
 
+    private @Id long id;
+    private String name;
     private UploadStatus status;
     private String error;
     private Integer featureCount;
-    private Map<String, Object> sampleProperties;
     private String sampleGeometryWKT;
+
+    @Embedded
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "crs_srs", column = @Column(name = "bbox_srs")), //
+            @AttributeOverride(name = "crs_wkt", column = @Column(name = "bbox_wkt"))//
+    })
     private BoundingBoxMetadata nativeBounds;
+
     private String encoding;
-    private CoordinateReferenceSystemMetadata nativeCrs;
+
+    @ElementCollection
+    @CollectionTable(name = "dataset_sample_properties")
+    private List<SampleProperty> sampleProperties = new ArrayList<>();
 }

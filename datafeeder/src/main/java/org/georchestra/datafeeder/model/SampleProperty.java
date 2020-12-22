@@ -16,17 +16,17 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.app;
+package org.georchestra.datafeeder.model;
 
-import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
-import org.georchestra.datafeeder.repository.PersistenceConfiguration;
-import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
-import org.georchestra.datafeeder.swagger.SwaggerDocConfig;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import javax.persistence.Embeddable;
 
-@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class,
-        PersistenceConfiguration.class, SwaggerDocConfig.class })
-public @Configuration class DataFeederApplicationConfiguration {
+import lombok.Data;
 
+@Data
+@Embeddable
+public class SampleProperty {
+
+    private String name;
+    private String value;
+    private String type;
 }
