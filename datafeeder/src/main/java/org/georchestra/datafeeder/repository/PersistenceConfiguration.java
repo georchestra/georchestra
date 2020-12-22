@@ -16,17 +16,20 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.app;
+package org.georchestra.datafeeder.repository;
 
-import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
-import org.georchestra.datafeeder.repository.PersistenceConfiguration;
-import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
-import org.georchestra.datafeeder.swagger.SwaggerDocConfig;
+import org.georchestra.datafeeder.model.DataUploadState;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class,
-        PersistenceConfiguration.class, SwaggerDocConfig.class })
-public @Configuration class DataFeederApplicationConfiguration {
-
+/**
+ * 
+ */
+@Configuration
+@EnableJpaRepositories
+@EntityScan(basePackageClasses = DataUploadState.class)
+@Import(JpaAuditingConfiguration.class)
+public class PersistenceConfiguration {
 }

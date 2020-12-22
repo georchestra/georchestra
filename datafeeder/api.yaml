@@ -247,9 +247,9 @@ components:
           format: int32
           description: Number of features in the dataset
         sampleProperties:
-          type: object
-          additionalProperties: true
-          description: Associative array of property names and values for the sample feature
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
         sampleGeometryWKT:
           type: string
           description: Well Known Text representation of an exemplar geometry extracted from the dataset
@@ -259,6 +259,16 @@ components:
           type: string
           description: detected charset
     
+    Property:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+
     CRS:
       type: object
       description: Coordinate Reference System

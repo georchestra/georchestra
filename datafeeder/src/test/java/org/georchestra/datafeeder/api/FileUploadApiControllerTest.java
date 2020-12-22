@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2020 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.georchestra.datafeeder.api;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -42,7 +60,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +76,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.NonNull;
 
 @SpringBootTest(classes = { DataFeederApplicationConfiguration.class }, webEnvironment = WebEnvironment.MOCK)
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+@EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
 public class FileUploadApiControllerTest {
@@ -165,7 +182,7 @@ public class FileUploadApiControllerTest {
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();
-        awaitUntilJobDatasetStateIs(id, "test", 3, ERROR);
+        awaitUntilJobDatasetUploadStatusIs(id, "test", 3, ERROR);
 
         DataUploadState job = awaitUntilJobIsOneOf(id, 3, ERROR);
         assertEquals(3, job.getDatasets().size());
@@ -355,7 +372,7 @@ public class FileUploadApiControllerTest {
         awaitUntilJobIsOneOf(id, 1, ANALYZING, DONE);
         awaitUntilJobIsOneOf(id, 5, DONE);
 
-        DataUploadState state = uploadService.findJobState(id);
+        DataUploadState state = uploadService.findJob(id);
         assertNull(state.getError());
         assertEquals(1d, state.getProgress(), 0d);
         List<DatasetUploadState> datasets = state.getDatasets();
@@ -383,8 +400,9 @@ public class FileUploadApiControllerTest {
             assertNotNull(datasetState.getSampleGeometryWKT());
             assertNotNull(datasetState.getSampleProperties());
             assertFalse(datasetState.getSampleProperties().isEmpty());
-            assertNotNull(datasetState.getNativeCrs());
-            assertNotNull(datasetState.getNativeCrs().getWKT());
+            assertNotNull(datasetState.getNativeBounds());
+            assertNotNull(datasetState.getNativeBounds().getCrs());
+            assertNotNull(datasetState.getNativeBounds().getCrs().getWKT());
         } else if (ERROR == expectedStatus || ANALYZING == expectedStatus) {
             assertNull(datasetState.getEncoding());
             assertNull(datasetState.getError());
@@ -392,14 +410,14 @@ public class FileUploadApiControllerTest {
             assertNull(datasetState.getSampleGeometryWKT());
             assertNotNull(datasetState.getSampleProperties());
             assertTrue(datasetState.getSampleProperties().isEmpty());
-            assertNull(datasetState.getNativeCrs());
+            assertNull(datasetState.getNativeBounds());
         }
     }
 
     private DataUploadState awaitUntilJobIsOneOf(final UUID jobId, int seconds, UploadStatus... oneof) {
         final AtomicReference<DataUploadState> jobStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
-            DataUploadState jobState = uploadService.findJobState(jobId);
+            DataUploadState jobState = uploadService.findJob(jobId);
             jobStatus.set(jobState);
 
             UploadStatus status = jobState.getStatus();
@@ -410,12 +428,12 @@ public class FileUploadApiControllerTest {
         return jobStatus.get();
     }
 
-    private DatasetUploadState awaitUntilJobDatasetStateIs(final UUID jobId, final String datasetName,
+    private DatasetUploadState awaitUntilJobDatasetUploadStatusIs(final UUID jobId, final String datasetName,
             final int seconds, final UploadStatus expectedStatus) {
 
         final AtomicReference<DatasetUploadState> datasetStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
-            DataUploadState jobState = uploadService.findJobState(jobId);
+            DataUploadState jobState = uploadService.findJob(jobId);
             List<DatasetUploadState> datasets = jobState.getDatasets();
             Optional<DatasetUploadState> dataset = datasets.stream().filter(ds -> datasetName.equals(ds.getName()))
                     .findFirst();

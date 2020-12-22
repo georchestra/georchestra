@@ -18,10 +18,17 @@
  */
 package org.georchestra.datafeeder.model;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+
 import lombok.Data;
 
-public @Data class BoundingBoxMetadata {
+@Data
+@Embeddable
+public class BoundingBoxMetadata {
+    @Embedded
     private CoordinateReferenceSystemMetadata crs;
+
     private Double minx;
     private Double maxx;
     private Double miny;

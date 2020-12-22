@@ -19,16 +19,61 @@
 package org.georchestra.datafeeder.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import lombok.Data;
 
-public @Data class DataUploadState {
+@Data
+@Entity
+@Table(name = "upload")
+@EntityListeners(AuditingEntityListener.class)
+public class DataUploadState {
 
+    @Id
+    @Column(unique = true, nullable = false)
     private UUID jobId;
-    private double progress;
+
+    @CreatedBy
+    @Column(name = "created_by", nullable = false)
+    private String username;
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false)
+    private Date createdDate;
+
+    @LastModifiedBy
+    @Column(name = "last_modified_by")
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    @Column(name = "last_modified_date")
+    private Date lastModifiedDate;
+
+    @Column(nullable = false)
     private UploadStatus status;
+
+    @Column
     private String error;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DatasetUploadState> datasets = new ArrayList<>();
+
+    private double progress;
 }
