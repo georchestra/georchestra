@@ -16,20 +16,27 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.repository;
+package org.georchestra.datafeeder.service.batch.analysis;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import java.io.File;
 
-/**
- * 
- */
-@Configuration
-@EnableJpaRepositories
-@EntityScan(basePackageClasses = DataUploadJob.class)
-@Import(JpaAuditingConfiguration.class)
-public class PersistenceConfiguration {
+import org.georchestra.datafeeder.service.DataUploadService;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class MultipartFileUploadProcessor implements ItemProcessor<MultipartFile, File> {
+
+    private @Autowired DataUploadService uploadService;
+
+    @Override
+    public File process(MultipartFile item) throws Exception {
+        File dest = new File("");
+        item.transferTo(dest);
+        return dest;
+    }
+
 }

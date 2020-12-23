@@ -32,7 +32,11 @@ public class JpaAuditingConfiguration {
     public @Bean AuditorAware<String> jpaAuditorProvider() {
         return () -> {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            return auth.getName();
+            if (auth == null) {
+                return "annonymous";
+            }
+            String name = auth.getName();
+            return name;
         };
     }
 }

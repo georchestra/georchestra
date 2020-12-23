@@ -80,7 +80,7 @@ public class UploadPackageTest {
                 "dir/test2.shp", "dir/test2.dbf", "dir/test2.shx", "dir/test2.prj"//
         );
 
-        Set<String> datasets = pack.findDatasets();
+        Set<String> datasets = pack.findDatasetFiles();
         Set<String> expected = Sets.newHashSet("test.shp", "test2.shp", "dir/test2.shp");
         assertEquals(expected, datasets);
     }

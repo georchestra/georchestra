@@ -28,7 +28,12 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -38,11 +43,32 @@ import lombok.Data;
 @Table(name = "dataset")
 public class DatasetUploadState {
 
-    private @Id long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DataUploadJob job;
+
+    @Column
+    private String absolutePath;
+
+    @Column
+    private String fileName;
+
+    @Column
     private String name;
+
+    @Column
     private UploadStatus status;
+
+    @Lob
     private String error;
+
+    @Column
     private Integer featureCount;
+
+    @Lob
     private String sampleGeometryWKT;
 
     @Embedded

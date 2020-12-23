@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -54,7 +53,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @see SecurityTestController
  */
 @SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+@EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
 public class GeorchestraSecurityProxyAuthenticationConfigurationTest {

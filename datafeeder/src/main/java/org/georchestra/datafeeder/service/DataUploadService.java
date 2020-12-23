@@ -30,11 +30,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.georchestra.datafeeder.model.DataUploadState;
+import org.georchestra.datafeeder.api.FileUploadApiController;
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.SampleProperty;
 import org.georchestra.datafeeder.model.UploadStatus;
-import org.georchestra.datafeeder.repository.DataUploadRepository;
+import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.geotools.util.Converters;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,40 +44,43 @@ import org.springframework.scheduling.annotation.Async;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Service provider for {@link FileUploadApiController}
+ */
 @Slf4j
 public class DataUploadService {
 
     private @Autowired FileStorageService storageService;
     private @Autowired DatasetsService datasetsService;
-    private @Autowired DataUploadRepository repository;
+    private @Autowired DataUploadJobRepository repository;
 
-    public DataUploadState createJob(@NonNull UUID jobId, @NonNull String username) {
-        DataUploadState state = new DataUploadState();
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
+        DataUploadJob state = new DataUploadJob();
         state.setJobId(jobId);
         state.setStatus(UploadStatus.PENDING);
         state.setUsername(username);
-        DataUploadState saved = repository.save(state);
+        DataUploadJob saved = repository.save(state);
         return saved;
     }
 
-    public DataUploadState findJob(UUID uploadId) {
-        return repository.findByJobId(uploadId).orElseThrow(() -> new NoSuchElementException());
+    public Optional<DataUploadJob> findJob(UUID uploadId) {
+        return repository.findByJobId(uploadId);
     }
 
     /**
      * Asynchronously starts the analysis process for the upload pack given by its
-     * id, returns immediately with {@link DataUploadState#getStatus() status}
+     * id, returns immediately with {@link DataUploadJob#getStatus() status}
      * {@link UploadStatus#PENDING} and an empty
-     * {@link DataUploadState#getDatasets() datasets} list.
+     * {@link DataUploadJob#getDatasets() datasets} list.
      */
     @Async
     public void analyze(@NonNull UUID uploadId) {
         UploadPackage uploadPack = getUploadPack(uploadId);
         repository.setJobStatus(uploadId, UploadStatus.ANALYZING);
-        DataUploadState job = this.findJob(uploadId);
+        DataUploadJob job = this.findJob(uploadId).orElseThrow(NoSuchElementException::new);
         List<DatasetUploadState> datasets = datasets(uploadPack);
 
-        DataUploadState state = new DataUploadState();
+        DataUploadJob state = new DataUploadJob();
         state.setJobId(uploadId);
         state.setStatus(UploadStatus.PENDING);
         // return state;
@@ -85,7 +89,7 @@ public class DataUploadService {
     private List<DatasetUploadState> datasets(UploadPackage pack) {
         Set<String> datasetFileNames;
         try {
-            datasetFileNames = pack.findDatasets();
+            datasetFileNames = pack.findDatasetFiles();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -135,11 +139,11 @@ public class DataUploadService {
         return p;
     }
 
-    public List<DataUploadState> findAllJobs() {
+    public List<DataUploadJob> findAllJobs() {
         return repository.findAll();
     }
 
-    public List<DataUploadState> findUserJobs(@NonNull String userName) {
+    public List<DataUploadJob> findUserJobs(@NonNull String userName) {
         return repository.findAllByUsername(userName);
     }
 

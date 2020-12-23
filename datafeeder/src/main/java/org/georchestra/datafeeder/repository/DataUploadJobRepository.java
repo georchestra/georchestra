@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.DataUploadState;
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UploadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,19 +32,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
-public interface DataUploadRepository extends JpaRepository<DataUploadState, UUID> {
+public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UUID> {
 
-    List<DataUploadState> findAllByUsername(@NonNull String username);
+    List<DataUploadJob> findAllByUsername(@NonNull String username);
 
-    Optional<DataUploadState> findByJobId(@NonNull UUID jobId);
+    Optional<DataUploadJob> findByJobId(@NonNull UUID jobId);
 
     @Modifying
     @Transactional
-    @Query("update DataUploadState set status = :status where jobId = :jobId")
+    @Query("update DataUploadJob set status = :status where jobId = :jobId")
     int setJobStatus(@Param("jobId") UUID jobId, @Param("status") UploadStatus status);
 
     @Modifying
     @Transactional
-    @Query("update DataUploadState set progress = :progress where jobId = :jobId")
+    @Query("update DataUploadJob set progress = :progress where jobId = :jobId")
     int setProgress(@Param("jobId") UUID jobId, @Param("progress") double progress);
 }

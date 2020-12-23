@@ -48,7 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
-import org.georchestra.datafeeder.model.DataUploadState;
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.UploadStatus;
 import org.georchestra.datafeeder.service.DataUploadService;
@@ -148,7 +148,7 @@ public class FileUploadApiControllerTest {
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         UUID id = initialStatus.getJobId();
-        DataUploadState job = awaitUntilJobIsOneOf(id, 3, ERROR);
+        DataUploadJob job = awaitUntilJobIsOneOf(id, 3, ERROR);
         assertEquals(1, job.getDatasets().size());
         assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
@@ -176,7 +176,7 @@ public class FileUploadApiControllerTest {
         final List<MultipartFile> received = Collections.singletonList(zipFile);
         final ResponseEntity<UploadJobStatus> response = controller.uploadFiles(received);
 
-        assertEquals(ACCEPTED, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
         assertEquals(UploadJobStatus.StatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
@@ -184,7 +184,7 @@ public class FileUploadApiControllerTest {
         final UUID id = initialStatus.getJobId();
         awaitUntilJobDatasetUploadStatusIs(id, "test", 3, ERROR);
 
-        DataUploadState job = awaitUntilJobIsOneOf(id, 3, ERROR);
+        DataUploadJob job = awaitUntilJobIsOneOf(id, 3, ERROR);
         assertEquals(3, job.getDatasets().size());
         assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
@@ -218,7 +218,7 @@ public class FileUploadApiControllerTest {
 
     private UploadJobStatus upload(List<MultipartFile> files) {
         ResponseEntity<UploadJobStatus> response = controller.uploadFiles(files);
-        assertEquals(ACCEPTED, response.getStatusCode());
+        assertEquals(OK, response.getStatusCode());
         return response.getBody();
     }
 
@@ -372,10 +372,11 @@ public class FileUploadApiControllerTest {
         awaitUntilJobIsOneOf(id, 1, ANALYZING, DONE);
         awaitUntilJobIsOneOf(id, 5, DONE);
 
-        DataUploadState state = uploadService.findJob(id);
-        assertNull(state.getError());
-        assertEquals(1d, state.getProgress(), 0d);
-        List<DatasetUploadState> datasets = state.getDatasets();
+        Optional<DataUploadJob> state = uploadService.findJob(id);
+        assertTrue(state.isPresent());
+        assertNull(state.get().getError());
+        assertEquals(1d, state.get().getProgress(), 0d);
+        List<DatasetUploadState> datasets = state.get().getDatasets();
 
         assertEquals(expectedDatasetNames.length, datasets.size());
         for (String datasetName : expectedDatasetNames) {
@@ -414,10 +415,10 @@ public class FileUploadApiControllerTest {
         }
     }
 
-    private DataUploadState awaitUntilJobIsOneOf(final UUID jobId, int seconds, UploadStatus... oneof) {
-        final AtomicReference<DataUploadState> jobStatus = new AtomicReference<>();
+    private DataUploadJob awaitUntilJobIsOneOf(final UUID jobId, int seconds, UploadStatus... oneof) {
+        final AtomicReference<DataUploadJob> jobStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
-            DataUploadState jobState = uploadService.findJob(jobId);
+            DataUploadJob jobState = uploadService.findJob(jobId).orElseThrow(NoSuchElementException::new);
             jobStatus.set(jobState);
 
             UploadStatus status = jobState.getStatus();
@@ -433,7 +434,7 @@ public class FileUploadApiControllerTest {
 
         final AtomicReference<DatasetUploadState> datasetStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
-            DataUploadState jobState = uploadService.findJob(jobId);
+            DataUploadJob jobState = uploadService.findJob(jobId).orElseThrow(NoSuchElementException::new);
             List<DatasetUploadState> datasets = jobState.getDatasets();
             Optional<DatasetUploadState> dataset = datasets.stream().filter(ds -> datasetName.equals(ds.getName()))
                     .findFirst();

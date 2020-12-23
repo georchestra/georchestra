@@ -18,45 +18,20 @@
  */
 package org.georchestra.datafeeder.service.batch;
 
-import org.springframework.batch.item.ItemReader;
+import org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration;
+import org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.annotation.Import;
 
-/**
- * File upload job:
- * <p>
- * upload -> save -> unpack -> analyze
- *
- */
 @Configuration
-//@EnableBatchProcessing
+@EnableBatchProcessing
+@Import({ UploadAnalysisConfiguration.class, DataPublishingConfiguration.class })
 public class DatafeederBatchConfiguration {
 
-//    @Autowired
-//    JobBuilderFactory jobBuilderFactory;
-//
-//    @Autowired
-//    StepBuilderFactory stepBuilderFactory;
-
-//    @Bean
-//    public Job uploadAndAnalyzeDatasetJob(JobCompletionNotificationListener listener, Step step1) {
-//        return jobBuilderFactory//
-//                .get("uploadAndAnalyzeDatasetJob")//
-//                .incrementer(new RunIdIncrementer())//
-//                .listener(listener)//
-//                .flow(step1)//
-//                .end().build();
-//    }
-//
-//    @Bean
-//    public Step uploadFile(ItemWriter<MultipartFile> writer) {
-//        return stepBuilderFactory//
-//                .get("uploadFile")//
-//                .reader(reader()).processor(processor()).writer(writer).build();
-//    }
-
-    private ItemReader<MultipartFile> reader() {
-        // TODO Auto-generated method stub
-        return null;
+    public @Bean JobManager jobManager() {
+        return new JobManager();
     }
+
 }

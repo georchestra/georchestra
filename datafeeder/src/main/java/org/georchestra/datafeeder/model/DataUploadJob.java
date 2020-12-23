@@ -44,7 +44,7 @@ import lombok.Data;
 @Entity
 @Table(name = "upload")
 @EntityListeners(AuditingEntityListener.class)
-public class DataUploadState {
+public class DataUploadJob {
 
     @Id
     @Column(unique = true, nullable = false)
