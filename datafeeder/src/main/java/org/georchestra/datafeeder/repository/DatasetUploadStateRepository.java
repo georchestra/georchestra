@@ -18,18 +18,16 @@
  */
 package org.georchestra.datafeeder.repository;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import java.util.List;
+import java.util.UUID;
 
-/**
- * 
- */
-@Configuration
-@EnableJpaRepositories
-@EntityScan(basePackageClasses = DataUploadJob.class)
-@Import(JpaAuditingConfiguration.class)
-public class PersistenceConfiguration {
+import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface DatasetUploadStateRepository extends JpaRepository<DatasetUploadState, Long> {
+
+    @Query("select d from DatasetUploadState d where d.job.jobId = :jobId")
+    List<DatasetUploadState> findAllByJobId(@Param("jobId") UUID jobId);
 }

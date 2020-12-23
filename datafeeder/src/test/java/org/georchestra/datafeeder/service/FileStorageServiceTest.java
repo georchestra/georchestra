@@ -176,7 +176,7 @@ public class FileStorageServiceTest {
         verifyUploads(id, expected);
 
         UploadPackage pack = service.find(id);
-        Set<String> actual = pack.findDatasets();
+        Set<String> actual = pack.findDatasetFiles();
         assertEquals(Sets.newHashSet("test.shp", "test2.shp", "test3.geojson"), actual);
     }
 

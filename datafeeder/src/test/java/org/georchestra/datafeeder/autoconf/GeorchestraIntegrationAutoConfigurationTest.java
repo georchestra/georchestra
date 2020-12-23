@@ -47,7 +47,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * be enabled through the {@code georchestra} spring profile
  */
 @SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+@EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
 public class GeorchestraIntegrationAutoConfigurationTest {

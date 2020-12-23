@@ -16,27 +16,24 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch;
+package org.georchestra.datafeeder.service.batch.publish;
 
-import java.io.File;
-
-import org.georchestra.datafeeder.service.DataUploadService;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.annotation.Configuration;
 
-import lombok.extern.slf4j.Slf4j;
+/**
+ * 
+ * Spring-batch configuration for the data publishing workflow
+ *
+ */
+@Configuration
+@EnableBatchProcessing
+public class DataPublishingConfiguration {
 
-@Slf4j
-public class MultipartFileUploadProcessor implements ItemProcessor<MultipartFile, File> {
-
-    private @Autowired DataUploadService uploadService;
-
-    @Override
-    public File process(MultipartFile item) throws Exception {
-        File dest = new File("");
-        item.transferTo(dest);
-        return dest;
-    }
+    private @Autowired JobBuilderFactory jobBuilderFactory;
+    private @Autowired StepBuilderFactory stepBuilderFactory;
 
 }

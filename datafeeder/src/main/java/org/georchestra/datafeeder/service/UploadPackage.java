@@ -60,7 +60,7 @@ public class UploadPackage {
         return service.resolve(id);
     }
 
-    public Set<String> findDatasets() throws IOException {
+    public Set<String> findDatasetFiles() throws IOException {
         return relativeFileNames().filter(this::isDataset).collect(Collectors.toCollection(TreeSet::new));
     }
 
@@ -69,7 +69,7 @@ public class UploadPackage {
     }
 
     public Path resolve(@NonNull String fileName) {
-        return root().resolve(fileName);
+        return root().resolve(fileName).toAbsolutePath();
     }
 
     public boolean isArchive(@NonNull String fileName) {

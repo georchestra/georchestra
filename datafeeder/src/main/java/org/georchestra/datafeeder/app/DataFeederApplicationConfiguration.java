@@ -25,8 +25,7 @@ import org.georchestra.datafeeder.swagger.SwaggerDocConfig;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class,
-        PersistenceConfiguration.class, SwaggerDocConfig.class })
+@Import(value = { DataFeederApiConfiguration.class, DataFeederServiceConfiguration.class, SwaggerDocConfig.class })
 public @Configuration class DataFeederApplicationConfiguration {
 
 }
