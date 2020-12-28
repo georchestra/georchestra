@@ -412,7 +412,7 @@
     <dependency>
       <groupId>com.github.database-rider</groupId>
       <artifactId>rider-spring</artifactId>
-      <version>1.5.1</version>
+      <version>1.21.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
