@@ -47,4 +47,9 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
     @Transactional
     @Query("update DataUploadJob set progress = :progress where jobId = :jobId")
     int setProgress(@Param("jobId") UUID jobId, @Param("progress") double progress);
+
+    @Modifying
+    @Transactional
+    @Query("update DataUploadJob set finishedSteps = finishedSteps + 1 where jobId = :jobId")
+    int incrementProgress(@Param("jobId") UUID jobId);
 }

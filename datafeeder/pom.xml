@@ -203,6 +203,13 @@
       <artifactId>gt-sample-data</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <!-- upgrade hsqldb to avoid "data exception: string data, right truncation" error on @Lob columns -->
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.5.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${server}</finalName>

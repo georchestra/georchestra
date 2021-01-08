@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,64 @@ public class DatasetsService {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
+    public List<String> getTypeNames(@NonNull Path path) {
+        final Map<String, String> parameters = resolveConnectionParameters(path);
+        DataStore ds = null;
+        try {
+            ds = loadDataStore(parameters);
+            return Arrays.asList(ds.getTypeNames());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (ds != null)
+                ds.dispose();
+        }
+    }
+
+    public DatasetMetadata describe(@NonNull Path path, @NonNull String typeName) {
+        DataStore ds = loadDataStore(path);
+        try {
+            SimpleFeatureSource fs = ds.getFeatureSource(typeName);
+            DatasetMetadata md = describe(fs);
+            if (isShapefile(path)) {
+                md.setEncoding(DEFAULT_SHAPEFILE_ENCODING);
+            }
+            return md;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ds.dispose();
+        }
+    }
+
+    private DatasetMetadata describe(SimpleFeatureSource fs) throws IOException {
+        DatasetMetadata md = new DatasetMetadata();
+        md.setTypeName(fs.getName().getLocalPart());
+
+        // compute native bounds
+        md.setNativeBounds(nativeBounds(fs));
+
+        // compute feature count
+        md.setFeatureCount(featureCount(fs));
+
+        // compute sample feature for properties and geometry
+        Optional<SimpleFeature> sampleFeature = sampleFeature(fs);
+        if (sampleFeature.isPresent()) {
+            SimpleFeature feature = sampleFeature.get();
+            Geometry sampleGeometry;
+            Map<String, Object> sampleProperties;
+
+            sampleGeometry = (Geometry) feature.getDefaultGeometry();
+            sampleProperties = feature.getProperties().stream()//
+                    .filter(p -> !(p instanceof GeometryAttribute))//
+                    .collect(Collectors.toMap(p -> p.getName().getLocalPart(), Property::getValue));
+
+            md.setSampleGeometry(sampleGeometry);
+            md.setSampleProperties(sampleProperties);
+        }
+        return md;
+    }
+
     public DataSourceMetadata describe(@NonNull Path path) {
         final Map<String, String> parameters = resolveConnectionParameters(path);
         DataSourceType dataSourceType = resolveDataSourceType(path, parameters);
@@ -96,29 +155,6 @@ public class DatasetsService {
         dsm.setDatasets(mds);
         dsm.setType(dataSourceType);
         return dsm;
-    }
-
-    private DatasetMetadata describe(SimpleFeatureSource fs) throws IOException {
-        DatasetMetadata md = new DatasetMetadata();
-        md.setTypeName(fs.getName().getLocalPart());
-        md.setNativeBounds(nativeBounds(fs));
-        md.setFeatureCount(featureCount(fs));
-
-        Optional<SimpleFeature> sampleFeature = sampleFeature(fs);
-        if (sampleFeature.isPresent()) {
-            SimpleFeature feature = sampleFeature.get();
-            Geometry sampleGeometry;
-            Map<String, Object> sampleProperties;
-
-            sampleGeometry = (Geometry) feature.getDefaultGeometry();
-            sampleProperties = feature.getProperties().stream()//
-                    .filter(p -> !(p instanceof GeometryAttribute))//
-                    .collect(Collectors.toMap(p -> p.getName().getLocalPart(), Property::getValue));
-
-            md.setSampleGeometry(sampleGeometry);
-            md.setSampleProperties(sampleProperties);
-        }
-        return md;
     }
 
     private @Nullable BoundingBoxMetadata nativeBounds(SimpleFeatureSource fs) throws IOException {
@@ -183,9 +219,13 @@ public class DatasetsService {
         return Optional.empty();
     }
 
-    public @NonNull DataStore loadDataStore(@NonNull Path path) throws IOException {
+    public @NonNull DataStore loadDataStore(@NonNull Path path) {
         Map<String, String> params = resolveConnectionParameters(path);
-        return loadDataStore(params);
+        try {
+            return loadDataStore(params);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public @NonNull DataStore loadDataStore(Map<String, String> params) throws IOException {

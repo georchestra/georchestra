@@ -26,6 +26,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -76,6 +77,7 @@ public class UploadAnalysisConfiguration {
                 .build();
     }
 
+    @JobScope
     public @Bean JobCompletionNotificationListener jobCompletionNotificationListener() {
         return new JobCompletionNotificationListener();
     }
@@ -86,13 +88,16 @@ public class UploadAnalysisConfiguration {
                 .build();
     }
 
-    public @Bean Step analyzeDatasets(DataUploadAnalysisService service, DatasetUploadStateItemReader reader) {
+    public @Bean Step analyzeDatasets(DataUploadAnalysisService service, DatasetUploadStateItemReader reader,
+            DatasetUploadStateUpdateListener datasetStatusUpdater, ProgressUpdateStepListener jobProgressUpdater) {
 
         TaskletStep step = steps.get("analyzeDataset")//
                 .<DatasetUploadState, DatasetUploadState>chunk(1)//
                 .reader(reader)//
                 .processor(service::analyze)//
                 .writer(service::save)//
+                .listener(datasetStatusUpdater)//
+                .listener(jobProgressUpdater)//
                 .build();//
         return step;
     }

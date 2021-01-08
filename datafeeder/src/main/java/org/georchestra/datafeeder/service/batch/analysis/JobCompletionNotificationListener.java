@@ -18,29 +18,72 @@
  */
 package org.georchestra.datafeeder.service.batch.analysis;
 
+import java.util.UUID;
+
+import org.georchestra.datafeeder.model.UploadStatus;
+import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
+public class JobCompletionNotificationListener implements JobExecutionListener {
 
-//  @Autowired private final JdbcTemplate jdbcTemplate;
+    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
+    private @Autowired DataUploadJobRepository repository;
+
+    @Override
+    public void beforeJob(JobExecution jobExecution) {
+        if (uploadId == null)
+            return;
+
+        final BatchStatus status = jobExecution.getStatus();
+        log.info("upload job id: {}, status: {}", uploadId, status);
+        switch (status) {
+        case STARTING:
+        case STARTED:
+            repository.setJobStatus(uploadId, UploadStatus.ANALYZING);
+            break;
+        case ABANDONED:
+        case COMPLETED:
+        case FAILED:
+        case STOPPED:
+        case STOPPING:
+        case UNKNOWN:
+        default:
+            break;
+        }
+    }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.info("!!! JOB FINISHED! Time to verify the results");
+        if (uploadId == null)
+            return;
 
-//      jdbcTemplate.query("SELECT first_name, last_name FROM people",
-//        (rs, row) -> new Person(
-//          rs.getString(1),
-//          rs.getString(2))
-//      ).forEach(person -> log.info("Found <" + person + "> in the database."));
+        final BatchStatus status = jobExecution.getStatus();
+        log.info("upload job id: {}, status: {}", uploadId, status);
+        switch (status) {
+        case COMPLETED:
+            repository.setJobStatus(uploadId, UploadStatus.DONE);
+            break;
+        case ABANDONED:
+        case FAILED:
+            repository.setJobStatus(uploadId, UploadStatus.ERROR);
+            break;
+        case STOPPING:
+        case STOPPED:
+            repository.setJobStatus(uploadId, UploadStatus.PENDING);
+            break;
+        case STARTED:
+        case UNKNOWN:
+        default:
+            break;
         }
     }
 }

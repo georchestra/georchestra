@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -45,7 +46,7 @@ public class DatasetUploadState {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private DataUploadJob job;
@@ -63,12 +64,15 @@ public class DatasetUploadState {
     private UploadStatus status;
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String error;
 
     @Column
     private Integer featureCount;
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 1024 * 1024)
     private String sampleGeometryWKT;
 
     @Embedded
