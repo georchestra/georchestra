@@ -67,7 +67,7 @@ public class DataUploadJob {
     private Date lastModifiedDate;
 
     @Column(nullable = false)
-    private UploadStatus status;
+    private UploadStatus status = UploadStatus.PENDING;
 
     @Column
     private String error;
@@ -75,5 +75,10 @@ public class DataUploadJob {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DatasetUploadState> datasets = new ArrayList<>();
 
-    private double progress;
+    private int totalSteps;
+    private int finishedSteps;
+
+    public double getProgress() {
+        return totalSteps == 0 ? 0d : (double) finishedSteps / totalSteps;
+    }
 }

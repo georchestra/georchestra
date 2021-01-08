@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,15 +110,104 @@ public class UploadAnalysisConfigurationTest {
         assertNotNull(dset.getName());
     }
 
+    @Test
+    public void analyze_single_shapefile() throws Exception {
+        List<MultipartFile> received = multipartSupport.roadsShapefile();
+        UUID uploadId = storageService.saveUploads(received);
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
+        assertEquals(UploadStatus.PENDING, initial.getStatus());
+
+        JobExecution execution = launchJob(uploadId);
+        ExitStatus exitStatus = execution.getExitStatus();
+        assertEquals(ExitStatus.COMPLETED, exitStatus);
+
+        Optional<DataUploadJob> saved = repository.findByJobId(uploadId);
+        assertTrue(saved.isPresent());
+        DataUploadJob state = saved.get();
+
+        assertEquals(uploadId, state.getJobId());
+        assertEquals(UploadStatus.DONE, state.getStatus());
+        assertEquals(1, state.getDatasets().size());
+        assertEquals(1.0, state.getProgress(), 0d);
+
+        DatasetUploadState dset = state.getDatasets().get(0);
+        assertEquals(UploadStatus.DONE, dset.getStatus());
+        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
+        assertNotNull(dset.getFileName());
+        assertNotNull(dset.getName());
+
+        List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
+        assertEquals(1, dsets.size());
+        dset = dsets.get(0);
+        assertEquals(UploadStatus.DONE, dset.getStatus());
+        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
+        assertNotNull(dset.getFileName());
+        assertNotNull(dset.getName());
+    }
+
+    @Test
+    public void analyze_zipfile_multiple_shapefiles() throws Exception {
+        List<MultipartFile> roads = multipartSupport.roadsShapefile();
+        List<MultipartFile> states = multipartSupport.statePopShapefile();
+        List<MultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
+
+        MultipartFile received = multipartSupport.createZipFile("test upload.zip", roads, states, chinesePoly);
+
+        UUID uploadId = storageService.saveUploads(Collections.singletonList(received));
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
+        assertEquals(UploadStatus.PENDING, initial.getStatus());
+
+        JobExecution execution = launchJob(uploadId);
+        ExitStatus exitStatus = execution.getExitStatus();
+        assertEquals(ExitStatus.COMPLETED, exitStatus);
+
+        Optional<DataUploadJob> saved = repository.findByJobId(uploadId);
+        assertTrue(saved.isPresent());
+        DataUploadJob state = saved.get();
+
+        assertEquals(uploadId, state.getJobId());
+        assertEquals(UploadStatus.DONE, state.getStatus());
+        assertEquals(3, state.getDatasets().size());
+        assertEquals(3, state.getTotalSteps());
+        assertEquals(3, state.getFinishedSteps());
+        assertEquals(1.0, state.getProgress(), 0d);
+
+        DatasetUploadState dset = state.getDatasets().get(0);
+        assertEquals(UploadStatus.DONE, dset.getStatus());
+        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
+        assertNotNull(dset.getFileName());
+        assertNotNull(dset.getName());
+
+        List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
+        assertEquals(1, dsets.size());
+        dset = dsets.get(0);
+        assertEquals(UploadStatus.DONE, dset.getStatus());
+        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
+        assertNotNull(dset.getFileName());
+        assertNotNull(dset.getName());
+    }
+
     private JobExecution readUploadPack(UUID uploadId) {
         if (uploadId != null) {
             String parameter = uploadId.toString();
-            boolean identifying = false;
+            boolean identifying = true;
             this.jobParameters.put(UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
                     new JobParameter(parameter, identifying));
         }
         JobParameters params = jobParameters();
         JobExecution execution = jobLauncherTestUtils.launchStep("initializeDataUploadState", params);
+        return execution;
+    }
+
+    private JobExecution launchJob(UUID uploadId) throws Exception {
+        if (uploadId != null) {
+            String parameter = uploadId.toString();
+            boolean identifying = true;
+            this.jobParameters.put(UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
+                    new JobParameter(parameter, identifying));
+        }
+        JobParameters params = jobParameters();
+        JobExecution execution = jobLauncherTestUtils.launchJob(params);
         return execution;
     }
 }

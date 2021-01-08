@@ -18,8 +18,10 @@
  */
 package org.georchestra.datafeeder.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 
 import lombok.Data;
@@ -31,6 +33,7 @@ public class CoordinateReferenceSystemMetadata {
     private String srs;
 
     @Lob
-    @Column(name = "crs_wkt")
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 8096, name = "crs_wkt")
     private String WKT;
 }

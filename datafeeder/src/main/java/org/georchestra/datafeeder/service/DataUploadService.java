@@ -70,8 +70,8 @@ public class DataUploadService {
     /**
      * Asynchronously starts the analysis process for the upload pack given by its
      * id, returns immediately with {@link DataUploadJob#getStatus() status}
-     * {@link UploadStatus#PENDING} and an empty
-     * {@link DataUploadJob#getDatasets() datasets} list.
+     * {@link UploadStatus#PENDING} and an empty {@link DataUploadJob#getDatasets()
+     * datasets} list.
      */
     @Async
     public void analyze(@NonNull UUID uploadId) {

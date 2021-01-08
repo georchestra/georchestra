@@ -49,7 +49,7 @@ public class DatasetsServiceTest {
         testLoadDataStore(testData.statePopShapefile());
     }
 
-    private void testLoadDataStore(Path path) throws IOException {
+    private void testLoadDataStore(Path path) {
         DataStore ds = service.loadDataStore(path);
         try {
             assertNotNull(ds);
