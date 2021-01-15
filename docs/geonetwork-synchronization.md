@@ -14,12 +14,11 @@ distinguish between roles and groups, a prefix was used (`SV_` for roles, `EL_`
 for groups). Some organizations still want to stick with the previous
 synchronization behaviour.
 
-One reason to roll back to the previous behaviour is that there is an unicity
-clause in geOrchestra between users and organizations (e.g. "one user should be member of 1
-and only 1 organization"). Keeping the `EL_*` role logic allows a user to be
-member of several different groups in GeoNetwork, and keep the rule on the organization valid.
+One reason to rollback to the previous behaviour is that one geOrchestra user belongs to one
+and only one organization. Keeping the `EL_*` role logic allows a user to be
+a member of several groups in GeoNetwork.
 
-Using the former `EL_*` roles as GeoNetwork groups is still possible: by modifying
+Using the former `EL_*` roles as GeoNetwork groups is still possible by modifying
 the datadir consequently, see below:
 
 First, we need to edit the
