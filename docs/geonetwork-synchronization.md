@@ -12,8 +12,15 @@ registered in the LDAP tree (the `ou=orgs` branch).
 Historically though, geOrchestra only had a `ou=groups` branch, and to
 distinguish between roles and groups, a prefix was used (`SV_` for roles, `EL_`
 for groups). Some organizations still want to stick with the previous
-  synchronization behaviour. This is still possible: by modifying the datadir
-  consequently:
+synchronization behaviour.
+
+One reason to roll back to the previous behaviour is that there is an unicity
+clause in geOrchestra between users and organizations (e.g. "one user should be member of 1
+and only 1 organization"). Keeping the `EL_*` role logic allows a user to be
+member of several different groups in GeoNetwork, and keep the rule on the organization valid.
+
+Using the former `EL_*` roles as GeoNetwork groups is still possible: by modifying
+the datadir consequently, see below:
 
 First, we need to edit the
 [geonetwork.properties](https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L60)
@@ -43,19 +50,4 @@ map the label of the group onto the `description` attribute from the ldap:
 -      <entry key="ldapGroupLabelAttribute" value="o"/>
 +     <entry key="ldapGroupSearchPattern" value="EL_(.*)"/>
 +     <entry key="ldapGroupLabelAttribute" value="description"/>
-```
-
-# Automatic creation of groups
-
-GeoNetwork in geOrchestra is also configured to create automatically
-non-existing groups when the user connects onto the catalogue. With the
-previous configuration, mapping the geonetwork groups onto the `ou=roles` LDAP
-branch will create groups like `ADMINISTRATOR`, `REVIEWER` and so on at first
-connection to the GeoNetwork UI. To disable this behaviour, we will need to set
-the `createNonExistingLdapGroup` option to false in the
-[config-security-georchestra.xml](https://github.com/georchestra/datadir/blob/master/geonetwork/config/config-security-georchestra.xml#L91):
-
-```diff
--    <property name="createNonExistingLdapGroup" value="true"/>
-+    <property name="createNonExistingLdapGroup" value="false"/>
 ```
