@@ -21,6 +21,8 @@ spring:
       max-request-size: ${datafeeder.file-upload.max-request-size}
       file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
       location:  ${datafeeder.file-upload.temporary-location}
+  batch:
+    job.enabled: false #disable automatically running configured jobs at startup time
 
 datafeeder:
   file-upload:
