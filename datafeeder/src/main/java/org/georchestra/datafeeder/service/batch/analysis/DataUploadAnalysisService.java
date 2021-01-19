@@ -1,5 +1,8 @@
 package org.georchestra.datafeeder.service.batch.analysis;
 
+import static org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration.JOB_NAME;
+import static org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,7 +28,17 @@ import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.service.UploadPackage;
 import org.geotools.util.Converters;
 import org.locationtech.jts.geom.Geometry;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
+import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +54,9 @@ public class DataUploadAnalysisService {
     private @Autowired DataUploadJobRepository jobRepository;
     private @Autowired DatasetUploadStateRepository datasetRepository;
     private @Autowired DatasetsService datasetsService;
+
+    private @Autowired JobLauncher jobLauncher;
+    private @Autowired @Qualifier(JOB_NAME) Job uploadAnalysisJob;
 
     /**
      * Data upload analysis process step 0: creates a {@link DataUploadJob} with
@@ -62,6 +78,23 @@ public class DataUploadAnalysisService {
         state.setUsername(username);
         DataUploadJob saved = jobRepository.save(state);
         return saved;
+    }
+
+    public void runJob(@NonNull UUID jobId) {
+        final boolean identifying = true;
+        final JobParameters params = new JobParametersBuilder()//
+                .addString(UPLOAD_ID_JOB_PARAM_NAME, jobId.toString(), identifying)//
+                .toJobParameters();
+        log.info("Launching analisys job {}", jobId);
+        JobExecution execution;
+        try {
+            execution = jobLauncher.run(uploadAnalysisJob, params);
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+                | JobParametersInvalidException e) {
+            log.error("Error running job {}", jobId, e);
+            throw new RuntimeException("Error running job " + jobId, e);
+        }
+        log.info("Analysis job {} finished with status {}", jobId, execution.getStatus());
     }
 
     /**

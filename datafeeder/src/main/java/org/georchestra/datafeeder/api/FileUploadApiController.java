@@ -58,6 +58,9 @@ public class FileUploadApiController implements FileUploadApi {
         UUID uploadId;
         DataUploadJob state;
         final String userName = getUserName();
+        if (files.isEmpty()) {
+            throw ApiException.badRequest("No files provided in multi-part item 'filename'");
+        }
         try {
             uploadId = storageService.saveUploads(files);
             state = uploadService.createJob(uploadId, userName);
