@@ -23,16 +23,12 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.UploadPackage;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
-import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -69,17 +65,16 @@ public class UploadAnalysisConfiguration {
 
         return jobs.get("analyzeUploadJob")//
                 .incrementer(new RunIdIncrementer())//
-                .listener(jobCompletionNotificationListener())//
+                .listener(jobLifeCycleStatusUpdateListener())//
                 // steps...
                 .start(initializer)//
                 .next(analyzer)//
-                .next(finishDataUploadState())//
                 .build();
     }
 
     @JobScope
-    public @Bean JobCompletionNotificationListener jobCompletionNotificationListener() {
-        return new JobCompletionNotificationListener();
+    public @Bean JobLifeCycleStatusUpdateListener jobLifeCycleStatusUpdateListener() {
+        return new JobLifeCycleStatusUpdateListener();
     }
 
     public @Bean Step initializeDataUploadState(DataUploadStateInitializer initializer) {
@@ -89,29 +84,15 @@ public class UploadAnalysisConfiguration {
     }
 
     public @Bean Step analyzeDatasets(DataUploadAnalysisService service, DatasetUploadStateItemReader reader,
-            DatasetUploadStateUpdateListener datasetStatusUpdater, ProgressUpdateStepListener jobProgressUpdater) {
+            DatasetUploadStateUpdateListener itemStatusUpdater) {
 
         TaskletStep step = steps.get("analyzeDataset")//
                 .<DatasetUploadState, DatasetUploadState>chunk(1)//
                 .reader(reader)//
                 .processor(service::analyze)//
                 .writer(service::save)//
-                .listener(datasetStatusUpdater)//
-                .listener(jobProgressUpdater)//
+                .listener(itemStatusUpdater)//
                 .build();//
         return step;
     }
-
-    public @Bean Step finishDataUploadState() {
-        return steps.get("finishDataUploadState")//
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
-                            throws Exception {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                }).build();
-    }
-
 }

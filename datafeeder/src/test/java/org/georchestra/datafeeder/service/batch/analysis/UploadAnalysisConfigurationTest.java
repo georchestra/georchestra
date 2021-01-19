@@ -172,19 +172,15 @@ public class UploadAnalysisConfigurationTest {
         assertEquals(3, state.getFinishedSteps());
         assertEquals(1.0, state.getProgress(), 0d);
 
-        DatasetUploadState dset = state.getDatasets().get(0);
-        assertEquals(UploadStatus.DONE, dset.getStatus());
-        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
-        assertNotNull(dset.getFileName());
-        assertNotNull(dset.getName());
-
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
-        assertEquals(1, dsets.size());
-        dset = dsets.get(0);
-        assertEquals(UploadStatus.DONE, dset.getStatus());
-        assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
-        assertNotNull(dset.getFileName());
-        assertNotNull(dset.getName());
+        assertEquals(3, dsets.size());
+        for (DatasetUploadState dset : dsets) {
+            dset = dsets.get(0);
+            assertEquals(UploadStatus.DONE, dset.getStatus());
+            assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
+            assertNotNull(dset.getFileName());
+            assertNotNull(dset.getName());
+        }
     }
 
     private JobExecution readUploadPack(UUID uploadId) {
