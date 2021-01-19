@@ -1,5 +1,6 @@
 package org.georchestra.datafeeder.api;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -25,6 +26,10 @@ public abstract class ApiException extends RuntimeException {
         throw new Forbidden(String.format(format, args));
     }
 
+    public static ApiException badRequest(String format, Object... args) {
+        throw new BadRequest(String.format(format, args));
+    }
+
     @ResponseStatus(value = NOT_FOUND)
     static class NotFound extends ApiException {
         private @Getter final HttpStatus status = NOT_FOUND;
@@ -39,6 +44,15 @@ public abstract class ApiException extends RuntimeException {
         private @Getter final HttpStatus status = FORBIDDEN;
 
         public Forbidden(String reason) {
+            super(reason);
+        }
+    }
+
+    @ResponseStatus(value = BAD_REQUEST)
+    static class BadRequest extends ApiException {
+        private @Getter final HttpStatus status = BAD_REQUEST;
+
+        public BadRequest(String reason) {
             super(reason);
         }
     }

@@ -55,11 +55,13 @@ import org.springframework.context.annotation.Configuration;
 public class UploadAnalysisConfiguration {
 
     public static final String UPLOAD_ID_JOB_PARAM_NAME = "uploadId";
+    public static final String JOB_NAME = "analyzeUploadJob";
 
     private @Autowired JobBuilderFactory jobs;
     private @Autowired StepBuilderFactory steps;
 
-    public @Bean Job analyzeUploadJob(//
+    @Bean(name = UploadAnalysisConfiguration.JOB_NAME)
+    public Job analyzeUploadJob(//
             @Qualifier("initializeDataUploadState") Step initializer, //
             @Qualifier("analyzeDatasets") Step analyzer) {
 

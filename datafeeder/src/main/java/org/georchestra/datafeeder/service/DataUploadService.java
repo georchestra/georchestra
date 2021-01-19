@@ -18,53 +18,34 @@
  */
 package org.georchestra.datafeeder.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
 import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.SampleProperty;
 import org.georchestra.datafeeder.model.UploadStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
-import org.geotools.util.Converters;
-import org.locationtech.jts.geom.Geometry;
+import org.georchestra.datafeeder.service.batch.analysis.DataUploadAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service provider for {@link FileUploadApiController}
  */
-@Slf4j
 public class DataUploadService {
 
-    private @Autowired FileStorageService storageService;
-    private @Autowired DatasetsService datasetsService;
     private @Autowired DataUploadJobRepository repository;
-
-    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
-        DataUploadJob state = new DataUploadJob();
-        state.setJobId(jobId);
-        state.setStatus(UploadStatus.PENDING);
-        state.setUsername(username);
-        DataUploadJob saved = repository.save(state);
-        return saved;
-    }
+    private @Autowired DataUploadAnalysisService analysisService;
 
     public Optional<DataUploadJob> findJob(UUID uploadId) {
         return repository.findByJobId(uploadId);
+    }
+
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
+        return analysisService.createJob(jobId, username);
     }
 
     /**
@@ -75,68 +56,7 @@ public class DataUploadService {
      */
     @Async
     public void analyze(@NonNull UUID uploadId) {
-        UploadPackage uploadPack = getUploadPack(uploadId);
-        repository.setJobStatus(uploadId, UploadStatus.ANALYZING);
-        DataUploadJob job = this.findJob(uploadId).orElseThrow(NoSuchElementException::new);
-        List<DatasetUploadState> datasets = datasets(uploadPack);
-
-        DataUploadJob state = new DataUploadJob();
-        state.setJobId(uploadId);
-        state.setStatus(UploadStatus.PENDING);
-        // return state;
-    }
-
-    private List<DatasetUploadState> datasets(UploadPackage pack) {
-        Set<String> datasetFileNames;
-        try {
-            datasetFileNames = pack.findDatasetFiles();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        List<DatasetUploadState> states = new ArrayList<>();
-        for (String fileName : datasetFileNames) {
-            List<DatasetUploadState> ds = loadDataset(pack, fileName);
-            states.addAll(ds);
-        }
-        return states;
-    }
-
-    private List<DatasetUploadState> loadDataset(UploadPackage pack, String fileName) {
-        Path path = pack.resolve(fileName);
-        DatasetUploadState ds = new DatasetUploadState();
-        DataSourceMetadata dataSource = datasetsService.describe(path);
-        List<DatasetMetadata> fileDatasets = dataSource.getDatasets();
-        List<DatasetUploadState> states = new ArrayList<>(fileDatasets.size());
-        for (DatasetMetadata md : fileDatasets) {
-            ds.setEncoding(md.getEncoding());
-            ds.setName(md.getTypeName());
-            ds.setNativeBounds(md.getNativeBounds());
-            Optional<Geometry> sampleGeometry = md.sampleGeometry();
-            ds.setSampleGeometryWKT(sampleGeometry.map(Geometry::toText).orElse(null));
-            ds.setSampleProperties(sampleProperties(md.getSampleProperties()));
-            ds.setFeatureCount(md.getFeatureCount());
-            ds.setStatus(UploadStatus.ANALYZING);
-        }
-        return states;
-    }
-
-    private List<SampleProperty> sampleProperties(Map<String, Object> sampleProperties) {
-        if (sampleProperties != null) {
-            return sampleProperties.entrySet().stream().map(this::sampleProperty).collect(Collectors.toList());
-        }
-        return new ArrayList<>();
-    }
-
-    private SampleProperty sampleProperty(Map.Entry<String, Object> e) {
-        SampleProperty p = new SampleProperty();
-        p.setName(e.getKey());
-        Object value = e.getValue();
-        if (value != null) {
-            String v = Converters.convert(value, String.class);
-            p.setValue(v);
-            p.setType(value.getClass().getSimpleName());
-        }
-        return p;
+        analysisService.runJob(uploadId);
     }
 
     public List<DataUploadJob> findAllJobs() {
@@ -154,17 +74,4 @@ public class DataUploadService {
     public void remove(@NonNull UUID jobId) {
         repository.delete(jobId);
     }
-
-    private UploadPackage getUploadPack(UUID uploadId) {
-        UploadPackage pack;
-        try {
-            pack = storageService.find(uploadId);
-        } catch (FileNotFoundException fnf) {
-            throw new IllegalArgumentException("upload pack does not exist: " + uploadId);
-        } catch (IOException e) {
-            throw new RuntimeException(e);// TODO better exception handling
-        }
-        return pack;
-    }
-
 }
