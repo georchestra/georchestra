@@ -29,14 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class JobCompletionNotificationListener implements JobExecutionListener {
+public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired DataUploadJobRepository repository;
+    private @Autowired @Setter DataUploadAnalysisService service;
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -70,7 +72,7 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
         log.info("upload job id: {}, status: {}", uploadId, status);
         switch (status) {
         case COMPLETED:
-            repository.setJobStatus(uploadId, UploadStatus.DONE);
+            service.summarize(uploadId);
             break;
         case ABANDONED:
         case FAILED:
