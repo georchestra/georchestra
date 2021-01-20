@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
 import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.UploadStatus;
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.service.batch.analysis.DataUploadAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +51,8 @@ public class DataUploadService {
     /**
      * Asynchronously starts the analysis process for the upload pack given by its
      * id, returns immediately with {@link DataUploadJob#getStatus() status}
-     * {@link UploadStatus#PENDING} and an empty {@link DataUploadJob#getDatasets()
-     * datasets} list.
+     * {@link AnalysisStatus#PENDING} and an empty
+     * {@link DataUploadJob#getDatasets() datasets} list.
      */
     @Async
     public void analyze(@NonNull UUID uploadId) {

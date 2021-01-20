@@ -16,10 +16,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.SampleProperty;
-import org.georchestra.datafeeder.model.UploadStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DatasetMetadata;
@@ -60,7 +60,7 @@ public class DataUploadAnalysisService {
 
     /**
      * Data upload analysis process step 0: creates a {@link DataUploadJob} with
-     * {@link UploadStatus#PENDING PENDING} status for the {@link UploadPackage}
+     * {@link AnalysisStatus#PENDING PENDING} status for the {@link UploadPackage}
      * with the given id.
      * 
      * @throws IllegalArgumentException if no {@link UploadPackage} exists for the
@@ -75,7 +75,7 @@ public class DataUploadAnalysisService {
         getUploadPack(jobId);
         DataUploadJob state = new DataUploadJob();
         state.setJobId(jobId);
-        state.setStatus(UploadStatus.PENDING);
+        state.setStatus(AnalysisStatus.PENDING);
         state.setUsername(username);
         DataUploadJob saved = jobRepository.save(state);
         return saved;
@@ -105,11 +105,11 @@ public class DataUploadAnalysisService {
      * {@link #createJob created}.
      * <p>
      * Initializes a data upload job, by setting its state to
-     * {@link UploadStatus#ANALYZING ANALYZING}, clearing its
+     * {@link AnalysisStatus#ANALYZING ANALYZING}, clearing its
      * {@link DataUploadJob#getDatasets() datasets} and setting its progress to
      * zero.
      * <p>
-     * Adds a {@link UploadStatus#PENDING PENDING} {@link DatasetUploadState} for
+     * Adds a {@link AnalysisStatus#PENDING PENDING} {@link DatasetUploadState} for
      * each dataset found on each uploaded file. For example, some uploaded files
      * like shapefiles, have a single dataset, but some other, like a geopackage,
      * may contain more than one dataset.
@@ -122,16 +122,21 @@ public class DataUploadAnalysisService {
      *                                  {@link FileStorageService}
      */
     @Transactional
-    public void initialize(@NonNull UUID uploadId) throws IOException {
+    public void initialize(@NonNull UUID uploadId) {
         log.info("Initializing DataUploadState from UploadPackage {}", uploadId);
         final UploadPackage uploadPack = getUploadPack(uploadId);
 
         DataUploadJob job = jobRepository.findByJobId(uploadId)
                 .orElseThrow(() -> new IllegalArgumentException("DataUploadState does not exist: " + uploadId));
-        job.setStatus(UploadStatus.ANALYZING);
+        job.setStatus(AnalysisStatus.ANALYZING);
         job.getDatasets().clear();
 
-        Set<String> datasetFiles = uploadPack.findDatasetFiles();
+        Set<String> datasetFiles;
+        try {
+            datasetFiles = uploadPack.findDatasetFiles();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
 
         int errored = 0;
         for (String fileRelativePath : datasetFiles) {
@@ -142,7 +147,7 @@ public class DataUploadAnalysisService {
                 List<DatasetUploadState> fileDatasets = createPendingDatasets(fileRelativePath, path, typeNames);
                 fileDatasets.forEach(d -> d.setJob(job));
                 job.getDatasets().addAll(fileDatasets);
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 errored++;
                 DatasetUploadState dataset = createFailedDataset(fileRelativePath, path, e);
                 dataset.setJob(job);
@@ -157,7 +162,7 @@ public class DataUploadAnalysisService {
 
     public DatasetUploadState analyze(DatasetUploadState item) throws Exception {
         Objects.requireNonNull(item.getId(), "item has no id");
-        checkStatus(item, UploadStatus.ANALYZING);
+        checkStatus(item, AnalysisStatus.ANALYZING);
 
         final Path path = Paths.get(item.getAbsolutePath());
         final String typeName = item.getName();
@@ -178,7 +183,7 @@ public class DataUploadAnalysisService {
         return item;
     }
 
-    private void checkStatus(DatasetUploadState item, UploadStatus expected) {
+    private void checkStatus(DatasetUploadState item, AnalysisStatus expected) {
         if (expected != item.getStatus()) {
             throw new IllegalStateException(String.format("Invalid status, expected %s, got %s. Item: %s#%s", expected,
                     item.getStatus(), item.getFileName(), item.getName()));
@@ -190,13 +195,14 @@ public class DataUploadAnalysisService {
         this.datasetRepository.save(items);
     }
 
-    @Transactional
     public void summarize(@NonNull UUID uploadId) {
+        datasetRepository.flush();
+        jobRepository.flush();
         DataUploadJob state = jobRepository.findByJobId(uploadId)
                 .orElseThrow(() -> new IllegalArgumentException("DataUploadState does not exist: " + uploadId));
-        UploadStatus status = determineJobStatus(state.getDatasets());
+        AnalysisStatus status = determineJobStatus(state.getDatasets());
         state.setStatus(status);
-        if (UploadStatus.ERROR == status) {
+        if (AnalysisStatus.ERROR == status) {
             state.setError(buildErrorMessage(state.getDatasets()));
         }
         jobRepository.save(state);
@@ -204,13 +210,23 @@ public class DataUploadAnalysisService {
 
     private String buildErrorMessage(List<DatasetUploadState> datasets) {
         return "Error analyzing the following datasets:\n"
-                + datasets.stream().filter(d -> d.getStatus() == UploadStatus.ERROR)
+                + datasets.stream().filter(d -> d.getStatus() == AnalysisStatus.ERROR)
                         .map(d -> d.getName() + ": " + d.getError()).collect(Collectors.joining("\n"));
     }
 
-    private UploadStatus determineJobStatus(List<DatasetUploadState> datasets) {
-        boolean anyFailed = datasets.stream().map(DatasetUploadState::getStatus).anyMatch(UploadStatus.ERROR::equals);
-        return anyFailed ? UploadStatus.ERROR : UploadStatus.DONE;
+    private AnalysisStatus determineJobStatus(List<DatasetUploadState> datasets) {
+        for (DatasetUploadState s : datasets) {
+            DatasetUploadState d = this.datasetRepository.findOne(s.getId());
+            AnalysisStatus status = d.getStatus();
+            if (AnalysisStatus.ERROR == status) {
+                return AnalysisStatus.ERROR;
+            } else if (AnalysisStatus.DONE != status) {
+                throw new IllegalStateException("Expected status DONE or ERROR, got " + status);
+            }
+        }
+        return AnalysisStatus.DONE;
+//        boolean anyFailed = datasets.stream().map(DatasetUploadState::getStatus).anyMatch(UploadStatus.ERROR::equals);
+//        return anyFailed ? UploadStatus.ERROR : UploadStatus.DONE;
     }
 
     private List<SampleProperty> sampleProperties(Map<String, Object> sampleProperties) {
@@ -252,17 +268,17 @@ public class DataUploadAnalysisService {
             dataset.setName(typeName);
             dataset.setFileName(fileRelativePath);
             dataset.setAbsolutePath(path.toAbsolutePath().toString());
-            dataset.setStatus(UploadStatus.PENDING);
+            dataset.setStatus(AnalysisStatus.PENDING);
             datasets.add(dataset);
         }
         return datasets;
     }
 
-    private DatasetUploadState createFailedDataset(String fileRelativePath, Path path, RuntimeException e) {
+    private DatasetUploadState createFailedDataset(String fileRelativePath, Path path, Exception e) {
         DatasetUploadState dataset = new DatasetUploadState();
         dataset.setFileName(fileRelativePath);
         dataset.setAbsolutePath(path.toAbsolutePath().toString());
-        dataset.setStatus(UploadStatus.ERROR);
+        dataset.setStatus(AnalysisStatus.ERROR);
         dataset.setError(e.getMessage());
         return dataset;
     }

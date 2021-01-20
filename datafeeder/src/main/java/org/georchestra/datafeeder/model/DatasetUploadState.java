@@ -48,7 +48,7 @@ public class DatasetUploadState {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private DataUploadJob job;
 
     @Column
@@ -61,9 +61,10 @@ public class DatasetUploadState {
     private String name;
 
     @Column
-    private UploadStatus status;
+    private AnalysisStatus status;
 
     @Lob
+    @Column(length = 1024 * 1024)
     @Basic(fetch = FetchType.EAGER)
     private String error;
 
@@ -84,7 +85,7 @@ public class DatasetUploadState {
 
     private String encoding;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dataset_sample_properties")
     private List<SampleProperty> sampleProperties = new ArrayList<>();
 }

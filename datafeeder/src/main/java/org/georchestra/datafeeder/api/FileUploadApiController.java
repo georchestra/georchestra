@@ -70,7 +70,7 @@ public class FileUploadApiController implements FileUploadApi {
             throw new RuntimeException(e);// TODO translate to ResponseStatusException
         }
         UploadJobStatus response = mapper.toApi(state);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.accepted().body(response);
     }
 
     @Override

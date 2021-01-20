@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.UploadStatus;
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.service.UploadPackage;
@@ -28,7 +28,7 @@ import lombok.Setter;
  * <p>
  * It takes the upload job id from the {@link JobParameters} and asks the
  * {@link FileStorageService} for the corresponding {@link UploadPackage},
- * creates one {@link UploadStatus#PENDING PENDING} state
+ * creates one {@link AnalysisStatus#PENDING PENDING} state
  * {@link DatasetUploadState} for each dataset, and saves the
  * {@link DataUploadJob}.
  * 
