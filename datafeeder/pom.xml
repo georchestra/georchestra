@@ -133,6 +133,12 @@
       <artifactId>gt-epsg-hsql</artifactId>
     </dependency>
     <dependency>
+      <!-- upgrade hsqldb to avoid "data exception: string data, right truncation" error on @Lob columns -->
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
     </dependency>
@@ -169,6 +175,10 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
     <!-- Testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -201,13 +211,6 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-sample-data</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <!-- upgrade hsqldb to avoid "data exception: string data, right truncation" error on @Lob columns -->
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>2.5.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

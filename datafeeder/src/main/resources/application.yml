@@ -45,3 +45,21 @@ georchestra.datadir: /etc/georchestra
 spring:
   profiles: test
 georchestra.datadir: src/test/resources/datadir
+---
+spring:
+  profiles: local
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+
+georchestra.datadir: src/test/resources/datadir
+datafeeder:
+  file-upload:
+    max-file-size: 30MB
+    max-request-size: 256MB
+    file-size-threshold: 30MB
+    temporary-location: ${java.io.tmpdir}/datafeeder/tmp
+    persistent-location: ${java.io.tmpdir}/datafeeder/uploads
