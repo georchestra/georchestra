@@ -34,7 +34,9 @@ import lombok.NonNull;
 
 public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UUID> {
 
-    List<DataUploadJob> findAllByUsername(@NonNull String username);
+    List<DataUploadJob> findAllByUsernameOrderByCreatedDateDesc(@NonNull String username);
+
+    List<DataUploadJob> findAllByOrderByCreatedDateDesc();
 
     Optional<DataUploadJob> findByJobId(@NonNull UUID jobId);
 

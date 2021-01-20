@@ -69,6 +69,7 @@ public class DataUploadAnalysisService {
      *                                  the {@link UploadPackage} from
      *                                  {@link FileStorageService}
      */
+    @Transactional
     public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
         log.info("Creating DataUploadState from UploadPackage {}", jobId);
         getUploadPack(jobId);

@@ -19,7 +19,6 @@
 package org.georchestra.datafeeder.app;
 
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
-import org.georchestra.datafeeder.repository.PersistenceConfiguration;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
 import org.georchestra.datafeeder.swagger.SwaggerDocConfig;
 import org.springframework.context.annotation.Configuration;
