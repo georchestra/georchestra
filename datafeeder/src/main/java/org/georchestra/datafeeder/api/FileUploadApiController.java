@@ -108,6 +108,7 @@ public class FileUploadApiController implements FileUploadApi {
             @PathVariable("jobId") UUID jobId, //
             @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
 
+        getAndCheckAccessRights(jobId);
         if (Boolean.TRUE.equals(abort)) {
             this.uploadService.abortAndRemove(jobId);
         } else {

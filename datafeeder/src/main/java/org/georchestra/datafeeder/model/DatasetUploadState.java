@@ -38,8 +38,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(exclude = { "job" })
+@ToString(exclude = "job")
 @Entity
 @Table(name = "dataset")
 public class DatasetUploadState {
