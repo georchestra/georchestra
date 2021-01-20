@@ -184,7 +184,7 @@ public class FileStorageServiceTest {
         UploadPackage pack = service.find(id);
         for (MultipartFile mpf : received) {
             byte[] expectedContent = mpf.getBytes();
-            String fileName = mpf.getName();
+            String fileName = mpf.getOriginalFilename();
             Path path = pack.resolve(fileName);
             assertTrue(Files.isRegularFile(path));
             assertEquals(expectedContent.length, Files.size(path));
