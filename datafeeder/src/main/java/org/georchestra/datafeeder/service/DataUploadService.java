@@ -60,11 +60,11 @@ public class DataUploadService {
     }
 
     public List<DataUploadJob> findAllJobs() {
-        return repository.findAll();
+        return repository.findAllByOrderByCreatedDateDesc();
     }
 
     public List<DataUploadJob> findUserJobs(@NonNull String userName) {
-        return repository.findAllByUsername(userName);
+        return repository.findAllByUsernameOrderByCreatedDateDesc(userName);
     }
 
     public void abortAndRemove(@NonNull UUID jobId) {

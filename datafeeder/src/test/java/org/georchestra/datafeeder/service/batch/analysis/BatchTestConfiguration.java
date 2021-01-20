@@ -4,14 +4,16 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.batch.test.JobLauncherTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class BatchTestConfiguration {
+
+    private @Autowired PlatformTransactionManager transactionManager;
 
     @Bean
     public JobLauncherTestUtils jobLauncherTestUtils() {
@@ -21,13 +23,8 @@ public class BatchTestConfiguration {
     @Bean
     public JobRepository jobRepository() throws Exception {
         MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
-        factory.setTransactionManager(transactionManager());
+        factory.setTransactionManager(transactionManager);
         return (JobRepository) factory.getObject();
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new ResourcelessTransactionManager();
     }
 
     @Bean

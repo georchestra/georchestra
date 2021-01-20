@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -212,8 +213,12 @@ public class FileUploadApiControllerTest {
     @WithMockUser(username = "testuser", roles = "USER")
     public void testFindUploadJob_non_existent_job_id_returns_404() {
         UUID invalidId = UUID.randomUUID();
-        ResponseEntity<UploadJobStatus> response = controller.findUploadJob(invalidId);
-        assertEquals(NOT_FOUND, response.getStatusCode());
+        try {
+            controller.findUploadJob(invalidId);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
     }
 
     private UploadJobStatus upload(List<MultipartFile> files) {
