@@ -60,7 +60,7 @@ public class FileStorageService {
     }
 
     public void addFileToPackage(@NonNull UploadPackage pack, @NonNull MultipartFile mpf) throws IOException {
-        String fileName = mpf.getName();
+        String fileName = mpf.getOriginalFilename();
         File dest = pack.resolve(fileName).toFile();
         mpf.transferTo(dest);
         if (pack.isArchive(fileName)) {
