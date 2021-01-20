@@ -67,7 +67,7 @@ public class DataUploadJob {
     private Date lastModifiedDate;
 
     @Column(nullable = false)
-    private UploadStatus status = UploadStatus.PENDING;
+    private AnalysisStatus status = AnalysisStatus.PENDING;
 
     @Column
     private String error;

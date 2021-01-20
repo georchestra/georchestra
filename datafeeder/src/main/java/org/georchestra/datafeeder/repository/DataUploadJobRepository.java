@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.UploadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
+@Transactional
 public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UUID> {
 
     List<DataUploadJob> findAllByUsernameOrderByCreatedDateDesc(@NonNull String username);
@@ -40,18 +41,13 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
 
     Optional<DataUploadJob> findByJobId(@NonNull UUID jobId);
 
-    @Modifying
     @Transactional
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set status = :status where jobId = :jobId")
-    int setJobStatus(@Param("jobId") UUID jobId, @Param("status") UploadStatus status);
+    int setJobStatus(@Param("jobId") UUID jobId, @Param("status") AnalysisStatus status);
 
-    @Modifying
     @Transactional
-    @Query("update DataUploadJob set progress = :progress where jobId = :jobId")
-    int setProgress(@Param("jobId") UUID jobId, @Param("progress") double progress);
-
-    @Modifying
-    @Transactional
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set finishedSteps = finishedSteps + 1 where jobId = :jobId")
     int incrementProgress(@Param("jobId") UUID jobId);
 }

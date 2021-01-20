@@ -20,9 +20,9 @@ package org.georchestra.datafeeder.api;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.georchestra.datafeeder.model.UploadStatus.ANALYZING;
-import static org.georchestra.datafeeder.model.UploadStatus.DONE;
-import static org.georchestra.datafeeder.model.UploadStatus.ERROR;
+import static org.georchestra.datafeeder.model.AnalysisStatus.ANALYZING;
+import static org.georchestra.datafeeder.model.AnalysisStatus.DONE;
+import static org.georchestra.datafeeder.model.AnalysisStatus.ERROR;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.UploadStatus;
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.hamcrest.Matcher;
@@ -150,6 +150,7 @@ public class FileUploadApiControllerTest {
 
         UUID id = initialStatus.getJobId();
         DataUploadJob job = awaitUntilJobIsOneOf(id, 3, ERROR);
+        job = uploadService.findJob(job.getJobId()).orElse(null);
         assertEquals(1, job.getDatasets().size());
         assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
@@ -177,7 +178,7 @@ public class FileUploadApiControllerTest {
         final List<MultipartFile> received = Collections.singletonList(zipFile);
         final ResponseEntity<UploadJobStatus> response = controller.uploadFiles(received);
 
-        assertEquals(OK, response.getStatusCode());
+        assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
         assertEquals(UploadJobStatus.StatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
@@ -186,6 +187,7 @@ public class FileUploadApiControllerTest {
         awaitUntilJobDatasetUploadStatusIs(id, "test", 3, ERROR);
 
         DataUploadJob job = awaitUntilJobIsOneOf(id, 3, ERROR);
+        job = this.uploadService.findJob(job.getJobId()).orElse(null);
         assertEquals(3, job.getDatasets().size());
         assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
@@ -223,7 +225,7 @@ public class FileUploadApiControllerTest {
 
     private UploadJobStatus upload(List<MultipartFile> files) {
         ResponseEntity<UploadJobStatus> response = controller.uploadFiles(files);
-        assertEquals(OK, response.getStatusCode());
+        assertEquals(ACCEPTED, response.getStatusCode());
         return response.getBody();
     }
 
@@ -238,13 +240,14 @@ public class FileUploadApiControllerTest {
         UploadJobStatus user2Job1 = upload(multipartSupport.archSitesShapefile());
         UploadJobStatus user2Job2 = upload(multipartSupport.chinesePolyShapefile());
 
+        setCallingUser("testadmin", "ADMINISTRATOR");
         ResponseEntity<List<UploadJobStatus>> response = controller.findAllUploadJobs();
         assertEquals(OK, response.getStatusCode());
 
         Set<UUID> expected = Arrays.asList(user1Job1, user1Job2, user2Job1, user2Job2).stream()
                 .map(UploadJobStatus::getJobId).collect(Collectors.toSet());
         Set<UUID> actual = response.getBody().stream().map(UploadJobStatus::getJobId).collect(Collectors.toSet());
-        assertEquals(expected, actual);
+        assertTrue(actual.containsAll(expected));// actual may have more elements from other test cases
     }
 
     @Test
@@ -300,12 +303,22 @@ public class FileUploadApiControllerTest {
         final Boolean abort = null;
 
         assertEquals(OK, controller.findUploadJob(id1).getStatusCode());
-        assertEquals(OK, controller.removeJob(id1, abort));
-        assertEquals(NOT_FOUND, controller.findUploadJob(id1).getStatusCode());
+        assertEquals(OK, controller.removeJob(id1, abort).getStatusCode());
+        try {
+            controller.findUploadJob(id1);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
 
         assertEquals(OK, controller.findUploadJob(id2).getStatusCode());
-        assertEquals(OK, controller.removeJob(id2, abort));
-        assertEquals(NOT_FOUND, controller.findUploadJob(id2).getStatusCode());
+        assertEquals(OK, controller.removeJob(id2, abort).getStatusCode());
+        try {
+            controller.findUploadJob(id2);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
     }
 
     @Test
@@ -390,7 +403,7 @@ public class FileUploadApiControllerTest {
     }
 
     private void assertDataset(@NonNull List<DatasetUploadState> datasets, @NonNull String name,
-            @NonNull UploadStatus expectedStatus) {
+            @NonNull AnalysisStatus expectedStatus) {
 
         DatasetUploadState datasetState = datasets.stream().filter(d -> name.equals(d.getName())).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Expected dataset not returned: " + name));
@@ -420,14 +433,14 @@ public class FileUploadApiControllerTest {
         }
     }
 
-    private DataUploadJob awaitUntilJobIsOneOf(final UUID jobId, int seconds, UploadStatus... oneof) {
+    private DataUploadJob awaitUntilJobIsOneOf(final UUID jobId, int seconds, AnalysisStatus... oneof) {
         final AtomicReference<DataUploadJob> jobStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
             DataUploadJob jobState = uploadService.findJob(jobId).orElseThrow(NoSuchElementException::new);
             jobStatus.set(jobState);
 
-            UploadStatus status = jobState.getStatus();
-            List<Matcher<? super UploadStatus>> matchers;
+            AnalysisStatus status = jobState.getStatus();
+            List<Matcher<? super AnalysisStatus>> matchers;
             matchers = Arrays.stream(oneof).map(Matchers::equalTo).collect(Collectors.toList());
             assertThat(status, anyOf(matchers));
         });
@@ -435,7 +448,7 @@ public class FileUploadApiControllerTest {
     }
 
     private DatasetUploadState awaitUntilJobDatasetUploadStatusIs(final UUID jobId, final String datasetName,
-            final int seconds, final UploadStatus expectedStatus) {
+            final int seconds, final AnalysisStatus expectedStatus) {
 
         final AtomicReference<DatasetUploadState> datasetStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
