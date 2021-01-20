@@ -299,7 +299,7 @@ components:
           type: string
           description: Coordinate Reference System's EPSG identifier.
                        Can be null if a matching reference system couldn't be found in the EPSG database. 
-        WKT:
+        wkt:
           type: string
           description: Coordinate Reference System's Well Known Text representation. Despite the 'srs' identifier being found or not, the WKT representation is still available.
     BoundingBox:
