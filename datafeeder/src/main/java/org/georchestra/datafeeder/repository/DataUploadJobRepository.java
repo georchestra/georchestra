@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
-@Transactional
 public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UUID> {
 
     List<DataUploadJob> findAllByUsernameOrderByCreatedDateDesc(@NonNull String username);

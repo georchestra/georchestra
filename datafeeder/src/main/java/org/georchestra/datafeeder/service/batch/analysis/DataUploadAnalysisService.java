@@ -40,12 +40,15 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Centralized service to perform uploaded dataset analysis, used by
+ * spring-batch steps and listeners.
+ */
 @Service
 @Slf4j
 public class DataUploadAnalysisService {
@@ -69,7 +72,6 @@ public class DataUploadAnalysisService {
      *                                  the {@link UploadPackage} from
      *                                  {@link FileStorageService}
      */
-    @Transactional
     public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
         log.info("Creating DataUploadState from UploadPackage {}", jobId);
         getUploadPack(jobId);
@@ -82,9 +84,12 @@ public class DataUploadAnalysisService {
     }
 
     public void runJob(@NonNull UUID jobId) {
+        final String paramName = UPLOAD_ID_JOB_PARAM_NAME;
+        final String paramValue = jobId.toString();
         final boolean identifying = true;
+
         final JobParameters params = new JobParametersBuilder()//
-                .addString(UPLOAD_ID_JOB_PARAM_NAME, jobId.toString(), identifying)//
+                .addString(paramName, paramValue, identifying)//
                 .toJobParameters();
         log.info("Launching analisys job {}", jobId);
         JobExecution execution;
@@ -121,7 +126,6 @@ public class DataUploadAnalysisService {
      *                                  the {@link UploadPackage} from
      *                                  {@link FileStorageService}
      */
-    @Transactional
     public void initialize(@NonNull UUID uploadId) {
         log.info("Initializing DataUploadState from UploadPackage {}", uploadId);
         final UploadPackage uploadPack = getUploadPack(uploadId);
@@ -161,25 +165,28 @@ public class DataUploadAnalysisService {
     }
 
     public DatasetUploadState analyze(DatasetUploadState item) throws Exception {
+        log.info("analyzing dataset {}/{}#{}", item.getJob().getJobId(), item.getFileName(), item.getName());
         Objects.requireNonNull(item.getId(), "item has no id");
         checkStatus(item, AnalysisStatus.ANALYZING);
 
         final Path path = Paths.get(item.getAbsolutePath());
         final String typeName = item.getName();
+        try {
+            DatasetMetadata datasetMetadata = datasetsService.describe(path, typeName);
+            item.setStatus(AnalysisStatus.DONE);
+            item.setEncoding(datasetMetadata.getEncoding());
+            item.setFeatureCount(datasetMetadata.getFeatureCount());
+            item.setNativeBounds(datasetMetadata.getNativeBounds());
+            String geometryWKT = Optional.ofNullable(datasetMetadata.getSampleGeometry()).map(Geometry::toText)
+                    .orElse(null);
+            List<SampleProperty> sampleProperties = sampleProperties(datasetMetadata.getSampleProperties());
 
-        DatasetMetadata datasetMetadata = datasetsService.describe(path, typeName);
-
-        item.setEncoding(datasetMetadata.getEncoding());
-
-        item.setFeatureCount(datasetMetadata.getFeatureCount());
-        item.setNativeBounds(datasetMetadata.getNativeBounds());
-        String geometryWKT = Optional.ofNullable(datasetMetadata.getSampleGeometry()).map(Geometry::toText)
-                .orElse(null);
-        List<SampleProperty> sampleProperties = sampleProperties(datasetMetadata.getSampleProperties());
-
-        item.setSampleGeometryWKT(geometryWKT);
-        item.setSampleProperties(sampleProperties);
-
+            item.setSampleGeometryWKT(geometryWKT);
+            item.setSampleProperties(sampleProperties);
+        } catch (Exception e) {
+            item.setStatus(AnalysisStatus.ERROR);
+            item.setError(e.getMessage());
+        }
         return item;
     }
 
@@ -190,7 +197,6 @@ public class DataUploadAnalysisService {
         }
     }
 
-    @Transactional
     public void save(List<? extends DatasetUploadState> items) {
         this.datasetRepository.save(items);
     }

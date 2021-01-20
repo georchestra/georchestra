@@ -49,13 +49,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -192,9 +193,9 @@ public class FileUploadApiControllerTest {
         assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
 
-        assertDataset(job.getDatasets(), "test", ERROR);
         assertDataset(job.getDatasets(), "archsites", DONE);
         assertDataset(job.getDatasets(), "bugsites", DONE);
+        assertDataset(job.getDatasets(), "test", ERROR);
     }
 
     @Test
@@ -321,6 +322,7 @@ public class FileUploadApiControllerTest {
         }
     }
 
+    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testRemoveJob_ok_when_running_and_abort_is_true() {
@@ -337,6 +339,7 @@ public class FileUploadApiControllerTest {
         assertEquals(NOT_FOUND, controller.findUploadJob(id2).getStatusCode());
     }
 
+    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testRemoveJob_conflict_if_running_and_abort_not_specified() {
@@ -359,10 +362,16 @@ public class FileUploadApiControllerTest {
         UploadJobStatus job = upload(multipartSupport.archSitesShapefile());
         setCallingUser("user2", "USER", "SOMEOTHERROLE");
         final Boolean abort = true;
-        ResponseEntity<Void> response = controller.removeJob(job.getJobId(), abort);
-        assertEquals(FORBIDDEN, response.getStatusCode());
+        try {
+            controller.removeJob(job.getJobId(), abort);
+            fail("expected forbidden");
+        } catch (Exception e) {
+            assertThat(e, Matchers.instanceOf(ApiException.class));
+            assertEquals(FORBIDDEN, ((ApiException) e).getStatus());
+        }
     }
 
+    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     public void testRemoveJob_administrator_can_remove_other_users_jobs() {
         setCallingUser("testuser", "USER", "SOMEOTHERROLE");
@@ -422,9 +431,9 @@ public class FileUploadApiControllerTest {
             assertNotNull(datasetState.getNativeBounds());
             assertNotNull(datasetState.getNativeBounds().getCrs());
             assertNotNull(datasetState.getNativeBounds().getCrs().getWKT());
-        } else if (ERROR == expectedStatus || ANALYZING == expectedStatus) {
+        } else if (ERROR == expectedStatus) {
             assertNull(datasetState.getEncoding());
-            assertNull(datasetState.getError());
+            assertNotNull(datasetState.getError());
             assertNull(datasetState.getNativeBounds());
             assertNull(datasetState.getSampleGeometryWKT());
             assertNotNull(datasetState.getSampleProperties());
@@ -459,7 +468,7 @@ public class FileUploadApiControllerTest {
             if (dataset.isPresent()) {
                 DatasetUploadState state = dataset.get();
                 datasetStatus.set(state);
-                assertThat(state, equalTo(expectedStatus));
+                assertThat(state.getStatus(), equalTo(expectedStatus));
             }
         });
         return datasetStatus.get();

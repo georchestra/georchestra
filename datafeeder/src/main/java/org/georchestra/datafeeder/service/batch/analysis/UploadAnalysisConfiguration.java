@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * Spring-batch configuration for the uploaded datasets analysis workflow
@@ -59,6 +60,7 @@ public class UploadAnalysisConfiguration {
 
     private @Autowired JobBuilderFactory jobs;
     private @Autowired StepBuilderFactory steps;
+    private @Autowired PlatformTransactionManager platformTransactionManager;
 
     @Bean(name = UploadAnalysisConfiguration.JOB_NAME)
     public Job analyzeUploadJob(//
@@ -82,6 +84,7 @@ public class UploadAnalysisConfiguration {
     public @Bean Step initializeDataUploadState(DataUploadStateInitializer initializer) {
         return steps.get("initializeDataUploadState")//
                 .tasklet(initializer)//
+                .transactionManager(platformTransactionManager)//
                 .build();
     }
 
@@ -94,6 +97,7 @@ public class UploadAnalysisConfiguration {
                 .processor(service::analyze)//
                 .writer(service::save)//
                 .listener(itemStatusUpdater)//
+                .transactionManager(platformTransactionManager)//
                 .build();//
         return step;
     }
