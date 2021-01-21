@@ -19,7 +19,8 @@ paths:
     post:
       tags:
         - File Upload
-      description: 'Upload one or multiple files to the server, and get a handle to the job'
+      description: Upload one or multiple files to the server, and get a handle to the job.
+                   Once the files are uploaded, the analysis process is automatically triggered. Its status can be polled with GET /upload/{jobId}
       operationId: uploadFiles
       requestBody:
         content:
@@ -33,7 +34,7 @@ paths:
                     type: string
                     format: binary
       responses:
-        202:
+        200:
           $ref: '#/components/responses/UploadStatusResponse'
         401:
           description: 'Not authenticated'
@@ -104,7 +105,7 @@ paths:
           description: 'Forbidden. User has no priviledges access the requested job'
         409:
           description: 'Conflict. The abort=true parameter was not provided and the analysis or publishing job is running'
-  
+
   /upload/{jobId}/publish:
     post:
       tags:
@@ -247,9 +248,9 @@ components:
           format: int32
           description: Number of features in the dataset
         sampleProperties:
-          type: object
-          additionalProperties: true
-          description: Associative array of property names and values for the sample feature
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
         sampleGeometryWKT:
           type: string
           description: Well Known Text representation of an exemplar geometry extracted from the dataset
@@ -259,6 +260,16 @@ components:
           type: string
           description: detected charset
     
+    Property:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+
     CRS:
       type: object
       description: Coordinate Reference System
@@ -267,7 +278,7 @@ components:
           type: string
           description: Coordinate Reference System's EPSG identifier.
                        Can be null if a matching reference system couldn't be found in the EPSG database. 
-        WKT:
+        wkt:
           type: string
           description: Coordinate Reference System's Well Known Text representation. Despite the 'srs' identifier being found or not, the WKT representation is still available.
     BoundingBox:

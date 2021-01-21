@@ -18,19 +18,78 @@
  */
 package org.georchestra.datafeeder.model;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-public @Data class DatasetUploadState {
+@Data
+@EqualsAndHashCode(exclude = { "job" })
+@ToString(exclude = "job")
+@Entity
+@Table(name = "dataset")
+public class DatasetUploadState {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private DataUploadJob job;
+
+    @Column
+    private String absolutePath;
+
+    @Column
+    private String fileName;
+
+    @Column
     private String name;
 
-    private UploadStatus status;
+    @Column
+    private AnalysisStatus status;
+
+    @Lob
+    @Column(length = 1024 * 1024)
+    @Basic(fetch = FetchType.EAGER)
     private String error;
+
+    @Column
     private Integer featureCount;
-    private Map<String, Object> sampleProperties;
+
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(length = 1024 * 1024)
     private String sampleGeometryWKT;
+
+    @Embedded
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "crs_srs", column = @Column(name = "bbox_srs")), //
+            @AttributeOverride(name = "crs_wkt", column = @Column(name = "bbox_wkt"))//
+    })
     private BoundingBoxMetadata nativeBounds;
+
     private String encoding;
-    private CoordinateReferenceSystemMetadata nativeCrs;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "dataset_sample_properties")
+    private List<SampleProperty> sampleProperties = new ArrayList<>();
 }

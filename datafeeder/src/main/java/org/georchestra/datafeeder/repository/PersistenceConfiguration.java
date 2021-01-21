@@ -16,8 +16,20 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.model;
+package org.georchestra.datafeeder.repository;
 
-public enum UploadStatus {
-    PENDING, ANALYZING, DONE, ERROR;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+/**
+ * 
+ */
+@Configuration
+@EnableJpaRepositories
+@EntityScan(basePackageClasses = DataUploadJob.class)
+@Import(JpaAuditingConfiguration.class)
+public class PersistenceConfiguration {
 }

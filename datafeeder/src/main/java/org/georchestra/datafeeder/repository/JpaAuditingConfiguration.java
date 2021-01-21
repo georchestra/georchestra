@@ -16,22 +16,27 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch;
+package org.georchestra.datafeeder.repository;
 
-import org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration;
-import org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
-@EnableBatchProcessing
-@Import({ UploadAnalysisConfiguration.class, DataPublishingConfiguration.class })
-public class DatafeederBatchConfiguration {
+@EnableJpaAuditing(auditorAwareRef = "jpaAuditorProvider")
+public class JpaAuditingConfiguration {
 
-    public @Bean JobManager jobManager() {
-        return new JobManager();
+    public @Bean AuditorAware<String> jpaAuditorProvider() {
+        return () -> {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null) {
+                return "annonymous";
+            }
+            String name = auth.getName();
+            return name;
+        };
     }
-
 }

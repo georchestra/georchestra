@@ -18,17 +18,6 @@
  */
 package org.georchestra.datafeeder.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import lombok.Data;
-
-public @Data class DataUploadState {
-
-    private UUID jobId;
-    private double progress;
-    private UploadStatus status;
-    private String error;
-    private List<DatasetUploadState> datasets = new ArrayList<>();
+public enum AnalysisStatus {
+    PENDING, ANALYZING, DONE, ERROR;
 }

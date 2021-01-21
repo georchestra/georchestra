@@ -88,10 +88,11 @@ public class MultipartTestSupport extends ExternalResource {
         return createMultipartFile(name, content);
     }
 
-    public MultipartFile createMultipartFile(String name, byte[] content) {
+    public MultipartFile createMultipartFile(String originalFileName, byte[] content) {
         String contentType = null;
-        String originalFilename = null;
-        return new MockMultipartFile(name, originalFilename, contentType, content);
+        String formFieldName = "filename";
+        String originalFilename = originalFileName;
+        return new MockMultipartFile(formFieldName, originalFilename, contentType, content);
     }
 
     public byte[] createContents(int fileSize) {
@@ -108,7 +109,7 @@ public class MultipartTestSupport extends ExternalResource {
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
             for (List<MultipartFile> files : filesets) {
                 for (MultipartFile zipped : files) {
-                    String name = zipped.getName();
+                    String name = zipped.getOriginalFilename();
                     byte[] content = zipped.getBytes();
                     ZipEntry entry = new ZipEntry(name);
                     zos.putNextEntry(entry);

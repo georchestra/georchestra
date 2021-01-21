@@ -16,17 +16,24 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.service.batch.publish;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.mapstruct.Mapper;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
-@Mapper(componentModel = "spring", uses = CRSMapper.class)
-public interface ApiResponseMapper {
+/**
+ * 
+ * Spring-batch configuration for the data publishing workflow
+ *
+ */
+@Configuration
+@EnableBatchProcessing
+public class DataPublishingConfiguration {
 
-    UploadJobStatus toApi(DataUploadJob state);
-
-    DatasetUploadStatus toApi(DatasetUploadState dataset);
+    private @Autowired JobBuilderFactory jobBuilderFactory;
+    private @Autowired StepBuilderFactory stepBuilderFactory;
 
 }

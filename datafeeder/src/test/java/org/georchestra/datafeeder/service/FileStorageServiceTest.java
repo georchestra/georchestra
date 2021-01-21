@@ -176,7 +176,7 @@ public class FileStorageServiceTest {
         verifyUploads(id, expected);
 
         UploadPackage pack = service.find(id);
-        Set<String> actual = pack.findDatasets();
+        Set<String> actual = pack.findDatasetFiles();
         assertEquals(Sets.newHashSet("test.shp", "test2.shp", "test3.geojson"), actual);
     }
 
@@ -184,7 +184,7 @@ public class FileStorageServiceTest {
         UploadPackage pack = service.find(id);
         for (MultipartFile mpf : received) {
             byte[] expectedContent = mpf.getBytes();
-            String fileName = mpf.getName();
+            String fileName = mpf.getOriginalFilename();
             Path path = pack.resolve(fileName);
             assertTrue(Files.isRegularFile(path));
             assertEquals(expectedContent.length, Files.size(path));

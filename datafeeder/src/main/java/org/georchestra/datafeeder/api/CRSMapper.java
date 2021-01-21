@@ -18,15 +18,13 @@
  */
 package org.georchestra.datafeeder.api;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = CRSMapper.class)
-public interface ApiResponseMapper {
+@Mapper(componentModel = "spring")
+public interface CRSMapper {
 
-    UploadJobStatus toApi(DataUploadJob state);
-
-    DatasetUploadStatus toApi(DatasetUploadState dataset);
-
+    @Mapping(source = "WKT", target = "wkt")
+    CRS toApi(CoordinateReferenceSystemMetadata crs);
 }

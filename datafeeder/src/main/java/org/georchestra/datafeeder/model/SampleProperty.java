@@ -16,27 +16,19 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch;
+package org.georchestra.datafeeder.model;
 
-import java.io.File;
+import javax.persistence.Embeddable;
+import javax.persistence.Lob;
 
-import org.georchestra.datafeeder.service.DataUploadService;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.Data;
 
-import lombok.extern.slf4j.Slf4j;
+@Data
+@Embeddable
+public class SampleProperty {
 
-@Slf4j
-public class MultipartFileUploadProcessor implements ItemProcessor<MultipartFile, File> {
-
-    private @Autowired DataUploadService uploadService;
-
-    @Override
-    public File process(MultipartFile item) throws Exception {
-        File dest = new File("");
-        item.transferTo(dest);
-        return dest;
-    }
-
+    private String name;
+    @Lob
+    private String value;
+    private String type;
 }
