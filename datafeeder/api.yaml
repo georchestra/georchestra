@@ -20,8 +20,7 @@ paths:
       tags:
         - File Upload
       description: Upload one or multiple files to the server, and get a handle to the job.
-                   Once the files are uploaded, the analysis process should be triggered
-                   through "POST /upload/{jobId}/analyze"
+                   Once the files are uploaded, the analysis process is automatically triggered. Its status can be polled with GET /upload/{jobId}
       operationId: uploadFiles
       requestBody:
         content:
@@ -106,26 +105,6 @@ paths:
           description: 'Forbidden. User has no priviledges access the requested job'
         409:
           description: 'Conflict. The abort=true parameter was not provided and the analysis or publishing job is running'
-  
-  /upload/{jobId}/analyze:
-    post:
-      tags:
-        - File Upload
-      description: 'Start the analysis process for the uploaded file package'
-      operationId: analyze
-      parameters:
-      - $ref: '#/components/parameters/jobId'
-      responses:
-        202:
-          description: Accepted, analysis process started for the given upload package
-        400:
-          description: 'Bad request. Some parameter is not acceptable or missing'
-        401:
-          description: 'Not authenticated'
-        403:
-          description: 'Forbidden. User has no priviledges access the requested job'
-        409:
-          description: 'Conflict. The upload is not ready for publishing.'
 
   /upload/{jobId}/publish:
     post:

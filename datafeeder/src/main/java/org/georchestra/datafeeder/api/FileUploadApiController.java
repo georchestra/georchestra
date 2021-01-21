@@ -74,13 +74,6 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    public ResponseEntity<Void> analyze(@PathVariable("jobId") UUID uploadId) {
-        DataUploadJob state = getAndCheckAccessRights(uploadId);
-        uploadService.analyze(state.getJobId());
-        return ResponseEntity.accepted().build();
-    }
-
-    @Override
     public ResponseEntity<UploadJobStatus> findUploadJob(@PathVariable("jobId") UUID uploadId) {
         DataUploadJob state = getAndCheckAccessRights(uploadId);
         UploadJobStatus response = mapper.toApi(state);
