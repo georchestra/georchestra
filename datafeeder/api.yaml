@@ -153,6 +153,38 @@ paths:
         403:
           description: 'Forbidden. User has no priviledges access the requested job'
 
+  /upload/{jobId}/{typeName}/bounds:
+    get:
+      tags:
+        - File Upload
+      operationId: getBounds
+      description: Get the bounding box of the dataset, optionally indicating the CRS and whether to reproject from the native CRS to the new one
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      - $ref: '#/components/parameters/typeName'
+      - name: srs
+        in: query
+        description: Optional, coordinate reference system (e.g. 'EPSG:3857')
+        required: false
+        schema:
+          type: string
+      - name: srs_reproject
+        in: query
+        description: Optional, whether to reproject from the native CRS to the one provided in the srs parameter. If false or not provided, the srs parameter overrides the native CRS
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        202:
+          $ref: '#/components/responses/BoundingBoxResponse'
+        400:
+          description: 'Bad request. Some parameter is not acceptable or missing'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no priviledges access the requested job'
+
   /upload/{jobId}/publish:
     post:
       tags:
@@ -261,6 +293,12 @@ components:
         application/geo+json:
           schema:
             type: object
+    BoundingBoxResponse:
+      description: dataset bounds in the requested CRS, if given, defaults to the native CRS
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BoundingBox'
   schemas:
     UploadJobStatus:
       type: object

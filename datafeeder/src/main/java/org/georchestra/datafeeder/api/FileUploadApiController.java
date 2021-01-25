@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
@@ -123,6 +124,19 @@ public class FileUploadApiController implements FileUploadApi {
         Object body = writer.toString();
         return ResponseEntity.ok(body);
 
+    }
+
+    @Override
+    public ResponseEntity<BoundingBox> getBounds(@PathVariable("jobId") UUID jobId,
+            @PathVariable("typeName") String typeName, @RequestParam(value = "srs", required = false) String srs,
+            @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
+
+        getAndCheckAccessRights(jobId);
+
+        boolean reproject = srsReproject == null ? false : srsReproject.booleanValue();
+        BoundingBoxMetadata bounds = this.uploadService.computeBounds(jobId, typeName, srs, reproject);
+        BoundingBox bbox = mapper.toApi(bounds);
+        return ResponseEntity.ok(bbox);
     }
 
     @Override

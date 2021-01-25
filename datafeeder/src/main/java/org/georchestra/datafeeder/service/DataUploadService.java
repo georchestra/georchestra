@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
 import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
@@ -84,11 +85,25 @@ public class DataUploadService {
     public SimpleFeature sampleFeature(@NonNull UUID jobId, @NonNull String typeName, int featureN, Charset encoding,
             String srs, boolean srsReproject) {
 
+        DatasetUploadState dataset = getDataset(jobId, typeName);
+        Path path = Paths.get(dataset.getAbsolutePath());
+        return datasetsService.getFeature(path, typeName, encoding, featureN, srs, srsReproject);
+    }
+
+    public BoundingBoxMetadata computeBounds(@NonNull UUID jobId, @NonNull String typeName, String srs,
+            boolean reproject) {
+
+        DatasetUploadState dataset = getDataset(jobId, typeName);
+        Path path = Paths.get(dataset.getAbsolutePath());
+        return datasetsService.getBounds(path, typeName, srs, reproject);
+    }
+
+    private DatasetUploadState getDataset(UUID jobId, String typeName) {
         DataUploadJob job = findJob(jobId)
                 .orElseThrow(() -> new IllegalArgumentException("Job " + jobId + " does not exist"));
         DatasetUploadState dataset = job.getDatasets().stream().filter(d -> d.getName().equals(typeName)).findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("dataset " + typeName + " does not exist"));
-        Path path = Paths.get(dataset.getAbsolutePath());
-        return datasetsService.getFeature(path, typeName, encoding, featureN, srs, srsReproject);
+        return dataset;
     }
+
 }
