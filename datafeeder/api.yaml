@@ -345,13 +345,6 @@ components:
           type: integer
           format: int32
           description: Number of features in the dataset
-        sampleProperties:
-          type: array
-          items:
-            $ref: '#/components/schemas/Property'
-        sampleGeometryWKT:
-          type: string
-          description: Well Known Text representation of an exemplar geometry extracted from the dataset
         nativeBounds:
           $ref: '#/components/schemas/BoundingBox'
         encoding:
