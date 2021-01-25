@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -103,4 +103,9 @@ public class DataFeederServiceConfiguration {
     public @Bean DatasetsService datasetsService() {
         return new DatasetsService();
     }
+
+    public @Bean DataUploadValidityService dataUploadValidityService() {
+        return new DataUploadValidityService();
+    }
+
 }
