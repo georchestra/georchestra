@@ -19,6 +19,8 @@
 package org.georchestra.datafeeder.api;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +41,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,6 +84,45 @@ public class FileUploadApiController implements FileUploadApi {
         DataUploadJob state = getAndCheckAccessRights(uploadId);
         UploadJobStatus response = mapper.toApi(state);
         return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "/upload/{jobId}/{typeName}/sampleFeature", produces = {
+            "application/geo+json;charset=UTF-8" }, method = RequestMethod.GET)
+    @Override
+    public ResponseEntity<Object> getSampleFeature(@PathVariable("jobId") UUID jobId,
+            @PathVariable("typeName") String typeName,
+            @RequestParam(value = "featureIndex", required = false) Integer featureIndex,
+            @RequestParam(value = "encoding", required = false) String encoding,
+            @RequestParam(value = "srs", required = false) String srs,
+            @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
+
+        getAndCheckAccessRights(jobId);
+
+        Charset charset = encoding == null ? null : Charset.forName(encoding);
+
+        if (featureIndex == null)
+            featureIndex = 0;
+        if (srsReproject == null)
+            srsReproject = false;
+
+        SimpleFeature feature;
+        try {
+            feature = uploadService.sampleFeature(jobId, typeName, featureIndex, charset, srs, srsReproject);
+        } catch (IllegalArgumentException e) {
+            throw ApiException.badRequest(e.getMessage());
+        }
+        FeatureJSON encoder = new FeatureJSON();
+        encoder.setEncodeFeatureBounds(true);
+        encoder.setEncodeFeatureCRS(true);
+        StringWriter writer = new StringWriter();
+        try {
+            encoder.writeFeature(feature, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Object body = writer.toString();
+        return ResponseEntity.ok(body);
+
     }
 
     @Override

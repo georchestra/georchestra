@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.service;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,6 +93,37 @@ public class DatasetsService {
             return md;
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            ds.dispose();
+        }
+    }
+
+    public SimpleFeature getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
+            String srs, boolean srsReproject) {
+
+        DataStore ds = loadDataStore(path, encoding);
+        try {
+            SimpleFeatureSource fs = ds.getFeatureSource(typeName);
+            Query query = new Query();
+            query.setStartIndex(featureIndex);
+            query.setMaxFeatures(1);
+            if (srs != null) {
+                CoordinateReferenceSystem crs = CRS.decode(srs);
+                if (srsReproject) {
+                    query.setCoordinateSystemReproject(crs);
+                } else {
+                    query.setCoordinateSystem(crs);
+                }
+            }
+            SimpleFeatureCollection collection = fs.getFeatures(query);
+            try (SimpleFeatureIterator it = collection.features()) {
+                if (it.hasNext()) {
+                    return it.next();
+                }
+            }
+            throw new IllegalArgumentException("Requested feature index is outside feature count");
+        } catch (FactoryException | IOException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         } finally {
             ds.dispose();
         }
@@ -221,6 +253,17 @@ public class DatasetsService {
 
     public @NonNull DataStore loadDataStore(@NonNull Path path) {
         Map<String, String> params = resolveConnectionParameters(path);
+        try {
+            return loadDataStore(params);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
+        Map<String, String> params = resolveConnectionParameters(path);
+        if (encoding != null)
+            params.put(ShapefileDataStoreFactory.DBFCHARSET.key, encoding.name());
         try {
             return loadDataStore(params);
         } catch (IOException e) {

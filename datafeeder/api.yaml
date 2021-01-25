@@ -106,6 +106,53 @@ paths:
         409:
           description: 'Conflict. The abort=true parameter was not provided and the analysis or publishing job is running'
 
+  /upload/{jobId}/{typeName}/sampleFeature:
+    get:
+      tags:
+        - File Upload
+      operationId: getSampleFeature
+      description: Obtain a sample dataset feature in GeoJSON format, optionally specifying a feature index, crs, and/or dataset's character encoding.
+                   The response encoding is always UTF-8. The 'encoding' parameter can be used to force reading the native data in a different charset.
+      parameters:
+      - $ref: '#/components/parameters/jobId'
+      - $ref: '#/components/parameters/typeName'
+      - name: featureIndex
+        in: query
+        description: Optional feature index, if unspecified, the first feature (index 0) is returned
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+      - name: encoding
+        in: query
+        description: Optional, force dataset encoding
+        required: false
+        schema:
+          type: string
+      - name: srs
+        in: query
+        description: Optional, coordinate reference system (e.g. 'EPSG:3857')
+        required: false
+        schema:
+          type: string
+      - name: srs_reproject
+        in: query
+        description: Optional, whether to reproject from the native CRS to the one provided in the srs parameter. If false or not provided, the srs parameter overrides the native CRS
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        202:
+          $ref: '#/components/responses/SampleFeatureResponse'
+        400:
+          description: 'Bad request. Some parameter is not acceptable or missing'
+        401:
+          description: 'Not authenticated'
+        403:
+          description: 'Forbidden. User has no priviledges access the requested job'
+
   /upload/{jobId}/publish:
     post:
       tags:
@@ -180,6 +227,13 @@ components:
       schema:
         type: string
         format: uuid
+    typeName:
+      name: typeName
+      in: path
+      description: Feature type name
+      required: true
+      schema:
+        type: string
   responses:
     UploadStatusResponseList:
       description: Processing status of a list of dataset upload job
@@ -201,6 +255,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/PublishJobStatus'
+    SampleFeatureResponse:
+      description: Sample feature for an uploaded dataset
+      content:
+        application/geo+json:
+          schema:
+            type: object
   schemas:
     UploadJobStatus:
       type: object
