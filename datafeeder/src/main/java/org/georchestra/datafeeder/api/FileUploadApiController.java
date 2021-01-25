@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -30,16 +30,13 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.DataUploadValidityService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
-import lombok.NonNull;
 
 @Controller
 @Api(tags = { "File Upload" }) // hides the empty file-upload-api-controller entry in swagger-ui.html
@@ -59,12 +55,13 @@ public class FileUploadApiController implements FileUploadApi {
     private @Autowired FileStorageService storageService;
     private @Autowired DataUploadService uploadService;
     private @Autowired ApiResponseMapper mapper;
+    private @Autowired DataUploadValidityService validityService;
 
     @Override
     public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> files) {
         UUID uploadId;
         DataUploadJob state;
-        final String userName = getUserName();
+        final String userName = validityService.getUserName();
         if (files.isEmpty()) {
             throw ApiException.badRequest("No files provided in multi-part item 'filename'");
         }
@@ -82,7 +79,7 @@ public class FileUploadApiController implements FileUploadApi {
 
     @Override
     public ResponseEntity<UploadJobStatus> findUploadJob(@PathVariable("jobId") UUID uploadId) {
-        DataUploadJob state = getAndCheckAccessRights(uploadId);
+        DataUploadJob state = validityService.getAndCheckAccessRights(uploadId);
         UploadJobStatus response = mapper.toApi(state);
         return ResponseEntity.ok(response);
     }
@@ -149,7 +146,7 @@ public class FileUploadApiController implements FileUploadApi {
 
     @Override
     public ResponseEntity<List<UploadJobStatus>> findUserUploadJobs() {
-        String userName = getUserName();
+        String userName = validityService.getUserName();
         List<DataUploadJob> all = this.uploadService.findUserJobs(userName);
         List<UploadJobStatus> response = all.stream().map(mapper::toApi).collect(Collectors.toList());
         return ResponseEntity.ok(response);
@@ -160,41 +157,12 @@ public class FileUploadApiController implements FileUploadApi {
             @PathVariable("jobId") UUID jobId, //
             @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
 
-        getAndCheckAccessRights(jobId);
+        validityService.getAndCheckAccessRights(jobId);
         if (Boolean.TRUE.equals(abort)) {
             this.uploadService.abortAndRemove(jobId);
         } else {
             this.uploadService.remove(jobId);
         }
         return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    private @NonNull String getUserName() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication auth = context.getAuthentication();
-        String userName = auth.getName();
-        return userName;
-    }
-
-    private @NonNull boolean isAdministrator() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication auth = context.getAuthentication();
-        return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_ADMINISTRATOR"::equals);
-    }
-
-    private DataUploadJob getOrNotFound(UUID uploadId) {
-        DataUploadJob state = this.uploadService.findJob(uploadId)
-                .orElseThrow(() -> ApiException.notFound("upload %s does not exist", uploadId));
-        return state;
-    }
-
-    private DataUploadJob getAndCheckAccessRights(UUID uploadId) {
-        DataUploadJob state = getOrNotFound(uploadId);
-        final String userName = getUserName();
-        if (!userName.equals(state.getUsername()) && !isAdministrator()) {
-            throw ApiException.forbidden("User %s has no access rights to this upload", userName);
-        }
-        return state;
     }
 }
