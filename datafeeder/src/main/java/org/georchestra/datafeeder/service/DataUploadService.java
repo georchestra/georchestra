@@ -18,15 +18,20 @@
  */
 package org.georchestra.datafeeder.service;
 
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
-import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.service.batch.analysis.DataUploadAnalysisService;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
@@ -39,6 +44,7 @@ public class DataUploadService {
 
     private @Autowired DataUploadJobRepository repository;
     private @Autowired DataUploadAnalysisService analysisService;
+    private @Autowired DatasetsService datasetsService;
 
     public Optional<DataUploadJob> findJob(UUID uploadId) {
         return repository.findByJobId(uploadId);
@@ -73,5 +79,16 @@ public class DataUploadService {
 
     public void remove(@NonNull UUID jobId) {
         repository.delete(jobId);
+    }
+
+    public SimpleFeature sampleFeature(@NonNull UUID jobId, @NonNull String typeName, int featureN, Charset encoding,
+            String srs, boolean srsReproject) {
+
+        DataUploadJob job = findJob(jobId)
+                .orElseThrow(() -> new IllegalArgumentException("Job " + jobId + " does not exist"));
+        DatasetUploadState dataset = job.getDatasets().stream().filter(d -> d.getName().equals(typeName)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("dataset " + typeName + " does not exist"));
+        Path path = Paths.get(dataset.getAbsolutePath());
+        return datasetsService.getFeature(path, typeName, encoding, featureN, srs, srsReproject);
     }
 }
