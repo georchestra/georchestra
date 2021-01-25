@@ -98,6 +98,28 @@ public class DatasetsService {
         }
     }
 
+    public BoundingBoxMetadata getBounds(Path path, @NonNull String typeName, String srs, boolean reproject) {
+        DataStore ds = loadDataStore(path);
+        try {
+            SimpleFeatureSource fs = ds.getFeatureSource(typeName);
+            Query query = new Query();
+            if (srs != null) {
+                CoordinateReferenceSystem crs = CRS.decode(srs);
+                if (reproject) {
+                    query.setCoordinateSystemReproject(crs);
+                } else {
+                    query.setCoordinateSystem(crs);
+                }
+            }
+            ReferencedEnvelope bounds = fs.getBounds(query);
+            return toBoundingBoxMetadata(bounds);
+        } catch (FactoryException | IOException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        } finally {
+            ds.dispose();
+        }
+    }
+
     public SimpleFeature getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
             String srs, boolean srsReproject) {
 
@@ -191,6 +213,10 @@ public class DatasetsService {
 
     private @Nullable BoundingBoxMetadata nativeBounds(SimpleFeatureSource fs) throws IOException {
         ReferencedEnvelope bounds = fs.getBounds();
+        return toBoundingBoxMetadata(bounds);
+    }
+
+    private BoundingBoxMetadata toBoundingBoxMetadata(ReferencedEnvelope bounds) {
         if (bounds == null)
             return null;
 
@@ -306,5 +332,4 @@ public class DatasetsService {
         }
         throw new UnsupportedOperationException("Only shapefiles are supported so far");
     }
-
 }
