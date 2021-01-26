@@ -33,10 +33,10 @@ public class BatchTestConfiguration {
 
     private @Autowired PlatformTransactionManager transactionManager;
 
-    @Bean
-    public JobLauncherTestUtils jobLauncherTestUtils() {
-        return new JobLauncherTestUtils();
-    }
+//    @Bean
+//    public JobLauncherTestUtils jobLauncherTestUtils() {
+//        return new JobLauncherTestUtils();
+//    }
 
     @Bean
     public JobRepository jobRepository() throws Exception {
