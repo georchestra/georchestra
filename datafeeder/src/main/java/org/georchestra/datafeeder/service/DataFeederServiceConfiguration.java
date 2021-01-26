@@ -108,4 +108,8 @@ public class DataFeederServiceConfiguration {
         return new DataUploadValidityService();
     }
 
+    public @Bean DataPublishingService dataPublishingService() {
+        return new DataPublishingService();
+    }
+
 }
