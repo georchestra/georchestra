@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -318,8 +320,32 @@ public class DatasetsService {
             params.put(ShapefileDataStoreFactory.FILE_TYPE.key, "shapefile");
             params.put(ShapefileDataStoreFactory.URLP.key, url.toString());
             params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, "false");
+            String codePage = loadCharsetFromCodePageSideCarFile(path);
+            if (codePage != null) {
+                params.put(ShapefileDataStoreFactory.DBFCHARSET.key, codePage);
+            }
         }
         return params;
+    }
+
+    private String loadCharsetFromCodePageSideCarFile(@NonNull Path shapefilePath) {
+        String shpName = shapefilePath.getFileName().toString();
+        shpName = shpName.substring(0, shpName.length() - ".shp".length());
+        Path codepageFile = shapefilePath.resolveSibling(shpName + ".cpg");
+        String charset = null;
+        if (Files.isRegularFile(codepageFile)) {
+            try {
+                String codePage = com.google.common.io.Files.asCharSource(codepageFile.toFile(), StandardCharsets.UTF_8)
+                        .readFirstLine();
+                Charset.forName(codePage);
+                charset = codePage;
+            } catch (IllegalArgumentException e) {
+                log.warn("Error obtaining charset from shapefile's .cpg side-car file {}", codepageFile, e);
+            } catch (IOException e) {
+                log.warn("Unable to read shapefile's .cpg side-car file {}", codepageFile, e);
+            }
+        }
+        return charset;
     }
 
     private boolean isShapefile(@NonNull Path path) {
