@@ -45,7 +45,7 @@ public class DataPublishingApiController implements DataPublishingApi {
             @RequestBody(required = false) PublishRequest publishRequest) {
         DataUploadJob uploadPacket = validityService.getAndCheckAccessRights(jobId);
         dataPublishingService.publish(uploadPacket);
-        //TODO: Response from the service
+        // TODO: Response from the service
         return ResponseEntity.ok(null);
 
     }
