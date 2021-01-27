@@ -23,6 +23,7 @@ import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
@@ -59,6 +60,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -76,6 +78,7 @@ public class UsersControllerTest {
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private DelegationDao mockDelegationDao;
+    private AdvancedDelegationDao mockAdvancedDelegationDao;
     private LogUtils mockLogUtils;
 
     @Before
@@ -117,7 +120,9 @@ public class UsersControllerTest {
         usersCtrl = new UsersController(dao, userRule);
         usersCtrl.setOrgDao(orgsDao);
         mockDelegationDao = mock(DelegationDao.class);
+        mockAdvancedDelegationDao = mock(AdvancedDelegationDao.class);
         usersCtrl.setDelegationDao(mockDelegationDao);
+        usersCtrl.setAdvancedDelegationDao(mockAdvancedDelegationDao);
         usersCtrl.setRoleDao(roleDao);
 
         usersCtrl.logUtils = mockLogUtils;
@@ -130,11 +135,13 @@ public class UsersControllerTest {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
-        // Set user connected through spring security
+//      // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
         Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin", null, role);
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test(expected = DataServiceException.class)
@@ -170,7 +177,6 @@ public class UsersControllerTest {
     public void testFindByUid() throws Exception {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "developer", "");
-
         when(ldapTemplate.lookup(any(LdapName.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class)))
                 .thenReturn(pmauduit);
         Account res = usersCtrl.findByUid("pmauduit");
