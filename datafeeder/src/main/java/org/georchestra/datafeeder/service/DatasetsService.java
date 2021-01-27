@@ -21,6 +21,9 @@ package org.georchestra.datafeeder.service;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,6 +100,59 @@ public class DatasetsService {
         }
     }
 
+    public BoundingBoxMetadata getBounds(Path path, @NonNull String typeName, String srs, boolean reproject) {
+        DataStore ds = loadDataStore(path);
+        try {
+            SimpleFeatureSource fs = ds.getFeatureSource(typeName);
+            Query query = new Query();
+            if (srs != null) {
+                CoordinateReferenceSystem crs = CRS.decode(srs);
+                if (reproject) {
+                    query.setCoordinateSystemReproject(crs);
+                } else {
+                    query.setCoordinateSystem(crs);
+                }
+            }
+            ReferencedEnvelope bounds = fs.getBounds(query);
+            return toBoundingBoxMetadata(bounds);
+        } catch (FactoryException | IOException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        } finally {
+            ds.dispose();
+        }
+    }
+
+    public SimpleFeature getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
+            String srs, boolean srsReproject) {
+
+        DataStore ds = loadDataStore(path, encoding);
+        try {
+            SimpleFeatureSource fs = ds.getFeatureSource(typeName);
+            Query query = new Query();
+            query.setStartIndex(featureIndex);
+            query.setMaxFeatures(1);
+            if (srs != null) {
+                CoordinateReferenceSystem crs = CRS.decode(srs);
+                if (srsReproject) {
+                    query.setCoordinateSystemReproject(crs);
+                } else {
+                    query.setCoordinateSystem(crs);
+                }
+            }
+            SimpleFeatureCollection collection = fs.getFeatures(query);
+            try (SimpleFeatureIterator it = collection.features()) {
+                if (it.hasNext()) {
+                    return it.next();
+                }
+            }
+            throw new IllegalArgumentException("Requested feature index is outside feature count");
+        } catch (FactoryException | IOException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        } finally {
+            ds.dispose();
+        }
+    }
+
     private DatasetMetadata describe(SimpleFeatureSource fs) throws IOException {
         DatasetMetadata md = new DatasetMetadata();
         md.setTypeName(fs.getName().getLocalPart());
@@ -159,6 +215,10 @@ public class DatasetsService {
 
     private @Nullable BoundingBoxMetadata nativeBounds(SimpleFeatureSource fs) throws IOException {
         ReferencedEnvelope bounds = fs.getBounds();
+        return toBoundingBoxMetadata(bounds);
+    }
+
+    private BoundingBoxMetadata toBoundingBoxMetadata(ReferencedEnvelope bounds) {
         if (bounds == null)
             return null;
 
@@ -228,6 +288,17 @@ public class DatasetsService {
         }
     }
 
+    public @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
+        Map<String, String> params = resolveConnectionParameters(path);
+        if (encoding != null)
+            params.put(ShapefileDataStoreFactory.DBFCHARSET.key, encoding.name());
+        try {
+            return loadDataStore(params);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public @NonNull DataStore loadDataStore(Map<String, String> params) throws IOException {
         DataStore ds = DataStoreFinder.getDataStore(params);
         if (ds == null) {
@@ -249,8 +320,32 @@ public class DatasetsService {
             params.put(ShapefileDataStoreFactory.FILE_TYPE.key, "shapefile");
             params.put(ShapefileDataStoreFactory.URLP.key, url.toString());
             params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, "false");
+            String codePage = loadCharsetFromCodePageSideCarFile(path);
+            if (codePage != null) {
+                params.put(ShapefileDataStoreFactory.DBFCHARSET.key, codePage);
+            }
         }
         return params;
+    }
+
+    private String loadCharsetFromCodePageSideCarFile(@NonNull Path shapefilePath) {
+        String shpName = shapefilePath.getFileName().toString();
+        shpName = shpName.substring(0, shpName.length() - ".shp".length());
+        Path codepageFile = shapefilePath.resolveSibling(shpName + ".cpg");
+        String charset = null;
+        if (Files.isRegularFile(codepageFile)) {
+            try {
+                String codePage = com.google.common.io.Files.asCharSource(codepageFile.toFile(), StandardCharsets.UTF_8)
+                        .readFirstLine();
+                Charset.forName(codePage);
+                charset = codePage;
+            } catch (IllegalArgumentException e) {
+                log.warn("Error obtaining charset from shapefile's .cpg side-car file {}", codepageFile, e);
+            } catch (IOException e) {
+                log.warn("Unable to read shapefile's .cpg side-car file {}", codepageFile, e);
+            }
+        }
+        return charset;
     }
 
     private boolean isShapefile(@NonNull Path path) {
@@ -263,5 +358,4 @@ public class DatasetsService {
         }
         throw new UnsupportedOperationException("Only shapefiles are supported so far");
     }
-
 }

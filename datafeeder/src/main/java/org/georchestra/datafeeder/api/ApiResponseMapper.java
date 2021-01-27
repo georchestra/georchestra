@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.api;
 
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.mapstruct.Mapper;
@@ -28,5 +29,7 @@ public interface ApiResponseMapper {
     UploadJobStatus toApi(DataUploadJob state);
 
     DatasetUploadStatus toApi(DatasetUploadState dataset);
+
+    BoundingBox toApi(BoundingBoxMetadata bounds);
 
 }
