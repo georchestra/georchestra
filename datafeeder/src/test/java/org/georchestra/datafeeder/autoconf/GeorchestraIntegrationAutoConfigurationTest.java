@@ -27,13 +27,14 @@ import java.nio.file.Paths;
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
+import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.DataUploadValidityService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -54,6 +55,8 @@ public class GeorchestraIntegrationAutoConfigurationTest {
 
     private @MockBean DataUploadService dataUploadService;
     private @MockBean FileStorageService fileStorageService;
+    private @MockBean DataUploadValidityService mockDataUploadValidityService;
+    private @MockBean DataPublishingService mockDataPublishingService;
 
     private @Autowired ApplicationContext context;
 

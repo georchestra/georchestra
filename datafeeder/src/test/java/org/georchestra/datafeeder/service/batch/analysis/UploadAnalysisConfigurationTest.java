@@ -34,14 +34,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
+import org.georchestra.datafeeder.service.batch.analysis.BatchTestConfiguration.UploadJobLauncherTestUtils;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
@@ -51,7 +52,6 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,11 +65,13 @@ import org.springframework.web.multipart.MultipartFile;
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UploadAnalysisConfigurationTest {
 
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
-    private @Autowired JobLauncherTestUtils jobLauncherTestUtils;
+    private @Autowired UploadJobLauncherTestUtils jobLauncherTestUtils;
+
     private @Autowired DataUploadService uploadService;
     private @Autowired FileStorageService storageService;
     private @Autowired DataUploadJobRepository repository;

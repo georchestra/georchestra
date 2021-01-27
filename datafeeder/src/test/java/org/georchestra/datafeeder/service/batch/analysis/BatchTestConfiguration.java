@@ -18,12 +18,14 @@
  */
 package org.georchestra.datafeeder.service.batch.analysis;
 
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -33,10 +35,18 @@ public class BatchTestConfiguration {
 
     private @Autowired PlatformTransactionManager transactionManager;
 
-//    @Bean
-//    public JobLauncherTestUtils jobLauncherTestUtils() {
-//        return new JobLauncherTestUtils();
-//    }
+    @Bean
+    public UploadJobLauncherTestUtils analyzeUploadJobLauncherTestUtils() throws Exception {
+        return new UploadJobLauncherTestUtils();
+    }
+
+    public static class UploadJobLauncherTestUtils extends JobLauncherTestUtils {
+        @Autowired
+        @Qualifier(UploadAnalysisConfiguration.JOB_NAME)
+        public @Override void setJob(Job job) {
+            super.setJob(job);
+        }
+    }
 
     @Bean
     public JobRepository jobRepository() throws Exception {
