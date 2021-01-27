@@ -32,35 +32,35 @@ import org.springframework.stereotype.Component;
 import lombok.NonNull;
 
 /**
- * Utility service that checks existence of a DataUpload
- * and verifies access rights.
+ * Utility service that checks existence of a DataUpload and verifies access
+ * rights.
  *
  */
 @Component
 public class DataUploadValidityService {
-    
+
     private @Autowired DataUploadService uploadService;
-    
+
     public String getUserName() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication auth = context.getAuthentication();
         String userName = auth.getName();
         return userName;
     }
-    
+
     public DataUploadJob getOrNotFound(UUID uploadId) {
         DataUploadJob state = this.uploadService.findJob(uploadId)
                 .orElseThrow(() -> ApiException.notFound("upload %s does not exist", uploadId));
         return state;
     }
-    
+
     private @NonNull boolean isAdministrator() {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication auth = context.getAuthentication();
         return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .anyMatch("ROLE_ADMINISTRATOR"::equals);
     }
-    
+
     public DataUploadJob getAndCheckAccessRights(UUID uploadId) {
         DataUploadJob state = getOrNotFound(uploadId);
         final String userName = getUserName();
