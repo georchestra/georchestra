@@ -18,12 +18,20 @@
  */
 package org.georchestra.datafeeder.service;
 
+import org.georchestra.datafeeder.api.DataPublishingApiController;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service provider for {@link DataPublishingApiController}
+ * <p>
+ * Acts as a facade for internal processing of business processes required by
+ * the controller, which in turn only takes care of the HTTP API layer,
+ * delegating all processing to this service.
+ */
 @Service
 public class DataPublishingService {
 
