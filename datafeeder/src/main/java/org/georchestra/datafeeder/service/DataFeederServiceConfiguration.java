@@ -104,10 +104,6 @@ public class DataFeederServiceConfiguration {
         return new DatasetsService();
     }
 
-    public @Bean DataUploadValidityService dataUploadValidityService() {
-        return new DataUploadValidityService();
-    }
-
     public @Bean DataPublishingService dataPublishingService() {
         return new DataPublishingService();
     }

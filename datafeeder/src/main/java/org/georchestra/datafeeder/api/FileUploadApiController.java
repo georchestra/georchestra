@@ -30,7 +30,6 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;
-import org.georchestra.datafeeder.service.DataUploadValidityService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
@@ -55,7 +54,7 @@ public class FileUploadApiController implements FileUploadApi {
     private @Autowired FileStorageService storageService;
     private @Autowired DataUploadService uploadService;
     private @Autowired ApiResponseMapper mapper;
-    private @Autowired DataUploadValidityService validityService;
+    private @Autowired AuthorizationService validityService;
 
     @Override
     public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> files) {
@@ -79,7 +78,9 @@ public class FileUploadApiController implements FileUploadApi {
 
     @Override
     public ResponseEntity<UploadJobStatus> findUploadJob(@PathVariable("jobId") UUID uploadId) {
-        DataUploadJob state = validityService.getAndCheckAccessRights(uploadId);
+        validityService.checkAccessRights(uploadId);
+        DataUploadJob state = this.uploadService.findJob(uploadId)
+                .orElseThrow(() -> ApiException.notFound("upload %s does not exist", uploadId));
         UploadJobStatus response = mapper.toApi(state);
         return ResponseEntity.ok(response);
     }
@@ -94,7 +95,7 @@ public class FileUploadApiController implements FileUploadApi {
             @RequestParam(value = "srs", required = false) String srs,
             @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
 
-        getAndCheckAccessRights(jobId);
+        validityService.checkAccessRights(jobId);
 
         Charset charset = encoding == null ? null : Charset.forName(encoding);
 
@@ -128,7 +129,7 @@ public class FileUploadApiController implements FileUploadApi {
             @PathVariable("typeName") String typeName, @RequestParam(value = "srs", required = false) String srs,
             @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
 
-        getAndCheckAccessRights(jobId);
+        validityService.checkAccessRights(jobId);
 
         boolean reproject = srsReproject == null ? false : srsReproject.booleanValue();
         BoundingBoxMetadata bounds = this.uploadService.computeBounds(jobId, typeName, srs, reproject);
@@ -157,7 +158,7 @@ public class FileUploadApiController implements FileUploadApi {
             @PathVariable("jobId") UUID jobId, //
             @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
 
-        validityService.getAndCheckAccessRights(jobId);
+        validityService.checkAccessRights(jobId);
         if (Boolean.TRUE.equals(abort)) {
             this.uploadService.abortAndRemove(jobId);
         } else {

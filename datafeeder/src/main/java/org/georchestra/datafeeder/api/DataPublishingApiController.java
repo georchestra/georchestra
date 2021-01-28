@@ -22,9 +22,7 @@ import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataPublishingService;
-import org.georchestra.datafeeder.service.DataUploadValidityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,13 +36,13 @@ import io.swagger.annotations.Api;
 @Api(tags = { "Data Publishing" }) // hides the empty data-publishing-api-controller entry in swagger-ui.html
 public class DataPublishingApiController implements DataPublishingApi {
 
-    private @Autowired DataUploadValidityService validityService;
+    private @Autowired AuthorizationService validityService;
     private @Autowired DataPublishingService dataPublishingService;
 
     public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
             @RequestBody(required = false) PublishRequest publishRequest) {
-        DataUploadJob uploadPacket = validityService.getAndCheckAccessRights(jobId);
-        dataPublishingService.publish(uploadPacket);
+        validityService.checkAccessRights(jobId);
+        // dataPublishingService.publish(uploadPacket);
         // TODO: Response from the service
         return ResponseEntity.ok(null);
 
