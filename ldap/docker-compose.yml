@@ -16,6 +16,7 @@ services:
       - SLAPD_ADDITIONAL_MODULES=groupofmembers,openssh
       - SLAPD_PASSWORD_FILE=/run/secrets/slapd_password
       - SLAPD_PASSWORD=
+      - GS_MASTER_PASSWORD_FILE=/run/secrets/gs_master_passwd
       - SLAPD_LOG_LEVEL=32768
     volumes:
       - ldap_data_test:/var/lib/ldap
