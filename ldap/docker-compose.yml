@@ -10,6 +10,7 @@ services:
     build: ./
     secrets:
       - slapd_password
+      - gs_master_passwd
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
@@ -27,3 +28,5 @@ services:
 secrets:
   slapd_password:
     file: ./secrets/slapd_password.txt
+  gs_master_passwd:
+    file: ./secrets/gs_master_passwd.txt
