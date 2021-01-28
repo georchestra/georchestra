@@ -25,11 +25,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
+import org.georchestra.datafeeder.api.AuthorizationService;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
-import org.georchestra.datafeeder.service.DataUploadValidityService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +55,7 @@ public class GeorchestraIntegrationAutoConfigurationTest {
 
     private @MockBean DataUploadService dataUploadService;
     private @MockBean FileStorageService fileStorageService;
-    private @MockBean DataUploadValidityService mockDataUploadValidityService;
+    private @MockBean AuthorizationService mockDataUploadValidityService;
     private @MockBean DataPublishingService mockDataPublishingService;
 
     private @Autowired ApplicationContext context;

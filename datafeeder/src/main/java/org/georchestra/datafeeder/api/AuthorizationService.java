@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service;
+package org.georchestra.datafeeder.api;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.api.ApiException;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.service.DataUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,7 +37,7 @@ import lombok.NonNull;
  *
  */
 @Component
-public class DataUploadValidityService {
+public class AuthorizationService {
 
     private @Autowired DataUploadService uploadService;
 
@@ -48,7 +48,7 @@ public class DataUploadValidityService {
         return userName;
     }
 
-    public DataUploadJob getOrNotFound(UUID uploadId) {
+    private DataUploadJob getOrNotFound(UUID uploadId) {
         DataUploadJob state = this.uploadService.findJob(uploadId)
                 .orElseThrow(() -> ApiException.notFound("upload %s does not exist", uploadId));
         return state;
@@ -61,12 +61,11 @@ public class DataUploadValidityService {
                 .anyMatch("ROLE_ADMINISTRATOR"::equals);
     }
 
-    public DataUploadJob getAndCheckAccessRights(UUID uploadId) {
+    public void checkAccessRights(UUID uploadId) {
         DataUploadJob state = getOrNotFound(uploadId);
         final String userName = getUserName();
         if (!userName.equals(state.getUsername()) && !isAdministrator()) {
             throw ApiException.forbidden("User %s has no access rights to this upload", userName);
         }
-        return state;
     }
 }
