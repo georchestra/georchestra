@@ -31,6 +31,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,17 +42,22 @@ import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -348,5 +355,56 @@ public class FileUploadApiControllerTest {
         final Boolean abort = true;
         ResponseEntity<Void> response = controller.removeJob(job.getJobId(), abort);
         assertEquals(OK, response.getStatusCode());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    public void testSampleFeatureEncoding() throws IOException {
+        List<MultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(uploadFiles, "chinese_poly");
+        DatasetUploadState dataset = upload.getDatasets().get(0);
+        assertEquals("Expected default shapefile encoding when no .cpg file is provided", "ISO-8859-1",
+                dataset.getEncoding());
+        // correct chinese_poly's dbf charset: GB18030, NAME: 黑龙江省
+        final String encoding = "GB18030";
+        ResponseEntity<Object> response = controller.getSampleFeature(upload.getJobId(), "chinese_poly", 0, encoding,
+                null, false);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        String geoJsonFeature = response.getBody().toString();
+
+        FeatureJSON decoder = new FeatureJSON();
+        SimpleFeature feature = decoder.readFeature(new StringReader(geoJsonFeature));
+        assertThat(feature.getDefaultGeometry(), Matchers.instanceOf(MultiPolygon.class));
+        assertEquals(230000L, feature.getAttribute("ADCODE93"));
+        assertEquals("黑龙江省", feature.getAttribute("NAME"));
+    }
+
+    /**
+     * Verify {shapefile}.cpg code-page file is automatically detected if uploaded
+     */
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    public void testSampleFeatureEncodingDetected() throws IOException {
+        List<MultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
+        // correct chinese_poly's dbf charset: GB18030, NAME: 黑龙江省
+        uploadFiles.add(
+                multipartSupport.createMultipartFile("chinese_poly.cpg", "GB18030".getBytes(StandardCharsets.UTF_8)));
+
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(uploadFiles, "chinese_poly");
+        DatasetUploadState dataset = upload.getDatasets().get(0);
+        assertEquals("encoding from .cpg file not detected", "GB18030", dataset.getEncoding());
+
+        final String encodingParam = null;
+        ResponseEntity<Object> response = controller.getSampleFeature(upload.getJobId(), "chinese_poly", 0,
+                encodingParam, null, false);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        String geoJsonFeature = response.getBody().toString();
+
+        FeatureJSON decoder = new FeatureJSON();
+        SimpleFeature feature = decoder.readFeature(new StringReader(geoJsonFeature));
+        assertEquals("Auto-detected GB18030 charset from .cpg file not respected", "黑龙江省",
+                feature.getAttribute("NAME"));
     }
 }
