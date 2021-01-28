@@ -18,12 +18,14 @@
  */
 package org.georchestra.datafeeder.api;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,12 +41,21 @@ public class DataPublishingApiController implements DataPublishingApi {
     private @Autowired AuthorizationService validityService;
     private @Autowired DataPublishingService dataPublishingService;
 
+    @Override
+    public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
+        validityService.checkAccessRights(jobId);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
     public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
             @RequestBody(required = false) PublishRequest publishRequest) {
         validityService.checkAccessRights(jobId);
-        // dataPublishingService.publish(uploadPacket);
+
+        List<DatasetPublishRequest> datasets = publishRequest.getDatasets();
+        dataPublishingService.publish(null);
         // TODO: Response from the service
-        return ResponseEntity.ok(null);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
 
