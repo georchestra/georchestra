@@ -209,29 +209,6 @@ paths:
           description: 'Forbidden. User has no priviledges access the requested job'
         409:
           description: 'Conflict. The upload is not ready for publishing.'
-    put:
-      tags:
-        - Data Publishing
-      description: 'Save a draft state for the publication of the dataset(s) from the given upload'
-      operationId: saveDraft
-      parameters:
-      - $ref: '#/components/parameters/jobId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PublishRequest'
-      responses:
-        202:
-          $ref: '#/components/responses/PublishStatusResponse'
-        400:
-          description: 'Bad request. Some parameter is not acceptable or missing'
-        401:
-          description: 'Not authenticated'
-        403:
-          description: 'Forbidden. User has no priviledges access the requested job'
-        409:
-          description: 'Conflict. The upload is not ready for publishing.'
     get:
       tags:
         - Data Publishing
@@ -400,19 +377,26 @@ components:
 
     DatasetPublishRequest:
       type: object
+      description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
       properties:
         nativeName:
           type: string
+          description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
         publishedName:
           type: string
+          description: 
         title:
           type: string
+          description: 
         abstract:
           type: string
+          description: 
         encoding:
           type: string
+          description: 
         tags:
           type: array
+          description: 
           items:           
             type: string
         crs:
@@ -463,7 +447,7 @@ components:
       properties:
         nativeName:
           type: string
-          description: Name of the dataset in the uploaded package
+          description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
         publishedName:
           type: string
           description: Name of the dataset in the uploaded package
