@@ -375,33 +375,24 @@ components:
           items:
             $ref: '#/components/schemas/DatasetPublishRequest'
 
-    DatasetPublishRequest:
+    DatasetMetadata:
       type: object
-      description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
+      description: User supplied dataset metadata information
+      required:
+      - title 
+      - abstract
       properties:
-        nativeName:
-          type: string
-          description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
-        publishedName:
-          type: string
-          description: 
         title:
           type: string
-          description: 
+          description: Metadata title for the dataset
         abstract:
           type: string
-          description: 
-        encoding:
-          type: string
-          description: 
+          description: Metadata abtract text for the dataset 
         tags:
           type: array
-          description: 
+          description: metadata keyworkds for the dataset
           items:           
             type: string
-        crs:
-          description: Optional, Coordinate Reference System to publish the dataset in
-          $ref: '#/components/schemas/CRS'
         creationDate:
           description: Dataset creation date, in RFC3339 format
           type: string
@@ -414,6 +405,35 @@ components:
           example: 25000
         creationProcessDescription:
           type: string
+          description: textual description of dataset lineage
+
+    DatasetPublishRequest:
+      type: object
+      description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
+      required:
+      - nativeName
+      - metadata 
+      properties:
+        nativeName:
+          type: string
+          description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
+        publishedName:
+          type: string
+          description: Name under which the dataset is published to GeoServer, defaults to nativeName
+        encoding:
+          type: string
+          description: Specify which charset (e.g. ISO-8859-1, UTF-8, etc.) to interpret the dataset alphanumeric properties with. Takes effect only for uploaded shapefiles.
+        srs:
+          description: Optional, Coordinate Reference System identifier to publish the dataset in. If not provided, the dataset is published using the CRS inferred
+                       during the upload analysis process. If no CRS identifier was determined, the job will fail.
+          type: string
+        srs_reproject:
+          description: Optional, whether to reproject from the native CRS to the one provided in the srs parameter.
+                       If false or not provided, the srs parameter overrides the native CRS without reprojection.
+          type: boolean
+          default: false
+        metadata:
+          $ref: '#/components/schemas/DatasetMetadata'
 
     PublishJobStatus:
       type: object
