@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 
 volumes:
   ldap_data_test:
@@ -8,14 +8,21 @@ services:
   ldap:
     image: georchestra/ldap:latest
     build: ./
+    secrets:
+      - slapd_password
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
       - SLAPD_ADDITIONAL_MODULES=groupofmembers,openssh
-      - SLAPD_PASSWORD=secret
+      - SLAPD_PASSWORD_FILE=/run/secrets/slapd_password
+      - SLAPD_PASSWORD=
       - SLAPD_LOG_LEVEL=32768
     volumes:
       - ldap_data_test:/var/lib/ldap
       - ldap_config_test:/etc/ldap
     ports:
       - '10389:389'
+
+secrets:
+  slapd_password:
+    file: ./secrets/slapd_password.txt

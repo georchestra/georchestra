@@ -3,6 +3,8 @@
 # test if already initialized
 if [ ! -f /etc/ldap/slapd.d/initialized ]; then
 
+    source /docker-entrypoint.d/utils/load_secrets.sh
+
     # start slapd in background
     echo -n "Starting slapd daemon in background..."
     slapd -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h "ldapi:/// ldap://127.0.0.1/"
