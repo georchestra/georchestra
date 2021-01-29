@@ -23,10 +23,12 @@ import org.georchestra.datafeeder.service.batch.publish.task.GeoNetworkTasklet;
 import org.georchestra.datafeeder.service.batch.publish.task.GeoServerGeoNetworkUpdateTasklet;
 import org.georchestra.datafeeder.service.batch.publish.task.GeoServerTasklet;
 import org.georchestra.datafeeder.service.batch.publish.task.PrepareTargetDataStoreTasklet;
+import org.georchestra.datafeeder.service.batch.publish.task.PublishJobLifeCycleStatusUpdateListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -56,8 +58,6 @@ public class DataPublishingConfiguration {
 
     @Bean(name = DataPublishingConfiguration.JOB_NAME)
     public Job publishingJob(//
-            // TODO: Do we need an initializer? @Qualifier("publishInitializer") Step
-            // initializer, //
             @Qualifier("preparePostGisStep") Step preparePostgis, //
             @Qualifier("postGisStep") Step postgis, //
             @Qualifier("geoserverStep") Step geoserver, //
@@ -66,16 +66,18 @@ public class DataPublishingConfiguration {
 
         return jobBuilderFactory.get(JOB_NAME)//
                 .incrementer(new RunIdIncrementer())//
-                // TODO: Add Listener!
-                // .listener(jobLifeCycleStatusUpdateListener())//
-                // steps...
-                // TODO: Do we need an initializer? .start(initializer)//
+                .listener(publishJobLifeCycleStatusUpdateListener())//
                 .start(preparePostgis)//
                 .next(postgis)//
                 .next(geoserver)//
                 .next(geonetwork)//
                 .next(geoserverGeonetworkUpdate)//
                 .build();
+    }
+
+    @JobScope
+    public @Bean PublishJobLifeCycleStatusUpdateListener publishJobLifeCycleStatusUpdateListener() {
+        return new PublishJobLifeCycleStatusUpdateListener();
     }
 
     @StepScope
@@ -131,5 +133,17 @@ public class DataPublishingConfiguration {
         return stepBuilderFactory.get("geoserverGeonetworkUpdateStep")//
                 .tasklet(geoServerGeoNetworkUpdateTasklet())//
                 .build();
+    }
+
+    public @Bean DataBackendService dataBackendService() {
+        return new MockDataBackendService();
+    }
+
+    public @Bean OWSPublicationService owsPublicationService() {
+        return new MockOWSPublicationService();
+    }
+
+    public @Bean MetadataPublicationService metadataPublicationService() {
+        return new MockMetadataPublicationService();
     }
 }

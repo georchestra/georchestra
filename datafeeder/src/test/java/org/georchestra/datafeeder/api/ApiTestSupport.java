@@ -100,7 +100,7 @@ public class ApiTestSupport {
         UploadJobStatus initialStatus = response.getBody();
         assertNotNull(initialStatus);
         assertNotNull(initialStatus.getJobId());
-        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(AnalysisStatusEnum.PENDING, initialStatus.getStatus());
         assertNotNull(initialStatus.getDatasets());
         assertTrue(initialStatus.getDatasets().isEmpty());
 

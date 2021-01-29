@@ -136,7 +136,7 @@ public class FileUploadApiControllerTest {
 
         assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
-        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(AnalysisStatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         UUID id = initialStatus.getJobId();
@@ -171,7 +171,7 @@ public class FileUploadApiControllerTest {
 
         assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
-        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(AnalysisStatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();

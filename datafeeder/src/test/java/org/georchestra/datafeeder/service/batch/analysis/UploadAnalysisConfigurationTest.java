@@ -100,7 +100,7 @@ public class UploadAnalysisConfigurationTest {
     public void step1_ReadUploadPack_single_shapefile() throws IOException {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = readUploadPack(uploadId);
@@ -134,7 +134,7 @@ public class UploadAnalysisConfigurationTest {
     public void analyze_single_shapefile() throws Exception {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);
@@ -174,7 +174,7 @@ public class UploadAnalysisConfigurationTest {
         MultipartFile received = multipartSupport.createZipFile("test upload.zip", roads, states, chinesePoly);
 
         UUID uploadId = storageService.saveUploads(Collections.singletonList(received));
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);

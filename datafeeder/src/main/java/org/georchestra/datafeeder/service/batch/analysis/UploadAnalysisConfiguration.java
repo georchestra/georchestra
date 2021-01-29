@@ -69,7 +69,7 @@ public class UploadAnalysisConfiguration {
 
         return jobs.get("analyzeUploadJob")//
                 .incrementer(new RunIdIncrementer())//
-                .listener(jobLifeCycleStatusUpdateListener())//
+                .listener(uploadJobLifeCycleStatusUpdateListener())//
                 // steps...
                 .start(initializer)//
                 .next(analyzer)//
@@ -77,8 +77,8 @@ public class UploadAnalysisConfiguration {
     }
 
     @JobScope
-    public @Bean JobLifeCycleStatusUpdateListener jobLifeCycleStatusUpdateListener() {
-        return new JobLifeCycleStatusUpdateListener();
+    public @Bean UploadJobLifeCycleStatusUpdateListener uploadJobLifeCycleStatusUpdateListener() {
+        return new UploadJobLifeCycleStatusUpdateListener();
     }
 
     public @Bean Step initializeDataUploadState(DataUploadStateInitializer initializer) {

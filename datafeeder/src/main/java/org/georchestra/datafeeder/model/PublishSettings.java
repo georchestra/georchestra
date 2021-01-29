@@ -35,11 +35,17 @@ public class PublishSettings {
     @Column(name = "published_name")
     private String publishedName;
 
+    @Column(name = "published_encoding")
+    private String encoding;
+
     @Column(name = "published_srs")
     private String srs;
 
     @Column(name = "pubished_srs_reproject")
     private Boolean srsReproject;
+
+    @Column(name = "md_record_id")
+    private String metadataRecordId;
 
     @Column(name = "md_title")
     private String title;

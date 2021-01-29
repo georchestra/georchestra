@@ -54,6 +54,9 @@ public class DataUploadJob {
     @Column(name = "created_by", nullable = false)
     private String username;
 
+    @Column(name = "org_name")
+    private String organizationName;
+
     @CreatedDate
     @Column(name = "created_date", nullable = false)
     private Date createdDate;
