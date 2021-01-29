@@ -36,11 +36,11 @@ public interface DatasetUploadStateRepository extends JpaRepository<DatasetUploa
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DatasetUploadState set status = :status where id = :id")
+    @Query("update DatasetUploadState set analizeStatus = :status where id = :id")
     int setDatasetStatus(@Param("id") long id, @Param("status") AnalysisStatus status);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DatasetUploadState set status = :status, error = :error where id = :id")
+    @Query("update DatasetUploadState set analizeStatus = :status, error = :error where id = :id")
     int setDatasetStatus(@Param("id") long id, @Param("status") AnalysisStatus status, @Param("error") String error);
 }

@@ -42,7 +42,7 @@ public class DatasetUploadStateUpdateListener implements ItemProcessListener<Dat
     @Override
     public void beforeProcess(DatasetUploadState item) {
         datasetRepository.setDatasetStatus(item.getId(), AnalysisStatus.ANALYZING);
-        item.setStatus(AnalysisStatus.ANALYZING);
+        item.setAnalizeStatus(AnalysisStatus.ANALYZING);
     }
 
     @Override

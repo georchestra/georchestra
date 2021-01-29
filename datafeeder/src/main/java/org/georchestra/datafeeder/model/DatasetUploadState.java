@@ -65,7 +65,10 @@ public class DatasetUploadState {
     private String name;
 
     @Column
-    private AnalysisStatus status;
+    private AnalysisStatus analizeStatus;
+
+    @Column
+    private PublishingStatus publishStatus = PublishingStatus.PENDING;
 
     @Lob
     @Column(length = 1024 * 1024)

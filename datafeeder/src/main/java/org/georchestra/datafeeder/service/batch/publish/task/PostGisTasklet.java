@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.service.batch.publish.task;
 
+import org.georchestra.datafeeder.service.DatasetsService;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.StepExecution;
@@ -25,7 +26,7 @@ import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,17 +37,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PostGisTasklet implements Tasklet, StepExecutionListener {
 
+    private @Autowired DatasetsService datasets;
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
         // TODO Do something here.
         log.info("before step execution");
-    }
-
-    @Override
-    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        // FIXME: Implement postgis copying
-        log.info("I would now copy data to PostGIS database.");
-        return RepeatStatus.FINISHED;
     }
 
     @Override
@@ -56,4 +52,12 @@ public class PostGisTasklet implements Tasklet, StepExecutionListener {
         stepExecution.getJobExecution().getExecutionContext().put("result", true);
         return ExitStatus.COMPLETED;
     }
+
+    @Override
+    public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        // FIXME: Implement postgis copying
+        log.info("I would now copy data to PostGIS database.");
+        return RepeatStatus.FINISHED;
+    }
+
 }
