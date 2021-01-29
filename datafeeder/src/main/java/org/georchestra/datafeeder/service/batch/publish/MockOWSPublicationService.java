@@ -21,10 +21,11 @@ package org.georchestra.datafeeder.service.batch.publish;
 import java.net.URI;
 import java.util.Objects;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -33,20 +34,20 @@ public class MockOWSPublicationService implements OWSPublicationService {
     private @Autowired MetadataPublicationService metadataService;
 
     @Override
-    public void publishDatasets(DataUploadJob job) {
-        log.info("MOCK publishing of OWS datasets for " + job.getJobId());
+    public void publish(@NonNull DatasetUploadState dataset) {
+        log.info("MOCK publishing of OWS datasets for " + dataset.getJob().getJobId() + "/" + dataset.getName());
     }
 
     @Override
-    public void addMetadataLinks(DataUploadJob job) {
-        log.info("MOCK publishing of OWS metadata links for " + job.getJobId());
-        job.getDatasets().forEach(d -> {
-            PublishSettings publishing = d.getPublishing();
-            Objects.requireNonNull(publishing);
-            Objects.requireNonNull(publishing.getMetadataRecordId());
-            URI metadataLink = metadataService.buildMetadataRecordURI(publishing.getMetadataRecordId());
-            log.info("MOCK added metadata link " + metadataLink);
-        });
+    public void addMetadataLink(@NonNull DatasetUploadState dataset) {
+        log.info("MOCK publishing of OWS metadata links for " + dataset.getJob().getJobId() + "/" + dataset.getName());
+        PublishSettings publishing = dataset.getPublishing();
+        Objects.requireNonNull(publishing);
+        Objects.requireNonNull(publishing.getMetadataRecordId());
+        URI metadataLink = metadataService.buildMetadataRecordURI(publishing.getMetadataRecordId());
+        // non-mock service should update the geoserver feature type adding the md link
+        // here
+        log.info("MOCK added metadata link " + metadataLink);
     }
 
 }

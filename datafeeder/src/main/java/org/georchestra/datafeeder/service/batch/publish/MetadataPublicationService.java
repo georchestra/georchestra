@@ -20,13 +20,13 @@ package org.georchestra.datafeeder.service.batch.publish;
 
 import java.net.URI;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 
 import lombok.NonNull;
 
 public interface MetadataPublicationService {
 
-    void publishDatasets(@NonNull DataUploadJob job);
+    void publish(@NonNull DatasetUploadState dataset);
 
     URI buildMetadataRecordURI(@NonNull String recordId);
 }

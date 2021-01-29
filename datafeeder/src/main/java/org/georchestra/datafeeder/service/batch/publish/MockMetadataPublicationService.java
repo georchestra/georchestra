@@ -22,7 +22,7 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 
 import lombok.NonNull;
@@ -30,12 +30,10 @@ import lombok.NonNull;
 public class MockMetadataPublicationService implements MetadataPublicationService {
 
     @Override
-    public void publishDatasets(DataUploadJob job) {
-        job.getDatasets().forEach(dset -> {
-            PublishSettings publishState = dset.getPublishing();
-            Objects.requireNonNull(publishState);
-            publishState.setMetadataRecordId(UUID.randomUUID().toString());
-        });
+    public void publish(DatasetUploadState dataset) {
+        PublishSettings publishState = dataset.getPublishing();
+        Objects.requireNonNull(publishState);
+        publishState.setMetadataRecordId(UUID.randomUUID().toString());
     }
 
     @Override

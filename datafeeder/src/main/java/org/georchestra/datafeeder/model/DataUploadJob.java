@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
@@ -39,6 +40,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 @Entity
@@ -86,5 +88,9 @@ public class DataUploadJob {
 
     public double getProgress() {
         return totalSteps == 0 ? 0d : (double) finishedSteps / totalSteps;
+    }
+
+    public Optional<DatasetUploadState> getDataset(@NonNull String nativeName) {
+        return getDatasets().stream().filter(d -> nativeName.equals(d.getName())).findFirst();
     }
 }

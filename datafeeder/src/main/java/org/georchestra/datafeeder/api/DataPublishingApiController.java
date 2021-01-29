@@ -65,7 +65,7 @@ public class DataPublishingApiController implements DataPublishingApi {
         authorizationService.checkAccessRights(jobId);
 
         // launch the async job
-        dataPublishingService.publish(jobId);
+        dataPublishingService.publish(jobId, publishRequest);
 
         DataUploadJob upload = getOrNotFound(jobId);
         PublishJobStatus status = mapper.toApi(upload);

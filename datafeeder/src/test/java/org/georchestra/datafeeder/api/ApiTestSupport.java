@@ -166,6 +166,20 @@ public class ApiTestSupport {
         return jobStatus.get();
     }
 
+    public DataUploadJob awaitUntilPublishStateIs(final UUID jobId, int seconds, JobStatus... oneof) {
+        final AtomicReference<DataUploadJob> jobStatus = new AtomicReference<>();
+        await().atMost(seconds, SECONDS).untilAsserted(() -> {
+            DataUploadJob jobState = uploadService.findJob(jobId).orElseThrow(NoSuchElementException::new);
+            jobStatus.set(jobState);
+
+            JobStatus status = jobState.getPublishStatus();
+            List<Matcher<? super JobStatus>> matchers;
+            matchers = Arrays.stream(oneof).map(Matchers::equalTo).collect(Collectors.toList());
+            assertThat(status, anyOf(matchers));
+        });
+        return jobStatus.get();
+    }
+
     public DatasetUploadState awaitUntilJobDatasetUploadStatusIs(final UUID jobId, final String datasetName,
             final int seconds, final JobStatus expectedStatus) {
 

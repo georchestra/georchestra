@@ -61,19 +61,18 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
         try {
             datasetsService.createDataStore(connectionParams);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void importDatasets(@NonNull DataUploadJob job) {
-        Map<String, String> connectionParams = resolveConnectionParams(job);
-        for (DatasetUploadState d : job.getDatasets()) {
-            try {
-                datasetsService.importDataset(d, connectionParams);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    public void importDataset(@NonNull DatasetUploadState dataset) {
+        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
+        try {
+            datasetsService.importDataset(dataset, connectionParams);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -88,7 +87,7 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
         }
         connectionParams.put(ShapefileDirectoryFactory.URLP.key, url);
         connectionParams.put(ShapefileDirectoryFactory.CREATE_SPATIAL_INDEX.key, "true");
-        connectionParams.put(ShapefileDirectoryFactory.FILE_TYPE.key, "directory");
+        connectionParams.put(ShapefileDirectoryFactory.FILE_TYPE.key, "shapefile");
         return connectionParams;
     }
 
