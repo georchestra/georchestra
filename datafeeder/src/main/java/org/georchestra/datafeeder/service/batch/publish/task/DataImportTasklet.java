@@ -28,14 +28,20 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-public class GeoServerGeoNetworkUpdateTasklet implements Tasklet {
+/**
+ * Tasklet to copy Datasets into the configured target data store (usually a
+ * PostGIS database).
+ * 
+ */
+public class DataImportTasklet implements Tasklet {
 
     private @Value("#{jobParameters['id']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.addMetadataLinksToGeoServerDatasets(uploadId);
+        service.importDatasetsToTargetDatastore(uploadId);
         return RepeatStatus.FINISHED;
     }
+
 }

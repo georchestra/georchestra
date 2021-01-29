@@ -18,38 +18,24 @@
  */
 package org.georchestra.datafeeder.service.batch.publish.task;
 
-import org.springframework.batch.core.ExitStatus;
+import java.util.UUID;
+
+import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
-import lombok.extern.slf4j.Slf4j;
+public class GeoNetworkTasklet implements Tasklet {
 
-@Slf4j
-public class GeoNetworkTasklet implements Tasklet, StepExecutionListener {
-
-    @Override
-    public void beforeStep(StepExecution stepExecution) {
-        // TODO Do something here.
-        log.info("before step execution");
-    }
+    private @Value("#{jobParameters['id']}") UUID uploadId;
+    private @Autowired PublishingBatchService service;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        // FIXME: Implement postgis copying
-        log.info("I would now publish Metadata to GeoNetwork.");
+        service.publishDatasetsMetadataToGeoNetwork(uploadId);
         return RepeatStatus.FINISHED;
     }
-
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        log.info("after step execution");
-        // TODO: Implement something useful
-        stepExecution.getJobExecution().getExecutionContext().put("result", true);
-        return ExitStatus.COMPLETED;
-    }
-
 }
