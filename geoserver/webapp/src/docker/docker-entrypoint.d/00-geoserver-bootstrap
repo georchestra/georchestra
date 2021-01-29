@@ -16,4 +16,7 @@ else
 
     echo 'Change log config according to docker setup'
     sed -i 's:stdOutLogging>false:stdOutLogging>true:g' /mnt/geoserver_datadir/logging.xml
+
+    echo 'deactivate oshi logs (hardware monitoring, fails on docker, the error logs pollute the geoserver logs)'
+    echo "log4j.category.oshi.hardware.platform.linux=OFF" >> /mnt/geoserver_datadir/logs/PRODUCTION_LOGGING.properties
 fi
