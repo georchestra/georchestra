@@ -18,12 +18,15 @@
  */
 package org.georchestra.datafeeder.service;
 
+import java.util.UUID;
+
 import org.georchestra.datafeeder.api.DataPublishingApiController;
-import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import lombok.NonNull;
 
 /**
  * Service provider for {@link DataPublishingApiController}
@@ -38,9 +41,8 @@ public class DataPublishingService {
     private @Autowired PublishingBatchService publishingBatchService;
 
     @Async
-    public void publish(DataUploadJob uploadPacket) {
-        publishingBatchService.runJob(uploadPacket.getJobId());
-
+    public void publish(@NonNull UUID uploadId) {
+        publishingBatchService.runJob(uploadId);
     }
 
 }

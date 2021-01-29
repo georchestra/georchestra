@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class PrepareTargetDataStoreTasklet implements Tasklet {
 
-    private @Value("#{jobParameters['id']}") UUID uploadId;
+    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
 
     @Override

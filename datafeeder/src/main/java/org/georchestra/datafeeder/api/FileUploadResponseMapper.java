@@ -21,17 +21,21 @@ package org.georchestra.datafeeder.api;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring", uses = CRSMapper.class)
-public interface ApiResponseMapper {
+public interface FileUploadResponseMapper {
 
+    @Mappings({ @Mapping(target = "status", source = "analyzeStatus") })
     UploadJobStatus toApi(DataUploadJob state);
 
-    @Mapping(target = "status", source = "analizeStatus")
+    @Mappings({ @Mapping(target = "status", source = "analyzeStatus") })
     DatasetUploadStatus toApi(DatasetUploadState dataset);
 
     BoundingBox toApi(BoundingBoxMetadata bounds);
 
+    JobStatusEnum toApi(JobStatus jobStatus);
 }

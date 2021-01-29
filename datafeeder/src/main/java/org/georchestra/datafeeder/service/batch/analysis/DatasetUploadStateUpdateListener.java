@@ -20,7 +20,7 @@ package org.georchestra.datafeeder.service.batch.analysis;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
@@ -41,8 +41,8 @@ public class DatasetUploadStateUpdateListener implements ItemProcessListener<Dat
 
     @Override
     public void beforeProcess(DatasetUploadState item) {
-        datasetRepository.setDatasetStatus(item.getId(), AnalysisStatus.ANALYZING);
-        item.setAnalizeStatus(AnalysisStatus.ANALYZING);
+        datasetRepository.setAnalyzeStatus(item.getId(), JobStatus.RUNNING);
+        item.setAnalyzeStatus(JobStatus.RUNNING);
     }
 
     @Override

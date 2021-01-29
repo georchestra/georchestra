@@ -20,9 +20,9 @@ package org.georchestra.datafeeder.api;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.georchestra.datafeeder.model.AnalysisStatus.ANALYZING;
-import static org.georchestra.datafeeder.model.AnalysisStatus.DONE;
-import static org.georchestra.datafeeder.model.AnalysisStatus.ERROR;
+import static org.georchestra.datafeeder.model.JobStatus.DONE;
+import static org.georchestra.datafeeder.model.JobStatus.ERROR;
+import static org.georchestra.datafeeder.model.JobStatus.RUNNING;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -43,15 +43,12 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.service.DataPublishingService;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.service.DataUploadService;
-import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -68,12 +65,7 @@ import lombok.NonNull;
 public class ApiTestSupport {
 
     private @Autowired DataUploadService uploadService;
-    private @Autowired DataPublishingService publishingService;
-
-    public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
-
     private @Autowired FileUploadApi uploadController;
-    private @Autowired DataPublishingApi publishingController;
 
     public void setCallingUser(@NonNull String username, @NonNull String... roles) {
         List<GrantedAuthority> authorities = Arrays.stream(roles).map(role -> {
@@ -108,12 +100,12 @@ public class ApiTestSupport {
         UploadJobStatus initialStatus = response.getBody();
         assertNotNull(initialStatus);
         assertNotNull(initialStatus.getJobId());
-        assertEquals(UploadJobStatus.StatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
         assertNotNull(initialStatus.getDatasets());
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();
-        awaitUntilJobIsOneOf(id, 1, ANALYZING, DONE);
+        awaitUntilJobIsOneOf(id, 1, RUNNING, DONE);
         awaitUntilJobIsOneOf(id, 5, DONE);
 
         Optional<DataUploadJob> state = uploadService.findJob(id);
@@ -130,7 +122,7 @@ public class ApiTestSupport {
     }
 
     public void assertDataset(@NonNull List<DatasetUploadState> datasets, @NonNull String name,
-            @NonNull AnalysisStatus expectedStatus) {
+            @NonNull JobStatus expectedStatus) {
 
         DatasetUploadState datasetState = datasets.stream().filter(d -> name.equals(d.getName())).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Expected dataset not returned: " + name));
@@ -138,7 +130,7 @@ public class ApiTestSupport {
         datasetState.getNativeBounds();
         datasetState.getSampleGeometryWKT();
         datasetState.getSampleProperties();
-        assertEquals(expectedStatus, datasetState.getAnalizeStatus());
+        assertEquals(expectedStatus, datasetState.getAnalyzeStatus());
         if (DONE == expectedStatus) {
             assertNotNull(datasetState.getEncoding());
             assertNull(datasetState.getError());
@@ -160,14 +152,14 @@ public class ApiTestSupport {
         }
     }
 
-    public DataUploadJob awaitUntilJobIsOneOf(final UUID jobId, int seconds, AnalysisStatus... oneof) {
+    public DataUploadJob awaitUntilJobIsOneOf(final UUID jobId, int seconds, JobStatus... oneof) {
         final AtomicReference<DataUploadJob> jobStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
             DataUploadJob jobState = uploadService.findJob(jobId).orElseThrow(NoSuchElementException::new);
             jobStatus.set(jobState);
 
-            AnalysisStatus status = jobState.getStatus();
-            List<Matcher<? super AnalysisStatus>> matchers;
+            JobStatus status = jobState.getAnalyzeStatus();
+            List<Matcher<? super JobStatus>> matchers;
             matchers = Arrays.stream(oneof).map(Matchers::equalTo).collect(Collectors.toList());
             assertThat(status, anyOf(matchers));
         });
@@ -175,7 +167,7 @@ public class ApiTestSupport {
     }
 
     public DatasetUploadState awaitUntilJobDatasetUploadStatusIs(final UUID jobId, final String datasetName,
-            final int seconds, final AnalysisStatus expectedStatus) {
+            final int seconds, final JobStatus expectedStatus) {
 
         final AtomicReference<DatasetUploadState> datasetStatus = new AtomicReference<>();
         await().atMost(seconds, SECONDS).untilAsserted(() -> {
@@ -186,7 +178,7 @@ public class ApiTestSupport {
             if (dataset.isPresent()) {
                 DatasetUploadState state = dataset.get();
                 datasetStatus.set(state);
-                assertThat(state.getAnalizeStatus(), equalTo(expectedStatus));
+                assertThat(state.getAnalyzeStatus(), equalTo(expectedStatus));
             }
         });
         return datasetStatus.get();

@@ -20,7 +20,7 @@ package org.georchestra.datafeeder.service.batch.analysis;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
@@ -50,7 +50,7 @@ public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
         switch (status) {
         case STARTING:
         case STARTED:
-            repository.setJobStatus(uploadId, AnalysisStatus.ANALYZING);
+            repository.setAnalyzeStatus(uploadId, JobStatus.RUNNING);
             break;
         case ABANDONED:
         case COMPLETED:
@@ -78,7 +78,7 @@ public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
             break;
         case STOPPING:
         case STOPPED:
-            repository.setJobStatus(uploadId, AnalysisStatus.PENDING);
+            repository.setAnalyzeStatus(uploadId, JobStatus.PENDING);
             break;
         case STARTED:
         case UNKNOWN:
