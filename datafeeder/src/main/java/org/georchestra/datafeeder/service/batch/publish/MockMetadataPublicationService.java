@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -16,20 +16,29 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.service.batch.publish;
 
-import org.georchestra.datafeeder.model.BoundingBoxMetadata;
-import org.georchestra.datafeeder.model.DataUploadJob;
+import java.net.URI;
+import java.util.Objects;
+import java.util.UUID;
+
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.mapstruct.Mapper;
+import org.georchestra.datafeeder.model.PublishSettings;
 
-@Mapper(componentModel = "spring", uses = CRSMapper.class)
-public interface ApiResponseMapper {
+import lombok.NonNull;
 
-    UploadJobStatus toApi(DataUploadJob state);
+public class MockMetadataPublicationService implements MetadataPublicationService {
 
-    DatasetUploadStatus toApi(DatasetUploadState dataset);
+    @Override
+    public void publish(DatasetUploadState dataset) {
+        PublishSettings publishState = dataset.getPublishing();
+        Objects.requireNonNull(publishState);
+        publishState.setMetadataRecordId(UUID.randomUUID().toString());
+    }
 
-    BoundingBox toApi(BoundingBoxMetadata bounds);
+    @Override
+    public URI buildMetadataRecordURI(@NonNull String recordId) {
+        return URI.create("https://mock.csw.org/?id=" + recordId);
+    }
 
 }

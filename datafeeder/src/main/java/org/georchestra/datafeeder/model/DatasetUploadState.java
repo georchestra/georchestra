@@ -39,6 +39,7 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Data
@@ -55,17 +56,20 @@ public class DatasetUploadState {
     @ManyToOne(fetch = FetchType.EAGER)
     private DataUploadJob job;
 
-    @Column
+    @Column(nullable = false)
     private String absolutePath;
 
-    @Column
+    @Column(nullable = false)
     private String fileName;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
-    private AnalysisStatus status;
+    @Column(nullable = false)
+    private @NonNull JobStatus analyzeStatus = JobStatus.PENDING;
+
+    @Column(nullable = false)
+    private @NonNull JobStatus publishStatus = JobStatus.PENDING;
 
     @Lob
     @Column(length = 1024 * 1024)
@@ -87,9 +91,13 @@ public class DatasetUploadState {
     })
     private BoundingBoxMetadata nativeBounds;
 
+    @Column(name = "inferred_encoding")
     private String encoding;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dataset_sample_properties")
     private List<SampleProperty> sampleProperties = new ArrayList<>();
+
+    @Embedded
+    private PublishSettings publishing;
 }

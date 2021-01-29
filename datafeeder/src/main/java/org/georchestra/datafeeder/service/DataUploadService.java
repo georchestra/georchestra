@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
-import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -51,15 +51,15 @@ public class DataUploadService {
         return repository.findByJobId(uploadId);
     }
 
-    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
-        return analysisService.createJob(jobId, username);
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, String orgName) {
+        return analysisService.createJob(jobId, username, orgName);
     }
 
     /**
      * Asynchronously starts the analysis process for the upload pack given by its
      * id, returns immediately with {@link DataUploadJob#getStatus() status}
-     * {@link AnalysisStatus#PENDING} and an empty
-     * {@link DataUploadJob#getDatasets() datasets} list.
+     * {@link JobStatus#PENDING} and an empty {@link DataUploadJob#getDatasets()
+     * datasets} list.
      */
     @Async
     public void analyze(@NonNull UUID uploadId) {

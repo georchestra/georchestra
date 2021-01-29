@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -16,8 +16,15 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.model;
+package org.georchestra.datafeeder.service.batch.publish;
 
-public enum PublishingStatus {
-    PENDING, RUNNING, DONE, ERROR;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
+
+public interface DataBackendService {
+
+    void prepareBackend(DataUploadJob job);
+
+    void importDataset(DatasetUploadState dataset);
+
 }

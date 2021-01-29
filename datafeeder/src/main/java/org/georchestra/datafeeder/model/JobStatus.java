@@ -18,6 +18,6 @@
  */
 package org.georchestra.datafeeder.model;
 
-public enum AnalysisStatus {
-    PENDING, ANALYZING, DONE, ERROR;
+public enum JobStatus {
+    PENDING, RUNNING, DONE, ERROR;
 }

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
@@ -100,8 +100,8 @@ public class UploadAnalysisConfigurationTest {
     public void step1_ReadUploadPack_single_shapefile() throws IOException {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
-        assertEquals(AnalysisStatus.PENDING, initial.getStatus());
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
+        assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = readUploadPack(uploadId);
         ExitStatus exitStatus = execution.getExitStatus();
@@ -112,11 +112,11 @@ public class UploadAnalysisConfigurationTest {
         DataUploadJob state = saved.get();
 
         assertEquals(uploadId, state.getJobId());
-        assertEquals(AnalysisStatus.ANALYZING, state.getStatus());
+        assertEquals(JobStatus.RUNNING, state.getAnalyzeStatus());
         assertEquals(1, state.getDatasets().size());
 
         DatasetUploadState dset = state.getDatasets().get(0);
-        assertEquals(AnalysisStatus.PENDING, dset.getStatus());
+        assertEquals(JobStatus.PENDING, dset.getAnalyzeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -124,7 +124,7 @@ public class UploadAnalysisConfigurationTest {
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
         assertEquals(1, dsets.size());
         dset = dsets.get(0);
-        assertEquals(AnalysisStatus.PENDING, dset.getStatus());
+        assertEquals(JobStatus.PENDING, dset.getAnalyzeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -134,8 +134,8 @@ public class UploadAnalysisConfigurationTest {
     public void analyze_single_shapefile() throws Exception {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
-        assertEquals(AnalysisStatus.PENDING, initial.getStatus());
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
+        assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);
         ExitStatus exitStatus = execution.getExitStatus();
@@ -146,12 +146,12 @@ public class UploadAnalysisConfigurationTest {
         DataUploadJob state = saved.get();
 
         assertEquals(uploadId, state.getJobId());
-        assertEquals(AnalysisStatus.DONE, state.getStatus());
+        assertEquals(JobStatus.DONE, state.getAnalyzeStatus());
         assertEquals(1, state.getDatasets().size());
         assertEquals(1.0, state.getProgress(), 0d);
 
         DatasetUploadState dset = state.getDatasets().get(0);
-        assertEquals(AnalysisStatus.DONE, dset.getStatus());
+        assertEquals(JobStatus.DONE, dset.getAnalyzeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -159,7 +159,7 @@ public class UploadAnalysisConfigurationTest {
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
         assertEquals(1, dsets.size());
         dset = dsets.get(0);
-        assertEquals(AnalysisStatus.DONE, dset.getStatus());
+        assertEquals(JobStatus.DONE, dset.getAnalyzeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -174,8 +174,8 @@ public class UploadAnalysisConfigurationTest {
         MultipartFile received = multipartSupport.createZipFile("test upload.zip", roads, states, chinesePoly);
 
         UUID uploadId = storageService.saveUploads(Collections.singletonList(received));
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
-        assertEquals(AnalysisStatus.PENDING, initial.getStatus());
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", "test-org");
+        assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);
         ExitStatus exitStatus = execution.getExitStatus();
@@ -186,7 +186,7 @@ public class UploadAnalysisConfigurationTest {
         DataUploadJob state = saved.get();
 
         assertEquals(uploadId, state.getJobId());
-        assertEquals(AnalysisStatus.DONE, state.getStatus());
+        assertEquals(JobStatus.DONE, state.getAnalyzeStatus());
         assertEquals(3, state.getDatasets().size());
         assertEquals(3, state.getTotalSteps());
         assertEquals(3, state.getFinishedSteps());
@@ -196,7 +196,7 @@ public class UploadAnalysisConfigurationTest {
         assertEquals(3, dsets.size());
         for (DatasetUploadState dset : dsets) {
             dset = dsets.get(0);
-            assertEquals(AnalysisStatus.DONE, dset.getStatus());
+            assertEquals(JobStatus.DONE, dset.getAnalyzeStatus());
             assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
             assertNotNull(dset.getFileName());
             assertNotNull(dset.getName());

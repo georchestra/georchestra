@@ -53,7 +53,7 @@ public class FileUploadApiController implements FileUploadApi {
 
     private @Autowired FileStorageService storageService;
     private @Autowired DataUploadService uploadService;
-    private @Autowired ApiResponseMapper mapper;
+    private @Autowired FileUploadResponseMapper mapper;
     private @Autowired AuthorizationService validityService;
 
     @Override
@@ -61,12 +61,13 @@ public class FileUploadApiController implements FileUploadApi {
         UUID uploadId;
         DataUploadJob state;
         final String userName = validityService.getUserName();
+        final String orgName = validityService.getUserOrgName();
         if (files.isEmpty()) {
             throw ApiException.badRequest("No files provided in multi-part item 'filename'");
         }
         try {
             uploadId = storageService.saveUploads(files);
-            state = uploadService.createJob(uploadId, userName);
+            state = uploadService.createJob(uploadId, userName, orgName);
             uploadService.analyze(uploadId);
         } catch (IOException e) {
             e.printStackTrace();
