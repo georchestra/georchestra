@@ -54,3 +54,6 @@ ${JAVA_OPTIONS} \
 -Djetty.jmxremote.rmiregistryhost=0.0.0.0 \
 -Djetty.jmxremote.rmiserverhost=0.0.0.0 \
 -jar /usr/local/jetty/start.jar" ]
+
+ARG GS_VERSION
+ENV GS_VERSION=$GS_VERSION
