@@ -44,7 +44,7 @@
             <label for="role" translate>role.userlabel</label>
             <select class="pull-right form-control input-sm" ng-model="role.user"
                id="role" ng-change="role.associate()"
-               data-placeholder-text-single="'…' | translate"
+               data-placeholder-text-single="'...'"
                ng-options="u.uid as (u.sn + ' ' + u.givenName) for u in role.notUsers" chosen>
             </select>
           </div>
