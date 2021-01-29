@@ -277,7 +277,10 @@ components:
           schema:
             $ref: '#/components/schemas/BoundingBox'
   schemas:
-    JobStatusEnum:
+    AnalysisStatusEnum:
+      type: string
+      enum: [PENDING, ANALYZING, DONE, ERROR]
+    PublishStatusEnum:
       type: string
       enum: [PENDING, RUNNING, DONE, ERROR]
 
@@ -297,7 +300,7 @@ components:
           maximum: 1.0
           default: 0.0
         status:
-          $ref: '#/components/schemas/JobStatusEnum'
+          $ref: '#/components/schemas/AnalysisStatusEnum'
           description: aggregate of status of all datasets in the upload package. If any dataset status is PENDING, ANALYZING, or ERROR, that's the job's status.
                        If at least one dataset status is ERROR, then the job status is ERROR. If no datasets where recognized in the upload, status is ERROR. 
         error:
@@ -316,7 +319,7 @@ components:
           type: string
           description: Name of the dataset in the uploaded package
         status:
-          $ref: '#/components/schemas/JobStatusEnum'
+          $ref: '#/components/schemas/AnalysisStatusEnum'
         error:
           type: string
           description: short description of the error that prevents the dataset to be analysed
@@ -453,7 +456,7 @@ components:
           maximum: 1.0
           default: 0.0
         status:
-          $ref: '#/components/schemas/JobStatusEnum'
+          $ref: '#/components/schemas/PublishStatusEnum'
         error:
           type: string
           description: short description of the error that prevents the job to complete successfully
@@ -475,7 +478,7 @@ components:
         title:
           type: string
         status:
-          $ref: '#/components/schemas/JobStatusEnum'
+          $ref: '#/components/schemas/PublishStatusEnum'
         error:
           type: string
           description: short description of the error that prevents the dataset to be published

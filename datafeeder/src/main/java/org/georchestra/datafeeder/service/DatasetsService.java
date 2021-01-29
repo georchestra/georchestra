@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,14 +38,19 @@ import javax.annotation.Nullable;
 
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
+import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.DataSourceMetadata.DataSourceType;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Query;
+import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.wkt.Formattable;
@@ -52,6 +58,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -353,5 +360,57 @@ public class DatasetsService {
             return DataSourceType.SHAPEFILE;
         }
         throw new UnsupportedOperationException("Only shapefiles are supported so far");
+    }
+
+    public void createDataStore(Map<String, String> connectionParams) throws IOException {
+        DataStore ds = DataStoreFinder.getDataStore(connectionParams);
+        if (ds == null) {
+            throw new IOException("Unable to create datastore " + connectionParams);
+        }
+    }
+
+    public void importDataset(DatasetUploadState d, Map<String, String> connectionParams) throws IOException {
+        DataStore sourceDs = resolveDataStore(d);
+        DataStore targetds = null;
+        try {
+            targetds = loadDataStore(connectionParams);
+            SimpleFeatureSource source = resolveFeatureSource(sourceDs, d);
+            SimpleFeatureType featureType = source.getSchema();
+            targetds.createSchema(featureType);
+            SimpleFeatureStore target = (SimpleFeatureStore) targetds.getFeatureSource(featureType.getTypeName());
+            Transaction gtTx = new DefaultTransaction();
+            try {
+                target.setTransaction(gtTx);
+                target.addFeatures(source.getFeatures());
+                gtTx.commit();
+            } catch (IOException e) {
+                gtTx.rollback();
+                throw e;
+            }
+        } finally {
+            sourceDs.dispose();
+            if (targetds != null)
+                targetds.dispose();
+        }
+    }
+
+    private DataStore resolveDataStore(DatasetUploadState d) {
+        PublishSettings publishing = d.getPublishing();
+        String encoding = publishing.getEncoding() == null ? d.getEncoding() : publishing.getEncoding();
+        Charset charset = encoding == null ? null : Charset.forName(encoding);
+        return loadDataStore(Paths.get(d.getAbsolutePath()), charset);
+    }
+
+    private SimpleFeatureSource resolveFeatureSource(DataStore store, DatasetUploadState d) throws IOException {
+        final @NonNull String nativeName = d.getName();
+        SimpleFeatureSource orig = store.getFeatureSource(nativeName);
+
+        PublishSettings publishing = d.getPublishing();
+        String typeName = publishing.getPublishedName();
+        if (typeName == null && !typeName.equals(nativeName)) {
+            throw new UnsupportedOperationException("implement!");
+        }
+
+        return orig;
     }
 }

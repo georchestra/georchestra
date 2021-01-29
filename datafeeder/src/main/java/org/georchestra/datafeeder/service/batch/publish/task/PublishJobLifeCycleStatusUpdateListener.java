@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.service.batch.publish.task;
 
 import java.util.UUID;
 
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
+import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -29,16 +30,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
+public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionListener {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired DataUploadJobRepository repository;
-    private @Autowired @Setter DataUploadAnalysisService service;
+    private @Autowired PublishingBatchService service;
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -46,18 +46,11 @@ public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
             return;
 
         final BatchStatus status = jobExecution.getStatus();
-        log.info("upload job id: {}, status: {}", uploadId, status);
         switch (status) {
         case STARTING:
         case STARTED:
-            repository.setAnalyzeStatus(uploadId, JobStatus.RUNNING);
+            service.initializePublishingStatus(uploadId);
             break;
-        case ABANDONED:
-        case COMPLETED:
-        case FAILED:
-        case STOPPED:
-        case STOPPING:
-        case UNKNOWN:
         default:
             break;
         }
@@ -69,7 +62,7 @@ public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
             return;
 
         final BatchStatus status = jobExecution.getStatus();
-        log.info("upload job id: {}, status: {}", uploadId, status);
+        log.info("publish job id: {}, status: {}", uploadId, status);
         switch (status) {
         case COMPLETED:
         case ABANDONED:
@@ -78,7 +71,7 @@ public class JobLifeCycleStatusUpdateListener implements JobExecutionListener {
             break;
         case STOPPING:
         case STOPPED:
-            repository.setAnalyzeStatus(uploadId, JobStatus.PENDING);
+            repository.setPublishingStatus(uploadId, JobStatus.PENDING);
             break;
         case STARTED:
         case UNKNOWN:

@@ -37,5 +37,21 @@ public interface FileUploadResponseMapper {
 
     BoundingBox toApi(BoundingBoxMetadata bounds);
 
-    JobStatusEnum toApi(JobStatus jobStatus);
+    default AnalysisStatusEnum toApi(JobStatus jobStatus) {
+        if (jobStatus == null) {
+            return null;
+        }
+        switch (jobStatus) {
+        case PENDING:
+            return AnalysisStatusEnum.PENDING;
+        case RUNNING:
+            return AnalysisStatusEnum.ANALYZING;
+        case DONE:
+            return AnalysisStatusEnum.DONE;
+        case ERROR:
+            return AnalysisStatusEnum.ERROR;
+        default:
+            throw new IllegalArgumentException("Unexpected enum constant: " + jobStatus);
+        }
+    }
 }
