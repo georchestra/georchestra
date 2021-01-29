@@ -116,7 +116,7 @@ public class UploadAnalysisConfigurationTest {
         assertEquals(1, state.getDatasets().size());
 
         DatasetUploadState dset = state.getDatasets().get(0);
-        assertEquals(AnalysisStatus.PENDING, dset.getStatus());
+        assertEquals(AnalysisStatus.PENDING, dset.getAnalizeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -124,7 +124,7 @@ public class UploadAnalysisConfigurationTest {
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
         assertEquals(1, dsets.size());
         dset = dsets.get(0);
-        assertEquals(AnalysisStatus.PENDING, dset.getStatus());
+        assertEquals(AnalysisStatus.PENDING, dset.getAnalizeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -151,7 +151,7 @@ public class UploadAnalysisConfigurationTest {
         assertEquals(1.0, state.getProgress(), 0d);
 
         DatasetUploadState dset = state.getDatasets().get(0);
-        assertEquals(AnalysisStatus.DONE, dset.getStatus());
+        assertEquals(AnalysisStatus.DONE, dset.getAnalizeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -159,7 +159,7 @@ public class UploadAnalysisConfigurationTest {
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
         assertEquals(1, dsets.size());
         dset = dsets.get(0);
-        assertEquals(AnalysisStatus.DONE, dset.getStatus());
+        assertEquals(AnalysisStatus.DONE, dset.getAnalizeStatus());
         assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
         assertNotNull(dset.getFileName());
         assertNotNull(dset.getName());
@@ -196,7 +196,7 @@ public class UploadAnalysisConfigurationTest {
         assertEquals(3, dsets.size());
         for (DatasetUploadState dset : dsets) {
             dset = dsets.get(0);
-            assertEquals(AnalysisStatus.DONE, dset.getStatus());
+            assertEquals(AnalysisStatus.DONE, dset.getAnalizeStatus());
             assertTrue(Files.exists(Paths.get(dset.getAbsolutePath())));
             assertNotNull(dset.getFileName());
             assertNotNull(dset.getName());

@@ -43,51 +43,51 @@ import io.swagger.annotations.Api;
 @Api(tags = { "Data Publishing" }) // hides the empty data-publishing-api-controller entry in swagger-ui.html
 public class DataPublishingApiController implements DataPublishingApi {
 
-	private @Autowired AuthorizationService validityService;
-	private @Autowired DataPublishingService dataPublishingService;
-	private @Autowired DataUploadService uploadService;
+    private @Autowired AuthorizationService validityService;
+    private @Autowired DataPublishingService dataPublishingService;
+    private @Autowired DataUploadService uploadService;
 
-	@Override
-	public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
-		validityService.checkAccessRights(jobId);
-		DataUploadJob upload = this.uploadService.findJob(jobId)
-				.orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
+    @Override
+    public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
+        validityService.checkAccessRights(jobId);
+        DataUploadJob upload = this.uploadService.findJob(jobId)
+                .orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
 
-		PublishJobStatus mock = new PublishJobStatus();
-		mock.setJobId(jobId);
-		mock.setDatasets(mockPublishStatus(upload.getDatasets()));
-		mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
-		return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
-	}
+        PublishJobStatus mock = new PublishJobStatus();
+        mock.setJobId(jobId);
+        mock.setDatasets(mockPublishStatus(upload.getDatasets()));
+        mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
+        return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
+    }
 
-	private List<DatasetPublishingStatus> mockPublishStatus(List<DatasetUploadState> datasets) {
-		List<DatasetPublishingStatus> ret = new ArrayList<>();
-		for (DatasetUploadState d : datasets) {
-			DatasetPublishingStatus p = new DatasetPublishingStatus();
-			p.setNativeName(d.getName());
-			p.setPublishedName(d.getName());
-			p.setStatus(StatusEnum.IMPORTING);
-		}
-		return ret;
-	}
+    private List<DatasetPublishingStatus> mockPublishStatus(List<DatasetUploadState> datasets) {
+        List<DatasetPublishingStatus> ret = new ArrayList<>();
+        for (DatasetUploadState d : datasets) {
+            DatasetPublishingStatus p = new DatasetPublishingStatus();
+            p.setNativeName(d.getName());
+            p.setPublishedName(d.getName());
+            p.setStatus(StatusEnum.IMPORTING);
+        }
+        return ret;
+    }
 
-	@Override
-	public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
-			@RequestBody(required = false) PublishRequest publishRequest) {
-		validityService.checkAccessRights(jobId);
+    @Override
+    public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
+            @RequestBody(required = false) PublishRequest publishRequest) {
+        validityService.checkAccessRights(jobId);
 
-		DataUploadJob upload = this.uploadService.findJob(jobId)
-				.orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
+        DataUploadJob upload = this.uploadService.findJob(jobId)
+                .orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
 
-		PublishJobStatus mock = new PublishJobStatus();
-		mock.setJobId(jobId);
-		mock.setDatasets(mockPublishStatus(upload.getDatasets()));
-		mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
-		return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
+        PublishJobStatus mock = new PublishJobStatus();
+        mock.setJobId(jobId);
+        mock.setDatasets(mockPublishStatus(upload.getDatasets()));
+        mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
+        return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
 
-		// dataPublishingService.publish(null);
-		// TODO: Response from the service
-		// return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-	}
+        // dataPublishingService.publish(null);
+        // TODO: Response from the service
+        // return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
 
 }

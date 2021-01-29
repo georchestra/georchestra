@@ -191,7 +191,7 @@ public class DataUploadAnalysisService {
         final String typeName = item.getName();
         try {
             DatasetMetadata datasetMetadata = datasetsService.describe(path, typeName);
-            item.setStatus(AnalysisStatus.DONE);
+            item.setAnalizeStatus(AnalysisStatus.DONE);
             item.setEncoding(datasetMetadata.getEncoding());
             item.setFeatureCount(datasetMetadata.getFeatureCount());
             item.setNativeBounds(datasetMetadata.getNativeBounds());
@@ -202,16 +202,16 @@ public class DataUploadAnalysisService {
             item.setSampleGeometryWKT(geometryWKT);
             item.setSampleProperties(sampleProperties);
         } catch (Exception e) {
-            item.setStatus(AnalysisStatus.ERROR);
+            item.setAnalizeStatus(AnalysisStatus.ERROR);
             item.setError(e.getMessage());
         }
         return item;
     }
 
     private void checkStatus(DatasetUploadState item, AnalysisStatus expected) {
-        if (expected != item.getStatus()) {
+        if (expected != item.getAnalizeStatus()) {
             throw new IllegalStateException(String.format("Invalid status, expected %s, got %s. Item: %s#%s", expected,
-                    item.getStatus(), item.getFileName(), item.getName()));
+                    item.getAnalizeStatus(), item.getFileName(), item.getName()));
         }
     }
 
@@ -234,14 +234,14 @@ public class DataUploadAnalysisService {
 
     private String buildErrorMessage(List<DatasetUploadState> datasets) {
         return "Error analyzing the following datasets:\n"
-                + datasets.stream().filter(d -> d.getStatus() == AnalysisStatus.ERROR)
+                + datasets.stream().filter(d -> d.getAnalizeStatus() == AnalysisStatus.ERROR)
                         .map(d -> d.getName() + ": " + d.getError()).collect(Collectors.joining("\n"));
     }
 
     private AnalysisStatus determineJobStatus(List<DatasetUploadState> datasets) {
         for (DatasetUploadState s : datasets) {
             DatasetUploadState d = this.datasetRepository.findOne(s.getId());
-            AnalysisStatus status = d.getStatus();
+            AnalysisStatus status = d.getAnalizeStatus();
             if (AnalysisStatus.ERROR == status) {
                 return AnalysisStatus.ERROR;
             } else if (AnalysisStatus.DONE != status) {
@@ -292,7 +292,7 @@ public class DataUploadAnalysisService {
             dataset.setName(typeName);
             dataset.setFileName(fileRelativePath);
             dataset.setAbsolutePath(path.toAbsolutePath().toString());
-            dataset.setStatus(AnalysisStatus.PENDING);
+            dataset.setAnalizeStatus(AnalysisStatus.PENDING);
             datasets.add(dataset);
         }
         return datasets;
@@ -302,7 +302,7 @@ public class DataUploadAnalysisService {
         DatasetUploadState dataset = new DatasetUploadState();
         dataset.setFileName(fileRelativePath);
         dataset.setAbsolutePath(path.toAbsolutePath().toString());
-        dataset.setStatus(AnalysisStatus.ERROR);
+        dataset.setAnalizeStatus(AnalysisStatus.ERROR);
         dataset.setError(e.getMessage());
         return dataset;
     }

@@ -138,7 +138,7 @@ public class ApiTestSupport {
         datasetState.getNativeBounds();
         datasetState.getSampleGeometryWKT();
         datasetState.getSampleProperties();
-        assertEquals(expectedStatus, datasetState.getStatus());
+        assertEquals(expectedStatus, datasetState.getAnalizeStatus());
         if (DONE == expectedStatus) {
             assertNotNull(datasetState.getEncoding());
             assertNull(datasetState.getError());
@@ -186,7 +186,7 @@ public class ApiTestSupport {
             if (dataset.isPresent()) {
                 DatasetUploadState state = dataset.get();
                 datasetStatus.set(state);
-                assertThat(state.getStatus(), equalTo(expectedStatus));
+                assertThat(state.getAnalizeStatus(), equalTo(expectedStatus));
             }
         });
         return datasetStatus.get();

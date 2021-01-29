@@ -22,12 +22,14 @@ import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = CRSMapper.class)
 public interface ApiResponseMapper {
 
     UploadJobStatus toApi(DataUploadJob state);
 
+    @Mapping(target = "status", source = "analizeStatus")
     DatasetUploadStatus toApi(DatasetUploadState dataset);
 
     BoundingBox toApi(BoundingBoxMetadata bounds);
