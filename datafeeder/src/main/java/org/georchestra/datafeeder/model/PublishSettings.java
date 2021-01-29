@@ -18,7 +18,7 @@
  */
 package org.georchestra.datafeeder.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -58,7 +58,7 @@ public class PublishSettings {
     private List<String> keywords;
 
     @Column(name = "md_creation_date")
-    private Date datasetCreationDate;
+    private LocalDate datasetCreationDate;
 
     @Column(name = "md_scale")
     private Double scale;

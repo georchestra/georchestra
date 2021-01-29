@@ -407,7 +407,7 @@ public class DatasetsService {
 
         PublishSettings publishing = d.getPublishing();
         String typeName = publishing.getPublishedName();
-        if (typeName == null && !typeName.equals(nativeName)) {
+        if (typeName != null && !typeName.equals(nativeName)) {
             throw new UnsupportedOperationException("implement!");
         }
 

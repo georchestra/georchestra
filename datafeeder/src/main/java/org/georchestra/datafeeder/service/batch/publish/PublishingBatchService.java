@@ -23,6 +23,7 @@ import static org.georchestra.datafeeder.service.batch.publish.DataPublishingCon
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -84,7 +85,7 @@ public class PublishingBatchService {
         log.info("Publishing job {} finished with status {}", jobId, execution.getStatus());
     }
 
-    private DataUploadJob findJob(@NonNull UUID jobId) {
+    public DataUploadJob findJob(@NonNull UUID jobId) {
         return repository.findByJobId(jobId).orElseThrow(() -> new IllegalArgumentException("job not found: " + jobId));
     }
 
@@ -126,12 +127,13 @@ public class PublishingBatchService {
         DataUploadJob job = findJob(jobId);
         checkAnalisisComplete(job);
         job.getDatasets().forEach(dset -> {
+            dset.setPublishStatus(JobStatus.RUNNING);
             if (dset.getPublishing() == null) {
                 dset.setPublishing(new PublishSettings());
             }
         });
         job.setPublishStatus(JobStatus.RUNNING);
-        repository.saveAndFlush(job);
+        save(job);
     }
 
     /**
@@ -141,31 +143,54 @@ public class PublishingBatchService {
     public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         backendService.prepareBackend(job);
-        repository.saveAndFlush(job);
+        save(job);
     }
 
     public void importDatasetsToTargetDatastore(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        backendService.importDatasets(job);
-        repository.saveAndFlush(job);
+        doOnEachRunningDataset(job, backendService::importDataset);
+        save(job);
     }
 
     public void publishDatasetsToGeoServer(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        owsService.publishDatasets(job);
-        repository.saveAndFlush(job);
+        doOnEachRunningDataset(job, owsService::publish);
+        save(job);
+    }
+
+    public DataUploadJob save(DataUploadJob job) {
+        return repository.saveAndFlush(job);
     }
 
     public void publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        metadataService.publishDatasets(job);
-        repository.saveAndFlush(job);
+        doOnEachRunningDataset(job, metadataService::publish);
+        save(job);
     }
 
     public void addMetadataLinksToGeoServerDatasets(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        owsService.addMetadataLinks(job);
-        repository.saveAndFlush(job);
+        doOnEachRunningDataset(job, dset -> {
+            if (JobStatus.RUNNING == dset.getPublishStatus()) {
+                owsService.addMetadataLink(dset);
+                dset.setPublishStatus(JobStatus.DONE);
+            }
+        });
+        save(job);
+    }
+
+    private void doOnEachRunningDataset(DataUploadJob job, Consumer<DatasetUploadState> consumer) {
+        for (DatasetUploadState dataset : job.getDatasets()) {
+            if (JobStatus.RUNNING == dataset.getPublishStatus()) {
+                try {
+                    consumer.accept(dataset);
+                } catch (Exception e) {
+                    dataset.setPublishStatus(JobStatus.ERROR);
+                    dataset.setError(e.getMessage());
+                }
+            }
+        }
+        save(job);
     }
 
     @Transactional
@@ -176,7 +201,7 @@ public class PublishingBatchService {
         if (JobStatus.ERROR == status) {
             job.setError(buildErrorMessage(job.getDatasets()));
         }
-        repository.saveAndFlush(job);
+        save(job);
     }
 
     private JobStatus determineJobStatus(List<DatasetUploadState> datasets) {

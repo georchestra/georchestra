@@ -19,6 +19,7 @@
 package org.georchestra.datafeeder.api;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -28,4 +29,9 @@ public interface DataPublishingResponseMapper {
     @Mapping(target = "status", source = "publishStatus")
     PublishJobStatus toApi(DataUploadJob upload);
 
+    @Mapping(target = "status", source = "publishStatus")
+    @Mapping(target = "nativeName", source = "name")
+    @Mapping(target = "publishedName", source = "publishing.publishedName")
+    @Mapping(target = "title", source = "publishing.title")
+    DatasetPublishingStatus toApi(DatasetUploadState upload);
 }

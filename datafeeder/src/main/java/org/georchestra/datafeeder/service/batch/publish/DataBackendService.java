@@ -19,11 +19,12 @@
 package org.georchestra.datafeeder.service.batch.publish;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 
 public interface DataBackendService {
 
     void prepareBackend(DataUploadJob job);
 
-    void importDatasets(DataUploadJob job);
+    void importDataset(DatasetUploadState dataset);
 
 }

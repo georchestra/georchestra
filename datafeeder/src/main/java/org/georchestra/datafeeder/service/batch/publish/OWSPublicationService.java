@@ -1,11 +1,11 @@
 package org.georchestra.datafeeder.service.batch.publish;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 
 public interface OWSPublicationService {
 
-    void publishDatasets(DataUploadJob job);
+    void publish(DatasetUploadState dataset);
 
-    void addMetadataLinks(DataUploadJob job);
+    void addMetadataLink(DatasetUploadState dataset);
 
 }

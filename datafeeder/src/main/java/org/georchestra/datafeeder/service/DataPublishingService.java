@@ -21,6 +21,12 @@ package org.georchestra.datafeeder.service;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.api.DataPublishingApiController;
+import org.georchestra.datafeeder.api.DatasetMetadata;
+import org.georchestra.datafeeder.api.DatasetPublishRequest;
+import org.georchestra.datafeeder.api.PublishRequest;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -41,7 +47,37 @@ public class DataPublishingService {
     private @Autowired PublishingBatchService publishingBatchService;
 
     @Async
-    public void publish(@NonNull UUID uploadId) {
+    public void publish(@NonNull UUID uploadId, @NonNull PublishRequest req) {
+        DataUploadJob job = publishingBatchService.findJob(uploadId);
+        for (DatasetPublishRequest dreq : req.getDatasets()) {
+            String nativeName = dreq.getNativeName();
+            DatasetUploadState dset = job.getDataset(nativeName)
+                    .orElseThrow(() -> new IllegalArgumentException("Dataset " + nativeName + " does not exist"));
+            PublishSettings publishing = dset.getPublishing();
+            if (publishing == null) {
+                publishing = new PublishSettings();
+                dset.setPublishing(publishing);
+            }
+            DatasetMetadata md = dreq.getMetadata();
+            String publishedName = dreq.getPublishedName();
+            publishing.setPublishedName(publishedName == null ? nativeName : publishedName);
+            String srs = dreq.getSrs();
+            publishing.setSrs(srs);
+            publishing.setSrsReproject(dreq.getSrsReproject());
+            String encoding = dreq.getEncoding();
+            if (null == encoding)
+                encoding = dset.getEncoding();
+            publishing.setEncoding(encoding);
+
+            publishing.setTitle(md.getTitle());
+            publishing.setAbstract(md.getAbstract());
+            publishing.setDatasetCreationDate(md.getCreationDate());
+            publishing.setDatasetCreationProcessDescription(md.getCreationProcessDescription());
+            publishing.setKeywords(md.getTags());
+            publishing.setScale(md.getScale());
+        }
+        publishingBatchService.save(job);
+
         publishingBatchService.runJob(uploadId);
     }
 
