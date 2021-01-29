@@ -18,45 +18,28 @@
  */
 package org.georchestra.datafeeder.service.batch.publish.task;
 
-import org.georchestra.datafeeder.service.DatasetsService;
-import org.springframework.batch.core.ExitStatus;
+import java.util.UUID;
+
+import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.batch.core.StepContribution;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
- * Tasklet to copy Datasets into PostGIS database.
- * 
+ * Tasklet to prepare the target data store where to copy Datasets (usually a
+ * PostGIS database, that might require creating a postgis database, or schema).
  */
-@Slf4j
-public class PostGisTasklet implements Tasklet, StepExecutionListener {
+public class PrepareTargetDataStoreTasklet implements Tasklet {
 
-    private @Autowired DatasetsService datasets;
-
-    @Override
-    public void beforeStep(StepExecution stepExecution) {
-        // TODO Do something here.
-        log.info("before step execution");
-    }
-
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        log.info("after step execution");
-        // TODO: Implement something useful
-        stepExecution.getJobExecution().getExecutionContext().put("result", true);
-        return ExitStatus.COMPLETED;
-    }
+    private @Value("#{jobParameters['id']}") UUID uploadId;
+    private @Autowired PublishingBatchService service;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        // FIXME: Implement postgis copying
-        log.info("I would now copy data to PostGIS database.");
+        service.prepareTargetStoreForJobDatasets(uploadId);
         return RepeatStatus.FINISHED;
     }
 
