@@ -21,7 +21,7 @@ package org.georchestra.datafeeder.repository;
 import java.util.List;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,11 +36,11 @@ public interface DatasetUploadStateRepository extends JpaRepository<DatasetUploa
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DatasetUploadState set analizeStatus = :status where id = :id")
-    int setDatasetStatus(@Param("id") long id, @Param("status") AnalysisStatus status);
+    @Query("update DatasetUploadState set analyzeStatus = :status where id = :id")
+    int setAnalyzeStatus(@Param("id") long id, @Param("status") JobStatus status);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DatasetUploadState set analizeStatus = :status, error = :error where id = :id")
-    int setDatasetStatus(@Param("id") long id, @Param("status") AnalysisStatus status, @Param("error") String error);
+    @Query("update DatasetUploadState set analyzeStatus = :status, error = :error where id = :id")
+    int setAnalyzeStatus(@Param("id") long id, @Param("status") JobStatus status, @Param("error") String error);
 }

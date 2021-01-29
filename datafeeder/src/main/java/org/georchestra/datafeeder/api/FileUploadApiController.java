@@ -53,7 +53,7 @@ public class FileUploadApiController implements FileUploadApi {
 
     private @Autowired FileStorageService storageService;
     private @Autowired DataUploadService uploadService;
-    private @Autowired ApiResponseMapper mapper;
+    private @Autowired FileUploadResponseMapper mapper;
     private @Autowired AuthorizationService validityService;
 
     @Override

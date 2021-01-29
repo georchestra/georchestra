@@ -42,7 +42,7 @@ public class FileUploadApiControllerSecurityTest {
 
     private @MockBean FileStorageService storageService;
     private @MockBean DataUploadService uploadService;
-    private @MockBean ApiResponseMapper mapper;
+    private @MockBean FileUploadResponseMapper mapper;
     private @MockBean AuthorizationService mockDataUploadValidityService;
     private @MockBean DataPublishingService mockDataPublishingService;
 

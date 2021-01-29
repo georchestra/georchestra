@@ -16,8 +16,16 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.model;
+package org.georchestra.datafeeder.api;
 
-public enum PublishingStatus {
-    PENDING, RUNNING, DONE, ERROR;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring", uses = CRSMapper.class)
+public interface DataPublishingResponseMapper {
+
+    @Mapping(target = "status", source = "publishStatus")
+    PublishJobStatus toApi(DataUploadJob upload);
+
 }

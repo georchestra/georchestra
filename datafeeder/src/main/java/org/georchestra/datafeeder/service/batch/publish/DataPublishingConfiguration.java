@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableBatchProcessing
 public class DataPublishingConfiguration {
 
-    public static final String JOB_PARAM_ID = "id";
+    public static final String JOB_PARAM_ID = "uploadId";
     public static final String JOB_NAME = "publishJob";
 
     private @Autowired JobBuilderFactory jobBuilderFactory;

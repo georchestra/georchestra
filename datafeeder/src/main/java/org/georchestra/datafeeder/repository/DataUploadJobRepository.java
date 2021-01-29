@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.AnalysisStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -42,8 +42,8 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DataUploadJob set status = :status where jobId = :jobId")
-    int setJobStatus(@Param("jobId") UUID jobId, @Param("status") AnalysisStatus status);
+    @Query("update DataUploadJob set analyzeStatus = :status where jobId = :jobId")
+    int setAnalyzeStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)

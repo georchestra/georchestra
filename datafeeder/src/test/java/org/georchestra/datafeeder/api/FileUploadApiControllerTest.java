@@ -18,8 +18,8 @@
  */
 package org.georchestra.datafeeder.api;
 
-import static org.georchestra.datafeeder.model.AnalysisStatus.DONE;
-import static org.georchestra.datafeeder.model.AnalysisStatus.ERROR;
+import static org.georchestra.datafeeder.model.JobStatus.DONE;
+import static org.georchestra.datafeeder.model.JobStatus.ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -136,7 +136,7 @@ public class FileUploadApiControllerTest {
 
         assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
-        assertEquals(UploadJobStatus.StatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         UUID id = initialStatus.getJobId();
@@ -171,7 +171,7 @@ public class FileUploadApiControllerTest {
 
         assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
-        assertEquals(UploadJobStatus.StatusEnum.PENDING, initialStatus.getStatus());
+        assertEquals(JobStatusEnum.PENDING, initialStatus.getStatus());
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();
