@@ -95,4 +95,7 @@ public class DatasetUploadState {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dataset_sample_properties")
     private List<SampleProperty> sampleProperties = new ArrayList<>();
+
+    @Embedded
+    private PublishSettings publishing;
 }
