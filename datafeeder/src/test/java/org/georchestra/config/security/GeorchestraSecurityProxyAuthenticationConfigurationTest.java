@@ -24,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
+import org.georchestra.datafeeder.api.AuthorizationService;
+import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Before;
@@ -60,6 +62,8 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
 
     private @MockBean DataUploadService dataUploadService;
     private @MockBean FileStorageService fileStorageService;
+    private @MockBean AuthorizationService mockDataUploadValidityService;
+    private @MockBean DataPublishingService mockDataPublishingService;
 
     private @LocalServerPort int port;
     private @Value("${server.context-path}") String contextPath;

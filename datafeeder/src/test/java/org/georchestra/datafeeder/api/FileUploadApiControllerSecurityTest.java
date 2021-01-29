@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.api;
 
 import java.util.Collections;
 
+import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Test;
@@ -42,6 +43,8 @@ public class FileUploadApiControllerSecurityTest {
     private @MockBean FileStorageService storageService;
     private @MockBean DataUploadService uploadService;
     private @MockBean ApiResponseMapper mapper;
+    private @MockBean AuthorizationService mockDataUploadValidityService;
+    private @MockBean DataPublishingService mockDataPublishingService;
 
     private @Autowired FileUploadApi controller;
 

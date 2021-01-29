@@ -85,12 +85,14 @@ public class DatasetsService {
     }
 
     public DatasetMetadata describe(@NonNull Path path, @NonNull String typeName) {
-        DataStore ds = loadDataStore(path);
+        Map<String, String> params = resolveConnectionParameters(path);
+        DataStore ds = loadDataStore(params);
         try {
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
             DatasetMetadata md = describe(fs);
             if (isShapefile(path)) {
-                md.setEncoding(DEFAULT_SHAPEFILE_ENCODING);
+                String charset = params.get(ShapefileDataStoreFactory.DBFCHARSET.key);
+                md.setEncoding(charset == null ? DEFAULT_SHAPEFILE_ENCODING : charset);
             }
             return md;
         } catch (IOException e) {
@@ -184,12 +186,8 @@ public class DatasetsService {
     public DataSourceMetadata describe(@NonNull Path path) {
         final Map<String, String> parameters = resolveConnectionParameters(path);
         DataSourceType dataSourceType = resolveDataSourceType(path, parameters);
-        DataStore ds;
-        try {
-            ds = loadDataStore(parameters);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        DataStore ds = loadDataStore(parameters);
+
         List<DatasetMetadata> mds = new ArrayList<>();
         try {
             String[] typeNames = ds.getTypeNames();
@@ -197,7 +195,8 @@ public class DatasetsService {
                 SimpleFeatureSource fs = ds.getFeatureSource(typeName);
                 DatasetMetadata md = describe(fs);
                 if (isShapefile(path)) {
-                    md.setEncoding(DEFAULT_SHAPEFILE_ENCODING);
+                    String charset = parameters.get(ShapefileDataStoreFactory.DBFCHARSET.key);
+                    md.setEncoding(charset == null ? DEFAULT_SHAPEFILE_ENCODING : charset);
                 }
                 mds.add(md);
             }
@@ -281,28 +280,25 @@ public class DatasetsService {
 
     public @NonNull DataStore loadDataStore(@NonNull Path path) {
         Map<String, String> params = resolveConnectionParameters(path);
-        try {
-            return loadDataStore(params);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return loadDataStore(params);
     }
 
     public @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
         Map<String, String> params = resolveConnectionParameters(path);
         if (encoding != null)
             params.put(ShapefileDataStoreFactory.DBFCHARSET.key, encoding.name());
+        return loadDataStore(params);
+    }
+
+    public @NonNull DataStore loadDataStore(Map<String, String> params) {
+        DataStore ds;
         try {
-            return loadDataStore(params);
+            ds = DataStoreFinder.getDataStore(params);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public @NonNull DataStore loadDataStore(Map<String, String> params) throws IOException {
-        DataStore ds = DataStoreFinder.getDataStore(params);
         if (ds == null) {
-            throw new IOException("Unable to resolve dataset");
+            throw new IllegalArgumentException("Unable to resolve dataset with parameters " + params);
         }
         return ds;
     }
