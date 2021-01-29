@@ -18,12 +18,17 @@
  */
 package org.georchestra.datafeeder.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.georchestra.datafeeder.api.DatasetPublishingStatus.StatusEnum;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DataPublishingService;
+import org.georchestra.datafeeder.service.DataUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,25 +43,51 @@ import io.swagger.annotations.Api;
 @Api(tags = { "Data Publishing" }) // hides the empty data-publishing-api-controller entry in swagger-ui.html
 public class DataPublishingApiController implements DataPublishingApi {
 
-    private @Autowired AuthorizationService validityService;
-    private @Autowired DataPublishingService dataPublishingService;
+	private @Autowired AuthorizationService validityService;
+	private @Autowired DataPublishingService dataPublishingService;
+	private @Autowired DataUploadService uploadService;
 
-    @Override
-    public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
-        validityService.checkAccessRights(jobId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-    }
+	@Override
+	public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
+		validityService.checkAccessRights(jobId);
+		DataUploadJob upload = this.uploadService.findJob(jobId)
+				.orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
 
-    @Override
-    public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
-            @RequestBody(required = false) PublishRequest publishRequest) {
-        validityService.checkAccessRights(jobId);
+		PublishJobStatus mock = new PublishJobStatus();
+		mock.setJobId(jobId);
+		mock.setDatasets(mockPublishStatus(upload.getDatasets()));
+		mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
+		return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
+	}
 
-        List<DatasetPublishRequest> datasets = publishRequest.getDatasets();
-        dataPublishingService.publish(null);
-        // TODO: Response from the service
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	private List<DatasetPublishingStatus> mockPublishStatus(List<DatasetUploadState> datasets) {
+		List<DatasetPublishingStatus> ret = new ArrayList<>();
+		for (DatasetUploadState d : datasets) {
+			DatasetPublishingStatus p = new DatasetPublishingStatus();
+			p.setNativeName(d.getName());
+			p.setPublishedName(d.getName());
+			p.setStatus(StatusEnum.IMPORTING);
+		}
+		return ret;
+	}
 
-    }
+	@Override
+	public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
+			@RequestBody(required = false) PublishRequest publishRequest) {
+		validityService.checkAccessRights(jobId);
+
+		DataUploadJob upload = this.uploadService.findJob(jobId)
+				.orElseThrow(() -> ApiException.notFound("upload %s does not exist", jobId));
+
+		PublishJobStatus mock = new PublishJobStatus();
+		mock.setJobId(jobId);
+		mock.setDatasets(mockPublishStatus(upload.getDatasets()));
+		mock.setStatus(org.georchestra.datafeeder.api.PublishJobStatus.StatusEnum.RUNNING);
+		return new ResponseEntity<>(mock, HttpStatus.NOT_IMPLEMENTED);
+
+		// dataPublishingService.publish(null);
+		// TODO: Response from the service
+		// return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
 }
