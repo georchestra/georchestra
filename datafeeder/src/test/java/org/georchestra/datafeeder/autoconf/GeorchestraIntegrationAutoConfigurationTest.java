@@ -21,13 +21,17 @@ package org.georchestra.datafeeder.autoconf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
-import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
 import org.georchestra.datafeeder.api.AuthorizationService;
+import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
@@ -47,7 +51,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Test suite for {@link GeorchestraIntegrationAutoConfiguration}, which shall
  * be enabled through the {@code georchestra} spring profile
  */
-@SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.MOCK)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
@@ -68,12 +72,12 @@ public class GeorchestraIntegrationAutoConfigurationTest {
                 env.getProperty("domainName"));
     }
 
-    public @Test void testDataFeederPropertiesFromGeorchestraDatadir() {
+    public @Test void testDataFeederPropertiesFromGeorchestraDatadir() throws MalformedURLException {
         DataFeederConfigurationProperties props = context.getBean(DataFeederConfigurationProperties.class);
         FileUploadConfig fileUpload = props.getFileUpload();
         assertNotNull(fileUpload);
 
-        final String msg = "is default.properties loaded from src/test/resources/datadir/datafeeder?";
+        final String msg = "is datafeeder.properties loaded from src/test/resources/datadir/datafeeder?";
         assertEquals(msg, "5MB", fileUpload.getMaxFileSize());
         assertEquals(msg, "10MB", fileUpload.getMaxRequestSize());
         assertEquals(msg, "1MB", fileUpload.getFileSizeThreshold());
@@ -83,5 +87,27 @@ public class GeorchestraIntegrationAutoConfigurationTest {
 
         Path expectedPersistent = Paths.get(System.getProperty("java.io.tmpdir") + "/datafeeder/uploads");
         assertEquals(msg, expectedPersistent, fileUpload.getPersistentLocation());
+
+        PublishingConfiguration publishing = props.getPublishing();
+        assertNotNull(publishing);
+        assertNotNull(publishing.getGeoserver());
+        assertNotNull(publishing.getGeonetwork());
+        assertNotNull(publishing.getBackend());
+
+        assertEquals(new URL("http://localhost:8080/geoserver/rest"), publishing.getGeoserver().getApiUrl());
+        assertEquals(new URL("https://georchestra.mydomain.org/geoserver"), publishing.getGeoserver().getPublicUrl());
+        assertEquals(new URL("http://localhost:8081/geonetwork"), publishing.getGeonetwork().getApiUrl());
+        assertEquals(new URL("https://georchestra.mydomain.org/geonetwork"), publishing.getGeonetwork().getPublicUrl());
+
+        Map<String, String> local = publishing.getBackend().getLocal();
+        assertEquals("postgis", local.get("dbtype"));
+        assertEquals("localhost", local.get("host"));
+        assertEquals("datafeeder", local.get("database"));
+
+        Map<String, String> gsBackendTemplate = publishing.getBackend().getGeoserver();
+        assertEquals("postgis", gsBackendTemplate.get("dbtype"));
+        assertEquals("java:comp/env/jdbc/datafeeder", gsBackendTemplate.get("jndiReferenceName"));
+        assertEquals("false", gsBackendTemplate.get("Loose bbox"));
+        assertEquals("true", gsBackendTemplate.get("Estimated extends"));
     }
 }
