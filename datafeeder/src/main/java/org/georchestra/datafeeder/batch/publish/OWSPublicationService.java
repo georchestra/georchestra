@@ -1,4 +1,4 @@
-package org.georchestra.datafeeder.service.batch.publish;
+package org.georchestra.datafeeder.batch.publish;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 

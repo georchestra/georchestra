@@ -16,10 +16,10 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch;
+package org.georchestra.datafeeder.batch;
 
-import org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration;
-import org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration;
+import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
+import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Configuration
 @EnableBatchProcessing
 @EnableAsync
-@Import({ UploadAnalysisConfiguration.class, DataPublishingConfiguration.class })
+@Import({ UploadAnalysisJobConfiguration.class, DataPublishingJobConfiguration.class })
 public class DatafeederBatchConfiguration {
 
     public @Bean JobManager jobManager() {

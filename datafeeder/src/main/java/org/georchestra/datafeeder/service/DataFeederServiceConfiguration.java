@@ -23,10 +23,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.georchestra.datafeeder.batch.DatafeederBatchConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
 import org.georchestra.datafeeder.repository.PersistenceConfiguration;
-import org.georchestra.datafeeder.service.batch.DatafeederBatchConfiguration;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.BeanExpressionException;
 import org.springframework.beans.factory.annotation.Autowired;

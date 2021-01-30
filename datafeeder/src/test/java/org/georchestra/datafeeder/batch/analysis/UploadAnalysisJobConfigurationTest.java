@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.batch.analysis;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -34,15 +34,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.georchestra.datafeeder.model.JobStatus;
+import org.georchestra.datafeeder.batch.analysis.BatchTestConfiguration.UploadJobLauncherTestUtils;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
-import org.georchestra.datafeeder.service.batch.analysis.BatchTestConfiguration.UploadJobLauncherTestUtils;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
@@ -66,7 +66,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "test" })
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UploadAnalysisConfigurationTest {
+public class UploadAnalysisJobConfigurationTest {
 
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
@@ -92,8 +92,8 @@ public class UploadAnalysisConfigurationTest {
         JobExecution execution = readUploadPack(null);
         ExitStatus exitStatus = execution.getExitStatus();
         assertEquals("FAILED", exitStatus.getExitCode());
-        assertThat(exitStatus.getExitDescription(),
-                containsString("Job parameter not provided: " + UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
+        assertThat(exitStatus.getExitDescription(), containsString(
+                "Job parameter not provided: " + UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
     }
 
     @Test
@@ -207,7 +207,7 @@ public class UploadAnalysisConfigurationTest {
         if (uploadId != null) {
             String parameter = uploadId.toString();
             boolean identifying = true;
-            this.jobParameters.put(UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
+            this.jobParameters.put(UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
                     new JobParameter(parameter, identifying));
         }
         JobParameters params = jobParameters();
@@ -219,7 +219,7 @@ public class UploadAnalysisConfigurationTest {
         if (uploadId != null) {
             String parameter = uploadId.toString();
             boolean identifying = true;
-            this.jobParameters.put(UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
+            this.jobParameters.put(UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
                     new JobParameter(parameter, identifying));
         }
         JobParameters params = jobParameters();

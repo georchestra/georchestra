@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.batch.analysis;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.georchestra.datafeeder.batch.JobManager;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
@@ -41,7 +42,6 @@ import org.georchestra.datafeeder.service.DatasetMetadata;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.service.UploadPackage;
-import org.georchestra.datafeeder.service.batch.JobManager;
 import org.geotools.util.Converters;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;

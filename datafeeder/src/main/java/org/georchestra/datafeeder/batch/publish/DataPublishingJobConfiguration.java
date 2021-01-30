@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.publish;
+package org.georchestra.datafeeder.batch.publish;
 
-import org.georchestra.datafeeder.service.batch.publish.task.DataImportTasklet;
-import org.georchestra.datafeeder.service.batch.publish.task.GeoNetworkTasklet;
-import org.georchestra.datafeeder.service.batch.publish.task.GeoServerGeoNetworkUpdateTasklet;
-import org.georchestra.datafeeder.service.batch.publish.task.GeoServerTasklet;
-import org.georchestra.datafeeder.service.batch.publish.task.PrepareTargetDataStoreTasklet;
-import org.georchestra.datafeeder.service.batch.publish.task.PublishJobLifeCycleStatusUpdateListener;
+import org.georchestra.datafeeder.batch.publish.task.DataImportTasklet;
+import org.georchestra.datafeeder.batch.publish.task.GeoNetworkTasklet;
+import org.georchestra.datafeeder.batch.publish.task.GeoServerGeoNetworkUpdateTasklet;
+import org.georchestra.datafeeder.batch.publish.task.GeoServerTasklet;
+import org.georchestra.datafeeder.batch.publish.task.PrepareTargetDataStoreTasklet;
+import org.georchestra.datafeeder.batch.publish.task.PublishJobLifeCycleStatusUpdateListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableBatchProcessing
-public class DataPublishingConfiguration {
+public class DataPublishingJobConfiguration {
 
     public static final String JOB_PARAM_ID = "uploadId";
     public static final String JOB_NAME = "publishJob";
@@ -56,7 +56,7 @@ public class DataPublishingConfiguration {
         return new PublishingBatchService();
     }
 
-    @Bean(name = DataPublishingConfiguration.JOB_NAME)
+    @Bean(name = DataPublishingJobConfiguration.JOB_NAME)
     public Job publishingJob(//
             @Qualifier("preparePostGisStep") Step preparePostgis, //
             @Qualifier("postGisStep") Step postgis, //
