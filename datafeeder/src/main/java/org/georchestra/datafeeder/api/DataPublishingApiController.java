@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.georchestra.datafeeder.api.mapper.DataPublishingResponseMapper;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;

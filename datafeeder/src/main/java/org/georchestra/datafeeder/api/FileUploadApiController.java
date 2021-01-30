@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;

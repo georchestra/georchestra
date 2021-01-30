@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.api.mapper;
 
+import org.georchestra.datafeeder.api.CRS;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
