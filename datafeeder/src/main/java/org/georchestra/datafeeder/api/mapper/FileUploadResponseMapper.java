@@ -16,8 +16,12 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.api.mapper;
 
+import org.georchestra.datafeeder.api.AnalysisStatusEnum;
+import org.georchestra.datafeeder.api.BoundingBox;
+import org.georchestra.datafeeder.api.DatasetUploadStatus;
+import org.georchestra.datafeeder.api.UploadJobStatus;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;

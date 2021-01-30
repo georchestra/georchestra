@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.api;
 
 import java.util.Collections;
 
+import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;

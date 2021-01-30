@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.api;
+package org.georchestra.datafeeder.api.mapper;
 
+import org.georchestra.datafeeder.api.DatasetPublishingStatus;
+import org.georchestra.datafeeder.api.PublishJobStatus;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.mapstruct.Mapper;
