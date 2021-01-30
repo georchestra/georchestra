@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.batch.analysis;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -61,7 +61,7 @@ public class DataUploadStateInitializer implements Tasklet {
 
     public @Override RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         Objects.requireNonNull(uploadId, () -> String
-                .format("Job parameter not provided: " + UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
+                .format("Job parameter not provided: " + UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
         service.initialize(uploadId);
         return RepeatStatus.FINISHED;
     }

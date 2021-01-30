@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.batch.analysis;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -53,7 +53,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @ComponentScan
 @EnableBatchProcessing
-public class UploadAnalysisConfiguration {
+public class UploadAnalysisJobConfiguration {
 
     public static final String UPLOAD_ID_JOB_PARAM_NAME = "uploadId";
     public static final String JOB_NAME = "analyzeUploadJob";
@@ -62,7 +62,7 @@ public class UploadAnalysisConfiguration {
     private @Autowired StepBuilderFactory steps;
     private @Autowired PlatformTransactionManager platformTransactionManager;
 
-    @Bean(name = UploadAnalysisConfiguration.JOB_NAME)
+    @Bean(name = UploadAnalysisJobConfiguration.JOB_NAME)
     public Job analyzeUploadJob(//
             @Qualifier("initializeDataUploadState") Step initializer, //
             @Qualifier("analyzeDatasets") Step analyzer) {

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch.analysis;
+package org.georchestra.datafeeder.batch.analysis;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -42,7 +42,7 @@ public class BatchTestConfiguration {
 
     public static class UploadJobLauncherTestUtils extends JobLauncherTestUtils {
         @Autowired
-        @Qualifier(UploadAnalysisConfiguration.JOB_NAME)
+        @Qualifier(UploadAnalysisJobConfiguration.JOB_NAME)
         public @Override void setJob(Job job) {
             super.setJob(job);
         }

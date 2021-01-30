@@ -24,10 +24,10 @@ import org.georchestra.datafeeder.api.DataPublishingApiController;
 import org.georchestra.datafeeder.api.DatasetMetadata;
 import org.georchestra.datafeeder.api.DatasetPublishRequest;
 import org.georchestra.datafeeder.api.PublishRequest;
+import org.georchestra.datafeeder.batch.publish.PublishingBatchService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
-import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

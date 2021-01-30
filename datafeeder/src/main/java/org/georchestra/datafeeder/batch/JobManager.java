@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.batch;
+package org.georchestra.datafeeder.batch;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.service.batch.analysis.UploadAnalysisConfiguration;
-import org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration;
+import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
+import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -43,12 +43,12 @@ public class JobManager {
 
     private @Autowired JobLauncher jobLauncher;
 
-    private @Autowired @Qualifier(UploadAnalysisConfiguration.JOB_NAME) Job uploadAnalysisJob;
-    private @Autowired @Qualifier(DataPublishingConfiguration.JOB_NAME) Job dataPublishingJob;
+    private @Autowired @Qualifier(UploadAnalysisJobConfiguration.JOB_NAME) Job uploadAnalysisJob;
+    private @Autowired @Qualifier(DataPublishingJobConfiguration.JOB_NAME) Job dataPublishingJob;
 
     @Async
     public void launchUploadJobAnalysis(@NonNull UUID jobId) {
-        final String paramName = UploadAnalysisConfiguration.UPLOAD_ID_JOB_PARAM_NAME;
+        final String paramName = UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME;
         final String paramValue = jobId.toString();
         final boolean identifying = true;
 
@@ -69,7 +69,7 @@ public class JobManager {
 
     @Async
     public void launchPublishingProcess(@NonNull UUID jobId) {
-        final String paramName = DataPublishingConfiguration.JOB_PARAM_ID;
+        final String paramName = DataPublishingJobConfiguration.JOB_PARAM_ID;
         final String paramValue = jobId.toString();
         final boolean identifying = true;
 
