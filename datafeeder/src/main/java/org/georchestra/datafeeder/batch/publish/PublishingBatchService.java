@@ -18,9 +18,6 @@
  */
 package org.georchestra.datafeeder.service.batch.publish;
 
-import static org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration.JOB_NAME;
-import static org.georchestra.datafeeder.service.batch.publish.DataPublishingConfiguration.JOB_PARAM_ID;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -33,32 +30,20 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersInvalidException;
+import org.georchestra.datafeeder.service.batch.JobManager;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Encapsulates implementation of processing steps required by the publish job;
  * with methods intended to be called by the job {@link Step steps}
  *
  */
-@Slf4j
 public class PublishingBatchService {
 
-    private @Autowired JobLauncher jobLauncher;
-    private @Autowired @Qualifier(JOB_NAME) Job job;
+    private @Autowired JobManager jobManager;
 
     private @Autowired DataUploadJobRepository repository;
     private @Autowired DataBackendService backendService;
@@ -66,23 +51,7 @@ public class PublishingBatchService {
     private @Autowired MetadataPublicationService metadataService;
 
     public void runJob(@NonNull UUID jobId) {
-        final String paramName = JOB_PARAM_ID;
-        final String paramValue = jobId.toString();
-        final boolean identifying = true;
-
-        final JobParameters params = new JobParametersBuilder()//
-                .addString(paramName, paramValue, identifying)//
-                .toJobParameters();
-        log.info("Launching publishing job {}", jobId);
-        JobExecution execution;
-        try {
-            execution = jobLauncher.run(job, params);
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
-                | JobParametersInvalidException e) {
-            log.error("Error running job {}", jobId, e);
-            throw new RuntimeException("Error running job " + jobId, e);
-        }
-        log.info("Publishing job {} finished with status {}", jobId, execution.getStatus());
+        jobManager.launchPublishingProcess(jobId);
     }
 
     public DataUploadJob findJob(@NonNull UUID jobId) {

@@ -29,7 +29,6 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.batch.publish.PublishingBatchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
@@ -46,7 +45,6 @@ public class DataPublishingService {
 
     private @Autowired PublishingBatchService publishingBatchService;
 
-    @Async
     public void publish(@NonNull UUID uploadId, @NonNull PublishRequest req) {
         DataUploadJob job = publishingBatchService.findJob(uploadId);
         for (DatasetPublishRequest dreq : req.getDatasets()) {
