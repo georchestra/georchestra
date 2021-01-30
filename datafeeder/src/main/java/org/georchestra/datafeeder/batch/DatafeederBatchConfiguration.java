@@ -20,20 +20,14 @@ package org.georchestra.datafeeder.batch;
 
 import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
 import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
+import org.georchestra.datafeeder.batch.service.BatchServicesConfiguration;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 @EnableBatchProcessing
-@EnableAsync
-@Import({ UploadAnalysisJobConfiguration.class, DataPublishingJobConfiguration.class })
+@Import({ BatchServicesConfiguration.class, UploadAnalysisJobConfiguration.class,
+        DataPublishingJobConfiguration.class })
 public class DatafeederBatchConfiguration {
-
-    public @Bean JobManager jobManager() {
-        return new JobManager();
-    }
-
 }

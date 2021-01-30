@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.batch.analysis;
 
 import java.util.UUID;
 
+import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;

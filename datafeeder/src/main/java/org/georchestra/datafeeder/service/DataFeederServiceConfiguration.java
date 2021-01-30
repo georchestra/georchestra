@@ -27,6 +27,7 @@ import org.georchestra.datafeeder.batch.DatafeederBatchConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
 import org.georchestra.datafeeder.repository.PersistenceConfiguration;
+import org.georchestra.datafeeder.service.publish.PublishingServicesConfiguration;
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.BeanExpressionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,8 @@ import org.springframework.context.annotation.Import;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
-@Import(value = { PersistenceConfiguration.class, DatafeederBatchConfiguration.class })
+@Import(value = { PersistenceConfiguration.class, DatafeederBatchConfiguration.class,
+        PublishingServicesConfiguration.class })
 @Slf4j
 public class DataFeederServiceConfiguration {
 

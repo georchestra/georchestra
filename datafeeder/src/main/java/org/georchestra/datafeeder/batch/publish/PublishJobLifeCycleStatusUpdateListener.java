@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish.task;
+package org.georchestra.datafeeder.batch.publish;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.batch.publish.PublishingBatchService;
+import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;

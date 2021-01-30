@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.batch.analysis;
 
+import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.UploadPackage;

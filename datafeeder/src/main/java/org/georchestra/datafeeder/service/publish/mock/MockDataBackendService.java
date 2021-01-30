@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish;
+package org.georchestra.datafeeder.service.publish.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DatasetsService;
+import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.shapefile.ShapefileDirectoryFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;

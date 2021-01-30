@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.api.FileUploadApiController;
-import org.georchestra.datafeeder.batch.analysis.DataUploadAnalysisService;
+import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
