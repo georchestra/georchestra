@@ -16,29 +16,15 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish;
+package org.georchestra.datafeeder.service.publish;
 
-import java.net.URI;
-import java.util.Objects;
-import java.util.UUID;
-
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.PublishSettings;
 
-import lombok.NonNull;
+public interface DataBackendService {
 
-public class MockMetadataPublicationService implements MetadataPublicationService {
+    void prepareBackend(DataUploadJob job);
 
-    @Override
-    public void publish(DatasetUploadState dataset) {
-        PublishSettings publishState = dataset.getPublishing();
-        Objects.requireNonNull(publishState);
-        publishState.setMetadataRecordId(UUID.randomUUID().toString());
-    }
-
-    @Override
-    public URI buildMetadataRecordURI(@NonNull String recordId) {
-        return URI.create("https://mock.csw.org/?id=" + recordId);
-    }
+    void importDataset(DatasetUploadState dataset);
 
 }

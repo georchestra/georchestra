@@ -24,7 +24,7 @@ import org.georchestra.datafeeder.api.DataPublishingApiController;
 import org.georchestra.datafeeder.api.DatasetMetadata;
 import org.georchestra.datafeeder.api.DatasetPublishRequest;
 import org.georchestra.datafeeder.api.PublishRequest;
-import org.georchestra.datafeeder.batch.publish.PublishingBatchService;
+import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;

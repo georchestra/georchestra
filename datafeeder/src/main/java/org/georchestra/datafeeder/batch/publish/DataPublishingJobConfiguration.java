@@ -18,12 +18,7 @@
  */
 package org.georchestra.datafeeder.batch.publish;
 
-import org.georchestra.datafeeder.batch.publish.task.DataImportTasklet;
-import org.georchestra.datafeeder.batch.publish.task.GeoNetworkTasklet;
-import org.georchestra.datafeeder.batch.publish.task.GeoServerGeoNetworkUpdateTasklet;
-import org.georchestra.datafeeder.batch.publish.task.GeoServerTasklet;
-import org.georchestra.datafeeder.batch.publish.task.PrepareTargetDataStoreTasklet;
-import org.georchestra.datafeeder.batch.publish.task.PublishJobLifeCycleStatusUpdateListener;
+import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -133,17 +128,5 @@ public class DataPublishingJobConfiguration {
         return stepBuilderFactory.get("geoserverGeonetworkUpdateStep")//
                 .tasklet(geoServerGeoNetworkUpdateTasklet())//
                 .build();
-    }
-
-    public @Bean DataBackendService dataBackendService() {
-        return new MockDataBackendService();
-    }
-
-    public @Bean OWSPublicationService owsPublicationService() {
-        return new MockOWSPublicationService();
-    }
-
-    public @Bean MetadataPublicationService metadataPublicationService() {
-        return new MockMetadataPublicationService();
     }
 }

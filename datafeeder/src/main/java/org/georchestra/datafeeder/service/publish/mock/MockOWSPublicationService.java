@@ -16,13 +16,15 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish;
+package org.georchestra.datafeeder.service.publish.mock;
 
 import java.net.URI;
 import java.util.Objects;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
+import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NonNull;

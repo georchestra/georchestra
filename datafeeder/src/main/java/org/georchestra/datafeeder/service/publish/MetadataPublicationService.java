@@ -16,15 +16,17 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish;
+package org.georchestra.datafeeder.service.publish;
 
-import org.georchestra.datafeeder.model.DataUploadJob;
+import java.net.URI;
+
 import org.georchestra.datafeeder.model.DatasetUploadState;
 
-public interface DataBackendService {
+import lombok.NonNull;
 
-    void prepareBackend(DataUploadJob job);
+public interface MetadataPublicationService {
 
-    void importDataset(DatasetUploadState dataset);
+    void publish(@NonNull DatasetUploadState dataset);
 
+    URI buildMetadataRecordURI(@NonNull String recordId);
 }

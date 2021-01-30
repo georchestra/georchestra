@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch;
+package org.georchestra.datafeeder.batch.service;
 
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 
 import lombok.NonNull;
@@ -42,12 +42,11 @@ import lombok.extern.slf4j.Slf4j;
 public class JobManager {
 
     private @Autowired JobLauncher jobLauncher;
-
-    private @Autowired @Qualifier(UploadAnalysisJobConfiguration.JOB_NAME) Job uploadAnalysisJob;
-    private @Autowired @Qualifier(DataPublishingJobConfiguration.JOB_NAME) Job dataPublishingJob;
+    private @Autowired ApplicationContext context;
 
     @Async
     public void launchUploadJobAnalysis(@NonNull UUID jobId) {
+        final Job uploadAnalysisJob = context.getBean(UploadAnalysisJobConfiguration.JOB_NAME, Job.class);
         final String paramName = UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME;
         final String paramValue = jobId.toString();
         final boolean identifying = true;
@@ -69,6 +68,7 @@ public class JobManager {
 
     @Async
     public void launchPublishingProcess(@NonNull UUID jobId) {
+        final Job dataPublishingJob = context.getBean(DataPublishingJobConfiguration.JOB_NAME, Job.class);
         final String paramName = DataPublishingJobConfiguration.JOB_PARAM_ID;
         final String paramValue = jobId.toString();
         final boolean identifying = true;

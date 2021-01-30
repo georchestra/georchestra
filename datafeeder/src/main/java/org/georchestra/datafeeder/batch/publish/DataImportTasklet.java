@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.batch.publish.task;
+package org.georchestra.datafeeder.batch.publish;
 
 import java.util.UUID;
 
-import org.georchestra.datafeeder.batch.publish.PublishingBatchService;
+import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -28,14 +28,19 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-public class GeoServerTasklet implements Tasklet {
+/**
+ * Tasklet to copy Datasets into the configured target data store (usually a
+ * PostGIS database).
+ * 
+ */
+public class DataImportTasklet implements Tasklet {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.publishDatasetsToGeoServer(uploadId);
+        service.importDatasetsToTargetDatastore(uploadId);
         return RepeatStatus.FINISHED;
     }
 
