@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.autoconf;
+package org.georchestra.datafeeder.service.publish.impl;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.service.publish.DataBackendService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -29,5 +31,9 @@ import org.springframework.context.annotation.Configuration;
  * @see DataFeederConfigurationProperties
  */
 @Configuration
-public class GeorchestraDatasetPublishingConfiguration {
+public class GeorchestraPublishingServicesConfiguration {
+
+    public @Bean DataBackendService dataBackendService() {
+        return new GeorchestraDataBackendService();
+    }
 }
