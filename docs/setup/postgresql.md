@@ -56,7 +56,7 @@ psql -d georchestra -f postgresql/060-atlas.sql
 
 ## GeoWebCache schema
 
-If geowebcache is used, it creates a geowebcache schema to store quota and relevant infos to
+If geowebcache is used, it creates a geowebcache schema to store quota and relevant infos for
 geowebcache. This setup is highly encouraged in a production environment to replace the local H2 database.
 
 ```
