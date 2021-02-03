@@ -182,7 +182,8 @@ public class DatasetsService {
             sampleGeometry = (Geometry) feature.getDefaultGeometry();
             sampleProperties = feature.getProperties().stream()//
                     .filter(p -> !(p instanceof GeometryAttribute))//
-                    .collect(Collectors.toMap(p -> p.getName().getLocalPart(), Property::getValue));
+                    .collect(Collectors.toMap(p -> p.getName().getLocalPart(),
+                            p -> Optional.ofNullable(p.getValue()).orElse("")));
 
             md.setSampleGeometry(sampleGeometry);
             md.setSampleProperties(sampleProperties);
