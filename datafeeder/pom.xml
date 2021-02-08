@@ -18,9 +18,24 @@
     <swagger.version>1.5.21</swagger.version>
     <springfox.version>2.9.2</springfox.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
+    <gs-rest-java-client.version>2.19-SNAPSHOT</gs-rest-java-client.version>
   </properties>
+  <!-- 
+  <repositories>
+    <repository>
+      <id>gs-openapi-github</id>
+      <name>GeoServer OAS3 Maven Packages</name>
+      <url>https://maven.pkg.github.com/camptocamp/geoserver-rest-openapi</url>
+    </repository>
+  </repositories>
+   -->
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.geoserver.openapi</groupId>
+        <artifactId>gs-rest-java-client</artifactId>
+        <version>${gs-rest-java-client.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
@@ -96,6 +111,10 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.geoserver.openapi</groupId>
+      <artifactId>gs-rest-java-client</artifactId>
+    </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>

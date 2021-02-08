@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.service.publish.impl;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
+import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -37,5 +38,9 @@ public class GeorchestraPublishingServicesConfiguration {
 
     public @Bean DataBackendService dataBackendService() {
         return new GeorchestraDataBackendService();
+    }
+
+    public @Bean OWSPublicationService owsPublicationService() {
+        return new GeorchestraOwsPublicationService();
     }
 }

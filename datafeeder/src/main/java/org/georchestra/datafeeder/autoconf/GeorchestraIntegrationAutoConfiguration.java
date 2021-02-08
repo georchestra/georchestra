@@ -36,11 +36,15 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("georchestra")
 @Import({ GeorchestraDatadirConfiguration.class, GeorchestraSecurityProxyAuthenticationConfiguration.class,
-        GeorchestraPublishingServicesConfiguration.class })
+		GeorchestraPublishingServicesConfiguration.class })
 public class GeorchestraIntegrationAutoConfiguration {
 
-    @ConfigurationProperties(prefix = "datafeeder")
-    public @Bean DataFeederConfigurationProperties configProperties() {
-        return new DataFeederConfigurationProperties();
-    }
+	@ConfigurationProperties(prefix = "datafeeder")
+	public @Bean DataFeederConfigurationProperties configProperties() {
+		return new DataFeederConfigurationProperties();
+	}
+
+	public GeorchestraNameNormalizer georchestraNameResolver() {
+		return new GeorchestraNameNormalizer();
+	}
 }
