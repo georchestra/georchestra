@@ -67,7 +67,7 @@ import org.springframework.web.multipart.MultipartFile;
 @SpringBootTest(classes = { DataFeederApplicationConfiguration.class }, webEnvironment = WebEnvironment.MOCK)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
-@ActiveProfiles(value = { "georchestra", "test" })
+@ActiveProfiles(value = { "georchestra", "test", "mock" })
 public class FileUploadApiControllerTest {
 
     private @Autowired ApiTestSupport testSupport;

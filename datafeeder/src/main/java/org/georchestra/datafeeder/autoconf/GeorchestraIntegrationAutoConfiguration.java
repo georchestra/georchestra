@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.autoconf;
 
 import org.georchestra.config.security.GeorchestraSecurityProxyAuthenticationConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.service.publish.impl.GeorchestraPublishingServicesConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,10 +35,11 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("georchestra")
-@Import({ GeorchestraDatadirConfiguration.class, GeorchestraSecurityProxyAuthenticationConfiguration.class })
+@Import({ GeorchestraDatadirConfiguration.class, GeorchestraSecurityProxyAuthenticationConfiguration.class,
+        GeorchestraPublishingServicesConfiguration.class })
 public class GeorchestraIntegrationAutoConfiguration {
 
-    @ConfigurationProperties
+    @ConfigurationProperties(prefix = "datafeeder")
     public @Bean DataFeederConfigurationProperties configProperties() {
         return new DataFeederConfigurationProperties();
     }
