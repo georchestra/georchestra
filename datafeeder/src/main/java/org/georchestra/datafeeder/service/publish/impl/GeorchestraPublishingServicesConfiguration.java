@@ -20,9 +20,9 @@ package org.georchestra.datafeeder.service.publish.impl;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
+import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 /**
  * Configuration providing strategy beans to publish uploaded datasets to
@@ -32,10 +32,17 @@ import org.springframework.context.annotation.Profile;
  * @see DataFeederConfigurationProperties
  */
 @Configuration
-@Profile({ "!mock" })
 public class GeorchestraPublishingServicesConfiguration {
 
     public @Bean DataBackendService dataBackendService() {
         return new GeorchestraDataBackendService();
+    }
+
+    public @Bean GeoServerRemoteService geoServerRemoteService() {
+        return new GeoServerRemoteService();
+    }
+
+    public @Bean OWSPublicationService owsPublicationService() {
+        return new GeorchestraOwsPublicationService();
     }
 }
