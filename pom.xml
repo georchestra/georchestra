@@ -365,7 +365,7 @@
       <dependency>
         <groupId>com.readytalk</groupId>
         <artifactId>metrics3-statsd</artifactId>
-        <version>4.1.0</version>
+        <version>4.2.0</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.jsr166-mirror</groupId>
