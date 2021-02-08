@@ -16,7 +16,8 @@ server:
     encoding.force: true
 
 spring:
-  profiles.active: georchestra
+  #TODO: remove 'mock' when external service implementations are ready. Remove local when ready to run as a georchestra microservice.
+  profiles.active: georchestra, local, mock
   application:
     name: datafeeder-service
   http:

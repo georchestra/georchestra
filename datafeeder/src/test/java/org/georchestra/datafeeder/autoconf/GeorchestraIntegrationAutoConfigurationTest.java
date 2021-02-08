@@ -34,6 +34,7 @@ import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileU
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +62,7 @@ public class GeorchestraIntegrationAutoConfigurationTest {
     private @MockBean FileStorageService fileStorageService;
     private @MockBean AuthorizationService mockDataUploadValidityService;
     private @MockBean DataPublishingService mockDataPublishingService;
+    private @MockBean DatasetsService mockDatasetsService;
 
     private @Autowired ApplicationContext context;
 
