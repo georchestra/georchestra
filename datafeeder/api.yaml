@@ -424,7 +424,7 @@ components:
           description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
         publishedName:
           type: string
-          description: Name under which the dataset is published to GeoServer, defaults to nativeName
+          description: Name under which the dataset is published to GeoServer, defaults to nativeName. It can be modified by the system to avoid duplicated layer names.
         encoding:
           type: string
           description: Specify which charset (e.g. ISO-8859-1, UTF-8, etc.) to interpret the dataset alphanumeric properties with. Takes effect only for uploaded shapefiles.
@@ -472,9 +472,16 @@ components:
         nativeName:
           type: string
           description: Name of the dataset in the uploaded package, necessary to identify which dataset to publish from the UploadJobStatus
+        publishedWorkspace:
+          type: string
+          description: Name of the GeoServer workspace under which the dataset has been published.
         publishedName:
           type: string
-          description: Name of the dataset in the uploaded package
+          description: Final name under which the layer was published to GeoServer. It may have been modified from the requested layer name
+                       in order to avoid duplication if a layer with such name already exists in the target GeoServer workspace.
+        metadataRecordId:
+          type: string
+          description: Identifier for the metadta record created while publishing the dataset's metadata to GeoNetwork.
         title:
           type: string
         status:

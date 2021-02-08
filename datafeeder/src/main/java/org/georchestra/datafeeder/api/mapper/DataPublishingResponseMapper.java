@@ -34,6 +34,8 @@ public interface DataPublishingResponseMapper {
     @Mapping(target = "status", source = "publishStatus")
     @Mapping(target = "nativeName", source = "name")
     @Mapping(target = "publishedName", source = "publishing.publishedName")
+    @Mapping(target = "publishedWorkspace", source = "publishing.publishedWorkspace")
+    @Mapping(target = "metadataRecordId", source = "publishing.metadataRecordId")
     @Mapping(target = "title", source = "publishing.title")
     DatasetPublishingStatus toApi(DatasetUploadState upload);
 }
