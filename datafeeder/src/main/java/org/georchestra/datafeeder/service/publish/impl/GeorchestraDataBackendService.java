@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.service.publish.impl;
 import java.io.IOException;
 import java.util.Map;
 
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -50,6 +51,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     private @Autowired DatasetsService datasetsService;
     private @Autowired DataFeederConfigurationProperties props;
+    private @Autowired GeorchestraNameNormalizer nameResolver;
 
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {
@@ -74,10 +76,11 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     private Map<String, String> resolveConnectionParams(DataUploadJob job) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
-        String schema = job.getOrganizationName();
-        if (schema == null) {
+        String orgName = job.getOrganizationName();
+        if (orgName == null) {
             throw new IllegalStateException("Georchestra organization name not provided in job.organizationName");
         }
+        String schema = nameResolver.resolveDatabaseSchemaName(orgName);
         connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);
         return connectionParams;
     }
