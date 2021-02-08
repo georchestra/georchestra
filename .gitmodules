@@ -22,3 +22,7 @@
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
 	branch = 2.18.2-georchestra
+[submodule "datafeeder/geoserver-rest-openapi"]
+	path = datafeeder/geoserver-rest-openapi
+	url = https://github.com/camptocamp/geoserver-rest-openapi
+	branch = master
