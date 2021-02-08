@@ -64,7 +64,7 @@ import org.springframework.web.multipart.MultipartFile;
         DataFeederServiceConfiguration.class }, webEnvironment = WebEnvironment.NONE)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
-@ActiveProfiles(value = { "georchestra", "test" })
+@ActiveProfiles(value = { "georchestra", "test", "mock" })
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UploadAnalysisJobConfigurationTest {
 

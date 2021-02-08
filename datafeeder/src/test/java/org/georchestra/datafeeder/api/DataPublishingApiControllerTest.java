@@ -30,7 +30,6 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.PublishSettings;
-import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,11 +48,10 @@ import org.springframework.web.multipart.MultipartFile;
 @SpringBootTest(classes = { DataFeederApplicationConfiguration.class }, webEnvironment = WebEnvironment.MOCK)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
-@ActiveProfiles(value = { "georchestra", "test" })
+@ActiveProfiles(value = { "georchestra", "test", "mock" })
 public class DataPublishingApiControllerTest {
 
     private @Autowired ApiTestSupport testSupport;
-    private @Autowired DataUploadService datasets;
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
     private @Autowired DataPublishingApi controller;
