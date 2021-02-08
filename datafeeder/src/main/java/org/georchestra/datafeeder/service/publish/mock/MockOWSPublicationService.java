@@ -38,6 +38,14 @@ public class MockOWSPublicationService implements OWSPublicationService {
     @Override
     public void publish(@NonNull DatasetUploadState dataset) {
         log.info("MOCK publishing of OWS datasets for " + dataset.getJob().getJobId() + "/" + dataset.getName());
+        PublishSettings publishing = dataset.getPublishing();
+        Objects.requireNonNull(publishing);
+        Objects.requireNonNull(publishing.getPublishedName());
+        String requestedPublishedName = publishing.getPublishedName();
+        String actualPublishedName = requestedPublishedName + "_mock";
+
+        publishing.setPublishedName(actualPublishedName);
+        publishing.setPublishedWorkspace("mock_workspace");
     }
 
     @Override

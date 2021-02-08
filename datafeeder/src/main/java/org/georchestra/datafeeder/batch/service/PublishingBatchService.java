@@ -129,6 +129,7 @@ public class PublishingBatchService {
         save(job);
     }
 
+    @Transactional
     public DataUploadJob save(DataUploadJob job) {
         return repository.saveAndFlush(job);
     }

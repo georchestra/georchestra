@@ -57,8 +57,8 @@ public class DataPublishingService {
                 dset.setPublishing(publishing);
             }
             DatasetMetadata md = dreq.getMetadata();
-            String publishedName = dreq.getPublishedName();
-            publishing.setPublishedName(publishedName == null ? nativeName : publishedName);
+            String requestedPublishedName = dreq.getPublishedName() == null ? nativeName : dreq.getPublishedName();
+            publishing.setPublishedName(requestedPublishedName);
             String srs = dreq.getSrs();
             publishing.setSrs(srs);
             publishing.setSrsReproject(dreq.getSrsReproject());

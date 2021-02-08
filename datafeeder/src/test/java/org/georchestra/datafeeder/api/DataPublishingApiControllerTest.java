@@ -75,7 +75,10 @@ public class DataPublishingApiControllerTest {
         assertEquals(PublishStatusEnum.PENDING, publishJob.getStatus());
 
         DatasetMetadata expectedMd = dsetReq.getMetadata();
-        String expectedPublishedName = dsetReq.getPublishedName() == null ? dset.getName() : dsetReq.getPublishedName();
+        final String requestedPublishedName = dsetReq.getPublishedName() == null ? dset.getName()
+                : dsetReq.getPublishedName();
+        final String expectedPublishedName = requestedPublishedName + "_mock";
+        final String expectedWorkspace = "mock_workspace";
         {
             DataUploadJob finalJob = testSupport.awaitUntilPublishStateIs(upload.getJobId(), 5, JobStatus.DONE);
             DatasetUploadState dsetFinal = finalJob.getDatasets().get(0);
@@ -103,11 +106,13 @@ public class DataPublishingApiControllerTest {
             assertEquals(1, publishJob.getDatasets().size());
 
             DatasetPublishingStatus actual = publishJob.getDatasets().get(0);
+            assertEquals(PublishStatusEnum.DONE, actual.getStatus());
             assertNull(actual.getError());
             assertEquals(expectedMd.getTitle(), actual.getTitle());
             assertEquals(dset.getName(), actual.getNativeName());
             assertEquals(expectedPublishedName, actual.getPublishedName());
-            assertEquals(PublishStatusEnum.DONE, actual.getStatus());
+            assertEquals(expectedWorkspace, actual.getPublishedWorkspace());
+            assertNotNull(actual.getMetadataRecordId());
         }
     }
 
