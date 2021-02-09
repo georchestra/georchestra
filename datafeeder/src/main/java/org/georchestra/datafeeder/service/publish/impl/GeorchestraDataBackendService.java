@@ -164,11 +164,12 @@ public class GeorchestraDataBackendService implements DataBackendService {
     public void importDataset(@NonNull DatasetUploadState dataset) {
         Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
 
-//		try {
-//			datasetsService.importDataset(dataset, connectionParams);
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
+        try {
+            datasetsService.importDataset(dataset, connectionParams);
+        } catch (IOException e) {
+            log.debug("Caught:", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private Map<String, String> resolveConnectionParams(DataUploadJob job) {
