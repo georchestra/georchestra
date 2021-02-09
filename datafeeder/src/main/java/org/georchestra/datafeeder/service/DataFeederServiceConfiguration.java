@@ -107,5 +107,4 @@ public class DataFeederServiceConfiguration {
     public @Bean DataPublishingService dataPublishingService() {
         return new DataPublishingService();
     }
-
 }

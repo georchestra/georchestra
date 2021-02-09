@@ -3,10 +3,10 @@ package org.georchestra.datafeeder.autoconf;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
-
 import lombok.NonNull;
 
 public class GeorchestraNameNormalizer {
+
     private static Pattern BEGINNING_BY_INT_OR_MINUS_OR_DOT_PATTERN = Pattern.compile("^[0-9-.]+");
     private static Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[^\\w-_.]");
 
