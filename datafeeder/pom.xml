@@ -396,7 +396,9 @@
         <postgresql.port>15432</postgresql.port>
         <geoserver.port>18080</geoserver.port>
         <geonetwork.port>28080</geonetwork.port>
-        <docker-compose.skip>false</docker-compose.skip>
+        <skipTests>false</skipTests>
+        <skipITs>${skipTests}</skipITs>
+        <docker-compose.skip>${skipITs}</docker-compose.skip>
       </properties>
       <build>
         <plugins>
@@ -412,7 +414,7 @@
               </execution>
             </executions>
             <configuration>
-              <skipITs>false</skipITs>
+              <skipITs>${skipITs}</skipITs>
               <systemProperties>
                 <geoserver_api_url>http://localhost:${geoserver.port}/geoserver/rest</geoserver_api_url>
                 <geoserver_admin_user>admin</geoserver_admin_user>
