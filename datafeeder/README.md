@@ -20,6 +20,14 @@ datafeeder$ mvn clean install
 ```
 Will compile and run the unit and integration tests.
 
+### Skipping tests
+
+Use the following maven properties to skip tests and/or integration tests:
+
+* `-DskipTests` skips both unit and integration tests
+* `-DskipITs` skips only integration tests and also avoid launching the docker composition (see section below)
+* `-D-Ddocker-compose.skip=true` avoids running the docker composition (see section below)
+
 ### Integration testing: docker compose
 
 For integration testing, some external services are required. For instance:
