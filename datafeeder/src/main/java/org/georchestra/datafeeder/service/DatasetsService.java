@@ -363,6 +363,7 @@ public class DatasetsService {
     }
 
     public void createDataStore(Map<String, String> connectionParams) throws IOException {
+
         DataStore ds = DataStoreFinder.getDataStore(connectionParams);
         if (ds == null) {
             throw new IOException("Unable to create datastore " + connectionParams);
