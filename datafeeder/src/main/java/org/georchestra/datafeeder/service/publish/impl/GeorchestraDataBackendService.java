@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -63,6 +64,8 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private @Autowired DatasetsService datasetsService;
     private @Autowired DataFeederConfigurationProperties props;
     private @Autowired GeorchestraNameNormalizer nameResolver;
+
+    private @Autowired GeorchestraNameNormalizer normalizationService;
 
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {
