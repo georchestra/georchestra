@@ -61,6 +61,18 @@ spring:
 georchestra.datadir: src/test/resources/datadir
 ---
 spring:
+  profiles: it
+georchestra.datadir: src/test/resources/datadir
+datafeeder.publishing:
+  geoserver.api-url: http://localhost:18080/geoserver/rest
+  geonetwork.api-url: http://localhost:28080/geonetwork
+  backend.local:
+    port: 15432
+    database: georchestra
+    user: georchestra
+    passwd: georchestra
+---
+spring:
   profiles: local
   datasource:
     url: jdbc:h2:mem:testdb
