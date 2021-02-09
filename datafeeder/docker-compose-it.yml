@@ -1,0 +1,75 @@
+# Docker composition to run integration tests against.
+# Sets up required external services:
+# - ldap
+# - database
+# - geoserver
+# - geonetwork
+version: '3.8'
+
+volumes:
+  postgresql_data:
+  ldap_data:
+  ldap_config:
+#  geoserver_geodata:
+  geoserver_datadir:
+#  geoserver_tiles:
+#  geoserver_native_libs:
+#  mapfishapp_uploads:
+#  extractorapp_extracts:
+  geonetwork_datadir:
+
+services:
+  ldap:
+    image: georchestra/ldap:latest
+    environment:
+        - SLAPD_ORGANISATION=georchestra
+        - SLAPD_DOMAIN=georchestra.org
+        - SLAPD_PASSWORD=secret
+        - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap
+    restart: always
+  database:
+    image: georchestra/database:latest
+    environment:
+      - POSTGRES_USER=georchestra
+      - POSTGRES_PASSWORD=georchestra
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRESQL_PORT}:5432
+    restart: always
+  geoserver:
+    image: georchestra/geoserver:latest
+    depends_on:
+      - ldap
+    volumes:
+#      - ./config:/etc/georchestra
+      - geoserver_datadir:/mnt/geoserver_datadir
+#      - geoserver_geodata:/mnt/geoserver_geodata
+#      - geoserver_tiles:/mnt/geoserver_tiles
+#      - geoserver_native_libs:/mnt/geoserver_native_libs
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=1G
+    ports:
+      - ${GEOSERVER_PORT}:8080
+    restart: always
+  geonetwork:
+    image: georchestra/geonetwork:latest
+    depends_on:
+      - ldap
+      - database
+    volumes:
+#      - ./config:/etc/georchestra
+      - geonetwork_datadir:/mnt/geonetwork_datadir
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=2G
+    ports:
+      - ${GEONETWORK_PORT}:8080
+    restart: always
+
