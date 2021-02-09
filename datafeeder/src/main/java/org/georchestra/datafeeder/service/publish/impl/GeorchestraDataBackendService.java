@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -61,6 +62,8 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     private @Autowired DatasetsService datasetsService;
     private @Autowired DataFeederConfigurationProperties props;
+
+    private @Autowired GeorchestraNameNormalizer normalizationService;
 
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {
@@ -168,7 +171,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     private Map<String, String> resolveConnectionParams(DataUploadJob job) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
-        String schema = job.getOrganizationName();
+        String schema = normalizationService.resolveDatabaseSchemaName(job.getOrganizationName());
         if (schema == null) {
             throw new IllegalStateException("Georchestra organization name not provided in job.organizationName");
         }
