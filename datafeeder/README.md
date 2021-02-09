@@ -12,7 +12,42 @@ Build the project:
 georchestra$ mvn clean install -f datafeeder/
 ```
 
-Build the docker image:
+Or
+
+```bash
+georchestra$ cd datafeeder
+datafeeder$ mvn clean install
+```
+Will compile and run the unit and integration tests.
+
+### Integration testing: docker compose
+
+For integration testing, some external services are required. For instance:
+- A geOrchestra GeoServer instance
+- A geOrchestra GeoNetwork instance
+- A PostgreSQL database with PostGIS extension, for which we're using geOrchestra's `database` docker image
+
+There is a docker composition with just the required extenal services in the `docker-compose-it.yml` file.
+
+A normal build with no extra aguments (e.g. `mvn verify`) will take care of running the docker composition before the integration tests are run, and shut it down afterwards. This is performed by the `com.dkanejs.maven.plugins:docker-compose-maven-plugin`, launching the composition at maven's `pre-integration-test` phase, and shutting it down during `post-integration-test`.
+
+Since this process may take a while, during development it is desirable to have the composition already running through several runs of the integration tests suite. To do so, launch the composition manually with
+
+```bash
+$ docker-compose -f docker-compose-it.yml up -d
+```
+
+With that in place, run the tests as many times as needed from the IDE or the console by enabling the `docker-compose.skip` flag:
+
+```bash
+$ mvn verify -Ddocker-compose.skip=true
+```
+
+so that the `docker-compose-maven-plugin` does not run.
+
+The integration tests ough to be written in a way that support multiple runs without re-initializing the external services state (for example, randomizing database schema names when going to create a schema and such).
+
+### Build the docker image:
 
 ```bash
 georchestra$ make docker-build-datafeeder
