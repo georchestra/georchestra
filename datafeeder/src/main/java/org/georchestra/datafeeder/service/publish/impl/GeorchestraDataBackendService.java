@@ -116,7 +116,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
      */
     private void createSchema(Map<String, String> connectionParams) throws SQLException {
         final String schema = connectionParams.get(PostgisNGDataStoreFactory.SCHEMA.key);
-        final String sql = String.format("CREATE SCHEMA %s", schema);
+        final String sql = String.format("CREATE SCHEMA IF NOT EXISTS %s ", schema);
 
         try (Connection connection = getConnectionFromParams(connectionParams)) {
             Statement stmt = connection.createStatement();
