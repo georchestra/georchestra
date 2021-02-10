@@ -40,6 +40,11 @@ public class GeorchestraNameNormalizer {
         normalized = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         normalized = FORBIDDEN_CHARS_PATTERN.matcher(normalized).replaceAll("_");
         normalized = BEGINNING_BY_INT_OR_MINUS_OR_DOT_PATTERN.matcher(normalized).replaceAll("");
+        normalized = normalized.toLowerCase();
+        if (normalized.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("Name was normalized until empty. Orginal name was: %s", name));
+        }
         return normalized;
     }
 }
