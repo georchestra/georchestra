@@ -70,40 +70,14 @@ public class GeorchestraDataBackendService implements DataBackendService {
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {
         log.trace("START prepareBackend");
-        Map<String, String> connectionParams = resolveConnectionParams(job);
 
-        try {
-            final boolean existsSchema = existsSchema(connectionParams);
-            if (!existsSchema) {
-                createSchema(connectionParams);
-            }
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        final Map<String, String> connectionParams = resolveConnectionParams(job);
+        createSchema(connectionParams);
         try {
             datasetsService.createDataStore(connectionParams);
         } catch (IOException e) {
-            // TODO Handle exception
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    private Connection getConnectionFromParams(Map<String, String> connectionParams) throws SQLException {
-
-        DataStore dataStore = null;
-        try {
-            dataStore = DataStoreFinder.getDataStore(connectionParams);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // TODO Check if we can really cast:
-        final JDBCDataStore jdbcDataStore = (JDBCDataStore) dataStore;
-        final DataSource source = jdbcDataStore.getDataSource();
-        return source.getConnection();
     }
 
     /**
@@ -114,49 +88,34 @@ public class GeorchestraDataBackendService implements DataBackendService {
      * @param connectionParams
      * @throws SQLException
      */
-    private void createSchema(Map<String, String> connectionParams) throws SQLException {
+    private void createSchema(Map<String, String> connectionParams) {
         final String schema = connectionParams.get(PostgisNGDataStoreFactory.SCHEMA.key);
         final String sql = String.format("CREATE SCHEMA IF NOT EXISTS %s ", schema);
 
-        try (Connection connection = getConnectionFromParams(connectionParams)) {
-            Statement stmt = connection.createStatement();
-            stmt.executeUpdate(sql);
-        }
-    }
+        DataStore dataStore = null;
+        try {
+            dataStore = DataStoreFinder.getDataStore(connectionParams);
 
-    /**
-     * Connects to the database and checks if the schema exists. The schema is found
-     * in the connectionParams under
-     * key @link{PostgisNGDataStoreFactory.SCHEMA.key}.
-     * 
-     * @param connectionParams
-     * @return
-     * @throws SQLException
-     */
-    private boolean existsSchema(Map<String, String> connectionParams) throws SQLException {
-
-        final Map<String, String> schemaLessConnectionParams = new HashMap<>(connectionParams);
-        final String schema = schemaLessConnectionParams.remove(PostgisNGDataStoreFactory.SCHEMA.key);
-
-        if (schema == null) {
-            // FIXME: Throw something
-        }
-
-        try (Connection connection = getConnectionFromParams(schemaLessConnectionParams)) {
-            final DatabaseMetaData mObject = connection.getMetaData();
-            final ResultSet schemas = mObject.getSchemas();
-            while (schemas.next()) {
-                // SEE:
-                // https://javadoc.io/static/org.postgresql/postgresql/42.0.0.jre7/org/postgresql/jdbc/PgDatabaseMetaData.html#getSchemas()
-                final String currSchema = schemas.getString("TABLE_SCHEM");
-                log.trace("Next Schema to search: {}", currSchema);
-                if (schema.equalsIgnoreCase(currSchema)) {
-                    log.trace("Found schema!");
-                    return true;
-                }
+            // TODO Check if we can really cast:
+            final JDBCDataStore jdbcDataStore;
+            if (dataStore instanceof JDBCDataStore) {
+                jdbcDataStore = (JDBCDataStore) dataStore;
+            } else {
+                throw new IllegalStateException("Could not cast DataStore to JDBCDataStore.");
             }
-            return false;
-
+            final DataSource source = jdbcDataStore.getDataSource();
+            try (Connection connection = source.getConnection()) {
+                Statement stmt = connection.createStatement();
+                stmt.executeUpdate(sql);
+            } catch (SQLException e) {
+                throw new IllegalStateException(e);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
         }
     }
 
