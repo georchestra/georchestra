@@ -44,6 +44,7 @@ public class GeorchestraIntegrationAutoConfiguration {
         return new DataFeederConfigurationProperties();
     }
 
+    @Bean
     public GeorchestraNameNormalizer georchestraNameResolver() {
         return new GeorchestraNameNormalizer();
     }

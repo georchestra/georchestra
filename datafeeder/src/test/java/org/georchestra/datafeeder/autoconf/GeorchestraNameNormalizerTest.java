@@ -26,6 +26,12 @@ public class GeorchestraNameNormalizerTest {
     public void testSchemaName() {
         assertEquals("psc", normalizationService.resolveDatabaseSchemaName("PSC"));
         assertEquals("projectcommiteeschema", normalizationService.resolveDatabaseSchemaName("ProjectCommiteeSchema"));
-        assertEquals("hellome", normalizationService.resolveDatabaseSchemaName("Hello Me"));
+        assertEquals("hello_me", normalizationService.resolveDatabaseSchemaName("Hello Me"));
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void testEmptyString() {
+        normalizationService.resolveDatabaseSchemaName("");
+    }
+
 }
