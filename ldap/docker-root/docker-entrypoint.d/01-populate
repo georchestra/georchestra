@@ -3,6 +3,8 @@
 # test if already initialized
 if [ ! -f /etc/ldap/slapd.d/initialized ]; then
 
+    source /docker-entrypoint.d/utils/load_secrets.sh
+
     # start slapd in background
     echo -n "Starting slapd daemon in background..."
     slapd -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h "ldapi:/// ldap://127.0.0.1/"
@@ -37,6 +39,15 @@ if [ ! -f /etc/ldap/slapd.d/initialized ]; then
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /georchestra.ldif";
     else
+        if [ -n "$GS_MASTER_PASSWORD" ]; then
+            # Allow changing the geoserver master password.
+            # Works on first run only
+            echo "replacing geoserver master password"
+            GS_MASTER_PASSWORD=`slappasswd -s "$GS_MASTER_PASSWORD"`
+            GS_MASTER_PASSWORD=`echo $GS_MASTER_PASSWORD |base64 -`
+            perl -p -i -e "s/e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9/${GS_MASTER_PASSWORD}/" /georchestra.ldif
+        fi
+
         perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"        /georchestra.ldif
         perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"     /georchestra.ldif
         ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /georchestra.ldif
