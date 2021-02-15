@@ -37,6 +37,8 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -106,7 +108,14 @@ public class RoleDaoImpl implements RoleDao {
         Name dn = buildRoleDn(roleID);
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-        context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
+        Set<String> values = new HashSet<>();
+
+        if( context.getStringAttributes("objectClass") != null ) {
+            Collections.addAll(values,context.getStringAttributes("objectClass"));
+        }
+        Collections.addAll(values, "top", "groupOfMembers");
+        
+        context.setAttributeValues("objectClass", values.toArray());
 
         try {
 
