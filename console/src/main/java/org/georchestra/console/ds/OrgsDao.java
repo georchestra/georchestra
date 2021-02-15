@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -96,7 +97,15 @@ public class OrgsDao {
         }
 
         public void mapToContext(T org, DirContextOperations context) {
-            context.setAttributeValues("objectclass", getObjectClass());
+            Set<String> values = new HashSet<>();
+
+            if( context.getStringAttributes("objectClass") != null ) {
+                Collections.addAll(values,context.getStringAttributes("objectClass"));
+            }
+            Collections.addAll(values, getObjectClass());
+            
+            context.setAttributeValues("objectClass", values);
+            
             context.setAttributeValue(getLdapKeyField(), org.getId());
             mapPayloadToContext(org, context);
         }
