@@ -47,7 +47,9 @@ import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -368,13 +370,19 @@ public final class AccountDaoImpl implements AccountDao {
      * @param context
      */
     private void mapToContext(Account account, DirContextOperations context) {
-
-        List<String> values = Lists.newArrayList("top", "person", "organizationalPerson", "inetOrgPerson",
+        
+        Set<String> values = new HashSet<>();
+        
+        if( context.getStringAttributes("objectClass") != null ) {
+            Collections.addAll(values,context.getStringAttributes("objectClass"));
+        }
+        Collections.addAll(values, "top", "person", "organizationalPerson", "inetOrgPerson",
                 "shadowAccount", "georchestraUser", "ldapPublicKey");
+        
         if (account.getSshKeys().length == 0) {
             values.remove("ldapPublicKey");
         }
-        context.setAttributeValues("objectclass", values.toArray());
+        context.setAttributeValues("objectClass", values.toArray());
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
