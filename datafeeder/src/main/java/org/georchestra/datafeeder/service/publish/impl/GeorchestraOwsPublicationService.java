@@ -18,49 +18,152 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.net.URI;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.BackendConfiguration;
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geoserver.openapi.model.catalog.DataStoreInfo;
+import org.geoserver.openapi.model.catalog.EnvelopeInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
+import org.geoserver.openapi.model.catalog.KeywordInfo;
 import org.geoserver.openapi.model.catalog.MetadataLinkInfo;
+import org.geoserver.openapi.model.catalog.NamespaceInfo;
+import org.geoserver.openapi.model.catalog.ProjectionPolicy;
 import org.geoserver.openapi.model.catalog.WorkspaceInfo;
+import org.geoserver.openapi.v1.model.DataStoreResponse;
 import org.geoserver.openapi.v1.model.Layer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NonNull;
 
+/**
+ * {@link OWSPublicationService} relying on {@link GeoServerRemoteService} to
+ * implement geOrchestra specific business rules on how to interact with
+ * GeoServer.
+ * <p>
+ * For instance:
+ * <ul>
+ * <li>Datasets are published to a workspace named after the geOrchestra short
+ * organization name the calling user belongs to (
+ * {@link DataUploadJob#getOrganizationName()}. The workspace is created if it
+ * doesn't already exist.
+ * <li>The GeoServer Datastore connection parameters are resolved from the
+ * {@link BackendConfiguration#getGeoserver() geoserver} connection parameters
+ * template provided by the externalized
+ * {@link DataFeederConfigurationProperties} configuration's
+ * {@code datafeeder.publishing.backend.geoserver.*} property map.
+ * </ul>
+ */
 public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     private @Autowired MetadataPublicationService metadataPublicationService;
-
+    private @Autowired DataFeederConfigurationProperties configProperties;
     private @Autowired GeoServerRemoteService geoserver;
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
     public @Override void publish(@NonNull DatasetUploadState dataset) {
         PublishSettings publishing = dataset.getPublishing();
-        Objects.requireNonNull(publishing);
-        Objects.requireNonNull(publishing.getPublishedName());
+        requireNonNull(publishing);
+        requireNonNull(publishing.getPublishedName());
 
         final String workspaceName = resolveWorkspace(dataset);
+        final String dataStoreName = resolveDataStoreName(dataset);
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
 
-        FeatureTypeInfo fti = buildPublishingFeatureType(workspaceName, publishedLayerName, dataset);
+        Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
+        if (!dataStore.isPresent()) {
+            geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, dataset));
+        }
+
+        FeatureTypeInfo fti = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName, dataset);
         geoserver.create(fti);
 
         publishing.setPublishedWorkspace(workspaceName);
         publishing.setPublishedName(publishedLayerName);
     }
 
-    private FeatureTypeInfo buildPublishingFeatureType(String workspaceName, String publishedLayerName,
+    private @NonNull DataStoreInfo buildDataStoreInfo(@NonNull String workspaceName, @NonNull String dataStoreName,
             @NonNull DatasetUploadState dataset) {
-        // TODO Auto-generated method stub
+
+        DataStoreInfo ds = new DataStoreInfo();
+        ds.connectionParameters(buildConnectionParameters(dataset));
+        ds.setName(dataStoreName);
+        ds.setEnabled(true);
+        ds.setWorkspace(new WorkspaceInfo().name(workspaceName));
+        ds.setDescription("Datafeeder uploaded datasets");
         return null;
+    }
+
+    private Map<String, String> buildConnectionParameters(@NonNull DatasetUploadState dataset) {
+        Map<String, String> connectionParams = configProperties.getPublishing().getBackend().getGeoserver();
+        return new HashMap<>(connectionParams);
+    }
+
+    private String resolveDataStoreName(@NonNull DatasetUploadState dataset) {
+        return "datafeeder";
+    }
+
+    private FeatureTypeInfo buildPublishingFeatureType(String workspace, String dataStore, String layerName,
+            @NonNull DatasetUploadState dataset) {
+
+        PublishSettings publishing = dataset.getPublishing();
+        FeatureTypeInfo ft = new FeatureTypeInfo();
+
+        ft.setNativeName(dataset.getName());
+        ft.setName(layerName);
+        ft.setNamespace(new NamespaceInfo().prefix(workspace));
+
+        ft.setTitle(publishing.getTitle());
+        // ft.setDescription(publishing.getAbstract());
+        ft.setAbstract(publishing.getAbstract());
+        ft.setAdvertised(true);
+        ft.setEnabled(true);
+        ft.setKeywords(buildKeywords(publishing.getKeywords()));
+
+        BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
+        ft.setNativeBoundingBox(buildEnvelope(nativeBounds));
+        ft.setNativeCRS(nativeBounds.getCrs().getSrs());
+        ft.setSrs(publishing.getSrs());
+        if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
+            ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
+        } else {
+            ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
+        }
+
+        ft.setStore(new DataStoreInfo().name(dataStore));
+        publishing.getSrs();
+        publishing.getSrsReproject();
+        return ft;
+    }
+
+    private EnvelopeInfo buildEnvelope(BoundingBoxMetadata bounds) {
+        if (bounds == null)
+            return null;
+
+        EnvelopeInfo env = new EnvelopeInfo();
+        if (bounds.getCrs() != null)
+            env.setCrs(bounds.getCrs().getSrs());
+        return env.minx(bounds.getMinx()).maxx(bounds.getMaxx()).miny(bounds.getMiny()).maxy(bounds.getMaxy());
+    }
+
+    private List<KeywordInfo> buildKeywords(List<String> keywords) {
+        if (keywords == null)
+            return null;
+        return keywords.stream().map(s -> new KeywordInfo().value(s)).collect(Collectors.toList());
     }
 
     private String resolveUniqueLayerName(@NonNull String workspace, @NonNull String proposedName) {
@@ -86,16 +189,18 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     public @Override void addMetadataLink(@NonNull DatasetUploadState dataset) {
         PublishSettings publishing = dataset.getPublishing();
 
-        Objects.requireNonNull(publishing);
-        Objects.requireNonNull(publishing.getPublishedWorkspace());
-        Objects.requireNonNull(publishing.getPublishedName());
-        Objects.requireNonNull(publishing.getMetadataRecordId());
+        requireNonNull(publishing);
+        requireNonNull(publishing.getPublishedWorkspace());
+        requireNonNull(publishing.getPublishedName());
+        requireNonNull(publishing.getMetadataRecordId());
 
         final String workspace = publishing.getPublishedWorkspace();
+        final String dataStore = resolveDataStoreName(dataset);
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
-        FeatureTypeInfo fti = geoserver.getFeatureTypeInfo(workspace, layerName);
+        FeatureTypeInfo fti = geoserver.findFeatureTypeInfo(workspace, dataStore, layerName)
+                .orElseThrow(() -> new IllegalArgumentException("FeatureType not found"));
 
         MetadataLinkInfo metadatalink = buildMetadataLink(metadataRecordId);
 

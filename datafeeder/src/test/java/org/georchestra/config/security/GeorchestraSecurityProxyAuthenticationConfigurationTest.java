@@ -29,6 +29,7 @@ import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.FileStorageService;
+import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +66,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     private @MockBean FileStorageService fileStorageService;
     private @MockBean AuthorizationService mockDataUploadValidityService;
     private @MockBean DataPublishingService mockDataPublishingService;
+    private @MockBean MetadataPublicationService mockMetadataPublicationService;
     private @MockBean DatasetsService mockDatasetsService;
 
     private @LocalServerPort int port;
