@@ -1,28 +1,14 @@
-server:
-  context-path: /import
-  servlet:
-    # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
-    # spring 2.x style, for forward compatibility
-    multipart:
-      max-file-size: ${datafeeder.file-upload.max-file-size}
-      max-request-size: ${datafeeder.file-upload.max-request-size}
-      file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
-      location:  ${datafeeder.file-upload.temporary-location}
-    # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
-    encoding.charset: UTF-8
-    # Enable http encoding support.
-    encoding.enabled: true
-    # Force the encoding to the configured charset on HTTP requests and responses.
-    encoding.force: true
-
 spring:
   #TODO: remove 'mock' when external service implementations are ready. Remove local when ready to run as a georchestra microservice.
   profiles.active: georchestra, local, mock
-  application:
-    name: datafeeder-service
-  http:
+  application.name: datafeeder-service
+  main.allow-bean-definition-overriding: true
+  batch.job.enabled: false #disable automatically running configured jobs at startup time
+
+server:
+  servlet:
+    context-path: /import
     # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
-    # spring 1.4+ style
     multipart:
       max-file-size: ${datafeeder.file-upload.max-file-size}
       max-request-size: ${datafeeder.file-upload.max-request-size}
@@ -34,9 +20,6 @@ spring:
     encoding.enabled: true
     # Force the encoding to the configured charset on HTTP requests and responses.
     encoding.force: true
-  batch:
-    job.enabled: false #disable automatically running configured jobs at startup time
-
 
 datafeeder:
   file-upload:

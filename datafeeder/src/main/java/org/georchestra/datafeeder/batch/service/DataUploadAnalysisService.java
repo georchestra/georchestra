@@ -45,6 +45,7 @@ import org.geotools.util.Converters;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 import lombok.Setter;
@@ -187,9 +188,10 @@ public class DataUploadAnalysisService {
     }
 
     public void save(List<? extends DatasetUploadState> items) {
-        this.datasetRepository.save(items);
+        this.datasetRepository.saveAll(items);
     }
 
+    @Transactional
     public void summarize(@NonNull UUID uploadId) {
         datasetRepository.flush();
         jobRepository.flush();
@@ -210,8 +212,7 @@ public class DataUploadAnalysisService {
     }
 
     private JobStatus determineJobStatus(List<DatasetUploadState> datasets) {
-        for (DatasetUploadState s : datasets) {
-            DatasetUploadState d = this.datasetRepository.findOne(s.getId());
+        for (DatasetUploadState d : datasets) {
             JobStatus status = d.getAnalyzeStatus();
             if (JobStatus.ERROR == status) {
                 return JobStatus.ERROR;
@@ -220,8 +221,6 @@ public class DataUploadAnalysisService {
             }
         }
         return JobStatus.DONE;
-//        boolean anyFailed = datasets.stream().map(DatasetUploadState::getStatus).anyMatch(UploadStatus.ERROR::equals);
-//        return anyFailed ? UploadStatus.ERROR : UploadStatus.DONE;
     }
 
     private List<SampleProperty> sampleProperties(Map<String, Object> sampleProperties) {

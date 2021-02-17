@@ -18,7 +18,9 @@
  */
 package org.georchestra.datafeeder.model;
 
+import javax.persistence.Basic;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
 
 import lombok.Data;
@@ -29,6 +31,7 @@ public class SampleProperty {
 
     private String name;
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String value;
     private String type;
 }
