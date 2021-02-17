@@ -35,11 +35,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -68,7 +68,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     private @MockBean DatasetsService mockDatasetsService;
 
     private @LocalServerPort int port;
-    private @Value("${server.context-path}") String contextPath;
+    private @Value("${server.servlet.context-path}") String contextPath;
 
     private @Autowired TestRestTemplate template;
 

@@ -20,12 +20,11 @@ package org.georchestra.datafeeder.api;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import org.georchestra.config.security.GeorchestraUserDetails;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
