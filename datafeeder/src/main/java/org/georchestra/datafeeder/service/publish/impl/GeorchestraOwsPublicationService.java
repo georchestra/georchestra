@@ -76,6 +76,10 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
     public @Override void publish(@NonNull DatasetUploadState dataset) {
+        requireNonNull(dataset.getJob());
+        requireNonNull(dataset.getJob().getOrganizationName(), "organization name not provided");
+        requireNonNull(dataset.getName(), "dataset native name not provided");
+
         PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing);
         requireNonNull(publishing.getPublishedName());
@@ -105,7 +109,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         ds.setEnabled(true);
         ds.setWorkspace(new WorkspaceInfo().name(workspaceName));
         ds.setDescription("Datafeeder uploaded datasets");
-        return null;
+        return ds;
     }
 
     private Map<String, String> buildConnectionParameters(@NonNull DatasetUploadState dataset) {
@@ -132,11 +136,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         ft.setAbstract(publishing.getAbstract());
         ft.setAdvertised(true);
         ft.setEnabled(true);
-        ft.setKeywords(buildKeywords(publishing.getKeywords()));
+        // ft.setKeywords(buildKeywords(publishing.getKeywords()));
 
         BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
-        ft.setNativeBoundingBox(buildEnvelope(nativeBounds));
-        ft.setNativeCRS(nativeBounds.getCrs().getSrs());
+        if (nativeBounds != null) {
+            ft.setNativeBoundingBox(buildEnvelope(nativeBounds));
+            ft.setNativeCRS(nativeBounds.getCrs().getSrs());
+        }
         ft.setSrs(publishing.getSrs());
         if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
             ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);

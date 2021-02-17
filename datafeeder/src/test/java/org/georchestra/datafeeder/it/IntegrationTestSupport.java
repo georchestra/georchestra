@@ -94,8 +94,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
         ResponseEntity<Map> entity;
         try {
-            entity = doGet(uri, Map.class, "sec-proxy", "true", "sec-username", "datafeeder", "sec-roles",
-                    "ROLE_ADMINISTRATOR");
+            entity = doGet(uri, Map.class, "sec-username", "datafeeder", "sec-roles", "ROLE_ADMINISTRATOR");
         } catch (Exception e) {
             throw new IllegalStateException("Unable to connect to GeoServer at " + uri + ". " + e.getMessage(), e);
         }
