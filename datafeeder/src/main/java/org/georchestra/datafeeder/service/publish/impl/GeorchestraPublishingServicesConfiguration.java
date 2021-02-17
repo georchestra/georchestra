@@ -18,9 +18,14 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geoserver.restconfig.client.GeoServerClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -40,11 +45,26 @@ public class GeorchestraPublishingServicesConfiguration {
         return new GeorchestraDataBackendService();
     }
 
-    public @Bean GeoServerRemoteService geoServerRemoteService() {
-        return new GeoServerRemoteService();
-    }
-
     public @Bean OWSPublicationService owsPublicationService() {
         return new GeorchestraOwsPublicationService();
+    }
+
+    public @Bean GeoServerClient geoServerApiClient(DataFeederConfigurationProperties props) {
+        ExternalApiConfiguration config = props.getPublishing().getGeoserver();
+        String restApiEntryPoint = config.getApiUrl().toExternalForm();
+
+        GeoServerClient client = new GeoServerClient(restApiEntryPoint);
+
+        Map<String, String> authHeaders = new HashMap<>();
+        // authHeaders.put("sec-proxy", "true");
+        authHeaders.put("sec-username", "datafeeder-application");
+        authHeaders.put("sec-roles", "ROLE_ADMINISTRATOR");
+
+        client.setRequestHeaderAuth("georchestra", authHeaders);
+        return client;
+    }
+
+    public @Bean GeoServerRemoteService geoServerRemoteService() {
+        return new GeoServerRemoteService();
     }
 }

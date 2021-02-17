@@ -15,7 +15,7 @@ public class GeorchestraNameNormalizer {
     }
 
     public String resolveWorkspaceName(String orgName) {
-        return normalizeName(orgName);
+        return normalizeName(orgName).toLowerCase();
     }
 
     public String resolveLayerName(@NonNull String proposedName) {

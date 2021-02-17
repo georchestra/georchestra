@@ -7,7 +7,9 @@ spring:
   #TODO: remove 'mock' when external service implementations are ready. Remove local when ready to run as a georchestra microservice.
   profiles.active: georchestra, local, mock
   application.name: datafeeder-service
-  main.allow-bean-definition-overriding: true
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: off
   batch.job.enabled: false #disable automatically running configured jobs at startup time
   servlet:
     # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
@@ -36,6 +38,21 @@ datafeeder:
     # directory location where files will be stored.
     persistent-location: ${file-upload.persistent-location:${java.io.tmpdir}/datafeeder/uploads}
 
+feign:
+  okhttp.enabled: true
+  httpclient.enabled: false 
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+
+logging:
+  level:
+    root: INFO
+    feign: INFO
+    org.geoserver.openapi: INFO
 ---
 spring:
   profiles: georchestra
@@ -56,6 +73,10 @@ datafeeder.publishing:
     database: georchestra
     user: georchestra
     passwd: georchestra
+
+feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+logging.level.feign: DEBUG
+logging.level.org.geoserver.openapi: DEBUG
 ---
 spring:
   profiles: local

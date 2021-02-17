@@ -40,6 +40,9 @@ import org.geoserver.restconfig.client.LayersClient;
 import org.geoserver.restconfig.client.NamespacesClient;
 import org.geoserver.restconfig.client.ServerException;
 import org.geoserver.restconfig.client.WorkspacesClient;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +50,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GeoServerRemoteService {
 
-    private GeoServerClient _client;
+    private @Autowired GeoServerClient _client;
 
     private static final WorkspaceLock LOCKS = new WorkspaceLock();
 
-    private GeoServerClient client() {
+    public @VisibleForTesting GeoServerClient client() {
         return this._client;
     }
 
