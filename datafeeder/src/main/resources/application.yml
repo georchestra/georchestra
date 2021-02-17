@@ -1,13 +1,14 @@
+server:
+  servlet:
+    context-path: /import
+
 spring:
   #TODO: remove 'mock' when external service implementations are ready. Remove local when ready to run as a georchestra microservice.
   profiles.active: georchestra, local, mock
   application.name: datafeeder-service
   main.allow-bean-definition-overriding: true
   batch.job.enabled: false #disable automatically running configured jobs at startup time
-
-server:
   servlet:
-    context-path: /import
     # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
     multipart:
       max-file-size: ${datafeeder.file-upload.max-file-size}
