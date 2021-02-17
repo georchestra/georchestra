@@ -30,6 +30,7 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -92,10 +93,12 @@ public class UploadAnalysisJobConfiguration {
     public @Bean Step analyzeDatasets(DataUploadAnalysisService service, DatasetUploadStateItemReader reader,
             DatasetUploadStateUpdateListener itemStatusUpdater) {
 
+        ItemProcessor<? super DatasetUploadState, ? extends DatasetUploadState> processor = service::analyze;
+
         TaskletStep step = steps.get("analyzeDataset")//
                 .<DatasetUploadState, DatasetUploadState>chunk(1)//
                 .reader(reader)//
-                .processor(service::analyze)//
+                .processor(processor)//
                 .writer(service::save)//
                 .listener(itemStatusUpdater)//
                 .transactionManager(platformTransactionManager)//

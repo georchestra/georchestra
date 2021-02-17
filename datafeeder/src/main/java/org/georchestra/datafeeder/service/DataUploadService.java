@@ -79,7 +79,7 @@ public class DataUploadService {
     }
 
     public void remove(@NonNull UUID jobId) {
-        repository.delete(jobId);
+        repository.deleteById(jobId);
     }
 
     public SimpleFeature sampleFeature(@NonNull UUID jobId, @NonNull String typeName, int featureN, Charset encoding,

@@ -2,11 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.georchestra</groupId>
-    <artifactId>root</artifactId>
-    <version>20.2-SNAPSHOT</version>
-  </parent>
+<!--   <parent> -->
+<!--     <groupId>org.georchestra</groupId> -->
+<!--     <artifactId>root</artifactId> -->
+<!--     <version>20.2-SNAPSHOT</version> -->
+<!--   </parent> -->
+  <version>20.2-SNAPSHOT</version>
+  <groupId>org.georchestra</groupId>
   <artifactId>datafeeder</artifactId>
   <packaging>jar</packaging>
   <name>Data-Feeder microservice</name>
@@ -14,13 +16,65 @@
     <maven.test.skip>false</maven.test.skip>
     <context.name>${project.artifactId}</context.name>
     <packageDatadirScmVersion>datafeeder</packageDatadirScmVersion>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>1.8</java.version>
+    <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+
+    <gt.version>24.2</gt.version>
     <openapi-generator-maven-plugin.version>4.3.1</openapi-generator-maven-plugin.version>
     <swagger.version>1.5.21</swagger.version>
     <springfox.version>2.9.2</springfox.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
+    <lombok.version>1.18.12</lombok.version>
+    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
+    <fmt.skip>false</fmt.skip>
+    <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
   </properties>
+  <repositories>
+    <!-- geotools -->
+    <repository>
+      <id>osgeo</id>
+      <name>OSGeo Nexus Release Repository</name>
+      <url>https://repo.osgeo.org/repository/release/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>osgeo-snapshot</id>
+      <name>OSGeo Nexus Snapshot Repository</name>
+      <url>https://repo.osgeo.org/repository/snapshot/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.geoserver.openapi</groupId>
+        <artifactId>gs-rest-java-client</artifactId>
+        <version>${gs-rest-java-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.mapstruct</groupId>
         <artifactId>mapstruct</artifactId>
@@ -99,6 +153,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
+      <version>2.10.10</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -132,10 +187,12 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-main</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <!-- upgrade hsqldb to avoid "data exception: string data, right truncation" error on @Lob columns -->
@@ -146,18 +203,22 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geojson</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geopkg</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-postgis</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <!--SpringFox dependencies -->
     <dependency>
@@ -232,6 +293,35 @@
             <generatorName>spring</generatorName>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>net.revelc.code.formatter</groupId>
+          <artifactId>formatter-maven-plugin</artifactId>
+          <version>${formatter-maven-plugin.version}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <goals>
+                <goal>${fmt.action}</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <skip>${fmt.skip}</skip>
+            <configFile>${maven.multiModuleProjectDirectory}/.mvn/formatter.xml</configFile>
+            <compilerSource>${java.version}</compilerSource>
+            <compilerCompliance>${java.version}</compilerCompliance>
+            <compilerTargetPlatform>${java.version}</compilerTargetPlatform>
+            <!-- Use Unix and Mac style line endings -->
+            <lineEnding>LF</lineEnding>
+            <encoding>UTF-8</encoding>
+            <skipJsFormatting>true</skipJsFormatting>
+            <skipCssFormatting>true</skipCssFormatting>
+            <skipHtmlFormatting>true</skipHtmlFormatting>
+            <skipJsonFormatting>true</skipJsonFormatting>
+            <skipXmlFormatting>true</skipXmlFormatting>
+            <skipJavaFormatting>false</skipJavaFormatting>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -242,6 +332,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
         <configuration>
           <mainClass>org.georchestra.datafeeder.app.DataFeederApplication</mainClass>
           <classifier>bin</classifier>
@@ -294,6 +385,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
         <dependencies>
           <dependency>
             <groupId>org.mapstruct</groupId>
@@ -304,6 +396,7 @@
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
           <annotationProcessorPaths>
             <path>
               <groupId>org.projectlombok</groupId>
@@ -405,6 +498,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
+            <version>3.0.0-M5</version>
             <executions>
               <execution>
                 <goals>

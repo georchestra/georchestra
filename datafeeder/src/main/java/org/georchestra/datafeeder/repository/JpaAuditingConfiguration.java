@@ -18,6 +18,8 @@
  */
 package org.georchestra.datafeeder.repository;
 
+import java.util.Optional;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -32,11 +34,7 @@ public class JpaAuditingConfiguration {
     public @Bean AuditorAware<String> jpaAuditorProvider() {
         return () -> {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null) {
-                return "annonymous";
-            }
-            String name = auth.getName();
-            return name;
+            return Optional.ofNullable(auth).map(Authentication::getName);
         };
     }
 }
