@@ -107,7 +107,7 @@ For example, given a shapefile:
 
 ```bash
 wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_admin_0_countries.zip
-unzip unzip ne_10m_admin_0_countries.zip
+unzip ne_10m_admin_0_countries.zip
 ls *shp
 ne_10m_admin_0_countries.shp
 ```
@@ -120,7 +120,7 @@ curl -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -
  -F filename=@ne_10m_admin_0_countries.shp \
  -F filename=@ne_10m_admin_0_countries.dbf \
  -F filename=@ne_10m_admin_0_countries.shx \
- -F filename=@ne_10m_admin_0_countries.prj 
+ -F filename=@ne_10m_admin_0_countries.prj
  
 {"jobId":"37bb3abe-69ce-40cc-be44-24a05aace203","progress":0.0,"status":"PENDING","error":null,"datasets":[]}
 ```
