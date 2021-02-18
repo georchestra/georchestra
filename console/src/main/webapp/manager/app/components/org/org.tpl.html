@@ -59,7 +59,7 @@
             <label for="orguser" translate>org.userlabel</label>
             <select class="pull-right form-control input-sm" ng-model="org.user"
                id="orguser" ng-change="org.associate()"
-               data-placeholder-text-single="'…' | translate"
+               data-placeholder-text-single="'...'"
                ng-options="u.uid as (u.sn + ' ' + u.givenName) for u in org.notUsers" chosen>
             </select>
           </div>
