@@ -9,6 +9,21 @@ The separate front-end UI service provides the wizard-like user interface to int
 Build the project:
 
 ```bash
+georchestra$ git submodule update --init
+```
+
+To update the `datafeeder/geoserver-rest-openapi/` git submodule. This is a project dependency that still hasn't got
+a place in a public maven repository, so for the time being we're building it.
+
+The following command will take care of building both the above mentioned dependency as well as the datafeeder application and its docker image:
+
+```bash
+georchestra$ make docker-build-datafeeder
+```
+
+Or if you already did and only want to build datafeeder, run:
+
+```bash
 georchestra$ mvn clean install -f datafeeder/
 ```
 
@@ -18,6 +33,7 @@ Or
 georchestra$ cd datafeeder
 datafeeder$ mvn clean install
 ```
+
 Will compile and run the unit and integration tests.
 
 ### Skipping tests
