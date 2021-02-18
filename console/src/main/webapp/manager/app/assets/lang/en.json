@@ -212,7 +212,7 @@
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",
   "msg.subject"           : "Subject",
-  "msg.nosubject"         : "— no subject —",
+  "msg.nosubject"         : "— no subject —",
   "msg.sender"            : "Sender",
   "msg.messages"          : "Messages",
   "msg.on"                : "on",
