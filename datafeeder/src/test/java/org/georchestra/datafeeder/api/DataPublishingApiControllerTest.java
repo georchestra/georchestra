@@ -18,12 +18,19 @@
  */
 package org.georchestra.datafeeder.api;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.model.DataUploadJob;
@@ -113,6 +120,27 @@ public class DataPublishingApiControllerTest {
             assertEquals(expectedPublishedName, actual.getPublishedName());
             assertEquals(expectedWorkspace, actual.getPublishedWorkspace());
             assertNotNull(actual.getMetadataRecordId());
+        }
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    public void testPublish_ValidateRequiredFields() {
+        List<MultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(shapefileFiles, "statepop");
+
+        // minimum required fields: nativeName, metadata.title, metadata.abstract
+        DatasetPublishRequest dsetReq = new DatasetPublishRequest().metadata(new DatasetMetadata());
+        PublishRequest publishRequest = new PublishRequest().addDatasetsItem(dsetReq);
+        try {
+            controller.publish(upload.getJobId(), publishRequest);
+            fail("Expected ConstraintViolationException");
+        } catch (ConstraintViolationException expected) {
+            Set<ConstraintViolation<?>> constraintViolations = expected.getConstraintViolations();
+            assertEquals(3, constraintViolations.size());
+            assertThat(expected.getMessage(), containsString("datasets[0].nativeName: must not be null"));
+            assertThat(expected.getMessage(), containsString("datasets[0].metadata.title: must not be null"));
+            assertThat(expected.getMessage(), containsString("datasets[0].metadata.abstract: must not be null"));
         }
     }
 
