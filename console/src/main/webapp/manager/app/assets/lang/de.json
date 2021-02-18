@@ -212,7 +212,7 @@
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",
   "msg.subject"           : "Betreff",
-  "msg.nosubject"         : "— kein Betreff —",
+  "msg.nosubject"         : "— kein Betreff —",
   "msg.sender"            : "Absender",
   "msg.messages"          : "Nachrichten",
   "msg.on"                : "am",
