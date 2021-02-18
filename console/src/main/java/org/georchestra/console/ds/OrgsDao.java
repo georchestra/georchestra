@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -99,13 +100,13 @@ public class OrgsDao {
         public void mapToContext(T org, DirContextOperations context) {
             Set<String> values = new HashSet<>();
 
-            if( context.getStringAttributes("objectClass") != null ) {
-                Collections.addAll(values,context.getStringAttributes("objectClass"));
+            if (context.getStringAttributes("objectClass") != null) {
+                Collections.addAll(values, context.getStringAttributes("objectClass"));
             }
             Collections.addAll(values, getObjectClass());
-            
-            context.setAttributeValues("objectClass", values);
-            
+
+            context.setAttributeValues("objectClass", values.toArray());
+
             context.setAttributeValue(getLdapKeyField(), org.getId());
             mapPayloadToContext(org, context);
         }

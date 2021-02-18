@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -110,11 +111,11 @@ public class RoleDaoImpl implements RoleDao {
 
         Set<String> values = new HashSet<>();
 
-        if( context.getStringAttributes("objectClass") != null ) {
-            Collections.addAll(values,context.getStringAttributes("objectClass"));
+        if (context.getStringAttributes("objectClass") != null) {
+            Collections.addAll(values, context.getStringAttributes("objectClass"));
         }
         Collections.addAll(values, "top", "groupOfMembers");
-        
+
         context.setAttributeValues("objectClass", values.toArray());
 
         try {
@@ -291,9 +292,15 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    private void mapToContext(Role role, DirContextOperations context) {
+    void mapToContext(Role role, DirContextOperations context) {
+        Set<String> values = new HashSet<>();
 
-        context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
+        if (context.getStringAttributes("objectClass") != null) {
+            Collections.addAll(values, context.getStringAttributes("objectClass"));
+        }
+        Collections.addAll(values, "top", "groupOfMembers");
+
+        context.setAttributeValues("objectClass", values.toArray());
 
         setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
