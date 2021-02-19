@@ -21,6 +21,7 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
@@ -39,6 +40,6 @@ interface FeatureWriterStrategy {
      * @return the generated files
      * @throws IOException
      */
-    File[] generateFiles() throws IOException;
+    List<File> generateFiles() throws IOException;
 
 }
