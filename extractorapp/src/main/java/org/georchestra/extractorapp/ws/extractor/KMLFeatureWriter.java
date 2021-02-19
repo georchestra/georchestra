@@ -41,13 +41,12 @@ final class KMLFeatureWriter extends FileFeatureWriter {
     /**
      * New instance of {@link OGRFeatureWriter}
      * 
-     * @param schema   output schema
      * @param basedir  output folder
      * @param features input the set of Features to write
      */
-    public KMLFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
+    public KMLFeatureWriter(File basedir, SimpleFeatureCollection features) {
 
-        super(schema, basedir, features);
+        super(basedir, features);
 
     }
 
@@ -71,6 +70,7 @@ final class KMLFeatureWriter extends FileFeatureWriter {
         FileOutputStream fop = null;
 
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        SimpleFeatureType schema = features.getSchema();
         builder.setName(schema.getName());
 
         try {
@@ -96,7 +96,7 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 
         } catch (IOException e) {
 
-            final String message = "Failed generation: " + this.schema.getName() + " - " + e.getMessage();
+            final String message = "Failed generation: " + schema.getName() + " - " + e.getMessage();
             LOG.error(message);
 
             throw e;
