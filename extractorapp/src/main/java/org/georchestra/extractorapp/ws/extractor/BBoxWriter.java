@@ -21,6 +21,7 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -74,7 +75,7 @@ public class BBoxWriter {
      * 
      * @throws IOException
      */
-    public File[] generateFiles() throws IOException {
+    public List<File> generateFiles() throws IOException {
 
         // create the feature type for the bbox geometry
         SimpleFeatureType type = createFeatureType();
