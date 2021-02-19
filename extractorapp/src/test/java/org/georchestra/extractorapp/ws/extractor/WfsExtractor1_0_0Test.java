@@ -149,16 +149,21 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
         final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
         FileDataStore bounding = null, data = null;
+        File dataFile = null, boundingFile = null;
         for (File shapefile : shapefiles) {
             if (shapefile.getName().startsWith("bounding_")) {
+                boundingFile = shapefile;
                 bounding = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
             } else {
+                dataFile = shapefile;
                 data = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
             }
         }
 
         assertNotNull(bounding);
         assertNotNull(data);
+        assertEquals("archsites.shp", dataFile.getName());
+        assertEquals("bounding_POLYGON.shp", boundingFile.getName());
 
         Envelope bounds = calculateBounds(bounding.getFeatureSource());
         assertEquals(23, data.getFeatureSource().getCount(Query.ALL));
