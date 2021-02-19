@@ -92,7 +92,7 @@ public class BBoxWriter {
         SimpleFeatureCollection features = DataUtilities.collection(bboxFeature);
 
         // bbox in shapefile format
-        FeatureWriterStrategy writer = new ShpFeatureWriter(features.getSchema(), this.baseDir, features);
+        FeatureWriterStrategy writer = new ShpFeatureWriter(this.baseDir, features);
         return writer.generateFiles();
     }
 
