@@ -55,14 +55,6 @@ final class KMLFeatureWriter extends FileFeatureWriter {
     }
 
     /**
-     * @return {@link ShpDatastoreFactory}
-     */
-    @Override
-    protected DatastoreFactory getDatastoreFactory() throws IOException {
-        return null;
-    }
-
-    /**
      *
      * @return Format file extension
      */
