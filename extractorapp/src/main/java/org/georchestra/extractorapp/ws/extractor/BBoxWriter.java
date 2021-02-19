@@ -32,7 +32,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.ProgressListener;
 
 /**
  * Creates the a file that contains a bounding box geometry related with the
@@ -50,7 +49,6 @@ public class BBoxWriter {
     private ReferencedEnvelope bbox;
     private File baseDir;
     private FileFormat fileFormat;
-    private ProgressListener progress;
     private CoordinateReferenceSystem requestedCRS;
 
     /**
@@ -60,10 +58,9 @@ public class BBoxWriter {
      * @param baseDir      where the file is created
      * @param format
      * @param requestedCRS CRS used to project the polygon associated to the bbox
-     * @param progress
      */
-    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format, CoordinateReferenceSystem requestedCRS,
-            ProgressListener progress) {
+    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format,
+            CoordinateReferenceSystem requestedCRS) {
         assert bbox != null;
         assert baseDir != null;
         assert format != null;
@@ -73,7 +70,6 @@ public class BBoxWriter {
         this.baseDir = baseDir;
         this.fileFormat = format;
         this.requestedCRS = requestedCRS;
-        this.progress = progress;
     }
 
     /**
@@ -96,8 +92,7 @@ public class BBoxWriter {
         SimpleFeatureCollection features = DataUtilities.collection(bboxFeature);
 
         // bbox in shapefile format
-        FeatureWriterStrategy writer = new ShpFeatureWriter(this.progress, features.getSchema(), this.baseDir,
-                features);
+        FeatureWriterStrategy writer = new ShpFeatureWriter(features.getSchema(), this.baseDir, features);
         return writer.generateFiles();
     }
 

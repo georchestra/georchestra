@@ -32,7 +32,6 @@ import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.store.ReprojectingFeatureCollection;
-import org.geotools.data.util.NullProgressListener;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.JTS;
@@ -57,7 +56,6 @@ import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.ProgressListener;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -275,12 +273,6 @@ public class WfsExtractor {
         SimpleFeatureSource featureSource = sourceDs.getFeatureSource(typeName);
         SimpleFeatureCollection features = getFeatures(request, sourceSchema, featureSource);
 
-        ProgressListener progressListener = new NullProgressListener() {
-            @Override
-            public void exceptionOccurred(Throwable exception) {
-                throw new RuntimeException(exception);
-            }
-        };
         File basedir = request.createContainingDir(_basedir);
 
         basedir.mkdirs();
@@ -290,12 +282,12 @@ public class WfsExtractor {
         LOG.debug("Number of features returned : " + features.size());
         switch (request._format.toLowerCase()) {
         case "shp":
-            featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.shp, request._projection, progressListener);
+            featuresWriter = new ShpFeatureWriter(sourceSchema, basedir, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.shp, request._projection);
             break;
         case "kml":
-            featuresWriter = new KMLFeatureWriter(progressListener, sourceSchema, basedir, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.kml, request._projection, progressListener);
+            featuresWriter = new KMLFeatureWriter(sourceSchema, basedir, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.kml, request._projection);
             break;
         default:
             throw new IllegalStateException("Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
