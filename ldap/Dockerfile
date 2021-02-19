@@ -35,4 +35,4 @@ HEALTHCHECK --interval=30s --timeout=10s \
       -D "cn=admin,dc=georchestra,dc=org" \
       -w "${SLAPD_PASSWORD}" \
       -b "dc=georchestra,dc=org" \
-      "cn=geoserver_privileged_user,ou=users,dc=georchestra,dc=org"
+      "cn=geoserver_privileged_user,ou=users,dc=georchestra,dc=org" || exit 1
