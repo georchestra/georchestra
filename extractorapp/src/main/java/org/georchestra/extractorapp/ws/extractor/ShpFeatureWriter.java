@@ -5,11 +5,13 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import org.geotools.data.shapefile.ShapefileDumper;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * This class implements the shape file writing strategy
@@ -27,57 +29,25 @@ final class ShpFeatureWriter extends FileFeatureWriter {
      * @param features input the set of Features to write
      */
     public ShpFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
-
         super(schema, basedir, features);
-
-    }
-
-    /**
-     * @return {@link ShpDatastoreFactory}
-     */
-    protected DatastoreFactory getDatastoreFactory() throws IOException {
-        ShpDatastoreFactory factory = new ShpDatastoreFactory();
-        return factory;
     }
 
     @Override
     public File[] generateFiles() throws IOException {
 
-        File[] files = null;
-        WriteFeatures writeFeatures = null;
-
+        ShapefileDumper dumper = new ShapefileDumper(super.basedir);
+        dumper.setEmptyShapefileAllowed(true);
+        dumper.setCharset(StandardCharsets.UTF_8);
         try {
-            DatastoreFactory ds = getDatastoreFactory();
-
-            // the sources features are projected in the requested output projections
-            CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
-            writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
-
-            this.features.accepts(writeFeatures, new NullProgressListener());
-
-            files = writeFeatures.getShapeFiles();
-
-            if (LOG.isDebugEnabled()) {
-
-                for (int i = 0; i < files.length; i++) {
-                    LOG.debug("Generated file: " + files[i].getAbsolutePath());
-                }
-            }
-
-            return files;
-
+            dumper.dump(super.features);
         } catch (IOException e) {
-            e.printStackTrace();
-            final String message = "Failed generation: " + this.schema.getName() + " - " + e.getMessage();
-            LOG.error(message);
-
+            LOG.error("Failed generation of " + super.schema.getName(), e);
             throw e;
-
-        } finally {
-            if (writeFeatures != null)
-                writeFeatures.close();
-
         }
+        File[] files = this.basedir.listFiles();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Generated " + Arrays.stream(files).map(File::getName).collect(Collectors.joining(",")));
+        }
+        return files;
     }
-
 }
