@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.geotools.data.DataStore;
@@ -32,12 +32,10 @@ import org.junit.rules.TemporaryFolder;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.io.Files;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -145,15 +143,8 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         final File[] fileNames = extract.listFiles();
         assertEquals(12, fileNames.length);
         assertBoundingPolygon(extract);
-
-        Collection<File> shapefiles = Collections2.filter(Arrays.asList(fileNames), new Predicate<File>() {
-            @Override
-            public boolean apply(File input) {
-                final String fileExtension = Files.getFileExtension(input.getName());
-                return fileExtension.equalsIgnoreCase("shp");
-            }
-        });
-
+        List<File> shapefiles = Arrays.stream(fileNames).filter(f -> f.getName().endsWith(".shp"))
+                .collect(Collectors.toList());
         assertEquals(2, shapefiles.size());
 
         final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
@@ -231,10 +222,9 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
         DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
 
-        SimpleFeatureType schema = ds.getSchema("savoie");
         SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
 
-        FeatureWriterStrategy fw = new KMLFeatureWriter(schema, testDir.newFolder("kmltest"), c);
+        FeatureWriterStrategy fw = new KMLFeatureWriter(testDir.newFolder("kmltest"), c);
 
         File[] results = {};
         try {

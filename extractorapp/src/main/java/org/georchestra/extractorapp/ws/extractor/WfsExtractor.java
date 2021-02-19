@@ -240,12 +240,12 @@ public class WfsExtractor {
             LOG.debug("WfsExtractor.extract - Non Secured Server");
         }
 
-        DataStore sourceDs = DataStoreFinder.getDataStore(params);
-
         String typeName = request.getWFSName();
+        DataStore sourceDs;
         SimpleFeatureType sourceSchema;
         // prefixed typeName
         if (typeName.contains(":")) {
+            sourceDs = DataStoreFinder.getDataStore(params);
             sourceSchema = sourceDs.getSchema(typeName);
         } else {
             // Not prefixed one (mapserver ?)
@@ -271,7 +271,7 @@ public class WfsExtractor {
         }
 
         SimpleFeatureSource featureSource = sourceDs.getFeatureSource(typeName);
-        SimpleFeatureCollection features = getFeatures(request, sourceSchema, featureSource);
+        SimpleFeatureCollection features = getFeatures(request, featureSource);
 
         File basedir = request.createContainingDir(_basedir);
 
@@ -284,11 +284,11 @@ public class WfsExtractor {
         }
         switch (request._format.toLowerCase()) {
         case "shp":
-            featuresWriter = new ShpFeatureWriter(sourceSchema, basedir, features);
+            featuresWriter = new ShpFeatureWriter(basedir, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.shp, request._projection);
             break;
         case "kml":
-            featuresWriter = new KMLFeatureWriter(sourceSchema, basedir, features);
+            featuresWriter = new KMLFeatureWriter(basedir, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.kml, request._projection);
             break;
         default:
@@ -303,10 +303,10 @@ public class WfsExtractor {
         return basedir;
     }
 
-    private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureType sourceSchema,
-            SimpleFeatureSource featureSource) throws IOException, TransformException, FactoryException {
+    private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureSource featureSource)
+            throws IOException, TransformException, FactoryException {
 
-        Query query = createQuery(request, sourceSchema);
+        Query query = createQuery(request, featureSource.getSchema());
         SimpleFeatureCollection features = featureSource.getFeatures(query);
 
         CoordinateReferenceSystem returnedCrs = features.getSchema().getCoordinateReferenceSystem();

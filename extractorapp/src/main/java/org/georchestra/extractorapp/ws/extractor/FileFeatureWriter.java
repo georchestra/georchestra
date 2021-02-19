@@ -26,7 +26,6 @@ import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
  * This abstract class defines the template strategy required to write different
@@ -39,24 +38,20 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
 
     protected static final Log LOG = LogFactory.getLog(FileFeatureWriter.class.getPackage().getName());
 
-    protected final SimpleFeatureType schema;
     protected final File basedir;
     protected final SimpleFeatureCollection features;
 
     /**
      * Sets the strategy parameters
      * 
-     * @param schema   output schema
      * @param basedir  output base folder
      * @param features the input set of features to write
      */
-    public FileFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
-        requireNonNull(schema, "schema is null");
+    public FileFeatureWriter(File basedir, SimpleFeatureCollection features) {
         requireNonNull(basedir, "basedir is null");
         requireNonNull(features, "features is null");
         if (!basedir.isDirectory())
             throw new IllegalArgumentException("basedir is not a directory: " + basedir);
-        this.schema = schema;
         this.basedir = basedir;
         this.features = features;
     }
