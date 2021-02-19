@@ -1,6 +1,5 @@
 package org.georchestra.console.integration.ds;
 
-
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
