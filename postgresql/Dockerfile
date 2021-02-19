@@ -19,4 +19,4 @@ RUN apt-get update && \
 COPY --chown=postgres [0-9][0-9]* fix-owner.sql license.txt logo.png /docker-entrypoint-initdb.d/
 
 HEALTHCHECK --interval=30s --timeout=30s \
-  CMD pg_isready -U $POSTGRES_USER
+  CMD pg_isready -U $POSTGRES_USER || exit 1
