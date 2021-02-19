@@ -6,6 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,31 +30,27 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.store.ReTypingFeatureCollection;
 import org.geotools.data.store.ReprojectingFeatureCollection;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.SchemaException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.GeoTools;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.MultiLineString;
-import org.locationtech.jts.geom.MultiPoint;
-import org.locationtech.jts.geom.MultiPolygon;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -174,15 +172,114 @@ public class WfsExtractor {
      */
     public File extract(ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
         checkNotNull(request);
-        if (request._owsType != OWSType.WFS) {
-            throw new IllegalArgumentException(request._owsType + "must be WFS for the WfsExtractor");
-        }
+        checkNotNull(request._bbox, "Bounding box not specified");
+        checkNotNull(request.getWFSName(), "WFS layer name not specified");
+        checkArgument(request._owsType == OWSType.WFS, request._owsType + "must be WFS for the WfsExtractor");
         checkArgument(request._format != null && SUPPORTED_FORMATS.contains(request._format.toLowerCase()),
                 "%s is not a recognized vector format", request._format);
-        checkNotNull(request._bbox, "Bounding box not specified");
 
+        final File basedir = request.createContainingDir(_basedir);
+
+        // TODO: dispose datastore
+        DataStore sourceDs = resolveDataStore(request);
+        try {
+            SimpleFeatureSource featureSource = resolveFeatureSource(sourceDs, request);
+            SimpleFeatureCollection features = getFeatures(request, featureSource);
+
+            FeatureWriterStrategy featuresWriter = resolveFeatureWriter(request._format, basedir, features);
+            BBoxWriter bboxWriter = new BBoxWriter(request._bbox, basedir, request._projection);
+
+            // generates the feature files and bbox file
+            featuresWriter.generateFiles();
+            bboxWriter.generateFiles();
+        } finally {
+            sourceDs.dispose();
+        }
+        return basedir;
+    }
+
+    private FeatureWriterStrategy resolveFeatureWriter(String format, File basedir, SimpleFeatureCollection features) {
+        switch (format.toLowerCase()) {
+        case "shp":
+            return new ShpFeatureWriter(basedir, features);
+        case "kml":
+            return new KMLFeatureWriter(basedir, features);
+        default:
+            throw new IllegalStateException("Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
+        }
+    }
+
+    private SimpleFeatureCollection removeTypeNamePrefix(SimpleFeatureCollection features) {
+        SimpleFeatureType origSchema = features.getSchema();
+        String typeName = origSchema.getTypeName();
+        checkArgument(typeName.contains(":"));
+        SimpleFeatureType renamedType;
+        try {
+            typeName = typeName.substring(typeName.indexOf(':') + 1);
+            String[] allProperties = origSchema.getTypes().stream().map(AttributeType::getName).map(Name::getLocalPart)
+                    .toArray(String[]::new);
+            CoordinateReferenceSystem override = null;
+            URI namespace = null;
+            renamedType = DataUtilities.createSubType(origSchema, allProperties, override, typeName, namespace);
+        } catch (SchemaException e) {
+            throw new IllegalStateException(e);
+        }
+        return new ReTypingFeatureCollection(features, renamedType);
+    }
+
+    private SimpleFeatureSource resolveFeatureSource(DataStore sourceDs, ExtractorLayerRequest request)
+            throws IOException {
+        String requestTypeName = request.getWFSName();
+        SimpleFeatureSource featureSource = null;
+        // prefixed typeName
+        if (requestTypeName.contains(":")) {
+            featureSource = sourceDs.getFeatureSource(requestTypeName);
+        } else {
+            // Not prefixed one (mapserver ?)
+            String[] typeNames = sourceDs.getTypeNames();
+            for (String typeName : typeNames) {
+                if (typeName.contains(requestTypeName)) {
+                    featureSource = sourceDs.getFeatureSource(typeName);
+                    break;
+                }
+            }
+            if (featureSource == null) {
+                throw new IOException("Unable to find the remote layer " + requestTypeName);
+            }
+        }
+        return featureSource;
+    }
+
+    private DataStore resolveDataStore(ExtractorLayerRequest request) throws IOException {
+        final Map<String, Serializable> params = buildWFSConnectionParameters(request);
+
+        String requestedTypeName = request.getWFSName();
+        DataStore sourceDs = null;
+        // prefixed typeName
+        if (requestedTypeName.contains(":")) {
+            sourceDs = DataStoreFinder.getDataStore(params);
+        } else {
+            // Not prefixed one (mapserver ?)
+            // Recreating the datastore forcing wfs 1.1.0, so that (presuming
+            // the remote server is actually powered by MapServer), we would
+            // have a typename prefixed with the same convention as before.
+            params.put(WFSDataStoreFactory.URL.key, request.capabilitiesURL("WFS", "1.1.0"));
+            // params.put(WFSDataStoreFactory.WFS_STRATEGY.key, "mapserver");
+            sourceDs = DataStoreFinder.getDataStore(params);
+        }
+        if (sourceDs == null) {
+            throw new IllegalStateException("Unable to connect to WFS " + params.get(WFSDataStoreFactory.URL.key));
+        }
+        return sourceDs;
+    }
+
+    private Map<String, Serializable> buildWFSConnectionParameters(ExtractorLayerRequest request) {
         Map<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put(WFSDataStoreFactory.URL.key, request.capabilitiesURL("WFS", "1.0.0"));
+        try {
+            params.put(WFSDataStoreFactory.URL.key, request.capabilitiesURL("WFS", "1.0.0"));
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
         params.put(WFSDataStoreFactory.LENIENT.key, true);
         params.put(WFSDataStoreFactory.PROTOCOL.key, true);
         params.put(WFSDataStoreFactory.TIMEOUT.key, Integer.valueOf(60000));
@@ -200,68 +297,7 @@ public class WfsExtractor {
         } else {
             LOG.debug("WfsExtractor.extract - Non Secured Server");
         }
-
-        String typeName = request.getWFSName();
-        DataStore sourceDs;
-        SimpleFeatureType sourceSchema;
-        // prefixed typeName
-        if (typeName.contains(":")) {
-            sourceDs = DataStoreFinder.getDataStore(params);
-            sourceSchema = sourceDs.getSchema(typeName);
-        } else {
-            // Not prefixed one (mapserver ?)
-            // Recreating the datastore forcing wfs 1.1.0, so that (presuming
-            // the remote server is actually powered by MapServer), we would
-            // have a typename prefixed with the same convention as before.
-            params.put(WFSDataStoreFactory.URL.key, request.capabilitiesURL("WFS", "1.1.0"));
-            // params.put(WFSDataStoreFactory.WFS_STRATEGY.key, "mapserver");
-            sourceDs = DataStoreFinder.getDataStore(params);
-            String[] typeNames = sourceDs.getTypeNames();
-            sourceSchema = null;
-            for (String s : typeNames) {
-                if (s.contains(typeName)) {
-                    typeName = s;
-                    sourceSchema = sourceDs.getSchema(s);
-                    // replace the expected typename in the request
-                    break;
-                }
-            }
-            if (sourceSchema == null) {
-                throw new IOException("Unable to find the remote layer " + typeName);
-            }
-        }
-
-        SimpleFeatureSource featureSource = sourceDs.getFeatureSource(typeName);
-        SimpleFeatureCollection features = getFeatures(request, featureSource);
-
-        File basedir = request.createContainingDir(_basedir);
-
-        basedir.mkdirs();
-
-        FeatureWriterStrategy featuresWriter;
-        BBoxWriter bboxWriter;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Number of features returned : " + features.size());
-        }
-        switch (request._format.toLowerCase()) {
-        case "shp":
-            featuresWriter = new ShpFeatureWriter(basedir, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.shp, request._projection);
-            break;
-        case "kml":
-            featuresWriter = new KMLFeatureWriter(basedir, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.kml, request._projection);
-            break;
-        default:
-            throw new IllegalStateException("Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
-        }
-
-        // generates the feature files and bbox file
-        featuresWriter.generateFiles();
-
-        bboxWriter.generateFiles();
-
-        return basedir;
+        return params;
     }
 
     private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureSource featureSource)
@@ -277,10 +313,17 @@ public class WfsExtractor {
             features = new ReprojectingFeatureCollection(features, targetCrs);
         }
 
+        if (features.getSchema().getTypeName().contains(":")) {
+            features = removeTypeNamePrefix(features);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Number of features returned : " + features.size());
+        }
         return features;
     }
 
-    private Query createQuery(ExtractorLayerRequest request, FeatureType schema)
+    private Query createQuery(ExtractorLayerRequest request, SimpleFeatureType schema)
             throws TransformException, FactoryException {
 
         final Filter filter;
@@ -307,7 +350,7 @@ public class WfsExtractor {
                     .map(d -> d.getName().getLocalPart())//
                     .toArray(String[]::new);
         }
-        Query query = new Query(request.getWFSName(), filter, properties);
+        Query query = new Query(schema.getTypeName(), filter, properties);
 
         return query;
     }
