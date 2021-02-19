@@ -20,7 +20,6 @@
 package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +27,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
 
 /**
@@ -64,56 +62,4 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
         this.features = features;
 
     }
-
-    /**
-     * Generates a vector files in the specified format
-     * 
-     * @throws IOException
-     */
-    @Override
-    public File[] generateFiles() throws IOException {
-
-        File[] files = null;
-        WriteFeatures writeFeatures = null;
-
-        try {
-            DatastoreFactory ds = getDatastoreFactory();
-
-            // the sources features are projected in the requested output projections
-            CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
-            writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
-
-            this.features.accepts(writeFeatures, this.progresListener);
-
-            files = writeFeatures.getShapeFiles();
-
-            if (LOG.isDebugEnabled()) {
-
-                for (int i = 0; i < files.length; i++) {
-                    LOG.debug("Generated file: " + files[i].getAbsolutePath());
-                }
-            }
-
-            return files;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            final String message = "Failed generation: " + this.schema.getName() + " - " + e.getMessage();
-            LOG.error(message);
-
-            throw e;
-
-        } finally {
-            if (writeFeatures != null)
-                writeFeatures.close();
-
-        }
-    }
-
-    /**
-     * @return a {@link DatastoreFactory} instance
-     * @throws IOException
-     */
-    protected abstract DatastoreFactory getDatastoreFactory() throws IOException;
-
 }

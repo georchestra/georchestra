@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
 
 /**
@@ -36,10 +37,49 @@ final class ShpFeatureWriter extends FileFeatureWriter {
     /**
      * @return {@link ShpDatastoreFactory}
      */
-    @Override
     protected DatastoreFactory getDatastoreFactory() throws IOException {
         ShpDatastoreFactory factory = new ShpDatastoreFactory();
         return factory;
+    }
+
+    @Override
+    public File[] generateFiles() throws IOException {
+
+        File[] files = null;
+        WriteFeatures writeFeatures = null;
+
+        try {
+            DatastoreFactory ds = getDatastoreFactory();
+
+            // the sources features are projected in the requested output projections
+            CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
+            writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
+
+            this.features.accepts(writeFeatures, this.progresListener);
+
+            files = writeFeatures.getShapeFiles();
+
+            if (LOG.isDebugEnabled()) {
+
+                for (int i = 0; i < files.length; i++) {
+                    LOG.debug("Generated file: " + files[i].getAbsolutePath());
+                }
+            }
+
+            return files;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            final String message = "Failed generation: " + this.schema.getName() + " - " + e.getMessage();
+            LOG.error(message);
+
+            throw e;
+
+        } finally {
+            if (writeFeatures != null)
+                writeFeatures.close();
+
+        }
     }
 
 }
