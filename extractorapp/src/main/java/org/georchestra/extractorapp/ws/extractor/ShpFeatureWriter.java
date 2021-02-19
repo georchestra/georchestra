@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.geotools.data.shapefile.ShapefileDumper;
@@ -31,7 +32,7 @@ final class ShpFeatureWriter extends FileFeatureWriter {
     }
 
     @Override
-    public File[] generateFiles() throws IOException {
+    public List<File> generateFiles() throws IOException {
 
         ShapefileDumper dumper = new ShapefileDumper(super.basedir);
         dumper.setEmptyShapefileAllowed(true);
@@ -42,9 +43,9 @@ final class ShpFeatureWriter extends FileFeatureWriter {
             LOG.error("Failed generation of " + super.features.getSchema().getName(), e);
             throw e;
         }
-        File[] files = this.basedir.listFiles();
+        List<File> files = Arrays.asList(this.basedir.listFiles());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Generated " + Arrays.stream(files).map(File::getName).collect(Collectors.joining(",")));
+            LOG.debug("Generated " + files.stream().map(File::getName).collect(Collectors.joining(",")));
         }
         return files;
     }

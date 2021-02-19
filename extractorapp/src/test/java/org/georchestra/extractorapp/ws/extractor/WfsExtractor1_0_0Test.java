@@ -231,13 +231,13 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
         FeatureWriterStrategy fw = new KMLFeatureWriter(testDir.newFolder("kmltest"), c);
 
-        File[] results = {};
+        List<File> results = null;
         try {
             results = fw.generateFiles();
         } catch (IllegalStateException e) {
             Assume.assumeNoException(e);
         }
-
+        assertNotNull(results);
         for (File i : results) {
             assertTrue("file does not exist or is empty: " + i.getName(), (i.exists() && i.length() > 0));
         }

@@ -3,9 +3,10 @@
  */
 package org.georchestra.extractorapp.ws.extractor;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
+import java.util.List;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -32,9 +33,9 @@ public class BBoxWriterTest {
         File baseDir = FileUtils.createTempDirectory();
         BBoxWriter writer = new BBoxWriter(bbox, baseDir, crs);
 
-        File[] generateFiles = writer.generateFiles();
+        List<File> generateFiles = writer.generateFiles();
 
-        assertTrue(generateFiles.length > 0);
+        assertFalse(generateFiles.isEmpty());
 
         FileUtils.delete(baseDir);
     }
