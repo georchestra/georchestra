@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
@@ -74,8 +75,7 @@ public class RoleDaoImplIT {
         // Adding another objectClass to the role "TEST_ROLE", created in @Before
         Name roleDn = roleDao.buildRoleDn("TEST_ROLE");
         DirContextOperations dco = ldapTemplate.lookupContext(roleDn);
-        ArrayList<String> oc = Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new));
+        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
         oc.add("uidObject");
         dco.setAttributeValue("uid", "1234");
         dco.setAttributeValues("objectClass", oc.toArray());

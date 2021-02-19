@@ -1,10 +1,7 @@
 package org.georchestra.console.integration.ds;
 
-import org.georchestra.console.ds.AccountDaoImpl;
+
 import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.integration.IntegrationTestSupport;
@@ -23,7 +20,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -37,7 +33,6 @@ public class OrgDaoImplIT {
     @Autowired
     LdapTemplate ldapTemplate;
 
-    Account account;
     Org org;
     OrgExt orgExt;
 
@@ -70,8 +65,7 @@ public class OrgDaoImplIT {
     @Test
     public void testObjectClassContextMapper() throws Exception {
         DirContextOperations dco = ldapTemplate.lookupContext("cn=torg,ou=orgs");
-        ArrayList<String> oc = Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new));
+        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
         // Adding a random (but valid, we're dealing with real ldap server) objectClass
         oc.add("dcObject");
         dco.setAttributeValues("objectClass", oc.toArray());
@@ -90,8 +84,7 @@ public class OrgDaoImplIT {
         };
         org.setCities(cities);
         orgDao.update(org);
-        assertTrue(Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new)).contains("dcObject"));
+        assertTrue(Arrays.asList(dco.getStringAttributes("objectClass")).contains("dcObject"));
     }
 
 }

@@ -1,9 +1,6 @@
 package org.georchestra.console.integration.ds;
 
 import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.DuplicatedUidException;
 import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
@@ -20,9 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
@@ -55,8 +51,7 @@ public class AccountDaoImplIT {
     @Test
     public void testObjectClassContextMapper() throws Exception {
         DirContextOperations dco = ldapTemplate.lookupContext("uid=userforittest,ou=users");
-        ArrayList<String> oc = Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new));
+        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
         // Adding a random (but valid, we're dealing with real ldap server) objectClass
         oc.add("dcObject");
         dco.setAttributeValues("objectClass", oc.toArray());
@@ -65,7 +60,6 @@ public class AccountDaoImplIT {
         dco = ldapTemplate.lookupContext("uid=userforittest,ou=users");
         account.setDescription("This is a new desc");
         accountDao.update(account, "test");
-        assertTrue(Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new)).contains("dcObject"));
+        assertTrue(Arrays.asList(dco.getStringAttributes("objectClass")).contains("dcObject"));
     }
 }
