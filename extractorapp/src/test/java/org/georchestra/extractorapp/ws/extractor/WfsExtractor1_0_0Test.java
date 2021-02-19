@@ -143,7 +143,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         assertTrue(this.serverWasCalled);
 
         final File[] fileNames = extract.listFiles();
-        assertEquals(10, fileNames.length);
+        assertEquals(12, fileNames.length);
         assertBoundingPolygon(extract);
 
         Collection<File> shapefiles = Collections2.filter(Arrays.asList(fileNames), new Predicate<File>() {
@@ -187,7 +187,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         assertTrue(this.serverWasCalled);
 
         List<String> fileNames = Arrays.asList(extract.list());
-        assertEquals(6, extract.listFiles().length);
+        assertEquals(7, extract.listFiles().length);
         assertBoundingPolygon(extract);
 
         Collections2.filter(fileNames, new Predicate<String>() {

@@ -107,7 +107,7 @@ public class BBoxWriter {
         try {
             Integer epsgCode = CRS.lookupEpsgCode(this.requestedCRS, false);
 
-            SimpleFeatureType type = DataUtilities.createType("bounding",
+            SimpleFeatureType type = DataUtilities.createType("bounding_POLYGON",
                     GEOMETRY_PROPERTY + ":Polygon:srid=" + epsgCode + "," + ID_PROPERTY + ":Integer");
 
             return type;

@@ -279,7 +279,9 @@ public class WfsExtractor {
 
         FeatureWriterStrategy featuresWriter;
         BBoxWriter bboxWriter;
-        LOG.debug("Number of features returned : " + features.size());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Number of features returned : " + features.size());
+        }
         switch (request._format.toLowerCase()) {
         case "shp":
             featuresWriter = new ShpFeatureWriter(sourceSchema, basedir, features);
