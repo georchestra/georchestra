@@ -20,14 +20,12 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.util.NullProgressListener;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -236,8 +234,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         SimpleFeatureType schema = ds.getSchema("savoie");
         SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
 
-        FeatureWriterStrategy fw = new KMLFeatureWriter(new NullProgressListener(), schema,
-                testDir.newFolder("kmltest"), c);
+        FeatureWriterStrategy fw = new KMLFeatureWriter(schema, testDir.newFolder("kmltest"), c);
 
         File[] results = {};
         try {

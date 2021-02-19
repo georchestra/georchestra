@@ -27,7 +27,6 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.util.ProgressListener;
 
 /**
  * This abstract class defines the template strategy required to write different
@@ -40,7 +39,6 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
 
     protected static final Log LOG = LogFactory.getLog(FileFeatureWriter.class.getPackage().getName());
 
-    protected ProgressListener progresListener;
     protected SimpleFeatureType schema;
     protected File basedir;
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> features;
@@ -48,15 +46,12 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
     /**
      * Sets the strategy parameters
      * 
-     * @param progresListener
-     * @param schema          output schema
-     * @param basedir         output base folder
-     * @param features        the input set of features to write
+     * @param schema   output schema
+     * @param basedir  output base folder
+     * @param features the input set of features to write
      */
-    public FileFeatureWriter(ProgressListener progresListener, SimpleFeatureType schema, File basedir,
-            SimpleFeatureCollection features) {
+    public FileFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
 
-        this.progresListener = progresListener;
         this.schema = schema;
         this.basedir = basedir;
         this.features = features;
