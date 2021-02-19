@@ -48,7 +48,6 @@ public class BBoxWriter {
 
     private ReferencedEnvelope bbox;
     private File baseDir;
-    private FileFormat fileFormat;
     private CoordinateReferenceSystem requestedCRS;
 
     /**
@@ -56,19 +55,15 @@ public class BBoxWriter {
      * 
      * @param bbox         the bbox used to create the polygon
      * @param baseDir      where the file is created
-     * @param format
      * @param requestedCRS CRS used to project the polygon associated to the bbox
      */
-    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format,
-            CoordinateReferenceSystem requestedCRS) {
+    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, CoordinateReferenceSystem requestedCRS) {
         assert bbox != null;
         assert baseDir != null;
-        assert format != null;
         assert requestedCRS != null;
 
         this.bbox = bbox;
         this.baseDir = baseDir;
-        this.fileFormat = format;
         this.requestedCRS = requestedCRS;
     }
 

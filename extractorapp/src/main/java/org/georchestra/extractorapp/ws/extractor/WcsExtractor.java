@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -22,8 +21,6 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 /**
  * Extracts Coverages from WCS
@@ -127,9 +124,6 @@ public class WcsExtractor {
         WcsCoverageReader reader = _format.getReader(request._url);
 
         File basedir = request.createContainingDir(_basedir);
-        if (!basedir.mkdirs() && !basedir.exists()) {
-            throw new RuntimeException("Unable to create " + basedir.getAbsolutePath());
-        }
 
         CoordinateReferenceSystem requestCRS = CRS.decode(request._epsg);
         String username;
