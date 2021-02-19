@@ -72,45 +72,6 @@ public class WfsExtractor {
             .getFilterFactory2(GeoTools.getDefaultHints());
     private static final Set<String> SUPPORTED_FORMATS = ImmutableSet.of("shp", "mif", "tab", "kml");
 
-    /**
-     * Enumerate general types of geometries we accept. Multi/normal is ignored
-     * because shapefiles are always multigeom
-     *
-     * The binding is the class to use when creating shapefile datastores
-     *
-     * @author jeichar
-     */
-    enum GeomType {
-        POINT(MultiPoint.class), LINE(MultiLineString.class), POLYGON(MultiPolygon.class), GEOMETRY(null);
-
-        public final Class<?> binding;
-
-        private GeomType(Class<?> binding) {
-            this.binding = binding;
-        }
-
-        /**
-         * Find the matching type from the geometry class
-         */
-        public static GeomType lookup(Class<?> binding) {
-            GeomType result;
-            if (Polygon.class.isAssignableFrom(binding) || MultiPolygon.class.isAssignableFrom(binding)) {
-                result = POLYGON;
-            } else if (LineString.class.isAssignableFrom(binding) || LinearRing.class.isAssignableFrom(binding)
-                    || MultiLineString.class.isAssignableFrom(binding)) {
-                result = LINE;
-            } else if (Point.class.isAssignableFrom(binding) || MultiPoint.class.isAssignableFrom(binding)) {
-                result = POINT;
-            } else if (Geometry.class.isAssignableFrom(binding) || GeometryCollection.class.isAssignableFrom(binding)) {
-                result = GEOMETRY;
-            } else {
-                throw new IllegalArgumentException(binding + " is not a recognized geometry type");
-            }
-
-            return result;
-        }
-    }
-
     private final File _basedir;
     private final String _adminUsername;
     private final String _adminPassword;
