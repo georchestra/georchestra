@@ -29,7 +29,6 @@ import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
 import org.geotools.xsd.Encoder;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.util.ProgressListener;
 
 /**
  * This class implements the KML file writing strategy
@@ -41,16 +40,14 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 
     /**
      * New instance of {@link OGRFeatureWriter}
-     *
-     * @param progressListener
-     * @param schema           output schema
-     * @param basedir          output folder
-     * @param features         input the set of Features to write
+     * 
+     * @param schema   output schema
+     * @param basedir  output folder
+     * @param features input the set of Features to write
      */
-    public KMLFeatureWriter(ProgressListener progresListener, SimpleFeatureType schema, File basedir,
-            SimpleFeatureCollection features) {
+    public KMLFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
 
-        super(progresListener, schema, basedir, features);
+        super(schema, basedir, features);
 
     }
 

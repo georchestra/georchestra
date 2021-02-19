@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.ProgressListener;
 
 /**
  * This class implements the shape file writing strategy
@@ -22,15 +22,13 @@ final class ShpFeatureWriter extends FileFeatureWriter {
     /**
      * New instance of {@link OGRFeatureWriter}
      * 
-     * @param progressListener
-     * @param schema           output schema
-     * @param basedir          output folder
-     * @param features         input the set of Features to write
+     * @param schema   output schema
+     * @param basedir  output folder
+     * @param features input the set of Features to write
      */
-    public ShpFeatureWriter(ProgressListener progresListener, SimpleFeatureType schema, File basedir,
-            SimpleFeatureCollection features) {
+    public ShpFeatureWriter(SimpleFeatureType schema, File basedir, SimpleFeatureCollection features) {
 
-        super(progresListener, schema, basedir, features);
+        super(schema, basedir, features);
 
     }
 
@@ -55,7 +53,7 @@ final class ShpFeatureWriter extends FileFeatureWriter {
             CoordinateReferenceSystem outCRS = this.features.getSchema().getCoordinateReferenceSystem();
             writeFeatures = new WriteFeatures(this.schema, this.basedir, outCRS, ds);
 
-            this.features.accepts(writeFeatures, this.progresListener);
+            this.features.accepts(writeFeatures, new NullProgressListener());
 
             files = writeFeatures.getShapeFiles();
 

@@ -35,7 +35,7 @@ public class BBoxWriterTest {
         ReferencedEnvelope bbox = new ReferencedEnvelope(227532.435762, 260426.450558, 6704235.126328, 6768637.529969,
                 crs);
         File baseDir = FileUtils.createTempDirectory();
-        BBoxWriter writer = new BBoxWriter(bbox, baseDir, format, crs, null);
+        BBoxWriter writer = new BBoxWriter(bbox, baseDir, format, crs);
 
         File[] generateFiles = writer.generateFiles();
 
