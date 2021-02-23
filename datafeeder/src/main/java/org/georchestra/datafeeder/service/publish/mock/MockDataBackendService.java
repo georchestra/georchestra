@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.io.FileUtils;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DatasetsService;
@@ -34,6 +33,7 @@ import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.shapefile.ShapefileDirectoryFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileSystemUtils;
 
 import lombok.NonNull;
 
@@ -53,7 +53,7 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
 
     @Override
     public void destroy() throws Exception {
-        directories.forEach(FileUtils::deleteQuietly);
+        directories.forEach(FileSystemUtils::deleteRecursively);
     }
 
     @Override

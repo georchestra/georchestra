@@ -13,7 +13,6 @@
   <packaging>jar</packaging>
   <name>Data-Feeder microservice</name>
   <properties>
-    <maven.test.skip>false</maven.test.skip>
     <context.name>${project.artifactId}</context.name>
     <packageDatadirScmVersion>datafeeder</packageDatadirScmVersion>
 
@@ -30,9 +29,9 @@
     <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
+    <gs-rest-java-client.version>2.19-SNAPSHOT</gs-rest-java-client.version>
   </properties>
   <repositories>
-    <!-- geotools -->
     <repository>
       <id>osgeo</id>
       <name>OSGeo Nexus Release Repository</name>
@@ -66,6 +65,11 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.geoserver.openapi</groupId>
+        <artifactId>gs-rest-java-client</artifactId>
+        <version>${gs-rest-java-client.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>${lombok.version}</version>
@@ -84,6 +88,13 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-vfs2</artifactId>
         <version>2.7.0</version>
+        <exclusions>
+          <!-- hadoop transitive dependency carries over an old version of okhttp that interferes with the geoserver rest client -->
+          <exclusion>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -91,15 +102,22 @@
         <version>1.20</version>
       </dependency>
       <dependency>
-        <groupId>org.geotools</groupId>
-        <artifactId>gt-geopkg</artifactId>
-        <version>${gt.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.geotools.jdbc</groupId>
         <artifactId>gt-jdbc-postgis</artifactId>
         <version>${gt.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-shapefile</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <!-- 
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-geopkg</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+       -->
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gt-geojson</artifactId>
@@ -145,6 +163,10 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.geoserver.openapi</groupId>
+      <artifactId>gs-rest-java-client</artifactId>
+    </dependency>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
@@ -202,22 +224,20 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geojson</artifactId>
-      <version>${gt.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geopkg</artifactId>
-      <version>${gt.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-postgis</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <!--SpringFox dependencies -->
     <dependency>
