@@ -6,6 +6,8 @@ ulimit -n 8192
 
 set -e
 
+source /docker-entrypoint.d/utils/load_secrets.sh
+
 SLAPD_FORCE_RECONFIGURE="${SLAPD_FORCE_RECONFIGURE:-false}"
 
 first_run=true

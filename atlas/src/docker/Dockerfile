@@ -14,6 +14,7 @@ CMD ["sh", "-c", "exec java \
 -Dlogback.configurationFile=/etc/georchestra/atlas/logback/logback.xml \
 -Xms$XMS -Xmx$XMX \
 ${JAVA_OPTIONS} \
+-Djetty.httpConfig.sendServerVersion=false \
 -Djetty.jmxremote.rmiregistryhost=0.0.0.0 \
 -Djetty.jmxremote.rmiserverhost=0.0.0.0 \
 -jar /usr/local/jetty/start.jar"]

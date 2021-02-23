@@ -5,10 +5,13 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.geotools.data.shapefile.ShapefileDumper;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.util.ProgressListener;
 
 /**
  * This class implements the shape file writing strategy
@@ -21,25 +24,29 @@ final class ShpFeatureWriter extends FileFeatureWriter {
     /**
      * New instance of {@link OGRFeatureWriter}
      * 
-     * @param progressListener
-     * @param schema           output schema
-     * @param basedir          output folder
-     * @param features         input the set of Features to write
+     * @param basedir  output folder
+     * @param features input the set of Features to write
      */
-    public ShpFeatureWriter(ProgressListener progresListener, SimpleFeatureType schema, File basedir,
-            SimpleFeatureCollection features) {
-
-        super(progresListener, schema, basedir, features);
-
+    public ShpFeatureWriter(File basedir, SimpleFeatureCollection features) {
+        super(basedir, features);
     }
 
-    /**
-     * @return {@link ShpDatastoreFactory}
-     */
     @Override
-    protected DatastoreFactory getDatastoreFactory() throws IOException {
-        ShpDatastoreFactory factory = new ShpDatastoreFactory();
-        return factory;
-    }
+    public List<File> generateFiles() throws IOException {
 
+        ShapefileDumper dumper = new ShapefileDumper(super.basedir);
+        dumper.setEmptyShapefileAllowed(true);
+        dumper.setCharset(StandardCharsets.UTF_8);
+        try {
+            dumper.dump(super.features);
+        } catch (IOException e) {
+            LOG.error("Failed generation of " + super.features.getSchema().getName(), e);
+            throw e;
+        }
+        List<File> files = Arrays.asList(this.basedir.listFiles());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Generated " + files.stream().map(File::getName).collect(Collectors.joining(",")));
+        }
+        return files;
+    }
 }

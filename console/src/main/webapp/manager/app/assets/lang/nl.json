@@ -212,7 +212,7 @@
   "msg.compose"           : "Een bericht opstellen",
   "msg.date"              : "Datum",
   "msg.subject"           : "Onderwerp",
-  "msg.nosubject"         : "— geen onderwerp —",
+  "msg.nosubject"         : "— geen onderwerp —",
   "msg.sender"            : "Afzender",
   "msg.messages"          : "Berichten",
   "msg.on"                : "op",
