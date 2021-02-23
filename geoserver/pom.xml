@@ -11,12 +11,12 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.16.5</gs.version>
-    <gt.version>22.5</gt.version>
-    <geofence.version>3.4.2</geofence.version>
+    <gs.version>2.17.5</gs.version>
+    <gt.version>23.5</gt.version>
+    <geofence.version>3.4.6.1</geofence.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
-    <jackson.version>2.10.1</jackson.version>
+    <jackson.version>2.10.5</jackson.version>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
     <spring.version>5.1.16.RELEASE</spring.version>
     <spring-security.version>5.1.11.RELEASE</spring-security.version>
