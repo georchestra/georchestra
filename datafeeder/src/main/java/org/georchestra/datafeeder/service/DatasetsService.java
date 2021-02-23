@@ -60,6 +60,8 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.lang.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -284,19 +286,19 @@ public class DatasetsService {
         return Optional.empty();
     }
 
-    public @NonNull DataStore loadDataStore(@NonNull Path path) {
+    final @VisibleForTesting @NonNull DataStore loadDataStore(@NonNull Path path) {
         Map<String, String> params = resolveConnectionParameters(path);
         return loadDataStore(params);
     }
 
-    public @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
+    private @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
         Map<String, String> params = resolveConnectionParameters(path);
         if (encoding != null)
             params.put(ShapefileDataStoreFactory.DBFCHARSET.key, encoding.name());
         return loadDataStore(params);
     }
 
-    public @NonNull DataStore loadDataStore(Map<String, String> params) {
+    private @NonNull DataStore loadDataStore(Map<String, String> params) {
         DataStore ds;
         try {
             ds = DataStoreFinder.getDataStore(params);
