@@ -123,7 +123,7 @@ public class GeoServerRemoteService {
         final NamespacesClient namespaces = this.client().namespaces();
 
         final String workspaceName = wsInfo.getName();
-        String defaultNamespaceURI = "http://georchestra.org/datafeeder/" + wsInfo.getName();
+        String defaultNamespaceURI = "https://georchestra.org/datafeeder/" + wsInfo.getName();
         // change the namespace URI associated to the workspace
         NamespaceInfo nsInfo = namespaces.findByPrefix(workspaceName)
                 .orElseThrow(() -> new IllegalStateException("NamespaceInfo not found for workspace " + workspaceName));
