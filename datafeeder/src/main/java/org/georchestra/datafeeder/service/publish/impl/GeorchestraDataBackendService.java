@@ -20,15 +20,11 @@ package org.georchestra.datafeeder.service.publish.impl;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
-import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
@@ -64,8 +60,6 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private @Autowired DatasetsService datasetsService;
     private @Autowired DataFeederConfigurationProperties props;
     private @Autowired GeorchestraNameNormalizer nameResolver;
-
-    private @Autowired GeorchestraNameNormalizer normalizationService;
 
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {

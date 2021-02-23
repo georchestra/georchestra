@@ -54,7 +54,6 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.wkt.Formattable;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
