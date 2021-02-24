@@ -6,8 +6,6 @@ on:
   pull_request:
     paths:
       - "ldap/**"
-  release:
-    types: [published]
 
 jobs:
   build:
