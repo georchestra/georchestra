@@ -18,8 +18,18 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
@@ -27,8 +37,13 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
+import org.geotools.jdbc.JDBCDataStore;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -55,26 +70,91 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     @Override
     public void prepareBackend(@NonNull DataUploadJob job) {
-        Map<String, String> connectionParams = resolveConnectionParams(job);
+        log.trace("START prepareBackend");
+
+        final Map<String, String> connectionParams = resolveConnectionParams(job);
+        createSchema(connectionParams);
         try {
             datasetsService.createDataStore(connectionParams);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Creates a Schema in the PostgreSQL database. The schema is defined in the
+     * connection parameters under the key
+     * 
+     * @link{PostgisNGDataStoreFactory.SCHEMA.key}.
+     * @param connectionParams
+     * @throws SQLException
+     */
+    private void createSchema(Map<String, String> connectionParams) {
+        final String schema = connectionParams.get(PostgisNGDataStoreFactory.SCHEMA.key);
+        final String sql = String.format("CREATE SCHEMA IF NOT EXISTS %s ", schema);
+
+        DataStore dataStore = null;
+        try {
+            dataStore = DataStoreFinder.getDataStore(connectionParams);
+
+            // TODO Check if we can really cast:
+            final JDBCDataStore jdbcDataStore;
+            if (dataStore instanceof JDBCDataStore) {
+                jdbcDataStore = (JDBCDataStore) dataStore;
+            } else {
+                throw new IllegalStateException("Could not cast DataStore to JDBCDataStore.");
+            }
+            final DataSource source = jdbcDataStore.getDataSource();
+            try (Connection connection = source.getConnection()) {
+                Statement stmt = connection.createStatement();
+                stmt.executeUpdate(sql);
+            } catch (SQLException e) {
+                throw new IllegalStateException(e);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            if (dataStore != null) {
+                dataStore.dispose();
+            }
         }
     }
 
     @Override
     public void importDataset(@NonNull DatasetUploadState dataset) {
+        requireNonNull(dataset.getName(), "Dataset name is null");
+        requireNonNull(dataset.getJob().getOrganizationName(), "Organization name is null");
+        requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
+
         Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
-//		try {
-//			datasetsService.importDataset(dataset, connectionParams);
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
+        try {
+            String uniqueTargetName = resolveTargetTypeName(dataset, connectionParams);
+            dataset.getPublishing().setImportedName(uniqueTargetName);
+            datasetsService.importDataset(dataset, connectionParams);
+        } catch (IOException e) {
+            log.warn("Error importing dataset", e);
+            throw new RuntimeException(e);
+        }
     }
 
-    private Map<String, String> resolveConnectionParams(DataUploadJob job) {
+    private String resolveTargetTypeName(@NonNull DatasetUploadState dataset, Map<String, String> connectionParams)
+            throws IOException {
+
+        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getName());
+        String resolvedTypeName = typeName;
+        DataStore targetStore = datasetsService.loadDataStore(connectionParams);
+        try {
+            final Set<String> typeNames = new HashSet<>(Arrays.asList(targetStore.getTypeNames()));
+            for (int deduplicator = 1; typeNames.contains(resolvedTypeName); deduplicator++) {
+                resolvedTypeName = typeName + "_" + (deduplicator);
+            }
+            return resolvedTypeName;
+        } finally {
+            targetStore.dispose();
+        }
+    }
+
+    public @VisibleForTesting Map<String, String> resolveConnectionParams(DataUploadJob job) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
         String orgName = job.getOrganizationName();
         if (orgName == null) {

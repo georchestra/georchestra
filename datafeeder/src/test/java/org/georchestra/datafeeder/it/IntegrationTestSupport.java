@@ -29,6 +29,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
@@ -45,9 +46,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Service;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -70,14 +74,18 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     private void checkDatabaseAvailability() throws SQLException {
         log.debug("Checking database availability");
-        BackendConfiguration backendConfiguration = appConfiguration.getPublishing().getBackend();
-        Map<String, String> localConnectionParameters = backendConfiguration.getLocal();
-        try (Connection conn = getConnectionFromParams(localConnectionParameters)) {
+        try (Connection conn = createLocalPostgisConnection()) {
             try (Statement st = conn.createStatement()) {
                 st.execute("SELECT 1");
                 log.debug("Local database config check success");
             }
         }
+    }
+
+    public Connection createLocalPostgisConnection() throws SQLException {
+        BackendConfiguration backendConfiguration = appConfiguration.getPublishing().getBackend();
+        Map<String, String> localConnectionParameters = backendConfiguration.getLocal();
+        return getConnectionFromParams(localConnectionParameters);
     }
 
     @SuppressWarnings("rawtypes")
@@ -142,6 +150,20 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         return template.exchange(uri, HttpMethod.GET, requestEntity, type);
+    }
+
+    public void deleteLocalDatabaseSchema(@NonNull String schema) throws SQLException {
+        try (Connection c = createLocalPostgisConnection(); Statement st = c.createStatement()) {
+            String sql = String.format("DROP SCHEMA IF EXISTS \"%s\" CASCADE", schema);
+            st.executeUpdate(sql);
+        }
+    }
+
+    public List<String> getDatabaseSchemas() throws SQLException {
+        try (Connection c = createLocalPostgisConnection(); Statement st = c.createStatement()) {
+            String sql = "select schema_name from information_schema.schemata";
+            return new JdbcTemplate(new SingleConnectionDataSource(c, true)).queryForList(sql, String.class);
+        }
     }
 
 }

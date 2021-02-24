@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraOwsPublicationService;
+import org.geoserver.openapi.v1.model.NamedLink;
 import org.geoserver.openapi.v1.model.WorkspaceSummary;
 import org.geoserver.restconfig.client.DataStoresClient;
 import org.geoserver.restconfig.client.FeatureTypesClient;
@@ -156,6 +158,8 @@ public class GeorchestraOwsPublicationServiceIT {
 
         assertTrue(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
         assertTrue(dataStores.findByWorkspaceAndName(EXPECTED_WORKSPACE, hardCodedStoreName).isPresent());
+        List<NamedLink> findFeatureTypes = featureTypes.findFeatureTypes(EXPECTED_WORKSPACE, hardCodedStoreName);
+        System.err.println(findFeatureTypes);
         assertTrue(featureTypes.getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME).isPresent());
         assertTrue(layers.getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME).isPresent());
     }

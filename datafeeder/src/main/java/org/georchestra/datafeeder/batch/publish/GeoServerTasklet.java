@@ -35,7 +35,12 @@ public class GeoServerTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.publishDatasetsToGeoServer(uploadId);
+        try {
+            service.publishDatasetsToGeoServer(uploadId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
         return RepeatStatus.FINISHED;
     }
 

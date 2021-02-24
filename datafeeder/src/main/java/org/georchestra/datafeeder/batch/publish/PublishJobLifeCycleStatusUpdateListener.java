@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.JobStatus;
-import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionListener {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
-    private @Autowired DataUploadJobRepository repository;
     private @Autowired PublishingBatchService service;
 
     @Override
@@ -49,7 +47,13 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
         switch (status) {
         case STARTING:
         case STARTED:
-            service.initializePublishingStatus(uploadId);
+            try {
+                service.initializeJobPublishingStatus(uploadId);
+            } catch (RuntimeException e) {
+                String message = e.getMessage();
+                service.setPublishingStatusError(uploadId, message);
+                throw e;
+            }
             break;
         default:
             break;
@@ -71,7 +75,7 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
             break;
         case STOPPING:
         case STOPPED:
-            repository.setPublishingStatus(uploadId, JobStatus.PENDING);
+            service.setPublishingStatus(uploadId, JobStatus.PENDING);
             break;
         case STARTED:
         case UNKNOWN:

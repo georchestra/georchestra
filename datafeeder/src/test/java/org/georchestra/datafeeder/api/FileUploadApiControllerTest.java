@@ -20,9 +20,9 @@ package org.georchestra.datafeeder.api;
 
 import static org.georchestra.datafeeder.model.JobStatus.DONE;
 import static org.georchestra.datafeeder.model.JobStatus.ERROR;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.springframework.http.HttpStatus.ACCEPTED;
