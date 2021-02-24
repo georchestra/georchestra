@@ -1,5 +1,6 @@
 {
 	"library": "spring-boot",
+	"hateoas": "true",
 	"modelPackage": "org.georchestra.datafeeder.api",
 	"apiPackage": "org.georchestra.datafeeder.api",
 	"invokerPackage": "org.georchestra.datafeeder.api",
