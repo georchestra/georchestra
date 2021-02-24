@@ -32,6 +32,9 @@ import lombok.Data;
 @Data
 @Embeddable
 public class PublishSettings {
+    @Column(name = "imported_name")
+    private String importedName;
+
     @Column(name = "published_workspace")
     private String publishedWorkspace;
 

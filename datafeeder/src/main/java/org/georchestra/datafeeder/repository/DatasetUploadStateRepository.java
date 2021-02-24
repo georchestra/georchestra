@@ -29,6 +29,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface DatasetUploadStateRepository extends JpaRepository<DatasetUploadState, Long> {
 
     @Query("select d from DatasetUploadState d where d.job.jobId = :jobId")

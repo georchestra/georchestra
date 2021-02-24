@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.NonNull;
 
+@Transactional
 public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UUID> {
 
     List<DataUploadJob> findAllByUsernameOrderByCreatedDateDesc(@NonNull String username);
@@ -49,6 +50,12 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set publishStatus = :status where jobId = :jobId")
     int setPublishingStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status);
+
+    @Transactional
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update DataUploadJob set publishStatus = :status, error = :error where jobId = :jobId")
+    int setPublishingStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status,
+            @Param("error") String errorMessage);
 
     @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)

@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -77,7 +79,9 @@ public class DataUploadJob {
     @Column(nullable = false)
     private JobStatus publishStatus = JobStatus.PENDING;
 
-    @Column
+    @Lob
+    @Column(length = 1024 * 1024)
+    @Basic(fetch = FetchType.EAGER)
     private String error;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
