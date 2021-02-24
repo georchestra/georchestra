@@ -8,8 +8,6 @@ on:
     paths:
       - "commons/**"
       - "security-proxy/**"
-  release:
-    types: [published]
 
 jobs:
   build:

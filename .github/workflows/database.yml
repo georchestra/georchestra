@@ -6,8 +6,7 @@ on:
   pull_request:
     paths:
       - "postgresql/**"
-  release:
-    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest
