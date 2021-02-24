@@ -37,6 +37,13 @@ public class GeorchestraNameNormalizer {
     }
 
     /**
+     * @return lower-cased {@link #normalizeName normalized} {@code featureTypeName}
+     */
+    public @NonNull String resolveDatabaseTableName(@NonNull String featureTypeName) {
+        return normalizeName(featureTypeName).toLowerCase();
+    }
+
+    /**
      * @return lower-cased {@link #normalizeName normalized} {@code orgName}
      */
     public String resolveWorkspaceName(String orgName) {

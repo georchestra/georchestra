@@ -18,11 +18,16 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -37,6 +42,8 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.geotools.jdbc.JDBCDataStore;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.annotations.VisibleForTesting;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -115,17 +122,39 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     @Override
     public void importDataset(@NonNull DatasetUploadState dataset) {
-        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
+        requireNonNull(dataset.getName(), "Dataset name is null");
+        requireNonNull(dataset.getJob().getOrganizationName(), "Organization name is null");
+        requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
 
+        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
         try {
+            String uniqueTargetName = resolveTargetTypeName(dataset, connectionParams);
+            dataset.getPublishing().setImportedName(uniqueTargetName);
             datasetsService.importDataset(dataset, connectionParams);
         } catch (IOException e) {
-            log.debug("Caught:", e);
+            log.warn("Error importing dataset", e);
             throw new RuntimeException(e);
         }
     }
 
-    private Map<String, String> resolveConnectionParams(DataUploadJob job) {
+    private String resolveTargetTypeName(@NonNull DatasetUploadState dataset, Map<String, String> connectionParams)
+            throws IOException {
+
+        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getName());
+        String resolvedTypeName = typeName;
+        DataStore targetStore = datasetsService.loadDataStore(connectionParams);
+        try {
+            final Set<String> typeNames = new HashSet<>(Arrays.asList(targetStore.getTypeNames()));
+            for (int deduplicator = 1; typeNames.contains(resolvedTypeName); deduplicator++) {
+                resolvedTypeName = typeName + "_" + (deduplicator);
+            }
+            return resolvedTypeName;
+        } finally {
+            targetStore.dispose();
+        }
+    }
+
+    public @VisibleForTesting Map<String, String> resolveConnectionParams(DataUploadJob job) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
         String orgName = job.getOrganizationName();
         if (orgName == null) {
