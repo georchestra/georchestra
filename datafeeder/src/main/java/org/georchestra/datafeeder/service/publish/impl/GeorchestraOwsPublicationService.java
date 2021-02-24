@@ -113,7 +113,16 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     }
 
     private Map<String, String> buildConnectionParameters(@NonNull DatasetUploadState dataset) {
-        Map<String, String> connectionParams = configProperties.getPublishing().getBackend().getGeoserver();
+        Map<String, String> connectionParams = new HashMap<>(
+                configProperties.getPublishing().getBackend().getGeoserver());
+
+        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getOrganizationName());
+        for (String k : connectionParams.keySet()) {
+            String v = connectionParams.get(k);
+            if ("<schema>".equals(v)) {
+                connectionParams.put(k, schema);
+            }
+        }
         return new HashMap<>(connectionParams);
     }
 
@@ -172,14 +181,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return keywords.stream().map(s -> new KeywordInfo().value(s)).collect(Collectors.toList());
     }
 
-    private String resolveUniqueLayerName(@NonNull String workspace, @NonNull String proposedName) {
+    private String resolveUniqueLayerName(final @NonNull String workspace, final @NonNull String proposedName) {
         String layerName = nameResolver.resolveLayerName(proposedName);
-        Optional<Layer> existing;
-        int deduplicatingCounter = 0;
-        do {
-            existing = geoserver.findLayerByName(workspace, layerName);
-            proposedName += "_" + (++deduplicatingCounter);
-        } while (existing.isPresent());
+        Optional<Layer> existingGsLayer = geoserver.findLayerByName(workspace, layerName);
+        for (int deduplicatingCounter = 1; existingGsLayer.isPresent(); deduplicatingCounter++) {
+            layerName = nameResolver.resolveLayerName(proposedName) + "_" + deduplicatingCounter;
+            existingGsLayer = geoserver.findLayerByName(workspace, layerName);
+        }
         return layerName;
     }
 
@@ -212,7 +220,8 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
         fti.addMetadatalinksItem(metadatalink);
 
-        geoserver.update(fti);
+        // TODO: revisit, giving an error.
+        // geoserver.update(fti);
     }
 
     private MetadataLinkInfo buildMetadataLink(String metadataRecordId) {

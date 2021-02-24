@@ -131,7 +131,7 @@ ne_10m_admin_0_countries.shp
 Launch the upload and analysis process with:
 
 ```bash
-curl -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -H 'sec-proxy: true' \
+curl -H 'sec-org: test org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -H 'sec-proxy: true' \
  'http://localhost:8080/import/upload' \
  -F filename=@ne_10m_admin_0_countries.shp \
  -F filename=@ne_10m_admin_0_countries.dbf \

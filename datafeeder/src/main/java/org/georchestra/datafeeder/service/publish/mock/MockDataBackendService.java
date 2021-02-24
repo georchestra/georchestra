@@ -71,6 +71,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     public void importDataset(@NonNull DatasetUploadState dataset) {
         Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
         try {
+            // use the same native featuretype name for the imported dataset featuretype
+            dataset.getPublishing().setImportedName(dataset.getName());
             datasetsService.importDataset(dataset, connectionParams);
         } catch (IOException e) {
             throw new RuntimeException(e);

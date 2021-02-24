@@ -81,8 +81,17 @@ public class PublishingBatchService {
         return job;
     }
 
+    @Transactional
     public void setPublishingStatus(@NonNull UUID jobId, @NonNull JobStatus status) {
         int recordsAffected = repository.setPublishingStatus(jobId, status);
+        if (recordsAffected != 1) {
+            throw new IllegalArgumentException("Job " + jobId + " does not exist");
+        }
+    }
+
+    @Transactional
+    public void setPublishingStatusError(@NonNull UUID jobId, @NonNull String message) {
+        int recordsAffected = repository.setPublishingStatus(jobId, JobStatus.ERROR, message);
         if (recordsAffected != 1) {
             throw new IllegalArgumentException("Job " + jobId + " does not exist");
         }
@@ -94,15 +103,9 @@ public class PublishingBatchService {
      * publishing} status to {@link JobStatus#RUNNING running}
      */
     @Transactional
-    public void initializePublishingStatus(@NonNull UUID jobId) {
+    public void initializeJobPublishingStatus(@NonNull UUID jobId) {
         DataUploadJob job = findJob(jobId);
         checkAnalisisComplete(job);
-        job.getDatasets().forEach(dset -> {
-            dset.setPublishStatus(JobStatus.RUNNING);
-            if (dset.getPublishing() == null) {
-                dset.setPublishing(new PublishSettings());
-            }
-        });
         job.setPublishStatus(JobStatus.RUNNING);
         save(job);
     }
@@ -111,9 +114,18 @@ public class PublishingBatchService {
      * 
      * @param jobId
      */
+    @Transactional
     public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId) {
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
+
         backendService.prepareBackend(job);
+
+        job.getDatasets().forEach(dset -> {
+            dset.setPublishStatus(JobStatus.RUNNING);
+            if (dset.getPublishing() == null) {
+                dset.setPublishing(new PublishSettings());
+            }
+        });
         save(job);
     }
 
@@ -168,10 +180,12 @@ public class PublishingBatchService {
     @Transactional
     public void summarize(@NonNull UUID uploadId) {
         DataUploadJob job = this.findJob(uploadId);
-        JobStatus status = determineJobStatus(job.getDatasets());
-        job.setPublishStatus(status);
-        if (JobStatus.ERROR == status) {
-            job.setError(buildErrorMessage(job.getDatasets()));
+        if (job.getPublishStatus() != JobStatus.ERROR) {
+            JobStatus status = determineJobStatus(job.getDatasets());
+            job.setPublishStatus(status);
+            if (JobStatus.ERROR == status) {
+                job.setError(buildErrorMessage(job.getDatasets()));
+            }
         }
         save(job);
     }

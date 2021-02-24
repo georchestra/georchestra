@@ -18,6 +18,8 @@
  */
 package org.georchestra.datafeeder.service;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,6 +51,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.wkt.Formattable;
@@ -61,6 +64,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.lang.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Stopwatch;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -298,7 +302,7 @@ public class DatasetsService {
         return loadDataStore(params);
     }
 
-    private @NonNull DataStore loadDataStore(Map<String, String> params) {
+    public @VisibleForTesting @NonNull DataStore loadDataStore(Map<String, String> params) {
         DataStore ds;
         try {
             ds = DataStoreFinder.getDataStore(params);
@@ -371,48 +375,90 @@ public class DatasetsService {
         }
     }
 
-    public void importDataset(DatasetUploadState d, Map<String, String> connectionParams) throws IOException {
-        DataStore sourceDs = resolveDataStore(d);
-        DataStore targetds = null;
+    public void importDataset(@NonNull DatasetUploadState d, @NonNull Map<String, String> connectionParams)
+            throws IOException {
+        requireNonNull(d.getPublishing());
+        requireNonNull(d.getPublishing().getImportedName(), "imported type name not provided");
+
+        DataStore sourceDs = resolveSourceDataStore(d);
         try {
-            targetds = loadDataStore(connectionParams);
             SimpleFeatureSource source = resolveFeatureSource(sourceDs, d);
-            SimpleFeatureType featureType = source.getSchema();
-            targetds.createSchema(featureType);
-            SimpleFeatureStore target = (SimpleFeatureStore) targetds.getFeatureSource(featureType.getTypeName());
-            Transaction gtTx = new DefaultTransaction();
+            SimpleFeatureType sourceType = source.getSchema();
+            String targetTypeName = d.getPublishing().getImportedName();
+            SimpleFeatureType targetType;
+            {
+                SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+                ftb.init(sourceType);
+                ftb.setName(targetTypeName);
+                targetType = ftb.buildFeatureType();
+            }
+            DataStore targetds = loadDataStore(connectionParams);
             try {
-                target.setTransaction(gtTx);
-                target.addFeatures(source.getFeatures());
-                gtTx.commit();
-            } catch (IOException e) {
-                gtTx.rollback();
-                throw e;
+                createSchema(targetType, targetds);
+                SimpleFeatureStore target = (SimpleFeatureStore) targetds.getFeatureSource(targetTypeName);
+                importData(source, target);
+            } finally {
+                targetds.dispose();
             }
         } finally {
             sourceDs.dispose();
-            if (targetds != null)
-                targetds.dispose();
         }
     }
 
-    private DataStore resolveDataStore(DatasetUploadState d) {
+    private void importData(SimpleFeatureSource source, SimpleFeatureStore target) throws IOException {
+        log.info("Uploading data to {}", target.getSchema().getTypeName());
+        final String typeName = target.getSchema().getTypeName();
+        final Stopwatch sw = Stopwatch.createStarted();
+
+        Transaction gtTx = new DefaultTransaction();
+        try {
+            target.setTransaction(gtTx);
+            target.addFeatures(source.getFeatures());
+            gtTx.commit();
+            log.info("Data imported to {} in {}", typeName, sw.stop());
+        } catch (IOException e) {
+            log.error("Error importing data to {}", typeName, e);
+            gtTx.rollback();
+            throw e;
+        }
+    }
+
+    private void createSchema(SimpleFeatureType featureType, DataStore targetds) throws IOException {
+        log.info("Creating FeatureType " + featureType.getTypeName());
+        try {
+            targetds.createSchema(featureType);
+            log.info("FeatureType " + featureType.getTypeName() + " created successfully");
+        } catch (IOException e) {
+            log.error("Error creating FeatureType {}", featureType.getTypeName(), e);
+            throw e;
+        }
+    }
+
+    public @VisibleForTesting DataStore resolveSourceDataStore(@NonNull DatasetUploadState d) {
         PublishSettings publishing = d.getPublishing();
+        requireNonNull(publishing, "Dataset 'publishing' settings is null");
+        requireNonNull(d.getAbsolutePath(), "Dataset file absolutePath not provided");
+
+        Path path = Paths.get(d.getAbsolutePath());
+        if (!Files.isRegularFile(path)) {
+            throw new IllegalArgumentException("Dataset absolutePath is not a file: " + path);
+        }
+
         String encoding = publishing.getEncoding() == null ? d.getEncoding() : publishing.getEncoding();
         Charset charset = encoding == null ? null : Charset.forName(encoding);
-        return loadDataStore(Paths.get(d.getAbsolutePath()), charset);
+        return loadDataStore(path, charset);
     }
 
     private SimpleFeatureSource resolveFeatureSource(DataStore store, DatasetUploadState d) throws IOException {
-        final @NonNull String nativeName = d.getName();
-        SimpleFeatureSource orig = store.getFeatureSource(nativeName);
-
-        PublishSettings publishing = d.getPublishing();
-        String typeName = publishing.getPublishedName();
-        if (typeName != null && !typeName.equals(nativeName)) {
-            throw new UnsupportedOperationException("implement!");
+        final String sourceNativeName = d.getName();
+        {
+            String[] typeNames = store.getTypeNames();
+            if (!Arrays.asList(typeNames).contains(sourceNativeName)) {
+                throw new IllegalArgumentException("Dataset name '" + sourceNativeName
+                        + "' does not exist. Type names in provided file: " + Arrays.toString(typeNames));
+            }
         }
-
+        SimpleFeatureSource orig = store.getFeatureSource(sourceNativeName);
         return orig;
     }
 }
