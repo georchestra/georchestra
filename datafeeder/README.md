@@ -104,6 +104,7 @@ geOrchestra's "security proxy" API Gateway service has been configured to redire
 A `local` spring profile exists in order to run the application in standalone mode, for debugging or otherwise. It _complements_ the `georchestra` profile by:
 
 - Replacing the location of the externalized configuration file `datafeeder.properties` by the one in `/src/test/resources/datadir/datafeeder/datafeeder.properties`
+
 - Setting up an in-memory (hence volatile) H2 databse for storage of the application data and **spring-batch** jobs.
 
 Both are configured by default, so no need to explicitly specify them in the command line run arguments.
@@ -111,6 +112,7 @@ Both are configured by default, so no need to explicitly specify them in the com
 Run from within the `datafeeder` root folder with:
 
 ```bash
+docker-compose -f docker-compose-it.yml up -d
 mvn spring-boot:run
 ```
 or create an equivalent run configuration in your IDE with `org.georchestra.datafeeder.app.DataFeederApplication` as the application's main class.

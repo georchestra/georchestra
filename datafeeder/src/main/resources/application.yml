@@ -87,7 +87,7 @@ logging.level.org.geoserver.openapi: DEBUG
 spring:
   profiles: local
 
-georchestra.datadir: src/test/resources/datadir
+#georchestra.datadir: src/test/resources/datadir
 
 datafeeder:
   file-upload:
