@@ -8,8 +8,6 @@ on:
     paths:
       - "commons/**"
       - "cas-server-webapp/**"
-  release:
-    types: [published]
 
 jobs:
   build:

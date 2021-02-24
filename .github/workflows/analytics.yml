@@ -8,8 +8,6 @@ on:
     paths:
       - "commons/**"
       - "analytics/**"
-  release:
-    types: [published]
 
 jobs:
   build:
