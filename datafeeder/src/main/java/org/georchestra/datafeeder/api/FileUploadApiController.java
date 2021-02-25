@@ -18,6 +18,9 @@
  */
 package org.georchestra.datafeeder.api;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -75,6 +78,7 @@ public class FileUploadApiController implements FileUploadApi {
             throw new RuntimeException(e);// TODO translate to ResponseStatusException
         }
         UploadJobStatus response = mapper.toApi(state);
+        response.add(linkTo(methodOn(FileUploadApiController.class).findUploadJob(uploadId)).withSelfRel());
         return ResponseEntity.accepted().body(response);
     }
 
@@ -84,6 +88,7 @@ public class FileUploadApiController implements FileUploadApi {
         DataUploadJob state = this.uploadService.findJob(uploadId)
                 .orElseThrow(() -> ApiException.notFound("upload %s does not exist", uploadId));
         UploadJobStatus response = mapper.toApi(state);
+        response.add(linkTo(methodOn(FileUploadApiController.class).findUploadJob(uploadId)).withSelfRel());
         return ResponseEntity.ok(response);
     }
 
@@ -144,6 +149,9 @@ public class FileUploadApiController implements FileUploadApi {
     public ResponseEntity<List<UploadJobStatus>> findAllUploadJobs() {
         List<DataUploadJob> all = this.uploadService.findAllJobs();
         List<UploadJobStatus> response = all.stream().map(mapper::toApi).collect(Collectors.toList());
+        response.forEach(job -> {
+            job.add(linkTo(methodOn(FileUploadApiController.class).findUploadJob(job.getJobId())).withSelfRel());
+        });
         return ResponseEntity.ok(response);
     }
 
@@ -152,6 +160,9 @@ public class FileUploadApiController implements FileUploadApi {
         String userName = validityService.getUserName();
         List<DataUploadJob> all = this.uploadService.findUserJobs(userName);
         List<UploadJobStatus> response = all.stream().map(mapper::toApi).collect(Collectors.toList());
+        response.forEach(job -> {
+            job.add(linkTo(methodOn(FileUploadApiController.class).findUploadJob(job.getJobId())).withSelfRel());
+        });
         return ResponseEntity.ok(response);
     }
 

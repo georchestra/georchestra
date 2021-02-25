@@ -72,8 +72,12 @@ spring:
   profiles: it
 georchestra.datadir: src/test/resources/datadir
 datafeeder.publishing:
-  geoserver.api-url: http://localhost:18080/geoserver/rest
-  geonetwork.api-url: http://localhost:28080/geonetwork
+  geoserver:
+    api-url: http://localhost:18080/geoserver/rest
+    public-url: http://localhost:18080/geoserver
+  geonetwork:
+    api-url: http://localhost:28080/geonetwork
+    public-url: http://localhost:28080/geonetwork
   backend.local:
     port: 15432
     database: georchestra
@@ -97,8 +101,12 @@ datafeeder:
     temporary-location: ${java.io.tmpdir}/datafeeder/tmp
     persistent-location: ${java.io.tmpdir}/datafeeder/uploads
   publishing:
-    geoserver.api-url: http://localhost:18080/geoserver/rest
-    geonetwork.api-url: http://localhost:28080/geonetwork
+    geoserver:
+      api-url: http://localhost:18080/geoserver/rest
+      public-url: http://localhost:18080/geoserver
+    geonetwork:
+      api-url: http://localhost:28080/geonetwork
+      public-url: http://localhost:28080/geonetwork
     backend:
       local:
         dbtype: postgis
