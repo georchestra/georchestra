@@ -370,15 +370,15 @@ public final class AccountDaoImpl implements AccountDao {
      * @param context
      */
     private void mapToContext(Account account, DirContextOperations context) {
-        
+
         Set<String> values = new HashSet<>();
-        
-        if( context.getStringAttributes("objectClass") != null ) {
-            Collections.addAll(values,context.getStringAttributes("objectClass"));
+
+        if (context.getStringAttributes("objectClass") != null) {
+            Collections.addAll(values, context.getStringAttributes("objectClass"));
         }
-        Collections.addAll(values, "top", "person", "organizationalPerson", "inetOrgPerson",
-                "shadowAccount", "georchestraUser", "ldapPublicKey");
-        
+        Collections.addAll(values, "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount",
+                "georchestraUser", "ldapPublicKey");
+
         if (account.getSshKeys().length == 0) {
             values.remove("ldapPublicKey");
         }

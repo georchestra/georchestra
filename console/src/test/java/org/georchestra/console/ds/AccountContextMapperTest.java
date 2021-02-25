@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.eq;
 
 public class AccountContextMapperTest {
@@ -20,7 +21,7 @@ public class AccountContextMapperTest {
                 LdapNameBuilder.newInstance("ou=pendingusers").build(), "ou=orgs,dc=georchestra,dc=org",
                 "ou=pendingorgs,dc=georchestra,dc=org");
         DirContextAdapter mockDirContextAdapter = Mockito.mock(DirContextAdapter.class);
-        SortedSet<String> roles = new TreeSet<String>();
+        SortedSet<String> roles = new TreeSet<>();
         roles.add("cn=momorg,ou=pendingorgs,dc=georchestra,dc=org");
         Mockito.when(mockDirContextAdapter.getAttributeSortedStringSet(eq("memberOf"))).thenReturn(roles);
         Mockito.when(mockDirContextAdapter.getDn())
@@ -29,7 +30,7 @@ public class AccountContextMapperTest {
         Account account = (Account) toTest.mapFromContext(mockDirContextAdapter);
 
         assertEquals("momorg", account.getOrg());
-        assertEquals(true, account.isPending());
-        assertEquals(true, account.getSshKeys().length == 0);
+        assertTrue(account.isPending());
+        assertEquals(0, account.getSshKeys().length);
     }
 }
