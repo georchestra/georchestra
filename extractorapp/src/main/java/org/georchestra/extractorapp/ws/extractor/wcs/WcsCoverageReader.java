@@ -433,7 +433,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      * 
      * @param request
      * @param file
-     * @param in
      * @throws IOException
      */
     private void writeWorldImageExt(WcsReaderRequest request, File file) throws IOException {
@@ -561,12 +560,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     private void createPrjFile(CoordinateReferenceSystem crs, String baseFilename) throws FileNotFoundException {
         LOG.debug("Writing PRJ file: " + baseFilename + ".prj");
 
-        PrintWriter out = new PrintWriter(new FileOutputStream(baseFilename + ".prj"));
-        try {
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(baseFilename + ".prj"))) {
             out.write(crs.toWKT());
             out.flush();
-        } finally {
-            out.close();
         }
     }
 
@@ -578,8 +574,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
      *
      *
      *
-     * @param imageFile
-     * @param baseFile  Basename and path for this image.
+     * @param baseFile Basename and path for this image.
      * @param ext
      * @throws IOException        In case we cannot create the world file.
      * @throws TransformException
@@ -676,10 +671,10 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     /*-------------------------  Unsupported methods  --------------------*/
-    @Override
-    public String[] listSubNames() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
-    }
+//    @Override
+//    public String[] listSubNames() {
+//        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+//    }
 
     @Override
     public int getGridCoverageCount() {
@@ -691,9 +686,9 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
 
-    @Override
-    public String getCurrentSubname() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
-    }
+//    @Override
+//    public String getCurrentSubname() {
+//        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+//    }
 
 }
