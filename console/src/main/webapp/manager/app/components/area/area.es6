@@ -252,7 +252,7 @@ class AreaController {
     this.ids = []
     this.collection.clear()
     reader.onload = () => this.$scope.$apply(() => {
-      reader.result.replace(/[\r]/g, '').split('\n').forEach(line => {
+      reader.result.replace(/\r/g, '').split('\n').forEach(line => {
         const [id] = line.split(/,|;/)
         const f = this.source.getFeatureById(id)
         if (!f) return
