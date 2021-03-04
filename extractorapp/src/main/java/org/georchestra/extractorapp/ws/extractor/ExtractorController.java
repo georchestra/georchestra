@@ -369,11 +369,8 @@ public class ExtractorController implements ServletContextAware {
 
         String servletBaseUrl = rawPublicUrl;
 
-        if (!servletBaseUrl.endsWith("/"))
-            servletBaseUrl = String.format("%s/", servletBaseUrl);
-
         // Append servlet context
-        this.servletUrl = servletBaseUrl + this.servletContext.getServletContextName();
+        this.servletUrl = servletBaseUrl + this.servletContext.getContextPath();
     }
 
     public void setAdminCredentials(UsernamePasswordCredentials adminCredentials) {
