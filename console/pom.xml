@@ -388,11 +388,11 @@
       <artifactId>ldaptive</artifactId>
       <version>1.0.3</version>
     </dependency>
-	  <dependency>
-	    <groupId>com.vladmihalcea</groupId>
-	    <artifactId>hibernate-types-52</artifactId>
-	    <version>2.10.3</version>
-	  </dependency>
+    <dependency>
+      <groupId>com.vladmihalcea</groupId>
+      <artifactId>hibernate-types-52</artifactId>
+      <version>2.10.3</version>
+    </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
