@@ -1,3 +1,8 @@
+---
+env:
+  # The following variable should be set to the same value as in the Makefile at the root of the repository
+  GEOSERVER_EXTENSION_PROFILES: colormap,mbtiles,wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,authkey,mapstore2,mbstyle,ogcapi,web-resource,flatgeobuf
+
 name: "geoserver"
 on:
   push:
@@ -8,8 +13,6 @@ on:
     paths:
       - "commons/**"
       - "geoserver/**"
-  release:
-    types: [published]
 
 jobs:
   build:
@@ -55,13 +58,13 @@ jobs:
     - name: "Building docker image with native security"
       if: github.repository == 'georchestra/georchestra'
       working-directory: geoserver/webapp
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,log4j-logstash,sentry-log4j,authkey,mapstore2 -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-log4j,${{ env.GEOSERVER_EXTENSION_PROFILES }} -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }} -DskipTests
 
 
     - name: "Building docker image with geofence"
       if: github.repository == 'georchestra/georchestra'
       working-directory: geoserver/webapp
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,geofence,log4j-logstash,sentry-log4j,authkey,mapstore2 -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,${{ env.GEOSERVER_EXTENSION_PROFILES }},geofence,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1

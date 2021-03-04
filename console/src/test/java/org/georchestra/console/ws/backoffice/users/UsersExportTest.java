@@ -118,10 +118,11 @@ import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 
@@ -176,7 +177,9 @@ public class UsersExportTest {
         Authentication auth = mock(Authentication.class);
         Collection<GrantedAuthority> authorities = Collections.singleton(AdvancedDelegationDao.ROLE_SUPERUSER);
         doReturn(authorities).when(auth).getAuthorities();
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
 
         when(accDao.findByUID(eq(account1.getUid()))).thenReturn(account1);
         when(accDao.findByUID(eq(account2.getUid()))).thenReturn(account2);

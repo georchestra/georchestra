@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>21.0-SNAPSHOT</version>
   </parent>
   <artifactId>mapfishapp</artifactId>
   <packaging>war</packaging>
@@ -167,7 +167,7 @@
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.10.8</version>
+      <version>1.10.9</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

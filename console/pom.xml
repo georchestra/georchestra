@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>21.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>console</artifactId>
@@ -388,11 +388,11 @@
       <artifactId>ldaptive</artifactId>
       <version>1.0.3</version>
     </dependency>
-    <dependency>
-      <groupId>com.vladmihalcea</groupId>
-      <artifactId>hibernate-types-52</artifactId>
-      <version>2.9.7</version>
-    </dependency>    
+	  <dependency>
+	    <groupId>com.vladmihalcea</groupId>
+	    <artifactId>hibernate-types-52</artifactId>
+	    <version>2.10.3</version>
+	  </dependency>
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>

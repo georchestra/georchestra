@@ -188,7 +188,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
       <legend>
         <s:message code="editUserDetailsForm.organisation"/> «{{org.name}}»
 				<a ng-if="isReferentOrSuperUser"
-					 href="/console/account/orgdetails"
+					 href="/console/account/orgdetails" target="_self"
 					 title="<s:message code="editUserDetailsForm.editOrg"/>"
 					 class="small pull-right" aria-label="<s:message code="editUserDetailsForm.editOrg"/>"
 				>
@@ -239,7 +239,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
           </p>
           <p>
             <a class="btn btn-primary"
-               href="<c:out value="${publicContextPath}/account/gdpr/download" />">
+               href="<c:out value="${publicContextPath}/account/gdpr/download" />" target="_blank">
               <i class="glyphicon glyphicon-download-alt"></i> <s:message
                 code="editUserDetailsForm.download"/>
             </a>
@@ -252,7 +252,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
             <s:message code="editUserDetailsForm.deleteMsg"/>
           </p>
           <p>
-            <button class="btn btn-danger">
+            <button class="btn btn-danger" ng-click="deleteUser()">
               <i class="glyphicon glyphicon-exclamation-sign"></i> <s:message
                 code="editUserDetailsForm.delete"/>
             </button>
@@ -266,23 +266,6 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
 <script src='js/bootstrap.min.js'></script>
 <%@ include file="validation.jsp" %>
 <script type="text/javascript">
-  (function () {
-    var deleteURI = "<c:out value="${publicContextPath}/account/gdpr/delete" />"
-    $('.gdpr .btn-danger').on('click', function () {
-      if (!window.confirm('<s:message code="editUserDetailsForm.deleteConfirm" />')) return false
-      fetch(deleteURI, {method: 'POST'})
-        .then(function (response) {
-          if (response.ok) {
-            window.location.href = '/logout'
-          } else {
-            alert('<s:message code="editUserDetailsForm.deleteFail" />')
-          }
-        })
-        .catch(function () {
-          alert('<s:message code="editUserDetailsForm.deleteFail" />')
-        })
-    })
-  })()
 
   /* Validate the form */
   function validate() {

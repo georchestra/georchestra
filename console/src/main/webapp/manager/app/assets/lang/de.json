@@ -212,7 +212,7 @@
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",
   "msg.subject"           : "Betreff",
-  "msg.nosubject"         : "— kein Betreff —",
+  "msg.nosubject"         : "— kein Betreff —",
   "msg.sender"            : "Absender",
   "msg.messages"          : "Nachrichten",
   "msg.on"                : "am",
@@ -286,5 +286,7 @@
   "date.custom"           : "benutzerdefinierter Zeitraum",
   "date.to"               : "bis",
   "sasl.remote.user"      : "Remote-Benutzer auf",
-  "sasl.tooltip"          : "In diesem Feld wird der Benutzername auf dem Remote-System definiert. Füllen Sie dieses Feld aus, um die Remote-Benutzerauthentifizierung zu aktivieren. Deaktivieren Sie das Feld für die lokale Authentifizierung (eine Kennwortregenerierung ist erforderlich)."
+  "sasl.tooltip"          : "In diesem Feld wird der Benutzername auf dem Remote-System definiert. Füllen Sie dieses Feld aus, um die Remote-Benutzerauthentifizierung zu aktivieren. Deaktivieren Sie das Feld für die lokale Authentifizierung (eine Kennwortregenerierung ist erforderlich).",
+  "editUserDetailsForm.deleteConfirm" : "Möchten Sie Ihr Konto wirklich löschen?",
+  "editUserDetailsForm.deleteFail" : "Konto konnte nicht gelöscht werden"
 }

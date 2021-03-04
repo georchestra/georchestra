@@ -14,12 +14,42 @@ git checkout -b 20.1
 git push origin 20.1
 ```
 
-Same has to be done for the `docker` branch:
+Same has to be done for the `docker-master` branch:
 ```
 git checkout docker-master
 git pull origin docker-master
 git checkout -b docker-20.1
 git push origin docker-20.1
+```
+
+### Docker
+
+From [master](https://github.com/georchestra/docker/tree/master), create a new branch:
+```
+git checkout master
+git pull origin master
+git checkout -b 20.1
+```
+
+Update the image tags:
+```
+sed -i 's/latest/20.1.x/g' docker-compose.yml
+```
+
+Make sure the config folder tracks the `docker-20.1` datadir branch:
+```
+$ cat .gitmodules
+[submodule "config"]
+	path = config
+	url = https://github.com/georchestra/datadir.git
+	branch = docker-20.1
+```
+
+Manually update the README and `.github/dependabot.yml`
+
+```
+git commit -am "20.1 branch"
+git push origin 20.1
 ```
 
 ### GeoServer minimal datadir

@@ -126,6 +126,9 @@ public class ExtractorLayerRequest {
         for (int i = 1; dir.exists(); i++) {
             dir = new File(basedir, dirname + "_" + i);
         }
+        if (!dir.mkdirs()) {
+            throw new RuntimeException("Unable to create " + basedir.getAbsolutePath());
+        }
         return dir;
     }
 

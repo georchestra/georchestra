@@ -97,7 +97,7 @@ GEOR.Addons.Streetview = Ext.extend(GEOR.Addons.Base, {
                     }
                     // cbll = position
                     // cbp = window size, bearing, tilt, zoom, pitch
-                    window.open("http://maps.google.com/maps?q=&layer=c&cbll="+pos.y+","+pos.x+"&cbp=12,"+pos.angle+",0,0,0");
+                    window.open(location.protocol+"//maps.google.com/maps?q=&layer=c&cbll="+pos.y+","+pos.x+"&cbp=12,"+pos.angle+",0,0,0");
                 },
                 scope: this
             },{
@@ -289,7 +289,7 @@ GEOR.Addons.Streetview = Ext.extend(GEOR.Addons.Base, {
      * 
      */
     _buildURL: function(lon, lat, angle) {
-        var base = "http://maps.googleapis.com/maps/api/streetview?",
+        var base = location.protocol+"//maps.googleapis.com/maps/api/streetview?",
             o = this.options,
             cmp = this._window,
             p = 1e6;

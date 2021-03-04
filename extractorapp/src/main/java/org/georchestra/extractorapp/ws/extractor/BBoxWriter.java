@@ -21,6 +21,7 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -32,7 +33,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.ProgressListener;
 
 /**
  * Creates the a file that contains a bounding box geometry related with the
@@ -49,8 +49,6 @@ public class BBoxWriter {
 
     private ReferencedEnvelope bbox;
     private File baseDir;
-    private FileFormat fileFormat;
-    private ProgressListener progress;
     private CoordinateReferenceSystem requestedCRS;
 
     /**
@@ -58,22 +56,16 @@ public class BBoxWriter {
      * 
      * @param bbox         the bbox used to create the polygon
      * @param baseDir      where the file is created
-     * @param format
      * @param requestedCRS CRS used to project the polygon associated to the bbox
-     * @param progress
      */
-    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, FileFormat format, CoordinateReferenceSystem requestedCRS,
-            ProgressListener progress) {
+    public BBoxWriter(ReferencedEnvelope bbox, File baseDir, CoordinateReferenceSystem requestedCRS) {
         assert bbox != null;
         assert baseDir != null;
-        assert format != null;
         assert requestedCRS != null;
 
         this.bbox = bbox;
         this.baseDir = baseDir;
-        this.fileFormat = format;
         this.requestedCRS = requestedCRS;
-        this.progress = progress;
     }
 
     /**
@@ -83,7 +75,7 @@ public class BBoxWriter {
      * 
      * @throws IOException
      */
-    public File[] generateFiles() throws IOException {
+    public List<File> generateFiles() throws IOException {
 
         // create the feature type for the bbox geometry
         SimpleFeatureType type = createFeatureType();
@@ -96,8 +88,7 @@ public class BBoxWriter {
         SimpleFeatureCollection features = DataUtilities.collection(bboxFeature);
 
         // bbox in shapefile format
-        FeatureWriterStrategy writer = new ShpFeatureWriter(this.progress, features.getSchema(), this.baseDir,
-                features);
+        FeatureWriterStrategy writer = new ShpFeatureWriter(this.baseDir, features);
         return writer.generateFiles();
     }
 
@@ -112,7 +103,7 @@ public class BBoxWriter {
         try {
             Integer epsgCode = CRS.lookupEpsgCode(this.requestedCRS, false);
 
-            SimpleFeatureType type = DataUtilities.createType("bounding",
+            SimpleFeatureType type = DataUtilities.createType("bounding_POLYGON",
                     GEOMETRY_PROPERTY + ":Polygon:srid=" + epsgCode + "," + ID_PROPERTY + ":Integer");
 
             return type;

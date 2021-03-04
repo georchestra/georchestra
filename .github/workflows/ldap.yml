@@ -6,8 +6,7 @@ on:
   pull_request:
     paths:
       - "ldap/**"
-  release:
-    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

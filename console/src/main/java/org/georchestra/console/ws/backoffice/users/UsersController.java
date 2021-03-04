@@ -130,6 +130,10 @@ public class UsersController {
         this.delegationDao = delegationDao;
     }
 
+    public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
+        this.advancedDelegationDao = advancedDelegationDao;
+    }
+
     public void setRoleDao(RoleDao roleDao) {
         this.roleDao = roleDao;
     }

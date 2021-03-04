@@ -4,19 +4,19 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>21.0-SNAPSHOT</version>
   </parent>
   <artifactId>geoserver-root</artifactId>
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.17.2</gs.version>
-    <gt.version>23.2</gt.version>
-    <geofence.version>3.4.2</geofence.version>
+    <gs.version>2.18.2</gs.version>
+    <gt.version>24.2</gt.version>
+    <geofence.version>3.4.6.1</geofence.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
-    <jackson.version>2.10.1</jackson.version>
+    <jackson.version>2.10.5</jackson.version>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
     <spring.version>5.1.16.RELEASE</spring.version>
     <spring-security.version>5.1.11.RELEASE</spring-security.version>
