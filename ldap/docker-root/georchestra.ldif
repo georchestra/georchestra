@@ -93,7 +93,7 @@ sn: geoserver_privileged_user
 mail: psc+geoserver_privileged_user@georchestra.org
 uid: geoserver_privileged_user
 cn: geoserver_privileged_user
-description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
+description: Do not modify.  This is a required user for extractorapp, mapfishapp...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
 # testpendinguser, pendingusers, georchestra.org
@@ -265,11 +265,11 @@ objectClass: top
 ou: pendingorgs
 
 
-dn: o=psc,ou=orgs,dc=georchestra,dc=org
+dn: o=PSC,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 objectClass: georchestraOrg
-o: psc
+o: PSC
 businessCategory: Association
 postalAddress: 127 rue georchestra, 73590 Chamblille
 description: Association PSC geOrchestra
@@ -326,61 +326,40 @@ jpegphoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
  fFK8aMP3iKw7qw6/gadRQAwW8eMCKML1CYGAR6D2p9FFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
  FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k=
 labeledURI: https://www.georchestra.org/
-knowledgeInformation: Internal notes
+knowledgeInformation: Internal CRM notes on PSC
 
-dn: cn=psc,ou=orgs,dc=georchestra,dc=org
+dn: cn=PSC,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
-cn: psc
-description: 62053,62267,62565,62685,62696,62862,62562
+cn: PSC
+description: 2A004,2B033
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 o: Project Steering Committee
 ou: PSC
-seeAlso: o=psc,ou=orgs,dc=georchestra,dc=org
+seeAlso: o=PSC,ou=orgs,dc=georchestra,dc=org
 
 
-dn: o=c2c,ou=orgs,dc=georchestra,dc=org
+dn: o=C2C,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 objectClass: georchestraOrg
-o: c2c
+o: C2C
 businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 labeledURI: https://www.camptocamp.com/
 description: Camptocamp SAS France
-knowledgeInformation: Notes internes
+knowledgeInformation: Internal CRM notes on Camptocamp
 
-dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
+dn: cn=C2C,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
-cn: c2c
-description: 62053
+cn: C2C
+description: 2B298,2A322,2B277,2B302,2B317,2B187,2A065,2B169,2B333,2A089,2B058,2B356,2B111,2B009,2B205,2B122,2B216,2B343,2B299,2B157,2A115,2A040,2A131,2B286,2A308,2B251,2B010,2B173,2B007,2B175,2B135,2A284,2B176,2B341,2B162,2A212,2A279,2A035,2A300,2B050,2B182,2A249,2A247,2B242,2A272,2B224,2B185,2B267,2B355,2A215,2A103,2A128,2A358,2A331,2A276,2A118,2A129,2A018,2B337,2A132,2A228,2A189,2A127,2B303,2B329,2B264,2A349,2A024,2B046,2A160,2A038,2B304,2B230,2A232,2A186,2A288,2B121,2B136,2B177,2B328,2A203,2A041,2A324,2A330,2B073,2B190,2B168,2B023,2A211,2B025,2B167,2A204,2B052,2A345,2A266,2A070,2A144,2A196,2A141,2A019,2B342,2A191,2B257,2B289,2A071,2A098,2B002,2A026,2A181,2B214,2B229,2A351,2B159,2B149,2B265,2B235,2A064,2A312,2A209,2A326,2A001,2A017,2A295,2A056,2A085,2A006,2A062,2A360,2A282,2B233,2B043,2B156,2B095,2A198,2A174,2A104,2B034,2B134,2B084,2B112,2B296,2A028,2B165,2B199,2B231,2A100,2B361,2A323,2B138,2B020,2B339,2B150,2B352,2B047,2B316,2B153,2A154,2A262,2A259,2A014,2A258,2A027,2A060,2A336,2B110,2B086,2B309,2B107,2B305,2B030,2B152,2B281,2B327,2B353,2B170,2B183,2B109,2B178,2B184,2B344,2B105,2B366,2B012,2A146,2A163,2A270,2A357,2A011,2A142,2A139,2A066,2A310,2A021,2A158,2A092,2A254,2A285,2B180,2B306,2B083,2B042,2B069,2B301,2B202,2B221,2B036,2B057,2B250,2B291,2B227,2B274,2B003,2B172,2B102,2B193,2B081,2B243,2B313,2B072,2B256,2B143,2B245,2B207,2B054,2B005,2B273,2B148,2B246,2B338,2B239,2B140,2B350,2B101,2B225,2B194,2B120,2B166,2B063,2B234,2B280,2B307,2B161,2B335,2B106,2B297,2B319,2B241,2B059,2B179,2B087,2B321,2B340,2B077,2B113,2B068,2B145,2B125,2B037,2B078,2B208,2B029,2B055,2B013,2B088,2B222,2B334,2B320,2B318,2B287,2B220,2B051,2B079,2B255,2B067,2B045,2B137,2B213,2B080,2B219,2B082,2B217,2B188,2B210,2B293,2B206,2B332,2B248,2B275,2B292,2B195,2B192,2B039,2B164,2B315,2B053,2B226,2B074,2B016,2B236,2B075,2B263,2B124,2B123,2B126,2B116,2B015,2B365,2B364,2A133,2B096,2B260,2B347,2A094,2B171,2A117,2A269,2A359,2A268,2B283,2A099,2A200,2A031,2B311,2B346,2B290,2B097,2B147,2A363,2A278,2A197,2B252,2B155,2B244,2B223,2A114,2A061,2B354,2B218,2A108,2A048,2A032,2A271,2A253,2A119,2A022,2B238,2B201,2B314,2B261,2B093,2B049,2A362,2A348,2A240,2A130,2A091,2A090,2A008,2A004,2B033
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 o: Camptocamp
 ou: C2C
 seeAlso: o=c2c,ou=orgs,dc=georchestra,dc=org
-
-dn: o=cra,ou=orgs,dc=georchestra,dc=org
-objectClass: organization
-objectClass: georchestraOrg
-objectClass: top
-o: cra
-businessCategory: Company
-postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
-labeledURI: https://www.grandest.fr/
-description: Conseil Régional
-knowledgeInformation: Notes sur l'organisme CRA
-
-dn: cn=cra,ou=orgs,dc=georchestra,dc=org
-objectClass: groupOfMembers
-objectClass: top
-cn: cra
-description: 62053
-member: uid=testreviewer,ou=users,dc=georchestra,dc=org
-o: Conseil régional d'Alsace
-ou: CRA
-seeAlso: o=cra,ou=orgs,dc=georchestra,dc=org
 
 dn: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: organization
@@ -390,7 +369,7 @@ o: pendingorg
 businessCategory: Company
 postalAddress: Null island
 labeledURI: https://www.fictive.pending.org/
-description: Pending org on Null Island
+description: Organisation pending validation
 
 dn: cn=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -399,5 +378,5 @@ cn: pendingorg
 description: 59107
 member: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 o: Fictive org pending admin validation
-ou: PENDINGORG
+ou: pendingorg
 seeAlso: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
