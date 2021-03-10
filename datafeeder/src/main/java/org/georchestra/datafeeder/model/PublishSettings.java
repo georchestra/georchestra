@@ -21,10 +21,13 @@ package org.georchestra.datafeeder.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 
 import lombok.Data;
@@ -71,4 +74,5 @@ public class PublishSettings {
 
     @Column(name = "md_creation_process_desc")
     private String datasetCreationProcessDescription;
+
 }

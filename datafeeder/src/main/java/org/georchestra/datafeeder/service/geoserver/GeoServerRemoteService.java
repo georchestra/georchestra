@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.publish.impl;
+package org.georchestra.datafeeder.service.geoserver;
 
 import static java.util.Objects.requireNonNull;
 

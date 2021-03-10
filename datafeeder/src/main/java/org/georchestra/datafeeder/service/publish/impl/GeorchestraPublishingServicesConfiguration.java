@@ -18,14 +18,19 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
+import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
+import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.geoserver.restconfig.client.GeoServerClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -41,12 +46,23 @@ import org.springframework.context.annotation.Profile;
 @Profile("!mock")
 public class GeorchestraPublishingServicesConfiguration {
 
+    private @Autowired DataFeederConfigurationProperties config;
+
     public @Bean DataBackendService dataBackendService() {
         return new GeorchestraDataBackendService();
     }
 
     public @Bean OWSPublicationService owsPublicationService() {
         return new GeorchestraOwsPublicationService();
+    }
+
+    public @Bean MetadataPublicationService metadataPublicationService() {
+        return new GeorchestraMetadataPublicationService(geoNetworkRemoteService());
+    }
+
+    public @Bean GeoNetworkRemoteService geoNetworkRemoteService() {
+        URL apiURL = config.getPublishing().getGeonetwork().getApiUrl();
+        return new GeoNetworkRemoteService(apiURL);
     }
 
     public @Bean GeoServerClient geoServerApiClient(DataFeederConfigurationProperties props) {
@@ -67,4 +83,5 @@ public class GeorchestraPublishingServicesConfiguration {
     public @Bean GeoServerRemoteService geoServerRemoteService() {
         return new GeoServerRemoteService();
     }
+
 }
