@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -16,21 +16,12 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.model;
+package org.georchestra.datafeeder.service.geonetwork;
 
-import javax.persistence.Embeddable;
+import org.springframework.http.HttpHeaders;
 
-import lombok.Data;
+public interface GeoNetworkClient {
 
-@Data
-@Embeddable
-public class Envelope {
-    private Double minx;
-    private Double maxx;
-    private Double miny;
-    private Double maxy;
+    GeoNetworkResponse putXmlRecord(String url, HttpHeaders additionalRequestHeaders, String xmlRecord);
 
-    public org.locationtech.jts.geom.Envelope toJTS() {
-        return new org.locationtech.jts.geom.Envelope(minx, maxx, miny, maxy);
-    }
 }

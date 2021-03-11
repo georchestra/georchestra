@@ -19,25 +19,37 @@
 package org.georchestra.datafeeder.service.publish.impl;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
+import org.georchestra.datafeeder.service.geonetwork.GeoNetworkResponse;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
+import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.ContactInfo;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.OnlineResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GeorchestraMetadataPublicationService implements MetadataPublicationService {
 
     private GeoNetworkRemoteService geonetwork;
+    private PublishingConfiguration publishingConfiguration;
 
-    public @Autowired GeorchestraMetadataPublicationService(@NonNull GeoNetworkRemoteService geonetwork) {
+    public @Autowired GeorchestraMetadataPublicationService(@NonNull GeoNetworkRemoteService geonetwork,
+            PublishingConfiguration publishingConfiguration) {
+        this.publishingConfiguration = publishingConfiguration;
         this.geonetwork = geonetwork;
     }
 
@@ -51,9 +63,11 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         Objects.requireNonNull(dataset.getPublishing());
 
         MetadataRecordProperties mdProps = toRecordProperties(dataset);
+        String metadataId = mdProps.getMetadataId();
+
         Supplier<String> resolvedTemplate = applyTemplate(mdProps);
-        String generatedId = geonetwork.publish(resolvedTemplate);
-        dataset.getPublishing().setMetadataRecordId(generatedId);
+        GeoNetworkResponse response = geonetwork.publish(resolvedTemplate);
+		dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
     private Supplier<String> applyTemplate(MetadataRecordProperties mdProps) {
@@ -68,6 +82,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
         MetadataRecordProperties m = new MetadataRecordProperties();
         m.setMetadataId(metadataId);
+
         m.setName(p.getPublishedName());
         m.setTitle(p.getTitle());
         m.setAbstract(p.getAbstract());
@@ -87,23 +102,117 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         m.setDistributionFormat("ESRI Shapefile");
         m.setDistributionFormatVersion("1.0");
         // m.setSpatialRepresentation("vector"); REVISIT
-//		p.getGeographicBoundingBox();
+        if (null != p.getGeographicBoundingBox()) {
+            m.setGeographicBoundingBox(p.getGeographicBoundingBox().toJTS());
+        }
+        m.setCoordinateReferenceSystem(p.getSrs());
+        final LocalDateTime now = LocalDateTime.now();
+        m.setMetadataPublicationDate(now.toLocalDate());
+        m.setMetadataTimestamp(now);
+
+        if (null != p.getScale()) {
+            m.setSpatialResolution(p.getScale().intValue());
+        }
+        m.setUseLimitation("ODBL");// REVISIT from config?
+        m.setAccessConstraints("otherRestrictions");
+        m.setUseConstraints("license");
+        m.setDatasetResponsibleParty(datasetResponsibleParty(d));
+        m.setMetadataResponsibleParty(metadataResponsibleParty(d));
+        m.setMetadataLanguage("eng");// REVISIT: from config?
+        m.setGraphicOverview(graphicOverview(d));
+        m.setUpdateFequency("asNeeded");
         return m;
     }
 
-    private OnlineResource wmsOnlineResource(DatasetUploadState d) {
+    private URI graphicOverview(DatasetUploadState d) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+//	"computed from LDAP / sec-* headers
+//	individualName = sec-firstname + ' ' + sec-lastname
+//	organisationName = sec-orgname
+//	adress = postalAddress from LDAP (to be discussed)
+//	email = sec-email
+//	linkage = labeledURI from LDAP 
+//	protocol = URL
+//	name = sec-orgname
+//	as in https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml"
+    private ContactInfo metadataResponsibleParty(DatasetUploadState d) {
+        String organizationName = d.getJob().getOrganizationName();
+        String username = d.getJob().getUsername();
+        ContactInfo contact = new ContactInfo();
+        contact.setIndividualName(username);
+        contact.setName(organizationName);
+        contact.setOrganizationName(organizationName);
+        log.warn("TODO: implement metadataResponsibleParty");
+        return contact;
+    }
+
+//	"computed from LDAP / sec-* headers 
+//	individualName = sec-firstname + ' ' + sec-lastname 
+//	organisationName = sec-orgname
+//	adress = postalAddress from LDAP (to be discussed) 
+//	email = sec-email"
+    private ContactInfo datasetResponsibleParty(DatasetUploadState d) {
+        String organizationName = d.getJob().getOrganizationName();
+        String username = d.getJob().getUsername();
+
+        ContactInfo contact = new ContactInfo();
+        contact.setIndividualName(username);
+        contact.setOrganizationName(organizationName);
+
+        log.warn("TODO: implement datasetResponsibleParty");
+        return contact;
+    }
+
+    private OnlineResource wmsOnlineResource(DatasetUploadState d) {
+        String protocol = "OGC:WMS";
+        String description = d.getPublishing().getTitle() + " - WMS";
+        String queryString = "SERVICE=WMS&REQUEST=GetCapabilities";
+        return onlineResource(d, protocol, description, queryString);
     }
 
     private OnlineResource wfsOnlineResource(DatasetUploadState d) {
-        // TODO Auto-generated method stub
-        return null;
+        String protocol = "OGC:WFS";
+        String description = d.getPublishing().getTitle() + " - WFS";
+        String queryString = "SERVICE=WFS&REQUEST=GetCapabilities";
+        return onlineResource(d, protocol, description, queryString);
     }
 
     private OnlineResource downloadOnlineResource(DatasetUploadState d) {
-        // TODO Auto-generated method stub
-        return null;
+        String protocol = "OGC:WFS";
+        String description = d.getPublishing().getTitle() + " - WFS";
+        String layer = d.getPublishing().getPublishedName();
+        String queryString = String.format("SERVICE=WFS&REQUEST=GetFeature&typename=%s&outputformat=shape-zip", layer);
+        return onlineResource(d, protocol, description, queryString);
     }
 
+    private OnlineResource onlineResource(DatasetUploadState d, String protocol, String description,
+            String queryString) {
+        OnlineResource r = new OnlineResource();
+        PublishSettings p = d.getPublishing();
+        String publishedName = p.getPublishedName();
+        String workspace = p.getPublishedWorkspace();
+
+        r.setName(publishedName);
+        r.setDescription(description);
+        r.setProtocol(protocol);
+
+        URL base = publishingConfiguration.getGeoserver().getPublicUrl();
+        UriComponentsBuilder builder;
+        try {
+            builder = UriComponentsBuilder.fromUri(base.toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+        String basePath = base.getPath();
+        String path = String.format("%s/%s", basePath, workspace);
+        builder.path(path);
+        builder.query(queryString);
+
+        URI linkage = builder.build().toUri();
+        r.setLinkage(linkage);
+        return r;
+    }
 }

@@ -57,12 +57,14 @@ public class GeorchestraPublishingServicesConfiguration {
     }
 
     public @Bean MetadataPublicationService metadataPublicationService() {
-        return new GeorchestraMetadataPublicationService(geoNetworkRemoteService());
+        return new GeorchestraMetadataPublicationService(geoNetworkRemoteService(), config.getPublishing());
     }
 
     public @Bean GeoNetworkRemoteService geoNetworkRemoteService() {
-        URL apiURL = config.getPublishing().getGeonetwork().getApiUrl();
-        return new GeoNetworkRemoteService(apiURL);
+        ExternalApiConfiguration gnConfig = config.getPublishing().getGeonetwork();
+        URL apiURL = gnConfig.getApiUrl();
+        URL publicUrl = gnConfig.getPublicUrl();
+        return new GeoNetworkRemoteService(apiURL, publicUrl);
     }
 
     public @Bean GeoServerClient geoServerApiClient(DataFeederConfigurationProperties props) {
