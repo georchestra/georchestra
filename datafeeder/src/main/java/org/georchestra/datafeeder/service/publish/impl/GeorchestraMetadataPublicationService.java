@@ -67,7 +67,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
         Supplier<String> resolvedTemplate = applyTemplate(mdProps);
         GeoNetworkResponse response = geonetwork.publish(resolvedTemplate);
-		dataset.getPublishing().setMetadataRecordId(metadataId);
+        dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
     private Supplier<String> applyTemplate(MetadataRecordProperties mdProps) {
