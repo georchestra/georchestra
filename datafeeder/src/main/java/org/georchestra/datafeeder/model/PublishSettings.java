@@ -75,4 +75,11 @@ public class PublishSettings {
     @Column(name = "md_creation_process_desc")
     private String datasetCreationProcessDescription;
 
+    @Embedded
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "minx", column = @Column(name = "md_geog_minx")), //
+            @AttributeOverride(name = "maxx", column = @Column(name = "md_geog_maxx")), //
+            @AttributeOverride(name = "miny", column = @Column(name = "md_geog_miny")), //
+            @AttributeOverride(name = "maxy", column = @Column(name = "md_geog_maxy")) })
+    private Envelope geographicBoundingBox;
 }
