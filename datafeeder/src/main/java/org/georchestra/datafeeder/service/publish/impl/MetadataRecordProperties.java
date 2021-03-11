@@ -24,10 +24,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.locationtech.jts.geom.Envelope;
+
 import lombok.Data;
 
 @Data
 public class MetadataRecordProperties {
+    String metadataId;
     String name;
     String title;
     String Abstract;
@@ -47,7 +50,7 @@ public class MetadataRecordProperties {
 
     // TBD
     // String topicCategory;
-    double[] geographicBoundingBox;
+    Envelope geographicBoundingBox;
     String coordinateReferenceSystem;
     LocalDate metadataPublicationDate;
     Integer spatialResolution;
@@ -58,7 +61,6 @@ public class MetadataRecordProperties {
     ContactInfo metadataResponsibleParty;
     LocalDateTime metadataTimestamp;
     String metadataLanguage;
-    String metadataId;
     URI graphicOverview;// provided by template?
     String updateFequency = "asNeeded";
 

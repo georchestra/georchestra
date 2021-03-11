@@ -76,8 +76,8 @@ datafeeder.publishing:
     api-url: http://localhost:18080/geoserver/rest
     public-url: http://localhost:18080/geoserver
   geonetwork:
-    api-url: http://localhost:28080/geonetwork
-    public-url: http://localhost:28080/geonetwork
+    api-url: http://localhost:28080/geonetwork/srv/api/0.1
+    public-url: https://georchestra.mydomain.org/geonetwork
   backend.local:
     port: 15432
     database: georchestra
