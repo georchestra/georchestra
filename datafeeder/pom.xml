@@ -24,6 +24,9 @@
     <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
     <lombok.version>1.18.12</lombok.version>
+
+    <jackson-threetenbp-version>2.6.4</jackson-threetenbp-version>
+
     <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
@@ -152,6 +155,14 @@
         <artifactId>guava</artifactId>
         <version>30.1-jre</version>
       </dependency>
+      
+      <!-- GeoNetwork client library deps -->
+      <dependency>
+        <groupId>com.github.joschi.jackson</groupId>
+        <artifactId>jackson-datatype-threetenbp</artifactId>
+        <version>${jackson-threetenbp-version}</version>
+      </dependency>
+            
       <!-- test deps -->
       <dependency>
         <groupId>org.geotools</groupId>
@@ -276,6 +287,7 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

@@ -28,8 +28,6 @@ import java.net.URI;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraIntegrationAutoConfiguration;
-import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
-import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.georchestra.datafeeder.it.IntegrationTestSupport;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
 import org.junit.Test;
@@ -54,13 +52,10 @@ import com.google.common.io.CharStreams;
 @ActiveProfiles(value = { "georchestra", "it" })
 public class GeoNetworkRemoteServiceIT {
 
-    private @Autowired DataFeederConfigurationProperties config;
-
     private @Autowired GeoNetworkRemoteService service;
 
     @Test
     public void buildMetadataRecordURI() {
-        ExternalApiConfiguration gnconfig = config.getPublishing().getGeonetwork();
         URI recordUri = service.buildMetadataRecordURI("someid");
         assertEquals("https://georchestra.mydomain.org/geonetwork?uuid=someid", recordUri.toString());
     }

@@ -43,7 +43,7 @@ public class GeoNetworkRemoteServiceTest {
     private URL publicURL;
 
     public @Before void before() throws Exception {
-        apiURL = new URL("http://geonetwork/geonetwork/srv/api/0.1/");
+        apiURL = new URL("http://geonetwork:8080/geonetwork");
         publicURL = new URL("https://test.georchestra.mydomain.org/geonetwork");
 
         service = spy(new GeoNetworkRemoteService(apiURL, publicURL));
@@ -75,7 +75,7 @@ public class GeoNetworkRemoteServiceTest {
         GeoNetworkClient client = mock(GeoNetworkClient.class);
         service.setClient(client);
 
-        String expectedURL = "http://geonetwork/geonetwork/srv/api/0.1/records?metadataType=METADATA&uuidProcessing=NOTHING&rejectIfInvalid=true&transformWith=_none_";
+        String expectedURL = "http://geonetwork:8080/geonetwork";
         GeoNetworkResponse response = new GeoNetworkResponse();
         response.setStatus(HttpStatus.CREATED);
 
