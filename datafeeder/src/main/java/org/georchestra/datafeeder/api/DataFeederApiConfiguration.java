@@ -18,6 +18,10 @@
  */
 package org.georchestra.datafeeder.api;
 
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -30,4 +34,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         jsr250Enabled = true // enable @RolesAllowed annotation in API methods
 )
 public @Configuration class DataFeederApiConfiguration extends GlobalMethodSecurityConfiguration {
+
+    @ConditionalOnMissingBean(DataFeederConfigurationProperties.class)
+    @ConfigurationProperties(prefix = "datafeeder")
+    public @Bean DataFeederConfigurationProperties configProperties() {
+        return new DataFeederConfigurationProperties();
+    }
+
 }
