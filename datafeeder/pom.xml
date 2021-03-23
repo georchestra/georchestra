@@ -27,7 +27,7 @@
     <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
-    <gs-rest-java-client.version>2.19-SNAPSHOT</gs-rest-java-client.version>
+    <gs-rest-java-client.version>2.20-SNAPSHOT</gs-rest-java-client.version>
   </properties>
   <repositories>
     <repository>
@@ -63,8 +63,8 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.geoserver.openapi</groupId>
-        <artifactId>gs-rest-java-client</artifactId>
+        <groupId>org.geoserver.community</groupId>
+        <artifactId>gs-rest-openapi-java-client</artifactId>
         <version>${gs-rest-java-client.version}</version>
       </dependency>
       <dependency>
@@ -167,8 +167,8 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.geoserver.openapi</groupId>
-      <artifactId>gs-rest-java-client</artifactId>
+      <groupId>org.geoserver.community</groupId>
+      <artifactId>gs-rest-openapi-java-client</artifactId>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
