@@ -53,8 +53,6 @@ docker-build-mapfishapp: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
 docker-build-datafeeder: 
-	# build geoserver-rest-openapi just until we find a public maven repo for it
-	mvn clean install -DskipTests -f datafeeder/geoserver-rest-openapi/ && \
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn3
