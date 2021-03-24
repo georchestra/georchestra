@@ -116,34 +116,9 @@ public class GeoNetworkRemoteService {
      * @return
      */
     public GeoNetworkResponse publish(@NonNull Supplier<String> xmlRecordAsString) {
-//
-//        final String url = URI.create(apiURL.toExternalForm() + "/records").normalize().toString()
-//                + "?metadataType=METADATA&recursiveSearch=false&assignToCatalog=false&uuidProcessing=NOTHING&rejectIfInvalid=false&transformWith=_none_";
+
         final String url = apiBaseURL.toString();
         final String xmlRecord = xmlRecordAsString.get();
-
-//		  -H 'accept: application/json' \
-//		  -H 'Content-Type: application/xml' \
-//		  -H 'X-XSRF-TOKEN: c9f33266-e242-4198-a18c-b01290dce5f1' \
-//		  -H 'Cookie: XSRF-TOKEN=c9f33266-e242-4198-a18c-b01290dce5f1' \
-//		  -H 'sec-username: testadmin' \
-//		  -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' \
-//		  -H 'sec-proxy: true' \
-//		  -H 'sec-org: Datafeeder Test' \
-
-//        > Host: localhost:28080
-//        > User-Agent: curl/7.68.0
-//        > Accept-Encoding: deflate, gzip, br
-//        > accept: application/json
-//        > X-XSRF-TOKEN: c9f33266-e242-4198-a18c-b01290dce5f1
-//        > Cookie: XSRF-TOKEN=c9f33266-e242-4198-a18c-b01290dce5f1
-//        > Content-Type: application/xml
-//        > sec-username: testadmin
-//        > sec-roles: ROLE_USER;ROLE_ADMINISTRATOR
-//        > sec-proxy: true
-//        > sec-org: Datafeeder Test
-//        > Content-Length: 47097
-//        > Expect: 100-continue
 
         HttpHeaders reqHeaders = new HttpHeaders();
         reqHeaders.set("Host", "localhost:28080");
@@ -164,7 +139,6 @@ public class GeoNetworkRemoteService {
 
         HttpStatus statusCode = response.getStatus();
         String statusText = response.getStatusText();
-//		HttpHeaders headers = response.getHeaders();
 
         if (statusCode.is2xxSuccessful()) {
             return response;

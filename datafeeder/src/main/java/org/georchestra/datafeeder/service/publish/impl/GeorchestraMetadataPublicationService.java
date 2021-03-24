@@ -46,9 +46,13 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
     private GeoNetworkRemoteService geonetwork;
     private PublishingConfiguration publishingConfiguration;
+    private TemplateMapper templateMapper;
 
-    public @Autowired GeorchestraMetadataPublicationService(@NonNull GeoNetworkRemoteService geonetwork,
+    public @Autowired GeorchestraMetadataPublicationService(//
+            @NonNull GeoNetworkRemoteService geonetwork, //
+            @NonNull TemplateMapper templateMapper, //
             PublishingConfiguration publishingConfiguration) {
+        this.templateMapper = templateMapper;
         this.publishingConfiguration = publishingConfiguration;
         this.geonetwork = geonetwork;
     }
@@ -65,14 +69,9 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         MetadataRecordProperties mdProps = toRecordProperties(dataset);
         String metadataId = mdProps.getMetadataId();
 
-        Supplier<String> resolvedTemplate = applyTemplate(mdProps);
-        GeoNetworkResponse response = geonetwork.publish(resolvedTemplate);
+        Supplier<String> record = templateMapper.apply(mdProps);
+        GeoNetworkResponse response = geonetwork.publish(record);
         dataset.getPublishing().setMetadataRecordId(metadataId);
-    }
-
-    private Supplier<String> applyTemplate(MetadataRecordProperties mdProps) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     private MetadataRecordProperties toRecordProperties(DatasetUploadState d) {
