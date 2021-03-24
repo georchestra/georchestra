@@ -146,6 +146,11 @@
         <version>1.2</version>
       </dependency>
       <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>Saxon-HE</artifactId>
+        <version>9.9.1-8</version>
+      </dependency>
+      <dependency>
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
         <version>2.11.3</version>
@@ -283,6 +288,11 @@
     <dependency>
       <groupId>io.github.threeten-jaxb</groupId>
       <artifactId>threeten-jaxb-core</artifactId>
+    </dependency>
+      <!-- Need Saxon for XSLT, the Java8 internal Xalan-based one does not handle "node-set" parameters -->
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openapitools</groupId>

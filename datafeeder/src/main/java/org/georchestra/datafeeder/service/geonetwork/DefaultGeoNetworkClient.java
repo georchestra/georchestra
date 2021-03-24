@@ -67,7 +67,6 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         String extra = null;
 
         SimpleMetadataProcessingReport report;
-        System.err.println(xml);
         try {
             report = api.insert(xml, metadataType, url, serverFolder, recursiveSearch, assignToCatalog, uuidProcessing,
                     group, category, rejectIfInvalid, transformWith, schema, extra);

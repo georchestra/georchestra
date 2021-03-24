@@ -57,7 +57,8 @@ public class GeorchestraPublishingServicesConfiguration {
     }
 
     public @Bean MetadataPublicationService metadataPublicationService() {
-        return new GeorchestraMetadataPublicationService(geoNetworkRemoteService(), config.getPublishing());
+        return new GeorchestraMetadataPublicationService(geoNetworkRemoteService(), templateMapper(),
+                config.getPublishing());
     }
 
     public @Bean GeoNetworkRemoteService geoNetworkRemoteService() {
@@ -65,6 +66,10 @@ public class GeorchestraPublishingServicesConfiguration {
         URL apiURL = gnConfig.getApiUrl();
         URL publicUrl = gnConfig.getPublicUrl();
         return new GeoNetworkRemoteService(apiURL, publicUrl);
+    }
+
+    public @Bean TemplateMapper templateMapper() {
+        return new GeorchestraTemplateMapper();
     }
 
     public @Bean GeoServerClient geoServerApiClient(DataFeederConfigurationProperties props) {

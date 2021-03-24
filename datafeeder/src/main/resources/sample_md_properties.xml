@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<properties>
+    <metadataId>3d7ea7eb-6538-43d2-a2d5-eb22c646851c</metadataId>
+    <name>test name</name>
+    <title>test title</title>
+    <abstract>test abstract</abstract>
+    <keywords>
+        <keyword>k1</keyword>
+        <keyword>k2</keyword>
+        <keyword>k 3</keyword>
+    </keywords>
+    <creationDate>2021-03-23</creationDate>
+    <lineage>test lineage</lineage>
+    <resourceType>series</resourceType>
+    <onlineResources>
+        <onlineResource>
+            <description>test description 1</description>
+            <linkage>http://test.com/onlineresource/1</linkage>
+            <name>1</name>
+            <protocol>http</protocol>
+        </onlineResource>
+        <onlineResource>
+            <description>test description 2</description>
+            <linkage>http://test.com/onlineresource/2</linkage>
+            <name>2</name>
+            <protocol>http</protocol>
+        </onlineResource>
+    </onlineResources>
+    <dataIdentifier>http://test.com</dataIdentifier>
+    <datasetLanguage>esp</datasetLanguage>
+    <distributionFormat>GeoPackage</distributionFormat>
+    <distributionFormatVersion>1.0</distributionFormatVersion>
+    <charsetEncoding>ISO-8859-1</charsetEncoding>
+    <spatialRepresentation>vector</spatialRepresentation>
+    <geographicBoundingBox minx="-180.0" maxx="180.0" miny="-90.0" maxy="90.0"/>
+    <coordinateReferenceSystem>EPSG:4326</coordinateReferenceSystem>
+    <metadataPublicationDate>2021-03-23</metadataPublicationDate>
+    <spatialResolution>500000</spatialResolution>
+    <useLimitation>ODBL</useLimitation>
+    <accessConstraints>test constraints</accessConstraints>
+    <useConstraints>license</useConstraints>
+    <datasetResponsibleParty>
+        <address>test address</address>
+        <email>test@email.com</email>
+        <individualName>John Doe</individualName>
+        <linkage>http://test.com/johndoe</linkage>
+        <name>john</name>
+        <organizationName>Test Org</organizationName>
+        <protocol>Dr.</protocol>
+    </datasetResponsibleParty>
+    <metadataResponsibleParty>
+        <address>test address</address>
+        <email>test@email.com</email>
+        <individualName>John Doe</individualName>
+        <linkage>http://test.com/johndoe</linkage>
+        <name>john</name>
+        <organizationName>Test Org</organizationName>
+        <protocol>Dr.</protocol>
+    </metadataResponsibleParty>
+    <metadataTimestamp>2021-03-23T23:46:56.05</metadataTimestamp>
+    <metadataLanguage>eng</metadataLanguage>
+    <graphicOverview>http://test.com/overview</graphicOverview>
+    <updateFequency>asNeeded</updateFequency>
+</properties>
