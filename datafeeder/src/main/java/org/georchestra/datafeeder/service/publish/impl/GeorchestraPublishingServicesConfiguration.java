@@ -18,12 +18,13 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.service.geonetwork.DefaultGeoNetworkClient;
+import org.georchestra.datafeeder.service.geonetwork.GeoNetworkClient;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
@@ -63,9 +64,11 @@ public class GeorchestraPublishingServicesConfiguration {
 
     public @Bean GeoNetworkRemoteService geoNetworkRemoteService() {
         ExternalApiConfiguration gnConfig = config.getPublishing().getGeonetwork();
-        URL apiURL = gnConfig.getApiUrl();
-        URL publicUrl = gnConfig.getPublicUrl();
-        return new GeoNetworkRemoteService(apiURL, publicUrl);
+        return new GeoNetworkRemoteService(gnConfig, geoNetworkClient());
+    }
+
+    public @Bean GeoNetworkClient geoNetworkClient() {
+        return new DefaultGeoNetworkClient();
     }
 
     public @Bean TemplateMapper templateMapper() {
@@ -77,7 +80,8 @@ public class GeorchestraPublishingServicesConfiguration {
         String restApiEntryPoint = config.getApiUrl().toExternalForm();
 
         GeoServerClient client = new GeoServerClient(restApiEntryPoint);
-
+        client.setDebugRequests(config.isLogRequests());
+        
         Map<String, String> authHeaders = new HashMap<>();
         // authHeaders.put("sec-proxy", "true");
         authHeaders.put("sec-username", "datafeeder-application");
