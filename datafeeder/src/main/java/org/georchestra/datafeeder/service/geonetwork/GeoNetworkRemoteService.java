@@ -120,15 +120,21 @@ public class GeoNetworkRemoteService {
         final String url = apiBaseURL.toString();
         final String xmlRecord = xmlRecordAsString.get();
 
+        // Allow passing restricted headers
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
         HttpHeaders reqHeaders = new HttpHeaders();
-        reqHeaders.set("Host", "localhost:28080");
-        reqHeaders.set("Accept", "application/json");
-        reqHeaders.set("Content-Type", "application/xml");
-        reqHeaders.set("User-Agent", "curl/7.68.0");
+        /// reqHeaders.set("Host", "localhost:28080");
+        // reqHeaders.set("Accept", "application/json");
+        // reqHeaders.set("Content-Type", "application/xml");
+        // reqHeaders.set("User-Agent", "curl/7.68.0");
+
+//		reqHeaders.set("Origin", "http://localhost:28080");
+//		reqHeaders.set("Referer", "http://localhost:28080");
 
         reqHeaders.set("sec-proxy", "true");
         reqHeaders.set("sec-username", "testadmin");
-        reqHeaders.set("sec-roles", "ROLE_USER;ROLE_ADMINISTRATOR");
+        reqHeaders.set("sec-roles", "ROLE_GN_ADMIN");
         reqHeaders.set("sec-org", "Datafeeder Test");
         // This is odd, apparently any UUID works as XSRF token, and these two need to
         // be set

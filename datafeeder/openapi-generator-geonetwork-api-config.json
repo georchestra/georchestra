@@ -8,8 +8,7 @@
   "generateApis": "true",
   "validateSpec": "false",
   "sourceFolder" : "src",
-  "library" : "okhttp-gson",
-  "feignVersion" : "11.x",
+  "library" : "jersey2",
   "dateLibrary" : "java8",
   "useTags" : "true",
 

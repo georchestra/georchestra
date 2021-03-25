@@ -18,24 +18,17 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.fao.geonet.ApiClient;
-import org.fao.geonet.openapi.RecordsApi;
-import org.fao.geonet.openapi.model.InfoReport;
-import org.fao.geonet.openapi.model.SimpleMetadataProcessingReport;
+import org.fao.geonet.client.ApiClient;
+import org.fao.geonet.client.ApiException;
+import org.fao.geonet.client.RecordsApi;
+import org.fao.geonet.client.model.InfoReport;
+import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import feign.Feign.Builder;
-import feign.FeignException;
-import feign.RequestTemplate;
-import feign.codec.EncodeException;
-import feign.codec.Encoder;
-import feign.okhttp.OkHttpClient;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,7 +43,9 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             @NonNull String xmlRecord) {
 
         ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
-        RecordsApi api = client.buildClient(RecordsApi.class);
+        client.setDebugging(true);
+        // RecordsApi api = client.buildClient(RecordsApi.class);
+        RecordsApi api = new RecordsApi(client);
 
         String metadataType = "METADATA";
         String xml = xmlRecord;
@@ -68,15 +63,15 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
         SimpleMetadataProcessingReport report;
         try {
-            report = api.insert(xml, metadataType, url, serverFolder, recursiveSearch, assignToCatalog, uuidProcessing,
+            report = api.insert(metadataType, xml, url, serverFolder, recursiveSearch, assignToCatalog, uuidProcessing,
                     group, category, rejectIfInvalid, transformWith, schema, extra);
-        } catch (FeignException e) {
+        } catch (ApiException e) {
             log.error("Error inserting metadata record", e);
             GeoNetworkResponse r = new GeoNetworkResponse();
-            r.setStatus(HttpStatus.valueOf(e.status()));
+            r.setStatus(HttpStatus.valueOf(e.getCode()));
             r.setStatusText(e.getMessage());
+            r.setErrorResponseBody(e.getResponseBody());
 
-//			r.setErrorResponseBody(e.getResponseBody());
 //			Map<String, List<String>> responseHeaders = e.getResponseHeaders();
 //			HttpHeaders headers = new HttpHeaders();
 //			responseHeaders.forEach(headers::addAll);
@@ -93,26 +88,30 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
     private ApiClient newApiClient(@NonNull String baseUrl, @NonNull HttpHeaders authHeaders) {
         ApiClient client = new ApiClient();
-        Builder feignBuilder = client.getFeignBuilder();
-        // use okhttp client, the default one doesn't send request headers correctly
-        feignBuilder.client(new OkHttpClient());
-
-        // replace the Encoder, which would encode the xml literal as a JSON string
-        Encoder encoder = new Encoder() {
-            public @Override void encode(Object object, Type bodyType, RequestTemplate template)
-                    throws EncodeException {
-                if (String.class.equals(bodyType)) {
-                    byte[] body = ((String) object).getBytes(StandardCharsets.UTF_8);
-                    template.body(body, StandardCharsets.UTF_8);
-                    return;
-                }
-                throw new UnsupportedOperationException();
-            }
-        };
-        feignBuilder.encoder(encoder);
+//        Builder feignBuilder = client.getFeignBuilder();
+//        // use okhttp client, the default one doesn't send request headers correctly
+//        feignBuilder.client(new OkHttpClient());
+//
+//        // replace the Encoder, which would encode the xml literal as a JSON string
+//        Encoder encoder = new Encoder() {
+//            public @Override void encode(Object object, Type bodyType, RequestTemplate template)
+//                    throws EncodeException {
+//                if (String.class.equals(bodyType)) {
+//                    byte[] body = ((String) object).getBytes(StandardCharsets.UTF_8);
+//                    template.body(body, StandardCharsets.UTF_8);
+//                    return;
+//                }
+//                throw new UnsupportedOperationException();
+//            }
+//        };
+//        feignBuilder.encoder(encoder);
 
         client.setBasePath(baseUrl);
-        client.setRequestHeaderAuth("georchestra", authHeaders);
+//        client.setRequestHeaderAuth("georchestra", authHeaders);
+        for (String name : authHeaders.keySet()) {
+            String value = authHeaders.getFirst(name);
+            client.addDefaultHeader(name, value);
+        }
         return client;
     }
 }
