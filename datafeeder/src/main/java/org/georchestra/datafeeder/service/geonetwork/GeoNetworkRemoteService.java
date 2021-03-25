@@ -21,8 +21,10 @@ package org.georchestra.datafeeder.service.geonetwork;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,14 +34,13 @@ import lombok.Setter;
 
 public class GeoNetworkRemoteService {
 
-    private URL apiBaseURL;
-    private @NonNull URL publicURL;
     private @Setter GeoNetworkClient client = new DefaultGeoNetworkClient();
+    private ExternalApiConfiguration config;
 
-    public GeoNetworkRemoteService(@NonNull URL geonetworkApiURL, @NonNull URL geonetworkPublicURL) {
-        this.publicURL = geonetworkPublicURL;
-        this.apiBaseURL = geonetworkApiURL;
-
+    public GeoNetworkRemoteService(@NonNull ExternalApiConfiguration gnConfig, @NonNull GeoNetworkClient client) {
+        Objects.requireNonNull(gnConfig.getApiUrl());
+        this.config = gnConfig;
+        this.client = client;
     }
 
     // http://localhost:28080/geonetwork/srv/api/0.1/records?metadataType=METADATA&recursiveSearch=false&assignToCatalog=false&uuidProcessing=NOTHING&rejectIfInvalid=true&transformWith=_none_
@@ -117,18 +118,25 @@ public class GeoNetworkRemoteService {
      */
     public GeoNetworkResponse publish(@NonNull Supplier<String> xmlRecordAsString) {
 
+        final URL apiBaseURL = this.config.getApiUrl();
         final String url = apiBaseURL.toString();
         final String xmlRecord = xmlRecordAsString.get();
 
+        // Allow passing restricted headers
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
         HttpHeaders reqHeaders = new HttpHeaders();
-        reqHeaders.set("Host", "localhost:28080");
-        reqHeaders.set("Accept", "application/json");
-        reqHeaders.set("Content-Type", "application/xml");
-        reqHeaders.set("User-Agent", "curl/7.68.0");
+        /// reqHeaders.set("Host", "localhost:28080");
+        // reqHeaders.set("Accept", "application/json");
+        // reqHeaders.set("Content-Type", "application/xml");
+        // reqHeaders.set("User-Agent", "curl/7.68.0");
+
+//		reqHeaders.set("Origin", "http://localhost:28080");
+//		reqHeaders.set("Referer", "http://localhost:28080");
 
         reqHeaders.set("sec-proxy", "true");
         reqHeaders.set("sec-username", "testadmin");
-        reqHeaders.set("sec-roles", "ROLE_USER;ROLE_ADMINISTRATOR");
+        reqHeaders.set("sec-roles", "ROLE_GN_ADMIN");
         reqHeaders.set("sec-org", "Datafeeder Test");
         // This is odd, apparently any UUID works as XSRF token, and these two need to
         // be set
@@ -154,6 +162,7 @@ public class GeoNetworkRemoteService {
     public URI buildMetadataRecordURI(@NonNull String recordId) {
         UriComponentsBuilder builder;
         try {
+            URL publicURL = this.config.getPublicUrl();
             builder = UriComponentsBuilder.fromUri(publicURL.toURI());
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);

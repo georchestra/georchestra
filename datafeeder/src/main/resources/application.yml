@@ -104,9 +104,11 @@ datafeeder:
     geoserver:
       api-url: http://localhost:18080/geoserver/rest
       public-url: http://localhost:18080/geoserver
+      log-requests: true
     geonetwork:
       api-url: http://localhost:28080/geonetwork
       public-url: http://localhost:28080/geonetwork
+      log-requests: true
     backend:
       local:
         dbtype: postgis

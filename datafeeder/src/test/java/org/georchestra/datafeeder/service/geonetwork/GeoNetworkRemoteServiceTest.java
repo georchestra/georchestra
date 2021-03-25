@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 import java.net.URI;
 import java.net.URL;
 
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
@@ -41,12 +42,19 @@ public class GeoNetworkRemoteServiceTest {
 
     private URL apiURL;
     private URL publicURL;
+    private GeoNetworkClient mockClient;
 
     public @Before void before() throws Exception {
         apiURL = new URL("http://geonetwork:8080/geonetwork");
         publicURL = new URL("https://test.georchestra.mydomain.org/geonetwork");
 
-        service = spy(new GeoNetworkRemoteService(apiURL, publicURL));
+        ExternalApiConfiguration config = new ExternalApiConfiguration();
+        config.setApiUrl(apiURL);
+        config.setPublicUrl(publicURL);
+
+        mockClient = mock(GeoNetworkClient.class);
+
+        service = spy(new GeoNetworkRemoteService(config, mockClient));
     }
 
     @Test(expected = NullPointerException.class)
@@ -72,14 +80,11 @@ public class GeoNetworkRemoteServiceTest {
                         + "<gmd:MD_Metadata>\n",
                 id);//
 
-        GeoNetworkClient client = mock(GeoNetworkClient.class);
-        service.setClient(client);
-
         String expectedURL = "http://geonetwork:8080/geonetwork";
         GeoNetworkResponse response = new GeoNetworkResponse();
         response.setStatus(HttpStatus.CREATED);
 
-        when(client.putXmlRecord(eq(expectedURL), any(HttpHeaders.class), eq(record))).thenReturn(response);
+        when(mockClient.putXmlRecord(eq(expectedURL), any(HttpHeaders.class), eq(record))).thenReturn(response);
 
         GeoNetworkResponse ret = service.publish(() -> record);
         assertSame(response, ret);
