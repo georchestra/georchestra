@@ -1,5 +1,4 @@
 {
-  "generatorName": "java",
   "modelPackage":"org.fao.geonet.client.model",
   "apiPackage":"org.fao.geonet.client",
   "invokerPackage": "org.fao.geonet.client",
@@ -9,8 +8,8 @@
   "generateApis": "true",
   "validateSpec": "false",
   "sourceFolder" : "src",
-  "library" : "feign",
-  "feignVersion" : "10.x",
+  "library" : "okhttp-gson",
+  "feignVersion" : "11.x",
   "dateLibrary" : "java8",
   "useTags" : "true",
 

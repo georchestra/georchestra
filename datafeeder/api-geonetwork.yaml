@@ -8842,17 +8842,17 @@ definitions:
           attribute: true
           wrapped: false
     title: Field
-  File:
+  FileObject:
     type: object
     properties:
       absolute:
         type: boolean
       absoluteFile:
-        $ref: '#/definitions/File'
+        $ref: '#/definitions/FileObject'
       absolutePath:
         type: string
       canonicalFile:
-        $ref: '#/definitions/File'
+        $ref: '#/definitions/FileObject'
       canonicalPath:
         type: string
       directory:
@@ -8869,7 +8869,7 @@ definitions:
       parent:
         type: string
       parentFile:
-        $ref: '#/definitions/File'
+        $ref: '#/definitions/FileObject'
       path:
         type: string
       totalSpace:
@@ -8885,7 +8885,7 @@ definitions:
       description:
         type: string
       file:
-        $ref: '#/definitions/File'
+        $ref: '#/definitions/FileObject'
       filename:
         type: string
       inputStream:
