@@ -1,0 +1,30 @@
+{
+  "generatorName": "java",
+  "modelPackage":"org.fao.geonet.client.model",
+  "apiPackage":"org.fao.geonet.client",
+  "invokerPackage": "org.fao.geonet.client",
+  "hideGenerationTimestamp": "true",
+	"addCompileSourceRoot": "true",
+  "generateModels": "true",
+  "generateApis": "true",
+  "validateSpec": "false",
+  "sourceFolder" : "src",
+  "library" : "feign",
+  "feignVersion" : "10.x",
+  "dateLibrary" : "java8",
+  "useTags" : "true",
+
+	"generateSupportingFiles": "true",
+	"swaggerDocketConfig": "false",
+	
+  "hateoas": "false",
+	"useRuntimeException": "true",
+	"useBeanValidation": "false",
+	"performBeanValidation": "false",
+	"generateApiDocumentation": "false",
+	"generateApiTests": "false",
+	"generateModelDocumentation": "false",
+	"generateModelTests": "false",
+	"importMappings": {
+	}
+}
