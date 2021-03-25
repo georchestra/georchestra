@@ -75,7 +75,7 @@ tags:
   - name: workers
     description: Workers related operations
 paths:
-  '/{portal}/api/0.1/csw/virtuals':
+  '/api/0.1/csw/virtuals':
     get:
       tags:
         - csw
@@ -128,7 +128,7 @@ paths:
           description: A service already exist with this name
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/csw/virtuals/{identifier}':
+  '/api/0.1/csw/virtuals/{identifier}':
     get:
       tags:
         - csw
@@ -205,7 +205,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/customstyle':
+  '/api/0.1/customstyle':
     get:
       tags:
         - customstyle
@@ -243,7 +243,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/formatters/cache':
+  '/api/0.1/formatters/cache':
     delete:
       tags:
         - formatters
@@ -264,7 +264,7 @@ paths:
           description: Operation not allowed. Only Administrator can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/groups':
+  '/api/0.1/groups':
     get:
       tags:
         - groups
@@ -332,7 +332,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/groups/{groupIdentifier}':
+  '/api/0.1/groups/{groupIdentifier}':
     get:
       tags:
         - groups
@@ -418,7 +418,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/groups/{groupIdentifier}/users':
+  '/api/0.1/groups/{groupIdentifier}/users':
     get:
       tags:
         - groups
@@ -446,7 +446,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/groups/{groupId}/logo':
+  '/api/0.1/groups/{groupId}/logo':
     get:
       tags:
         - groups
@@ -469,7 +469,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/harvesters/properties/{property}':
+  '/api/0.1/harvesters/properties/{property}':
     get:
       tags:
         - harvesters
@@ -563,7 +563,7 @@ paths:
           description: A property with that value already exist.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/harvesters/{harvesterUuid}/assign':
+  '/api/0.1/harvesters/{harvesterUuid}/assign':
     post:
       tags:
         - harvesters
@@ -659,7 +659,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/identifiers':
+  '/api/0.1/identifiers':
     get:
       tags:
         - identifiers
@@ -715,7 +715,7 @@ paths:
           description: Operation not allowed. Only Editor can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/identifiers/{identifier}':
+  '/api/0.1/identifiers/{identifier}':
     put:
       tags:
         - identifiers
@@ -770,7 +770,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/isolanguages':
+  '/api/0.1/isolanguages':
     get:
       tags:
         - languages
@@ -788,7 +788,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/IsoLanguage'
-  '/{portal}/api/0.1/languages':
+  '/api/0.1/languages':
     get:
       tags:
         - languages
@@ -807,7 +807,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Language'
-  '/{portal}/api/0.1/languages/{langCode}':
+  '/api/0.1/languages/{langCode}':
     put:
       tags:
         - languages
@@ -863,7 +863,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/logos':
+  '/api/0.1/logos':
     get:
       tags:
         - logos
@@ -921,7 +921,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/logos/{file}':
+  '/api/0.1/logos/{file}':
     delete:
       tags:
         - logos
@@ -944,7 +944,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/mapservers':
+  '/api/0.1/mapservers':
     get:
       tags:
         - mapservers
@@ -998,7 +998,7 @@ paths:
           description: Operation not allowed. Only Reviewvers can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/mapservers/{mapserverId}':
+  '/api/0.1/mapservers/{mapserverId}':
     get:
       tags:
         - mapservers
@@ -1077,7 +1077,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/mapservers/{mapserverId}/auth':
+  '/api/0.1/mapservers/{mapserverId}/auth':
     post:
       tags:
         - mapservers
@@ -1116,7 +1116,7 @@ paths:
           description: Resource not found.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/mapservers/{mapserverId}/records/{metadataUuid}':
+  '/api/0.1/mapservers/{mapserverId}/records/{metadataUuid}':
     get:
       tags:
         - mapservers
@@ -1245,7 +1245,7 @@ paths:
           description: Operation not allowed. Only Editors can access it.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/me':
+  '/api/0.1/me':
     get:
       tags:
         - me
@@ -1266,7 +1266,7 @@ paths:
           description: Not authenticated.
           schema:
             $ref: '#/definitions/MeResponse'
-  '/{portal}/api/0.1/operations':
+  '/api/0.1/operations':
     get:
       tags:
         - operations
@@ -1287,7 +1287,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Operation'
-  '/{portal}/api/0.1/pages/':
+  '/api/0.1/pages/':
     post:
       tags:
         - pages
@@ -1346,7 +1346,7 @@ paths:
           description: 'Page already in the system: use PUT'
         '500':
           description: File not valid
-  '/{portal}/api/0.1/pages/list':
+  '/api/0.1/pages/list':
     get:
       tags:
         - pages
@@ -1399,7 +1399,7 @@ paths:
               $ref: '#/definitions/PageJSONWrapper'
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/pages/{language}/{pageId}':
+  '/api/0.1/pages/{language}/{pageId}':
     get:
       tags:
         - pages
@@ -1560,7 +1560,7 @@ paths:
           description: Operation not allowed. User needs to be able to edit the resource.
         '404':
           description: Page not found
-  '/{portal}/api/0.1/pages/{language}/{pageId}/content':
+  '/api/0.1/pages/{language}/{pageId}/content':
     get:
       tags:
         - pages
@@ -1592,7 +1592,7 @@ paths:
           description: Operation not allowed. User needs to be able to view the resource.
         '404':
           description: Page not found
-  '/{portal}/api/0.1/pages/{language}/{pageId}/{section}':
+  '/api/0.1/pages/{language}/{pageId}/{section}':
     post:
       tags:
         - pages
@@ -1687,7 +1687,7 @@ paths:
           description: Operation not allowed. User needs to be able to edit the resource.
         '404':
           description: Page not found
-  '/{portal}/api/0.1/pages/{language}/{pageId}/{status}':
+  '/api/0.1/pages/{language}/{pageId}/{status}':
     put:
       tags:
         - pages
@@ -1729,7 +1729,7 @@ paths:
           description: Operation not allowed. User needs to be able to edit the resource.
         '404':
           description: Page not found
-  '/{portal}/api/0.1/processes/reports':
+  '/api/0.1/processes/reports':
     get:
       tags:
         - processes
@@ -1762,7 +1762,7 @@ paths:
           description: Report registry cleared.
         '403':
           description: Operation not allowed. Only authenticated user can access it.
-  '/{portal}/api/0.1/processes/search-and-replace':
+  '/api/0.1/processes/search-and-replace':
     post:
       tags:
         - processes
@@ -1829,7 +1829,7 @@ paths:
             $ref: '#/definitions/MetadataReplacementProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/processes/{process}':
+  '/api/0.1/processes/{process}':
     get:
       tags:
         - processes
@@ -1943,7 +1943,7 @@ paths:
             $ref: '#/definitions/XsltMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records':
+  '/api/0.1/records':
     get:
       tags:
         - records
@@ -2273,7 +2273,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/backups':
+  '/api/0.1/records/backups':
     put:
       tags:
         - records
@@ -2289,7 +2289,7 @@ paths:
           description: Return succeed message.
           schema:
             type: string
-  '/{portal}/api/0.1/records/backups/latest':
+  '/api/0.1/records/backups/latest':
     get:
       tags:
         - records
@@ -2305,7 +2305,7 @@ paths:
             $ref: '#/definitions/FileSystemResource'
         '404':
           description: Resource not found.
-  '/{portal}/api/0.1/records/batchediting':
+  '/api/0.1/records/batchediting':
     put:
       tags:
         - records
@@ -2355,7 +2355,7 @@ paths:
             $ref: '#/definitions/IProcessingReport'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/duplicate':
+  '/api/0.1/records/duplicate':
     put:
       tags:
         - records
@@ -2436,7 +2436,7 @@ paths:
             type: string
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/importfrommap':
+  '/api/0.1/records/importfrommap':
     post:
       tags:
         - records
@@ -2521,7 +2521,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/index':
+  '/api/0.1/records/index':
     get:
       tags:
         - records
@@ -2553,7 +2553,7 @@ paths:
               type: object
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/records/links':
+  '/api/0.1/records/links':
     get:
       tags:
         - links
@@ -2635,7 +2635,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/ResponseEntity'
-  '/{portal}/api/0.1/records/ownership':
+  '/api/0.1/records/ownership':
     put:
       tags:
         - records
@@ -2684,7 +2684,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/publish':
+  '/api/0.1/records/publish':
     put:
       tags:
         - records
@@ -2716,7 +2716,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/samples':
+  '/api/0.1/records/samples':
     put:
       tags:
         - records
@@ -2745,7 +2745,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/records/sharing':
+  '/api/0.1/records/sharing':
     get:
       tags:
         - records
@@ -2799,7 +2799,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/status/search':
+  '/api/0.1/records/status/search':
     get:
       tags:
         - records
@@ -2891,7 +2891,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/MetadataStatusResponse'
-  '/{portal}/api/0.1/records/tags':
+  '/api/0.1/records/tags':
     put:
       tags:
         - records
@@ -2978,7 +2978,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/templates':
+  '/api/0.1/records/templates':
     put:
       tags:
         - records
@@ -3008,7 +3008,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/records/unpublish':
+  '/api/0.1/records/unpublish':
     put:
       tags:
         - records
@@ -3040,7 +3040,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/validate':
+  '/api/0.1/records/validate':
     put:
       tags:
         - records
@@ -3072,7 +3072,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Editors can access it.
-  '/{portal}/api/0.1/records/versions':
+  '/api/0.1/records/versions':
     put:
       tags:
         - records
@@ -3101,7 +3101,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/MetadataProcessingReport'
-  '/{portal}/api/0.1/records/{metadataUuid}':
+  '/api/0.1/records/{metadataUuid}':
     get:
       tags:
         - records
@@ -3176,7 +3176,7 @@ paths:
           description: Record deleted.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/alert':
+  '/api/0.1/records/{metadataUuid}/alert':
     post:
       tags:
         - userfeedback
@@ -3256,7 +3256,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/ResponseEntity'
-  '/{portal}/api/0.1/records/{metadataUuid}/attachments':
+  '/api/0.1/records/{metadataUuid}/attachments':
     get:
       tags:
         - records
@@ -3413,7 +3413,7 @@ paths:
           description: Attachment added.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/attachments/print-thumbnail':
+  '/api/0.1/records/{metadataUuid}/attachments/print-thumbnail':
     put:
       tags:
         - records
@@ -3452,7 +3452,7 @@ paths:
             $ref: '#/definitions/MetadataResource'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/attachments/{resourceId}':
+  '/api/0.1/records/{metadataUuid}/attachments/{resourceId}':
     get:
       tags:
         - records
@@ -3562,7 +3562,7 @@ paths:
             $ref: '#/definitions/MetadataResource'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/doi':
+  '/api/0.1/records/{metadataUuid}/doi':
     put:
       tags:
         - records
@@ -3627,7 +3627,7 @@ paths:
           description: Metadata or DOI not found.
         '500':
           description: Service unavailable.
-  '/{portal}/api/0.1/records/{metadataUuid}/doi/checkPreConditions':
+  '/api/0.1/records/{metadataUuid}/doi/checkPreConditions':
     get:
       tags:
         - records
@@ -3658,7 +3658,7 @@ paths:
           description: Metadata not found.
         '500':
           description: Service unavailable.
-  '/{portal}/api/0.1/records/{metadataUuid}/editor':
+  '/api/0.1/records/{metadataUuid}/editor':
     get:
       tags:
         - records
@@ -3781,7 +3781,7 @@ paths:
           description: Editing session cancelled.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/editor/attributes':
+  '/api/0.1/records/{metadataUuid}/editor/attributes':
     delete:
       tags:
         - records
@@ -3813,7 +3813,7 @@ paths:
           description: Attribute removed.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/editor/elements':
+  '/api/0.1/records/{metadataUuid}/editor/elements':
     put:
       tags:
         - records
@@ -3894,7 +3894,7 @@ paths:
           description: Element removed.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/editor/elements/{direction}':
+  '/api/0.1/records/{metadataUuid}/editor/elements/{direction}':
     put:
       tags:
         - records
@@ -3934,7 +3934,7 @@ paths:
           description: Element reordered.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/featureCatalog':
+  '/api/0.1/records/{metadataUuid}/featureCatalog':
     get:
       tags:
         - records
@@ -3963,7 +3963,7 @@ paths:
             $ref: '#/definitions/FeatureResponse'
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/formatters/json':
+  '/api/0.1/records/{metadataUuid}/formatters/json':
     get:
       tags:
         - records
@@ -4023,7 +4023,7 @@ paths:
             type: object
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/formatters/xml':
+  '/api/0.1/records/{metadataUuid}/formatters/xml':
     get:
       tags:
         - records
@@ -4083,7 +4083,7 @@ paths:
             type: object
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/formatters/zip':
+  '/api/0.1/records/{metadataUuid}/formatters/zip':
     get:
       tags:
         - records
@@ -4157,7 +4157,7 @@ paths:
           description: Return the record.
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/formatters/{formatterId}':
+  '/api/0.1/records/{metadataUuid}/formatters/{formatterId}':
     get:
       tags:
         - records
@@ -4230,7 +4230,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/records/{metadataUuid}/group':
+  '/api/0.1/records/{metadataUuid}/group':
     put:
       tags:
         - records
@@ -4259,7 +4259,7 @@ paths:
           description: Record group updated.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/ownership':
+  '/api/0.1/records/{metadataUuid}/ownership':
     put:
       tags:
         - records
@@ -4300,7 +4300,7 @@ paths:
             $ref: '#/definitions/MetadataProcessingReport'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/popularity':
+  '/api/0.1/records/{metadataUuid}/popularity':
     post:
       tags:
         - records
@@ -4327,7 +4327,7 @@ paths:
           description: Operation not allowed. User needs to be able to view the resource.
         '404':
           description: Resource not found.
-  '/{portal}/api/0.1/records/{metadataUuid}/processes':
+  '/api/0.1/records/{metadataUuid}/processes':
     get:
       tags:
         - records
@@ -4355,7 +4355,7 @@ paths:
               $ref: '#/definitions/SuggestionType'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/processes/{process}':
+  '/api/0.1/records/{metadataUuid}/processes/{process}':
     get:
       tags:
         - records
@@ -4420,7 +4420,7 @@ paths:
             $ref: '#/definitions/ResponseEntity'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/publish':
+  '/api/0.1/records/{metadataUuid}/publish':
     put:
       tags:
         - records
@@ -4441,7 +4441,7 @@ paths:
           description: Settings updated.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/query':
+  '/api/0.1/records/{metadataUuid}/query':
     get:
       tags:
         - records
@@ -4464,7 +4464,7 @@ paths:
               $ref: '#/definitions/SavedQuery'
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/query/{savedQuery}':
+  '/api/0.1/records/{metadataUuid}/query/{savedQuery}':
     post:
       tags:
         - records
@@ -4508,7 +4508,7 @@ paths:
               type: string
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/rate':
+  '/api/0.1/records/{metadataUuid}/rate':
     put:
       tags:
         - records
@@ -4548,7 +4548,7 @@ paths:
             format: int32
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/related':
+  '/api/0.1/records/{metadataUuid}/related':
     get:
       tags:
         - records
@@ -4627,7 +4627,7 @@ paths:
             $ref: '#/definitions/RelatedResponse'
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/sharing':
+  '/api/0.1/records/{metadataUuid}/sharing':
     get:
       tags:
         - records
@@ -4686,7 +4686,7 @@ paths:
           description: Settings updated.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/status':
+  '/api/0.1/records/{metadataUuid}/status':
     get:
       tags:
         - records
@@ -4749,7 +4749,7 @@ paths:
           description: Metadata workflow not enabled.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/status/workflow/last':
+  '/api/0.1/records/{metadataUuid}/status/workflow/last':
     get:
       tags:
         - records
@@ -4770,7 +4770,7 @@ paths:
             $ref: '#/definitions/MetadataWorkflowStatusResponse'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/status/{statusId}.{userId}.{changeDate}':
+  '/api/0.1/records/{metadataUuid}/status/{statusId}.{userId}.{changeDate}':
     delete:
       tags:
         - records
@@ -4808,7 +4808,7 @@ paths:
           description: Operation not allowed. Only Administrators can access it.
         '404':
           description: Status not found.
-  '/{portal}/api/0.1/records/{metadataUuid}/status/{statusId}.{userId}.{changeDate}/close':
+  '/api/0.1/records/{metadataUuid}/status/{statusId}.{userId}.{changeDate}/close':
     put:
       tags:
         - records
@@ -4853,7 +4853,7 @@ paths:
           description: Operation not allowed. User needs to be able to edit the resource.
         '404':
           description: Status not found.
-  '/{portal}/api/0.1/records/{metadataUuid}/status/{type}':
+  '/api/0.1/records/{metadataUuid}/status/{type}':
     get:
       tags:
         - records
@@ -4897,7 +4897,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/MetadataStatusResponse'
-  '/{portal}/api/0.1/records/{metadataUuid}/tags':
+  '/api/0.1/records/{metadataUuid}/tags':
     get:
       tags:
         - records
@@ -4986,7 +4986,7 @@ paths:
           description: Record tags removed.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/unpublish':
+  '/api/0.1/records/{metadataUuid}/unpublish':
     put:
       tags:
         - records
@@ -5007,7 +5007,7 @@ paths:
           description: Settings updated.
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/userfeedback':
+  '/api/0.1/records/{metadataUuid}/userfeedback':
     get:
       tags:
         - userfeedback
@@ -5036,7 +5036,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserFeedbackDTO'
-  '/{portal}/api/0.1/records/{metadataUuid}/userfeedbackrating':
+  '/api/0.1/records/{metadataUuid}/userfeedbackrating':
     get:
       tags:
         - userfeedback
@@ -5055,7 +5055,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/RatingAverage'
-  '/{portal}/api/0.1/records/{metadataUuid}/validate/inspire':
+  '/api/0.1/records/{metadataUuid}/validate/inspire':
     put:
       tags:
         - records
@@ -5096,7 +5096,7 @@ paths:
           description: Metadata not found.
         '500':
           description: Service unavailable.
-  '/{portal}/api/0.1/records/{metadataUuid}/validate/inspire/testsuites':
+  '/api/0.1/records/{metadataUuid}/validate/inspire/testsuites':
     get:
       tags:
         - records
@@ -5122,7 +5122,7 @@ paths:
                 type: string
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/validate/internal':
+  '/api/0.1/records/{metadataUuid}/validate/internal':
     put:
       tags:
         - records
@@ -5157,7 +5157,7 @@ paths:
             $ref: '#/definitions/Reports'
         '403':
           description: Operation not allowed. User needs to be able to edit the resource.
-  '/{portal}/api/0.1/records/{metadataUuid}/versions':
+  '/api/0.1/records/{metadataUuid}/versions':
     put:
       tags:
         - records
@@ -5178,7 +5178,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/ResponseEntity'
-  '/{portal}/api/0.1/records/{testId}/validate/inspire':
+  '/api/0.1/records/{testId}/validate/inspire':
     get:
       tags:
         - records
@@ -5213,7 +5213,7 @@ paths:
           description: Operation not allowed. User needs to be able to edit the resource.
         '404':
           description: Report id not found.
-  '/{portal}/api/0.1/regions':
+  '/api/0.1/regions':
     get:
       tags:
         - regions
@@ -5245,7 +5245,7 @@ paths:
           description: List of regions.
           schema:
             $ref: '#/definitions/ListRegionsResponse'
-  '/{portal}/api/0.1/regions/types':
+  '/api/0.1/regions/types':
     get:
       tags:
         - regions
@@ -5260,7 +5260,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Category'
-  '/{portal}/api/0.1/registries/actions/entries/collect':
+  '/api/0.1/registries/actions/entries/collect':
     get:
       tags:
         - registries
@@ -5349,7 +5349,7 @@ paths:
             type: object
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/registries/actions/entries/import/spatial':
+  '/api/0.1/registries/actions/entries/import/spatial':
     post:
       tags:
         - registries
@@ -5439,7 +5439,7 @@ paths:
             $ref: '#/definitions/SimpleMetadataProcessingReport'
         '403':
           description: Operation not allowed. Only Reviewvers can access it.
-  '/{portal}/api/0.1/registries/actions/entries/synchronize':
+  '/api/0.1/registries/actions/entries/synchronize':
     get:
       tags:
         - registries
@@ -5576,7 +5576,7 @@ paths:
           description: Created
           schema:
             type: object
-  '/{portal}/api/0.1/registries/crs':
+  '/api/0.1/registries/crs':
     get:
       tags:
         - registries
@@ -5617,7 +5617,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Crs'
-  '/{portal}/api/0.1/registries/crs/types':
+  '/api/0.1/registries/crs/types':
     get:
       tags:
         - registries
@@ -5637,7 +5637,7 @@ paths:
                 - VerticalCRS
                 - GeographicCRS
                 - ProjectedCRS
-  '/{portal}/api/0.1/registries/crs/{id}':
+  '/api/0.1/registries/crs/{id}':
     get:
       tags:
         - registries
@@ -5659,7 +5659,7 @@ paths:
             $ref: '#/definitions/Crs'
         '404':
           description: CRS not found.
-  '/{portal}/api/0.1/registries/entries/{uuid}':
+  '/api/0.1/registries/entries/{uuid}':
     get:
       tags:
         - registries
@@ -5711,7 +5711,7 @@ paths:
             type: object
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/registries/vocabularies':
+  '/api/0.1/registries/vocabularies':
     post:
       tags:
         - registries
@@ -5811,7 +5811,7 @@ paths:
             type: string
         '403':
           description: Operation not allowed. Only Reviewvers can access it.
-  '/{portal}/api/0.1/registries/vocabularies/keyword':
+  '/api/0.1/registries/vocabularies/keyword':
     get:
       tags:
         - registries
@@ -5860,7 +5860,7 @@ paths:
           description: XML snippet with requested keywords.
           schema:
             type: object
-  '/{portal}/api/0.1/registries/vocabularies/search':
+  '/api/0.1/registries/vocabularies/search':
     get:
       tags:
         - registries
@@ -5938,7 +5938,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/KeywordBean'
-  '/{portal}/api/0.1/registries/vocabularies/{thesaurus}':
+  '/api/0.1/registries/vocabularies/{thesaurus}':
     get:
       tags:
         - registries
@@ -5979,7 +5979,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
         '404':
           description: Resource not found.
-  '/{portal}/api/0.1/related':
+  '/api/0.1/related':
     get:
       tags:
         - related
@@ -6047,7 +6047,7 @@ paths:
               $ref: '#/definitions/RelatedResponse'
         '403':
           description: Operation not allowed. User needs to be able to view the resource.
-  '/{portal}/api/0.1/reports/datadownloads':
+  '/api/0.1/reports/datadownloads':
     get:
       tags:
         - records
@@ -6078,7 +6078,7 @@ paths:
       responses:
         '200':
           description: List of metadata file downloads.
-  '/{portal}/api/0.1/reports/datauploads':
+  '/api/0.1/reports/datauploads':
     get:
       tags:
         - records
@@ -6109,7 +6109,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/reports/metadatainternal':
+  '/api/0.1/reports/metadatainternal':
     get:
       tags:
         - records
@@ -6140,7 +6140,7 @@ paths:
       responses:
         '200':
           description: Metadata not published during a period.
-  '/{portal}/api/0.1/reports/metadataupdated':
+  '/api/0.1/reports/metadataupdated':
     get:
       tags:
         - records
@@ -6171,7 +6171,7 @@ paths:
       responses:
         '200':
           description: Updated metadata during a period.
-  '/{portal}/api/0.1/reports/users':
+  '/api/0.1/reports/users':
     get:
       tags:
         - records
@@ -6202,7 +6202,7 @@ paths:
       responses:
         '200':
           description: List of users "active" during a time period.
-  '/{portal}/api/0.1/selections/{bucket}':
+  '/api/0.1/selections/{bucket}':
     get:
       tags:
         - selections
@@ -6281,7 +6281,7 @@ paths:
           schema:
             type: integer
             format: int32
-  '/{portal}/api/0.1/site':
+  '/api/0.1/site':
     get:
       tags:
         - site
@@ -6294,7 +6294,7 @@ paths:
           description: Site description.
           schema:
             $ref: '#/definitions/SettingsListResponse'
-  '/{portal}/api/0.1/site/index':
+  '/api/0.1/site/index':
     put:
       tags:
         - site
@@ -6327,7 +6327,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/HttpEntity'
-  '/{portal}/api/0.1/site/index/es':
+  '/api/0.1/site/index/es':
     put:
       tags:
         - site
@@ -6372,7 +6372,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/HttpEntity'
-  '/{portal}/api/0.1/site/indexing':
+  '/api/0.1/site/indexing':
     get:
       tags:
         - site
@@ -6385,7 +6385,7 @@ paths:
           description: OK
           schema:
             type: boolean
-  '/{portal}/api/0.1/site/info':
+  '/api/0.1/site/info':
     get:
       tags:
         - site
@@ -6398,7 +6398,7 @@ paths:
           description: Site information.
           schema:
             $ref: '#/definitions/SiteInformation'
-  '/{portal}/api/0.1/site/info/build':
+  '/api/0.1/site/info/build':
     get:
       tags:
         - site
@@ -6412,7 +6412,7 @@ paths:
           description: Build info.
           schema:
             $ref: '#/definitions/SystemInfo'
-  '/{portal}/api/0.1/site/info/isCasEnabled':
+  '/api/0.1/site/info/isCasEnabled':
     get:
       tags:
         - site
@@ -6425,7 +6425,7 @@ paths:
           description: OK
           schema:
             type: boolean
-  '/{portal}/api/0.1/site/info/readonly':
+  '/api/0.1/site/info/readonly':
     get:
       tags:
         - site
@@ -6438,7 +6438,7 @@ paths:
           description: OK
           schema:
             type: boolean
-  '/{portal}/api/0.1/site/info/staging/{profile}':
+  '/api/0.1/site/info/staging/{profile}':
     put:
       tags:
         - site
@@ -6464,7 +6464,7 @@ paths:
           description: Staging profile saved.
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/site/info/transforms':
+  '/api/0.1/site/info/transforms':
     get:
       tags:
         - site
@@ -6482,7 +6482,7 @@ paths:
             type: array
             items:
               type: string
-  '/{portal}/api/0.1/site/logging':
+  '/api/0.1/site/logging':
     get:
       tags:
         - site
@@ -6497,7 +6497,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/LogFileResponse'
-  '/{portal}/api/0.1/site/logging/activity':
+  '/api/0.1/site/logging/activity':
     get:
       tags:
         - site
@@ -6518,7 +6518,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/site/logging/activity/zip':
+  '/api/0.1/site/logging/activity/zip':
     get:
       tags:
         - site
@@ -6529,7 +6529,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/site/logo':
+  '/api/0.1/site/logo':
     put:
       tags:
         - site
@@ -6560,7 +6560,7 @@ paths:
           description: Logo set.
         '403':
           description: Operation not allowed. Only UserAdmins can access it.
-  '/{portal}/api/0.1/site/settings':
+  '/api/0.1/site/settings':
     get:
       tags:
         - site
@@ -6627,7 +6627,7 @@ paths:
           description: Settings saved.
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/site/settings/details':
+  '/api/0.1/site/settings/details':
     get:
       tags:
         - site
@@ -6680,7 +6680,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Setting'
-  '/{portal}/api/0.1/sources':
+  '/api/0.1/sources':
     get:
       tags:
         - sources
@@ -6715,7 +6715,7 @@ paths:
             $ref: '#/definitions/ResponseEntity'
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/sources/{sourceIdentifier}':
+  '/api/0.1/sources/{sourceIdentifier}':
     put:
       tags:
         - sources
@@ -6770,7 +6770,7 @@ paths:
             $ref: '#/definitions/ResponseEntity'
         '403':
           description: Operation not allowed. Only Administrators can access it.
-  '/{portal}/api/0.1/standards':
+  '/api/0.1/standards':
     get:
       tags:
         - standards
@@ -6785,7 +6785,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/MetadataSchema'
-  '/{portal}/api/0.1/standards/batchconfiguration':
+  '/api/0.1/standards/batchconfiguration':
     get:
       tags:
         - standards
@@ -6809,7 +6809,7 @@ paths:
             type: object
             additionalProperties:
               $ref: '#/definitions/BatchEditing'
-  '/{portal}/api/0.1/standards/reload':
+  '/api/0.1/standards/reload':
     get:
       tags:
         - standards
@@ -6820,7 +6820,7 @@ paths:
       responses:
         '200':
           description: Standards reloaded.
-  '/{portal}/api/0.1/standards/{schema}/batchconfiguration':
+  '/api/0.1/standards/{schema}/batchconfiguration':
     get:
       tags:
         - standards
@@ -6841,7 +6841,7 @@ paths:
             type: object
             additionalProperties:
               $ref: '#/definitions/BatchEditing'
-  '/{portal}/api/0.1/standards/{schema}/codelists/{codelist}':
+  '/api/0.1/standards/{schema}/codelists/{codelist}':
     get:
       tags:
         - standards
@@ -6887,7 +6887,7 @@ paths:
             type: object
             additionalProperties:
               type: string
-  '/{portal}/api/0.1/standards/{schema}/codelists/{codelist}/details':
+  '/api/0.1/standards/{schema}/codelists/{codelist}/details':
     get:
       tags:
         - standards
@@ -6942,7 +6942,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Codelist'
-  '/{portal}/api/0.1/standards/{schema}/descriptors/{element}/details':
+  '/api/0.1/standards/{schema}/descriptors/{element}/details':
     get:
       tags:
         - standards
@@ -6987,7 +6987,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/Element'
-  '/{portal}/api/0.1/standards/{schema}/editor/associatedpanel/config/{name}.json':
+  '/api/0.1/standards/{schema}/editor/associatedpanel/config/{name}.json':
     get:
       tags:
         - standards
@@ -7012,7 +7012,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/status':
+  '/api/0.1/status':
     get:
       tags:
         - status
@@ -7027,7 +7027,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/StatusValue'
-  '/{portal}/api/0.1/status/{type}':
+  '/api/0.1/status/{type}':
     get:
       tags:
         - status
@@ -7052,7 +7052,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/StatusValue'
-  '/{portal}/api/0.1/tags':
+  '/api/0.1/tags':
     get:
       tags:
         - tags
@@ -7094,7 +7094,7 @@ paths:
             format: int32
         '403':
           description: Operation not allowed. Only UserAdmins can access it.
-  '/{portal}/api/0.1/tags/{tagIdentifier}':
+  '/api/0.1/tags/{tagIdentifier}':
     get:
       tags:
         - tags
@@ -7164,7 +7164,7 @@ paths:
             $ref: '#/definitions/ResponseEntity'
         '403':
           description: Operation not allowed. Only UserAdmins can access it.
-  '/{portal}/api/0.1/tools/i18n/db':
+  '/api/0.1/tools/i18n/db':
     get:
       tags:
         - tools
@@ -7188,7 +7188,7 @@ paths:
             type: object
             additionalProperties:
               type: string
-  '/{portal}/api/0.1/tools/mail/test':
+  '/api/0.1/tools/mail/test':
     get:
       tags:
         - tools
@@ -7202,7 +7202,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/tools/migration/steps/{stepName}':
+  '/api/0.1/tools/migration/steps/{stepName}':
     put:
       tags:
         - tools
@@ -7225,7 +7225,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/tools/ogc/sld':
+  '/api/0.1/tools/ogc/sld':
     get:
       tags:
         - tools
@@ -7284,7 +7284,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/tools/ogc/sld/{id}.{extension}':
+  '/api/0.1/tools/ogc/sld/{id}.{extension}':
     get:
       tags:
         - tools
@@ -7302,7 +7302,7 @@ paths:
       responses:
         '200':
           description: OK
-  '/{portal}/api/0.1/ui':
+  '/api/0.1/ui':
     get:
       tags:
         - ui
@@ -7342,7 +7342,7 @@ paths:
             type: string
         '403':
           description: Operation not allowed. Only UserAdmins can access it.
-  '/{portal}/api/0.1/ui/{uiIdentifier}':
+  '/api/0.1/ui/{uiIdentifier}':
     get:
       tags:
         - ui
@@ -7411,7 +7411,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
         '404':
           description: UI Configuration not found.
-  '/{portal}/api/0.1/user/actions/register':
+  '/api/0.1/user/actions/register':
     put:
       tags:
         - users
@@ -7437,7 +7437,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/user/{username}':
+  '/api/0.1/user/{username}':
     patch:
       tags:
         - users
@@ -7465,7 +7465,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/user/{username}/actions/forgot-password':
+  '/api/0.1/user/{username}/actions/forgot-password':
     get:
       tags:
         - users
@@ -7488,7 +7488,7 @@ paths:
           description: Created
           schema:
             type: string
-  '/{portal}/api/0.1/userfeedback':
+  '/api/0.1/userfeedback':
     get:
       tags:
         - userfeedback
@@ -7539,7 +7539,7 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/ResponseEntity'
-  '/{portal}/api/0.1/userfeedback/ratingcriteria':
+  '/api/0.1/userfeedback/ratingcriteria':
     get:
       tags:
         - userfeedback
@@ -7554,7 +7554,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/RatingCriteria'
-  '/{portal}/api/0.1/userfeedback/{uuid}':
+  '/api/0.1/userfeedback/{uuid}':
     get:
       tags:
         - userfeedback
@@ -7594,7 +7594,7 @@ paths:
             $ref: '#/definitions/ResponseEntity'
         '403':
           description: Operation not allowed. Only Reviewvers can access it.
-  '/{portal}/api/0.1/userfeedback/{uuid}/publish':
+  '/api/0.1/userfeedback/{uuid}/publish':
     get:
       tags:
         - userfeedback
@@ -7618,7 +7618,7 @@ paths:
           description: Operation not allowed. Only Reviewvers can access it.
         '404':
           description: Resource not found.
-  '/{portal}/api/0.1/users':
+  '/api/0.1/users':
     get:
       tags:
         - users
@@ -7655,7 +7655,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/users/groups':
+  '/api/0.1/users/groups':
     get:
       tags:
         - users
@@ -7670,7 +7670,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserGroupsResponse'
-  '/{portal}/api/0.1/users/owners':
+  '/api/0.1/users/owners':
     get:
       tags:
         - users
@@ -7707,7 +7707,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/ResponseEntity'
-  '/{portal}/api/0.1/users/properties/{property}':
+  '/api/0.1/users/properties/{property}':
     get:
       tags:
         - users
@@ -7801,7 +7801,7 @@ paths:
           description: A property with that value already exist.
       security:
         - basicAuth: []
-  '/{portal}/api/0.1/users/{userIdentifier}':
+  '/api/0.1/users/{userIdentifier}':
     get:
       tags:
         - users
@@ -7869,7 +7869,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/users/{userIdentifier}/actions/forget-password':
+  '/api/0.1/users/{userIdentifier}/actions/forget-password':
     post:
       tags:
         - users
@@ -7902,7 +7902,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/users/{userIdentifier}/groups':
+  '/api/0.1/users/{userIdentifier}/groups':
     get:
       tags:
         - users
@@ -7925,7 +7925,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserGroup'
-  '/{portal}/api/0.1/usersearches':
+  '/api/0.1/usersearches':
     get:
       tags:
         - usersearches
@@ -7968,7 +7968,7 @@ paths:
           schema:
             type: integer
             format: int32
-  '/{portal}/api/0.1/usersearches/all':
+  '/api/0.1/usersearches/all':
     get:
       tags:
         - usersearches
@@ -7992,7 +7992,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserSearchDto'
-  '/{portal}/api/0.1/usersearches/allpaginated':
+  '/api/0.1/usersearches/allpaginated':
     get:
       tags:
         - usersearches
@@ -8033,7 +8033,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/PaginatedUserSearchResponse'
-  '/{portal}/api/0.1/usersearches/featured':
+  '/api/0.1/usersearches/featured':
     get:
       tags:
         - usersearches
@@ -8057,7 +8057,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/UserSearchDto'
-  '/{portal}/api/0.1/usersearches/{searchIdentifier}':
+  '/api/0.1/usersearches/{searchIdentifier}':
     get:
       tags:
         - usersearches
@@ -8126,7 +8126,7 @@ paths:
           description: OK
           schema:
             type: string
-  '/{portal}/api/0.1/userselections':
+  '/api/0.1/userselections':
     get:
       tags:
         - userselections
@@ -8170,7 +8170,7 @@ paths:
           description: A selection with that id or name already exist.
         '403':
           description: Operation not allowed. Only UserAdmins can access it.
-  '/{portal}/api/0.1/userselections/{selectionIdentifier}':
+  '/api/0.1/userselections/{selectionIdentifier}':
     put:
       tags:
         - userselections
@@ -8225,7 +8225,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
         '404':
           description: Selection not found.
-  '/{portal}/api/0.1/userselections/{selectionIdentifier}/{userIdentifier}':
+  '/api/0.1/userselections/{selectionIdentifier}/{userIdentifier}':
     get:
       tags:
         - userselections
@@ -8337,7 +8337,7 @@ paths:
           description: Operation not allowed. Only UserAdmins can access it.
         '404':
           description: Selection or user not found.
-  '/{portal}/api/0.1/workers/data/wfs/actions':
+  '/api/0.1/workers/data/wfs/actions':
     delete:
       tags:
         - workers
@@ -8365,7 +8365,7 @@ paths:
             type: object
             additionalProperties:
               type: object
-  '/{portal}/api/0.1/workers/data/wfs/actions/start':
+  '/api/0.1/workers/data/wfs/actions/start':
     put:
       tags:
         - workers
