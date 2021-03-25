@@ -68,9 +68,28 @@ public class UploadPackageTest {
         assertTrue(pack.isArchive("filename.tgz"));
         assertTrue(pack.isArchive("filename.tar.gz"));
         assertTrue(pack.isArchive("filename.bz2"));
+        assertTrue(pack.isArchive("some.file.name.zip"));
+        assertTrue(pack.isArchive("andorra-180101-free.shp.zip"));
 
+        assertFalse(pack.isArchive("filename.tar2"));
         assertFalse(pack.isArchive("File Name.shp"));
         assertFalse(pack.isArchive("File Name.json"));
+    }
+
+    public @Test void testIsDataset() {
+        assertTrue(pack.isDataset("filename.shp"));
+        assertTrue(pack.isDataset("File Name.Shp"));
+        assertTrue(pack.isDataset("filename.gpkg"));
+        assertTrue(pack.isDataset("filename.GPKG"));
+        assertTrue(pack.isDataset("filename.geojson"));
+        assertTrue(pack.isDataset("filename.GeoJSON"));
+        assertTrue(pack.isDataset("andorra-180101.free.shp"));
+
+        assertFalse(pack.isDataset(".shp"));
+
+        assertFalse(pack.isDataset("filename.tar"));
+        assertFalse(pack.isDataset("File Name.zip"));
+        assertFalse(pack.isDataset("File Name.tgz"));
     }
 
     public @Test void testFindDatasets() throws IOException {
