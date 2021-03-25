@@ -345,7 +345,7 @@ paths:
         - name: groupIdentifier
           in: path
           description: Group identifier
-          required: false
+          required: true
           type: integer
           format: int32
       responses:
@@ -368,7 +368,7 @@ paths:
         - name: groupIdentifier
           in: path
           description: Group identifier
-          required: false
+          required: true
           type: integer
           format: int32
         - in: body
@@ -400,7 +400,7 @@ paths:
         - name: groupIdentifier
           in: path
           description: Group identifier.
-          required: false
+          required: true
           type: integer
           format: int32
         - name: force
@@ -430,7 +430,7 @@ paths:
         - name: groupIdentifier
           in: path
           description: Group identifier
-          required: false
+          required: true
           type: integer
           format: int32
       responses:
@@ -481,7 +481,7 @@ paths:
         - name: property
           in: path
           description: The harvester property to check
-          required: false
+          required: true
           type: string
         - name: exist
           in: query
@@ -577,7 +577,7 @@ paths:
         - name: harvesterUuid
           in: path
           description: The harvester UUID
-          required: false
+          required: true
           type: string
         - name: source
           in: query
@@ -729,7 +729,7 @@ paths:
         - name: identifier
           in: path
           description: Identifier template identifier
-          required: false
+          required: true
           type: integer
           format: int32
         - in: body
@@ -895,6 +895,7 @@ paths:
       operationId: addLogo
       consumes:
         - application/json
+        - multipart/form-data
       produces:
         - application/json
       parameters:
@@ -933,7 +934,7 @@ paths:
         - name: file
           in: path
           description: The logo filename to delete
-          required: false
+          required: true
           type: string
       responses:
         '204':
@@ -2033,6 +2034,7 @@ paths:
       description: Add record in the catalog by uploading files.
       operationId: insertFile
       consumes:
+        - multipart/form-data
         - application/json
       produces:
         - application/json
@@ -8118,7 +8120,7 @@ paths:
         - name: searchIdentifier
           in: path
           description: Search identifier.
-          required: false
+          required: true
           type: integer
           format: int32
       responses:
