@@ -26,6 +26,8 @@ import org.fao.geonet.client.ApiException;
 import org.fao.geonet.client.RecordsApi;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -35,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
+    private @Autowired(required = false) DataFeederConfigurationProperties config;
+
     /**
      * @param baseUrl e.g. {@code http://localhost:8080/geonetwork}
      */
@@ -43,7 +47,7 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             @NonNull String xmlRecord) {
 
         ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
-        client.setDebugging(true);
+        client.setDebugging(debugRequests());
         // RecordsApi api = client.buildClient(RecordsApi.class);
         RecordsApi api = new RecordsApi(client);
 
@@ -72,10 +76,10 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             r.setStatusText(e.getMessage());
             r.setErrorResponseBody(e.getResponseBody());
 
-//			Map<String, List<String>> responseHeaders = e.getResponseHeaders();
-//			HttpHeaders headers = new HttpHeaders();
-//			responseHeaders.forEach(headers::addAll);
-//			r.setHeaders(headers);
+            Map<String, List<String>> responseHeaders = e.getResponseHeaders();
+            HttpHeaders headers = new HttpHeaders();
+            responseHeaders.forEach(headers::addAll);
+            r.setHeaders(headers);
             return r;
         }
 
@@ -84,6 +88,10 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         Map<String, List<InfoReport>> metadataInfos = report.getMetadataInfos();
         log.info("Created metadata record {}", metadataInfos);
         return r;
+    }
+
+    private boolean debugRequests() {
+        return this.config != null && this.config.getPublishing().getGeonetwork().isLogRequests();
     }
 
     private ApiClient newApiClient(@NonNull String baseUrl, @NonNull HttpHeaders authHeaders) {
