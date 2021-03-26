@@ -2117,6 +2117,10 @@ paths:
           description: (experimental) Add extra information to the record.
           required: false
           type: string
+        - name: publishToAll
+          in: query
+          type: boolean
+          required: false
       responses:
         '201':
           description: Report about imported records.

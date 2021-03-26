@@ -81,7 +81,7 @@ public class GeorchestraPublishingServicesConfiguration {
 
         GeoServerClient client = new GeoServerClient(restApiEntryPoint);
         client.setDebugRequests(config.isLogRequests());
-        
+
         Map<String, String> authHeaders = new HashMap<>();
         // authHeaders.put("sec-proxy", "true");
         authHeaders.put("sec-username", "datafeeder-application");
