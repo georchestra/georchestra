@@ -18,14 +18,18 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
+import static org.assertj.core.api.Assertions.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.UUID;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraIntegrationAutoConfiguration;
 import org.georchestra.datafeeder.it.IntegrationTestSupport;
@@ -39,6 +43,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.xml.sax.InputSource;
 
 import com.google.common.io.CharStreams;
 
@@ -65,10 +70,18 @@ public class GeoNetworkRemoteServiceIT {
         final String id = UUID.randomUUID().toString();
         final String record = loadSampleRecord(id);
 
-        GeoNetworkResponse response = service.publish(() -> record);
+        GeoNetworkResponse response = service.publish(id, () -> record);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
 
+        final String publishedRecord = service.getRecordById(id);
+        assertNotNull(publishedRecord);
+        try {
+            DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(publishedRecord)));
+        } catch (Exception e) {
+            fail("Published record not returned as valid XML", e);
+        }
     }
 
     private String loadSampleRecord(final String id) throws IOException {

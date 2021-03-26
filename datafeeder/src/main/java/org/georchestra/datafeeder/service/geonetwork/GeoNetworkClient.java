@@ -20,8 +20,14 @@ package org.georchestra.datafeeder.service.geonetwork;
 
 import org.springframework.http.HttpHeaders;
 
+import lombok.NonNull;
+
 public interface GeoNetworkClient {
 
-    GeoNetworkResponse putXmlRecord(String url, HttpHeaders additionalRequestHeaders, String xmlRecord);
+    GeoNetworkResponse putXmlRecord(String url, HttpHeaders additionalRequestHeaders, String metadataId,
+            String xmlRecord);
+
+    String getXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
+            @NonNull String recordId);
 
 }
