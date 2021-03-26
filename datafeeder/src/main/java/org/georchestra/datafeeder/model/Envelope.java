@@ -29,8 +29,4 @@ public class Envelope {
     private Double maxx;
     private Double miny;
     private Double maxy;
-
-    public org.locationtech.jts.geom.Envelope toJTS() {
-        return new org.locationtech.jts.geom.Envelope(minx, maxx, miny, maxy);
-    }
 }

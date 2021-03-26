@@ -26,9 +26,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
+import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.Address;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.ContactInfo;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.OnlineResource;
-import org.locationtech.jts.geom.Envelope;
 
 public class MetadataPropertiesTestSupport {
 
@@ -45,7 +45,7 @@ public class MetadataPropertiesTestSupport {
         p.setTitle("test title");
         p.setAbstract("test abstract");
         p.setAccessConstraints("test constraints");
-        p.setCharsetEncoding("ISO-8859-1");
+        p.setCharsetEncoding("8859part1");
         p.setCoordinateReferenceSystem("EPSG:4326");
         p.setCreationDate(LocalDate.now());
         p.setDataIdentifier(URI.create("http://test.com"));
@@ -53,7 +53,10 @@ public class MetadataPropertiesTestSupport {
         p.setDatasetResponsibleParty(contactInfo());
         p.setDistributionFormat("GeoPackage");
         p.setDistributionFormatVersion("1.0");
-        p.setGeographicBoundingBox(new Envelope(-180, 180, -90, 90));
+        p.setWestBoundLongitude(-180);
+        p.setEastBoundLongitude(180);
+        p.setSouthBoundLatitude(-90);
+        p.setNorthBoundLatitude(90);
         p.setGraphicOverview(URI.create("http://test.com/overview"));
         p.setKeywords(Arrays.asList("k1", "k2", "k 3"));
         p.setLineage("test lineage");
@@ -64,7 +67,6 @@ public class MetadataPropertiesTestSupport {
         p.setName("test name");
         p.setOnlineResources(Arrays.asList(onlineResource("1"), onlineResource("2")));
         p.setSpatialResolution(500_000);
-
         return p;
     }
 
@@ -78,14 +80,20 @@ public class MetadataPropertiesTestSupport {
     }
 
     private ContactInfo contactInfo() {
+    	Address address = new Address();
+    	address.setCity("Paris");
+    	address.setDeliveryPoint("18 Rue du Test");
+    	address.setPostalCode("2000");
+    	address.setCountry("France");
+    	
         ContactInfo c = new ContactInfo();
-        c.setAddress("test address");
+        c.setAddress(address);
         c.setEmail("test@email.com");
         c.setIndividualName("John Doe");
         c.setName("john");
+        c.setProtocol("URL");
         c.setLinkage("http://test.com/johndoe");
         c.setOrganizationName("Test Org");
-        c.setProtocol("Dr.");
         return c;
     }
 

@@ -18,10 +18,15 @@
  */
 package org.georchestra.datafeeder.it;
 
-import static org.assertj.core.api.Assertions.fail;
+import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
@@ -39,6 +44,7 @@ import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraMetadataPublicationService;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -121,6 +127,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         publishing.setDatasetCreationDate(datasetCreationDate);
         publishing.setDatasetCreationProcessDescription("Test process description");
         publishing.setEncoding("ISO-8859-1");
+        publishing.setScale(50_000);
 
         Envelope bounds = new Envelope();
         bounds.setMinx(-180d);
@@ -140,13 +147,159 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         final String publishedRecord = geonetwork.getRecordById(createdMdId);
         assertNotNull(publishedRecord);
+        System.err.println(publishedRecord);
         Document dom;
         try {
             dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                     .parse(new InputSource(new StringReader(publishedRecord)));
         } catch (Exception e) {
-            fail("Published record not returned as valid XML", e);
+            e.printStackTrace();
+            Assert.fail("Published record not returned as valid XML");
+            return;
         }
+
+        // metadata uuid, computed
+        assertXpath(dom, "MD_Metadata/fileIdentifier/CharacterString[text() = '%s']", createdMdId);
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/title/CharacterString[text() = 'Test Title']");
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/abstract/CharacterString[text() = 'Test abstract']");
+
+        String keyword = "MD_Metadata/identificationInfo/MD_DataIdentification/descriptiveKeywords/MD_Keywords/CharacterString[text()='%s']";
+        for (String kw : publishing.getKeywords()) {
+            assertXpath(dom, keyword, kw);
+        }
+
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date/CI_Date[text() = '%s']",
+                datasetCreationDate);
+        assertXpath(dom,
+                "MD_Metadata/dataQualityInfo/DQ_DataQuality/lineage/LI_Lineage/statement/CharacterString[text() = 'Test process description']");
+
+        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='series']");
+
+        final String title = publishing.getTitle();
+        assertOnlineResource(dom, "OGC:WMS", PULISHED_LAYERNAME, title + " - WMS");
+        assertOnlineResource(dom, "OGC:WFS", PULISHED_LAYERNAME, title + " - WFS");
+        assertOnlineResource(dom, "WWW:DOWNLOAD-1.0-http--download", PULISHED_LAYERNAME, title + " - WWW");
+
+        URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
+        final String uniqueResourceIdentifier = URI.create(publicUrl + "/?uuid=" + createdMdId).normalize().toString();
+
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/identifier/MD_Identifier/code/CharacterString[text() = '%s']",
+                uniqueResourceIdentifier);
+        // TODO:
+        // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString
+
+        // TODO (file format encoding (not char encoding !)): ? to be decided
+        // /gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format
+
+        // charset encoding, User input, computed from input file (UTF-8 if not found),
+        // Note ISO-8859-1 shall be translated to 8859part1
+        assertXpath(dom, "MD_Metadata/characterSet/MD_CharacterSetCode[@codeListValue='8859part1']");
+
+        // spatial representation, provided by metadata template
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/spatialRepresentationType/MD_SpatialRepresentationTypeCode[text()='vector']");
+
+        // topic category, ? to be decided
+        // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory/gmd:MD_TopicCategoryCode
+
+        // data extent, computed
+        String bbox = "MD_Metadata/identificationInfo/MD_DataIdentification/extent/EX_Extent/geographicElement/EX_GeographicBoundingBox/%s/Decimal[text()='%s']";
+        assertXpath(dom, bbox, "westBoundLongitude", "-180.0");
+        assertXpath(dom, bbox, "eastBoundLongitude", "180.0");
+        assertXpath(dom, bbox, "southBoundLatitude", "-00.0");
+        assertXpath(dom, bbox, "northBoundLatitude", "90.0");
+
+        // coordinate reference system, User input|computed from input file
+        // REVISIT: shouldn't it be <gmx:Anchor
+        // xlink:href="http://www.opengis.net/def/crs/EPSG/0/4258">EPSG:4258</gmx:Anchor>
+        String crs = "MD_Metadata/referenceSystemInfo/MD_ReferenceSystem/referenceSystemIdentifier/RS_Identifier/code/CharacterString[text()='%s']";
+        assertXpath(dom, crs, "EPSG:4326");
+
+        final String dataIdentXpath = "MD_Metadata/identificationInfo/MD_DataIdentification";
+        // metadata publication date, computed from datafeeder form submit time|now()
+        final LocalDate today = LocalDate.now();
+        final String dateBase = dataIdentXpath + "/citation/CI_Citation/date/CI_Date";
+        assertXpath(dom, dateBase + "[1]/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "[1]/dateType/CI_DateTypeCod[@codeListValue='creation']");
+        assertXpath(dom, dateBase + "[2]/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "[2]/dateType/CI_DateTypeCod[@codeListValue='publication']");
+
+        // spatial resolution, User input, default 1 : 25000
+        String spatialRes = dataIdentXpath
+                + "/spatialResolution/MD_Resolution/equivalentScale/MD_RepresentativeFraction/denominator/Integer[text()='%s']";
+        assertXpath(dom, spatialRes, publishing.getScale());
+
+        // use limitation, user input, default: CONFIG (typically "ODBL")
+        // REVISIT assertXpath(dom,
+        // dataIdentXpath+"/resourceConstraints/MD_LegalConstraints/useLimitation");
+
+        // access constraints, provided by metadata template,
+        // codeListValue="otherRestrictions"
+        String legalXpath = dataIdentXpath + "/resourceConstraints/MD_LegalConstraints";
+        assertXpath(dom, legalXpath + "/accessConstraints/MD_RestrictionCode[@codeListValue='otherRestrictions']");
+
+        // use constraints, provided by metadata template, codeListValue="license"
+        assertXpath(dom, legalXpath + "useConstraints/MD_RestrictionCode[@codeListValue='license']");
+
+        // metadata timestamp, computed, now()::ISO8601 (REVISIT?)
+        assertXpath(dom, "MD_Metadata/dateStamp/DateTime");
+
+        // metadata language, provided by metadata template, typically "eng" or "fre"
+        assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='eng']");
+
+        // graphic overview, provided by metadata template for the first iteration
+        assertXpath(dom, dataIdentXpath + "/graphicOverview");
+
+        // update frequency, provided by metadata template, codeListValue="asNeeded"
+        assertXpath(dom, dataIdentXpath
+                + "/resourceMaintenance/MD_MaintenanceInformation/maintenanceAndUpdateFrequency/MD_MaintenanceFrequencyCode[@codeListValue='asNeeded']");
+
+        assertResponsibleParty(dom);
+        assertPointOfContact(dom);
+    }
+
+    // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact
+    // computed from LDAP / sec-* headers
+    // individualName = sec-firstname + ' ' + sec-lastname
+    // organisationName = sec-orgname
+    // adress = postalAddress from LDAP (to be discussed)
+    // email = sec-email
+    // linkage = labeledURI from LDAP
+    // protocol = URL
+    // name = sec-orgname
+    // as in
+    // https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml
+    private void assertResponsibleParty(Document dom) {
+        final String rp = "MD_Metadata/identificationInfo/MD_DataIdentification/pointOfContact/CI_ResponsibleParty";
+        fail("implement");
+    }
+
+    // /gmd:MD_Metadata/gmd:contact
+    // computed from LDAP / sec-* headers
+    // individualName = sec-firstname + ' ' + sec-lastname
+    // organisationName = sec-orgname
+    // adress = postalAddress from LDAP (to be discussed)
+    // email = sec-email
+    private void assertPointOfContact(Document dom) {
+        final String poc = "MD_Metadata/contact/CI_ResponsibleParty";
+        fail("implement");
+    }
+
+    private void assertOnlineResource(Document dom, String protocol, String name, String description) {
+        final String onlineResource = "MD_Metadata/distributionInfo/MD_Distribution/transferOptions/MD_DigitalTransferOptions/onLine/CI_OnlineResource/%s/CharacterString[text() = '%s']";
+
+        assertXpath(dom, onlineResource, "protocol", protocol);
+        assertXpath(dom, onlineResource, "name", name);
+        assertXpath(dom, onlineResource, "description", description);
+    }
+
+    private void assertXpath(Document dom, String xpath, Object... args) {
+        String finalXpath = format(xpath, args);
+        assertThat(dom, hasXPath(finalXpath));
     }
 
 }
