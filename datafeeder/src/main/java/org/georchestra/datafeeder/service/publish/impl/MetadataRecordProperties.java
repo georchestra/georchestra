@@ -26,20 +26,14 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.locationtech.jts.geom.Envelope;
 
 import io.github.threetenjaxb.core.LocalDateTimeXmlAdapter;
 import io.github.threetenjaxb.core.LocalDateXmlAdapter;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @XmlRootElement(name = "properties", namespace = "https://camptocamp.com/datafeeder")
@@ -84,8 +78,11 @@ public class MetadataRecordProperties {
 
     // TBD
     // String topicCategory;
-    @XmlJavaTypeAdapter(EnvelopeXmlAdapter.class)
-    Envelope geographicBoundingBox;
+
+    double westBoundLongitude;
+    double eastBoundLongitude;
+    double southBoundLatitude;
+    double northBoundLatitude;
 
     String coordinateReferenceSystem;
 
@@ -123,35 +120,17 @@ public class MetadataRecordProperties {
     public static @Data class ContactInfo {
         String individualName;
         String organizationName;
-        String address;
+        Address address = new Address();
         String email;
         String linkage;
         String protocol = "URL";
         String name;
     }
 
-    /**
-     * The DTO for {@link Envelope}s
-     */
-    @XmlRootElement(name = "envelope")
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class EnvelopeDto {
-        @XmlAttribute
-        double minx, maxx, miny, maxy;
-    }
-
-    private static class EnvelopeXmlAdapter extends XmlAdapter<EnvelopeDto, Envelope> {
-
-        public @Override Envelope unmarshal(EnvelopeDto e) throws Exception {
-            return e == null ? null : new Envelope(e.minx, e.maxx, e.miny, e.maxy);
-        }
-
-        public @Override EnvelopeDto marshal(Envelope e) throws Exception {
-            return e == null ? null : new EnvelopeDto(e.getMinX(), e.getMaxX(), e.getMinY(), e.getMaxY());
-        }
-
+    public static @Data class Address {
+        String deliveryPoint;
+        String city;
+        String postalCode;
+        String country;
     }
 }

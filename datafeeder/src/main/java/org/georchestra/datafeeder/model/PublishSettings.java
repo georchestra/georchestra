@@ -70,7 +70,7 @@ public class PublishSettings {
     private LocalDate datasetCreationDate;
 
     @Column(name = "md_scale")
-    private Double scale;
+    private Integer scale;
 
     @Column(name = "md_creation_process_desc")
     private String datasetCreationProcessDescription;
