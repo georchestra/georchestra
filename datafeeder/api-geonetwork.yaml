@@ -2233,6 +2233,10 @@ paths:
           description: (experimental) Add extra information to the record.
           required: false
           type: string
+        - name: publishToAll
+          in: query
+          type: boolean
+          required: false
       responses:
         '201':
           description: Report about imported records.
@@ -3117,18 +3121,8 @@ paths:
         requesting a ZIP, a MEF version 2 file is returned. When requesting
         HTML, the default formatter is used.
       operationId: getRecord
-      consumes:
-        - '*/*'
       produces:
         - application/xml
-        - text/html
-        - application/json
-        - application/pdf
-        - '*/*'
-        - application/x-gn-mef-1-zip
-        - application/zip
-        - application/xhtml+xml
-        - application/x-gn-mef-2-zip
       parameters:
         - name: metadataUuid
           in: path

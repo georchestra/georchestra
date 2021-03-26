@@ -113,15 +113,48 @@ public class GeoNetworkRemoteService {
      * 
      * @param metadataId
      * 
+     * @param metadataId
+     * 
      * @param xmlRecordAsString
      * @return
      */
-    public GeoNetworkResponse publish(@NonNull Supplier<String> xmlRecordAsString) {
+    public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString) {
 
         final URL apiBaseURL = this.config.getApiUrl();
         final String url = apiBaseURL.toString();
         final String xmlRecord = xmlRecordAsString.get();
 
+        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
+
+        GeoNetworkResponse response = client.putXmlRecord(url, reqHeaders, metadataId, xmlRecord);
+
+        HttpStatus statusCode = response.getStatus();
+        String statusText = response.getStatusText();
+
+        if (statusCode.is2xxSuccessful()) {
+            return response;
+        }
+        if (statusCode.is4xxClientError()) {
+            throw new IllegalArgumentException(
+                    "Error creating metadata record: " + statusText + " (" + response.getErrorResponseBody() + ")");
+        }
+        throw new RuntimeException(
+                "Error creating metadata record: " + statusText + " (" + response.getErrorResponseBody() + ")");
+    }
+
+    public String getRecordById(@NonNull String metadataId) {
+
+        final URL apiBaseURL = this.config.getApiUrl();
+        final String url = apiBaseURL.toString();
+
+        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
+
+        String response = client.getXmlRecord(url, reqHeaders, metadataId);
+
+        return response;
+    }
+
+    private HttpHeaders createAdditionalRequestHeaders() {
         // Allow passing restricted headers
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
@@ -142,21 +175,7 @@ public class GeoNetworkRemoteService {
         // be set
         reqHeaders.set("X-XSRF-TOKEN", "c9f33266-e242-4198-a18c-b01290dce5f1");
         reqHeaders.set("Cookie", "XSRF-TOKEN=c9f33266-e242-4198-a18c-b01290dce5f1");
-
-        GeoNetworkResponse response = client.putXmlRecord(url, reqHeaders, xmlRecord);
-
-        HttpStatus statusCode = response.getStatus();
-        String statusText = response.getStatusText();
-
-        if (statusCode.is2xxSuccessful()) {
-            return response;
-        }
-        if (statusCode.is4xxClientError()) {
-            throw new IllegalArgumentException(
-                    "Error creating metadata record: " + statusText + " (" + response.getErrorResponseBody() + ")");
-        }
-        throw new RuntimeException(
-                "Error creating metadata record: " + statusText + " (" + response.getErrorResponseBody() + ")");
+        return reqHeaders;
     }
 
     public URI buildMetadataRecordURI(@NonNull String recordId) {

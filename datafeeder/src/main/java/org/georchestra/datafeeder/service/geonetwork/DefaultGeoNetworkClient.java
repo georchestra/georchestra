@@ -21,12 +21,15 @@ package org.georchestra.datafeeder.service.geonetwork;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+
 import org.fao.geonet.client.ApiClient;
 import org.fao.geonet.client.ApiException;
 import org.fao.geonet.client.RecordsApi;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -44,31 +47,46 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
      */
     @Override
     public GeoNetworkResponse putXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
-            @NonNull String xmlRecord) {
+            @NonNull String metadataId, @NonNull String xmlRecord) {
 
         ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
         client.setDebugging(debugRequests());
         // RecordsApi api = client.buildClient(RecordsApi.class);
         RecordsApi api = new RecordsApi(client);
 
-        String metadataType = "METADATA";
-        String xml = xmlRecord;
-        List<String> url = null;
-        String serverFolder = null;
-        Boolean recursiveSearch = false;
-        Boolean assignToCatalog = false;
-        String uuidProcessing = "NOTHING";
-        String group = null;
-        List<String> category = null;
-        Boolean rejectIfInvalid = false;
-        String transformWith = null;
-        String schema = null;
-        String extra = null;
+        final String metadataType = "METADATA";
+        final String xml = xmlRecord;
+        final List<String> url = null;
+        final String serverFolder = null;
+        final Boolean recursiveSearch = false;
+        final Boolean assignToCatalog = false;
+        final String uuidProcessing = "NOTHING";
+        final String group = null;
+        final List<String> category = null;
+        final Boolean rejectIfInvalid = false;
+        final String transformWith = null;
+        final String schema = null;
+        final String extra = null;
+        // This param makes the record public, but it seems it doesn't work in GN 3.8.x
+        final Boolean publishToAll = true;
 
         SimpleMetadataProcessingReport report;
         try {
+            log.info("Inserting record {} to GeoNetwork", metadataId);
             report = api.insert(metadataType, xml, url, serverFolder, recursiveSearch, assignToCatalog, uuidProcessing,
-                    group, category, rejectIfInvalid, transformWith, schema, extra);
+                    group, category, rejectIfInvalid, transformWith, schema, extra, publishToAll);
+
+            log.info("Publishing record {} to GeoNetwork", metadataId);
+            {
+                // Workaround IllegalStateException: Entity must not be null for http method PUT
+                Client httpClient = api.getApiClient().getHttpClient();
+                httpClient.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
+            }
+            // need to call publish, since publishToAll doesn't work/exist in GN 3.8.x?
+            api.publish(metadataId);
+
+            log.info("Published record {} to GeoNetwork", metadataId);
+
         } catch (ApiException e) {
             log.error("Error inserting metadata record", e);
             GeoNetworkResponse r = new GeoNetworkResponse();
@@ -88,6 +106,18 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         Map<String, List<InfoReport>> metadataInfos = report.getMetadataInfos();
         log.info("Created metadata record {}", metadataInfos);
         return r;
+    }
+
+    @Override
+    public String getXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
+            @NonNull String recordId) {
+
+        ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
+        client.setDebugging(debugRequests());
+
+        RecordsApi api = new RecordsApi(client);
+        String record = api.getRecord(recordId, "application/xml");
+        return record;
     }
 
     private boolean debugRequests() {
