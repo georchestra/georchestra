@@ -31,10 +31,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 
+import com.google.common.base.Throwables;
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Tasklet to prepare the target data store where to copy Datasets (usually a
  * PostGIS database, that might require creating a postgis database, or schema).
  */
+@Slf4j
 public class PrepareTargetDataStoreTasklet implements Tasklet {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
@@ -45,7 +50,12 @@ public class PrepareTargetDataStoreTasklet implements Tasklet {
         try {
             service.prepareTargetStoreForJobDatasets(uploadId);
         } catch (RuntimeException e) {
+            log.error("Error preparing target store", e);
             String message = e.getMessage();
+            if (message == null)
+                message = Throwables.getRootCause(e).getMessage();
+            if (message == null)
+                message = "Unknown reason";
             service.setPublishingStatusError(uploadId, message);
             DataUploadJob job = service.findJob(uploadId);
             Assert.isTrue(job.getPublishStatus() == JobStatus.ERROR, "Expected ERROR, got " + job.getPublishStatus());

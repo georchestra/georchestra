@@ -31,6 +31,7 @@ import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,8 @@ public class DataUploadService {
         return repository.findByJobId(uploadId);
     }
 
-    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, String orgName) {
-        return analysisService.createJob(jobId, username, orgName);
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, @NonNull UserInfo user) {
+        return analysisService.createJob(jobId, username, user);
     }
 
     /**

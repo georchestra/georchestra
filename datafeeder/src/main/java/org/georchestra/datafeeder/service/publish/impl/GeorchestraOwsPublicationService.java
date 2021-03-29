@@ -79,7 +79,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     public @Override void publish(@NonNull DatasetUploadState dataset) {
         requireNonNull(dataset.getJob());
-        requireNonNull(dataset.getJob().getOrganizationName(), "organization name not provided");
+        requireNonNull(dataset.getJob().getUser().getOrganization(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
@@ -129,7 +129,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         Map<String, String> connectionParams = new HashMap<>(
                 configProperties.getPublishing().getBackend().getGeoserver());
 
-        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getOrganizationName());
+        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getUser().getOrganization());
         for (String k : connectionParams.keySet()) {
             String v = connectionParams.get(k);
             if ("<schema>".equals(v)) {
@@ -205,7 +205,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     }
 
     private String resolveWorkspace(@NonNull DatasetUploadState dataset) {
-        final @NonNull String orgName = dataset.getJob().getOrganizationName();
+        final @NonNull String orgName = dataset.getJob().getUser().getOrganization();
         final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
 
         WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName);

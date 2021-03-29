@@ -28,6 +28,7 @@ import java.util.TreeSet;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.shapefile.ShapefileDirectoryFactory;
@@ -95,7 +96,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     }
 
     private File resolveKey(DataUploadJob job) {
-        String orgName = job.getOrganizationName() == null ? NULL_ORG : job.getOrganizationName();
+        UserInfo user = job.getUser();
+        String orgName = user.getOrganization() == null ? NULL_ORG : user.getOrganization();
         File directory = baseDirectory.toPath().resolve(job.getJobId().toString()).resolve(orgName).toFile();
         directory.mkdirs();
         this.directories.add(directory);

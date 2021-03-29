@@ -123,7 +123,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
     @Override
     public void importDataset(@NonNull DatasetUploadState dataset) {
         requireNonNull(dataset.getName(), "Dataset name is null");
-        requireNonNull(dataset.getJob().getOrganizationName(), "Organization name is null");
+        requireNonNull(dataset.getJob().getUser().getOrganization(), "Organization is null");
         requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
 
         Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
@@ -156,9 +156,9 @@ public class GeorchestraDataBackendService implements DataBackendService {
 
     public @VisibleForTesting Map<String, String> resolveConnectionParams(DataUploadJob job) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
-        String orgName = job.getOrganizationName();
+        String orgName = job.getUser().getOrganization();
         if (orgName == null) {
-            throw new IllegalStateException("Georchestra organization name not provided in job.organizationName");
+            throw new IllegalStateException("Georchestra organization name not provided in job.user.organization");
         }
         String schema = nameResolver.resolveDatabaseSchemaName(orgName);
         connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);

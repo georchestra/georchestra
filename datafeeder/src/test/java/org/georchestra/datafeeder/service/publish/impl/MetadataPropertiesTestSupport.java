@@ -80,12 +80,12 @@ public class MetadataPropertiesTestSupport {
     }
 
     private ContactInfo contactInfo() {
-    	Address address = new Address();
-    	address.setCity("Paris");
-    	address.setDeliveryPoint("18 Rue du Test");
-    	address.setPostalCode("2000");
-    	address.setCountry("France");
-    	
+        Address address = new Address();
+        address.setCity("Paris");
+        address.setDeliveryPoint("18 Rue du Test");
+        address.setPostalCode("2000");
+        address.setCountry("France");
+
         ContactInfo c = new ContactInfo();
         c.setAddress(address);
         c.setEmail("test@email.com");

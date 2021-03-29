@@ -22,7 +22,6 @@ import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.io.StringReader;
 import java.net.URI;
@@ -41,6 +40,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraMetadataPublicationService;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
@@ -58,6 +58,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import lombok.extern.slf4j.Slf4j;
+
 @SpringBootTest(classes = { //
         DataFeederApplicationConfiguration.class, //
         IntegrationTestSupport.class }, //
@@ -65,6 +67,7 @@ import org.xml.sax.InputSource;
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "it" })
+@Slf4j
 public class GeorchestraMetadataPublicationServiceIT {
 
     public @Autowired @Rule IntegrationTestSupport support;
@@ -94,7 +97,11 @@ public class GeorchestraMetadataPublicationServiceIT {
 
     private DatasetUploadState buildShapefileDatasetFromDefaultGeorchestraDataDirectory() {
         DataUploadJob job = new DataUploadJob();
-        job.setOrganizationName(ORG_NAME);
+        job.getUser().setOrganization(ORG_NAME);
+        job.getUser().setOrganizationName("Test Organization Full Name");
+        job.getUser().setEmail("testuser@test.com");
+        job.getUser().setFirstName("John");
+        job.getUser().setLastName("Doe");
 
         DatasetUploadState dset = new DatasetUploadState();
         dset.setJob(job);
@@ -147,7 +154,8 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         final String publishedRecord = geonetwork.getRecordById(createdMdId);
         assertNotNull(publishedRecord);
-        System.err.println(publishedRecord);
+        log.info("published record returned from GN: {}", publishedRecord);
+
         Document dom;
         try {
             dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
@@ -165,13 +173,13 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom,
                 "MD_Metadata/identificationInfo/MD_DataIdentification/abstract/CharacterString[text() = 'Test abstract']");
 
-        String keyword = "MD_Metadata/identificationInfo/MD_DataIdentification/descriptiveKeywords/MD_Keywords/CharacterString[text()='%s']";
+        String keyword = "MD_Metadata/identificationInfo/MD_DataIdentification/descriptiveKeywords/MD_Keywords/keyword/CharacterString[text()='%s']";
         for (String kw : publishing.getKeywords()) {
             assertXpath(dom, keyword, kw);
         }
 
         assertXpath(dom,
-                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date/CI_Date[text() = '%s']",
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date/CI_Date/date/Date[text() = '%s']",
                 datasetCreationDate);
         assertXpath(dom,
                 "MD_Metadata/dataQualityInfo/DQ_DataQuality/lineage/LI_Lineage/statement/CharacterString[text() = 'Test process description']");
@@ -184,11 +192,12 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertOnlineResource(dom, "WWW:DOWNLOAD-1.0-http--download", PULISHED_LAYERNAME, title + " - WWW");
 
         URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
-        final String uniqueResourceIdentifier = URI.create(publicUrl + "/?uuid=" + createdMdId).normalize().toString();
+        final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
 
         assertXpath(dom,
-                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/identifier/MD_Identifier/code/CharacterString[text() = '%s']",
+                "//MD_DataIdentification/citation/CI_Citation/identifier/MD_Identifier/code/CharacterString[text()='%s']",
                 uniqueResourceIdentifier);
+
         // TODO:
         // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString
 
@@ -201,7 +210,7 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         // spatial representation, provided by metadata template
         assertXpath(dom,
-                "MD_Metadata/identificationInfo/MD_DataIdentification/spatialRepresentationType/MD_SpatialRepresentationTypeCode[text()='vector']");
+                "MD_Metadata/identificationInfo/MD_DataIdentification/spatialRepresentationType/MD_SpatialRepresentationTypeCode[@codeListValue='vector']");
 
         // topic category, ? to be decided
         // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory/gmd:MD_TopicCategoryCode
@@ -210,7 +219,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         String bbox = "MD_Metadata/identificationInfo/MD_DataIdentification/extent/EX_Extent/geographicElement/EX_GeographicBoundingBox/%s/Decimal[text()='%s']";
         assertXpath(dom, bbox, "westBoundLongitude", "-180.0");
         assertXpath(dom, bbox, "eastBoundLongitude", "180.0");
-        assertXpath(dom, bbox, "southBoundLatitude", "-00.0");
+        assertXpath(dom, bbox, "southBoundLatitude", "-90.0");
         assertXpath(dom, bbox, "northBoundLatitude", "90.0");
 
         // coordinate reference system, User input|computed from input file
@@ -222,11 +231,11 @@ public class GeorchestraMetadataPublicationServiceIT {
         final String dataIdentXpath = "MD_Metadata/identificationInfo/MD_DataIdentification";
         // metadata publication date, computed from datafeeder form submit time|now()
         final LocalDate today = LocalDate.now();
-        final String dateBase = dataIdentXpath + "/citation/CI_Citation/date/CI_Date";
-        assertXpath(dom, dateBase + "[1]/date/Date[text()='%s']", today);
-        assertXpath(dom, dateBase + "[1]/dateType/CI_DateTypeCod[@codeListValue='creation']");
-        assertXpath(dom, dateBase + "[2]/date/Date[text()='%s']", today);
-        assertXpath(dom, dateBase + "[2]/dateType/CI_DateTypeCod[@codeListValue='publication']");
+        final String dateBase = dataIdentXpath + "/citation/CI_Citation";
+        assertXpath(dom, dateBase + "/date[1]/CI_Date/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "/date[1]/CI_Date/dateType/CI_DateTypeCode[@codeListValue='creation']");
+        assertXpath(dom, dateBase + "/date[2]/CI_Date/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "/date[2]/CI_Date/dateType/CI_DateTypeCode[@codeListValue='publication']");
 
         // spatial resolution, User input, default 1 : 25000
         String spatialRes = dataIdentXpath
@@ -243,7 +252,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom, legalXpath + "/accessConstraints/MD_RestrictionCode[@codeListValue='otherRestrictions']");
 
         // use constraints, provided by metadata template, codeListValue="license"
-        assertXpath(dom, legalXpath + "useConstraints/MD_RestrictionCode[@codeListValue='license']");
+        assertXpath(dom, legalXpath + "/useConstraints/MD_RestrictionCode[@codeListValue='license']");
 
         // metadata timestamp, computed, now()::ISO8601 (REVISIT?)
         assertXpath(dom, "MD_Metadata/dateStamp/DateTime");
@@ -275,7 +284,9 @@ public class GeorchestraMetadataPublicationServiceIT {
     // https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml
     private void assertResponsibleParty(Document dom) {
         final String rp = "MD_Metadata/identificationInfo/MD_DataIdentification/pointOfContact/CI_ResponsibleParty";
-        fail("implement");
+        UserInfo user = this.shpDataset.getJob().getUser();
+        assertPointOfContact(dom, rp, user.getFirstName() + " " + user.getLastName(), user.getOrganizationName(),
+                user.getEmail(), "", "", "");
     }
 
     // /gmd:MD_Metadata/gmd:contact
@@ -286,7 +297,23 @@ public class GeorchestraMetadataPublicationServiceIT {
     // email = sec-email
     private void assertPointOfContact(Document dom) {
         final String poc = "MD_Metadata/contact/CI_ResponsibleParty";
-        fail("implement");
+        UserInfo user = this.shpDataset.getJob().getUser();
+        assertPointOfContact(dom, poc, user.getFirstName() + " " + user.getLastName(), user.getOrganizationName(),
+                user.getEmail(), "", "", "");
+    }
+
+    private void assertPointOfContact(Document dom, String CI_ResponsiblePartyXPath, String individualName,
+            String organizationName, String email, String address, String city, String postalCode) {
+        final String base = CI_ResponsiblePartyXPath;
+
+        assertXpath(dom, base + "/individualName/CharacterString[text()='%s']", individualName);
+        assertXpath(dom, base + "/organisationName/CharacterString[text()='%s']", organizationName);
+
+        String addrXpath = base + "/contactInfo/CI_Contact/address/CI_Address/%s/CharacterString[text()='%s']";
+        assertXpath(dom, addrXpath, "electronicMailAddress", email);
+//		assertXpath(dom, addrXpath, "deliveryPoint", address);
+//		assertXpath(dom, addrXpath, "city", city);
+//		assertXpath(dom, addrXpath, "postalCode", postalCode);
     }
 
     private void assertOnlineResource(Document dom, String protocol, String name, String description) {
