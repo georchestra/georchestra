@@ -81,7 +81,7 @@ public class GeorchestraDataBackendServiceIT {
         support.deleteLocalDatabaseSchema(EXPECTED_SCHEMA_NAME);
 
         job = new DataUploadJob();
-        job.setOrganizationName(ORGANIZATION_NAME);
+        job.getUser().setOrganization(ORGANIZATION_NAME);
         dataset = new DatasetUploadState();
         dataset.setJob(job);
         publishing = new PublishSettings();
@@ -94,7 +94,7 @@ public class GeorchestraDataBackendServiceIT {
     }
 
     public @Test void prepareBackend_Null_Org_Name() {
-        job.setOrganizationName(null);
+        job.getUser().setOrganization(null);
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> service.prepareBackend(job));
         assertThat(ex.getMessage(), containsString("Georchestra organization name not provided"));
     }

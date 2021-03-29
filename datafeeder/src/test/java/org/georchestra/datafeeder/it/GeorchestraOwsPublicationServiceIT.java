@@ -120,7 +120,7 @@ public class GeorchestraOwsPublicationServiceIT {
      */
     private DatasetUploadState buildShapefileDatasetFromDefaultGeorchestraDataDirectory() {
         DataUploadJob job = new DataUploadJob();
-        job.setOrganizationName(ORG_NAME);
+        job.getUser().setOrganization(ORG_NAME);
 
         DatasetUploadState dset = new DatasetUploadState();
         dset.setJob(job);

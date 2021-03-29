@@ -35,6 +35,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.SampleProperty;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DatasetMetadata;
@@ -77,14 +78,14 @@ public class DataUploadAnalysisService {
      *                                  the {@link UploadPackage} from
      *                                  {@link FileStorageService}
      */
-    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, String organizationName) {
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, @NonNull UserInfo user) {
         log.info("Creating DataUploadState from UploadPackage {}", jobId);
         getUploadPack(jobId);
         DataUploadJob state = new DataUploadJob();
         state.setJobId(jobId);
         state.setAnalyzeStatus(JobStatus.PENDING);
         state.setUsername(username);
-        state.setOrganizationName(organizationName);
+        state.setUser(user);
         DataUploadJob saved = jobRepository.save(state);
         return saved;
     }

@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import org.georchestra.config.security.GeorchestraUserDetails;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -79,5 +80,21 @@ public class AuthorizationService {
         if (!userName.equals(state.getUsername()) && !isAdministrator()) {
             throw ApiException.forbidden("User %s has no access rights to this upload", userName);
         }
+    }
+
+    public @NonNull UserInfo getUserInfo() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication auth = context.getAuthentication();
+        Object principal = auth.getPrincipal();
+        UserInfo user = new UserInfo();
+        if (principal instanceof GeorchestraUserDetails) {
+            GeorchestraUserDetails georUser = (GeorchestraUserDetails) principal;
+            user.setEmail(georUser.getEmail());
+            user.setFirstName(georUser.getFirstName());
+            user.setLastName(georUser.getLastName());
+            user.setOrganization(georUser.getOrganization());
+            user.setOrganizationName(georUser.getOrganizationName());
+        }
+        return user;
     }
 }
