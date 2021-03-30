@@ -1,11 +1,13 @@
 server:
   servlet:
     context-path: /import
+    encoding.enabled: true
+    encoding.charset: UTF-8
+    encoding.force: true
   error.include-message: always
 
 spring:
-  #TODO: Remove local when ready to run as a georchestra microservice.
-  profiles.active: georchestra, local
+  profiles.active: georchestra
   application.name: datafeeder-service
   main:
     allow-bean-definition-overriding: true
@@ -18,18 +20,14 @@ spring:
       max-request-size: ${datafeeder.file-upload.max-request-size}
       file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
       location:  ${datafeeder.file-upload.temporary-location}
-    # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly.
-    encoding.charset: UTF-8
-    # Enable http encoding support.
-    encoding.enabled: true
-    # Force the encoding to the configured charset on HTTP requests and responses.
-    encoding.force: true
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+  jpa.hibernate.ddl-auto: update
   datasource:
+    # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
     username: sa
     password: password
-  jpa.database-platform: org.hibernate.dialect.H2Dialect
 
 datafeeder:
   file-upload:
@@ -58,43 +56,43 @@ logging:
   level:
     root: INFO
     feign: INFO
+    org.georchestra.datafeeder: INFO
     org.geoserver.openapi: INFO
+    org.geoserver.restconfig: INFO
 ---
 spring:
   profiles: georchestra
+  jpa.database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  datasource:
+    url: jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?currentSchema=${pgsqlSchema:datafeeder}
+    driverClassName: org.postgresql.Driver
+    username: ${pgsqlUser}
+    password: ${pgsqlPassword}
+    # connection pool configuration
+    hikari:
+      pool-name: datafeeder-connection-pool
+      minimum-idle: ${dataSource.minPoolSize:2}
+      idle-timeout: ${dataSource.maxIdleTime:60}
+      maximum-pool-size: ${dataSource.maxPoolSize:10}
+      connection-timeout: ${dataSource.timeout:2000}
+
 georchestra.datadir: /etc/georchestra
 ---
 spring:
   profiles: test
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+  jpa.hibernate.ddl-auto: update
+  datasource:
+    # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+      
 georchestra.datadir: src/test/resources/datadir
 ---
-spring:
-  profiles: it
+spring.profiles: it
 georchestra.datadir: src/test/resources/datadir
-datafeeder.publishing:
-  geoserver:
-    api-url: http://localhost:18080/geoserver/rest
-    public-url: https://georchestra.mydomain.org/geoserver
-    log-requests: true
-  geonetwork:
-    api-url: http://localhost:28080/geonetwork
-    public-url: https://georchestra.mydomain.org/geonetwork
-    log-requests: true
-  backend.local:
-    port: 15432
-    database: georchestra
-    user: georchestra
-    passwd: georchestra
-
-feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
-logging.level.feign: DEBUG
-logging.level.org.geoserver.openapi: DEBUG
----
-spring:
-  profiles: local
-
-#georchestra.datadir: src/test/resources/datadir
-
 datafeeder:
   file-upload:
     max-file-size: 30MB
@@ -105,11 +103,11 @@ datafeeder:
   publishing:
     geoserver:
       api-url: http://localhost:18080/geoserver/rest
-      public-url: http://localhost:18080/geoserver
+      public-url: https://georchestra.mydomain.org/geoserver
       log-requests: true
     geonetwork:
       api-url: http://localhost:28080/geonetwork
-      public-url: http://localhost:28080/geonetwork
+      public-url: https://georchestra.mydomain.org/geonetwork
       log-requests: true
     backend:
       local:
@@ -128,3 +126,7 @@ datafeeder:
         database: georchestra
         user: georchestra
         passwd: georchestra
+
+feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+logging.level.feign: DEBUG
+logging.level.org.geoserver.openapi: DEBUG
