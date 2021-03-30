@@ -37,12 +37,14 @@ import org.springframework.batch.core.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Encapsulates implementation of processing steps required by the publish job;
  * with methods intended to be called by the job {@link Step steps}
  *
  */
+@Slf4j
 public class PublishingBatchService {
 
     private @Autowired JobManager jobManager;
@@ -83,6 +85,7 @@ public class PublishingBatchService {
 
     @Transactional
     public void setPublishingStatus(@NonNull UUID jobId, @NonNull JobStatus status) {
+        log.info("Publish {}: Set publish status {}", jobId, status);
         int recordsAffected = repository.setPublishingStatus(jobId, status);
         if (recordsAffected != 1) {
             throw new IllegalArgumentException("Job " + jobId + " does not exist");
@@ -91,6 +94,7 @@ public class PublishingBatchService {
 
     @Transactional
     public void setPublishingStatusError(@NonNull UUID jobId, @NonNull String message) {
+        log.info("Publish {}: Set publish status {} '{}'", jobId, JobStatus.ERROR, message);
         int recordsAffected = repository.setPublishingStatus(jobId, JobStatus.ERROR, message);
         if (recordsAffected != 1) {
             throw new IllegalArgumentException("Job " + jobId + " does not exist");
@@ -104,6 +108,7 @@ public class PublishingBatchService {
      */
     @Transactional
     public void initializeJobPublishingStatus(@NonNull UUID jobId) {
+        log.info("Publish {}: Initialize job status to {}", jobId, JobStatus.RUNNING);
         DataUploadJob job = findJob(jobId);
         checkAnalisisComplete(job);
         job.setPublishStatus(JobStatus.RUNNING);
@@ -116,6 +121,7 @@ public class PublishingBatchService {
      */
     @Transactional
     public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId) {
+        log.info("Publish {}: Prepare target store for uploaded datasets", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
 
         backendService.prepareBackend(job);
@@ -130,12 +136,14 @@ public class PublishingBatchService {
     }
 
     public void importDatasetsToTargetDatastore(@NonNull UUID jobId) {
+        log.info("Publish {}: importing datasets to target database", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         doOnEachRunningDataset(job, backendService::importDataset);
         save(job);
     }
 
     public void publishDatasetsToGeoServer(@NonNull UUID jobId) {
+        log.info("Publish {}: Publish datasets to GeoServer", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         doOnEachRunningDataset(job, owsService::publish);
         save(job);
@@ -147,12 +155,14 @@ public class PublishingBatchService {
     }
 
     public void publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId) {
+        log.info("Publish {}: Publish datasets metadata to GeoNetwork", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         doOnEachRunningDataset(job, metadataService::publish);
         save(job);
     }
 
     public void addMetadataLinksToGeoServerDatasets(@NonNull UUID jobId) {
+        log.info("Publish {}: Add metadata links to GeoServer layer infos", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         doOnEachRunningDataset(job, dset -> {
             if (JobStatus.RUNNING == dset.getPublishStatus()) {
@@ -178,13 +188,16 @@ public class PublishingBatchService {
     }
 
     @Transactional
-    public void summarize(@NonNull UUID uploadId) {
-        DataUploadJob job = this.findJob(uploadId);
+    public void summarize(@NonNull UUID jobId) {
+        log.info("Publish {}: summarize status", jobId);
+        DataUploadJob job = this.findJob(jobId);
         if (job.getPublishStatus() != JobStatus.ERROR) {
             JobStatus status = determineJobStatus(job.getDatasets());
             job.setPublishStatus(status);
             if (JobStatus.ERROR == status) {
-                job.setError(buildErrorMessage(job.getDatasets()));
+                String errorMessage = buildErrorMessage(job.getDatasets());
+                log.info("Publish {}: summarized status is ERROR '{}'", jobId, errorMessage);
+                job.setError(errorMessage);
             }
         }
         save(job);
