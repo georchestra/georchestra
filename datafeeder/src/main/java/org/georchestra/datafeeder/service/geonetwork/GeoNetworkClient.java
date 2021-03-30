@@ -18,11 +18,15 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpHeaders;
 
 import lombok.NonNull;
 
 public interface GeoNetworkClient {
+
+    void checkServiceAvailable(String url, HttpHeaders reqHeaders) throws IOException;
 
     GeoNetworkResponse putXmlRecord(String url, HttpHeaders additionalRequestHeaders, String metadataId,
             String xmlRecord);

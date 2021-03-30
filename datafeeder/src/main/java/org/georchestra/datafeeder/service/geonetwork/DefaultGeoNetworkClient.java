@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +26,10 @@ import javax.ws.rs.client.Client;
 
 import org.fao.geonet.client.ApiClient;
 import org.fao.geonet.client.ApiException;
+import org.fao.geonet.client.MeApi;
 import org.fao.geonet.client.RecordsApi;
 import org.fao.geonet.client.model.InfoReport;
+import org.fao.geonet.client.model.MeResponse;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.glassfish.jersey.client.ClientProperties;
@@ -41,6 +44,28 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
     private @Autowired(required = false) DataFeederConfigurationProperties config;
+
+    @Override
+    public void checkServiceAvailable(@NonNull String baseUrl, @NonNull HttpHeaders reqHeaders) throws IOException {
+        ApiClient client = newApiClient(baseUrl, reqHeaders);
+        client.setDebugging(debugRequests());
+        MeApi meApi = new MeApi(client);
+        MeResponse me;
+        try {
+            me = meApi.getMe();
+            if (me == null) {
+                throw new IOException("Unable to get calling user information from geonetwork at " + baseUrl);
+            }
+            String id = me.getId();
+            String username = me.getUsername();
+            String organisation = me.getOrganisation();
+            log.info("GeoNetwork availability checked at {}, received user id:{}, username:{}, org:{}", baseUrl, id,
+                    username, organisation);
+        } catch (ApiException e) {
+            log.warn("Error checking geonetwork availability", e);
+            throw new IOException(e.getMessage(), e);
+        }
+    }
 
     /**
      * @param baseUrl e.g. {@code http://localhost:8080/geonetwork}
