@@ -299,9 +299,8 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
-        String basePath = base.getPath();
-        String path = String.format("%s/%s", basePath, workspace);
-        builder.path(path);
+        String path = String.format("/%s/ows", workspace);
+        builder.path(path);// appends path
         builder.query(queryString);
 
         URI linkage = builder.build().toUri();
