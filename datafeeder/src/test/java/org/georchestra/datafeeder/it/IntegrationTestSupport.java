@@ -98,8 +98,6 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         ExternalApiConfiguration gsConfig = appConfiguration.getPublishing().getGeoserver();
         URL apiUrl = gsConfig.getApiUrl();
         assertNotNull(apiUrl);
-        assertNotNull(gsConfig.getUsername());
-        assertNotNull(gsConfig.getPassword());
 
         String path = Paths.get(apiUrl.getPath()).resolve("about/version.json").toString();
         String uri = apiUrl.toURI().resolve(path).toString();

@@ -99,9 +99,11 @@ public class GeorchestraIntegrationAutoConfigurationTest {
         assertNotNull(publishing.getBackend());
 
         assertEquals(new URL("http://localhost:8080/geoserver/rest"), publishing.getGeoserver().getApiUrl());
-        assertEquals(new URL("https://georchestra.mydomain.org/geoserver"), publishing.getGeoserver().getPublicUrl());
+        assertEquals("properties loaded from src/test/resources/datadir/**?",
+                new URL("https://georchestra.test.org/geoserver"), publishing.getGeoserver().getPublicUrl());
         assertEquals(new URL("http://localhost:8081/geonetwork"), publishing.getGeonetwork().getApiUrl());
-        assertEquals(new URL("https://georchestra.mydomain.org/geonetwork"), publishing.getGeonetwork().getPublicUrl());
+        assertEquals("properties loaded from src/test/resources/datadir/**?",
+                new URL("https://georchestra.test.org/geonetwork"), publishing.getGeonetwork().getPublicUrl());
 
         Map<String, String> local = publishing.getBackend().getLocal();
         assertEquals("postgis", local.get("dbtype"));
