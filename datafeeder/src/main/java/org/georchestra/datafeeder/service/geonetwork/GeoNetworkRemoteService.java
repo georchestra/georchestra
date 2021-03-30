@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -140,6 +141,15 @@ public class GeoNetworkRemoteService {
         }
         throw new RuntimeException(
                 "Error creating metadata record: " + statusText + " (" + response.getErrorResponseBody() + ")");
+    }
+
+    public void checkServiceAvailable() throws IOException {
+        final URL apiBaseURL = this.config.getApiUrl();
+        final String url = apiBaseURL.toString();
+
+        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
+
+        client.checkServiceAvailable(url, reqHeaders);
     }
 
     public String getRecordById(@NonNull String metadataId) {
