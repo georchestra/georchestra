@@ -56,17 +56,21 @@ public class DataPublishingService {
                 publishing = new PublishSettings();
                 dset.setPublishing(publishing);
             }
-            DatasetMetadata md = dreq.getMetadata();
             String requestedPublishedName = dreq.getPublishedName() == null ? nativeName : dreq.getPublishedName();
             publishing.setPublishedName(requestedPublishedName);
             String srs = dreq.getSrs();
+            if (srs == null && null != dset.getNativeBounds() && null != dset.getNativeBounds().getCrs()) {
+                srs = dset.getNativeBounds().getCrs().getSrs();
+            }
             publishing.setSrs(srs);
             publishing.setSrsReproject(dreq.getSrsReproject());
             String encoding = dreq.getEncoding();
-            if (null == encoding)
+            if (null == encoding) {
                 encoding = dset.getEncoding();
+            }
             publishing.setEncoding(encoding);
 
+            DatasetMetadata md = dreq.getMetadata();
             publishing.setTitle(md.getTitle());
             publishing.setAbstract(md.getAbstract());
             publishing.setDatasetCreationDate(md.getCreationDate());
