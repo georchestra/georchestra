@@ -36,7 +36,9 @@ Default template to apply MetadataRecordProperties.java properties to a record t
 
   <xsl:template match="gmd:dateStamp">
     <gmd:dateStamp>
-      <gco:DateTime><xsl:value-of select="$props//metadataTimestamp" /></gco:DateTime>
+      <gco:DateTime>
+        <xsl:value-of select="$props//metadataTimestamp" />
+      </gco:DateTime>
     </gmd:dateStamp>
   </xsl:template>
 
@@ -62,6 +64,38 @@ Default template to apply MetadataRecordProperties.java properties to a record t
           </gco:CharacterString>
         </gmd:keyword>
       </xsl:for-each>
+      <gmd:type>
+        <gmd:MD_KeywordTypeCode
+          codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+          codeListValue="theme" />
+      </gmd:type>
+      <gmd:thesaurusName>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>GEMET - INSPIRE themes, version 1.0</gco:CharacterString>
+          </gmd:title>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>2008-06-01</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode
+                  codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_DateTypeCode"
+                  codeListValue="publication" />
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:identifier>
+            <gmd:MD_Identifier>
+              <gmd:code>
+                <gmx:Anchor
+                  xlink:href="https://sdi.eea.europa.eu/catalogue/srv/api/registries/vocabularies/external.theme.httpinspireeceuropaeutheme-theme">geonetwork.thesaurus.external.theme.httpinspireeceuropaeutheme-theme</gmx:Anchor>
+              </gmd:code>
+            </gmd:MD_Identifier>
+          </gmd:identifier>
+        </gmd:CI_Citation>
+      </gmd:thesaurusName>
     </gmd:MD_Keywords>
   </xsl:template>
 
