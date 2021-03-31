@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /import
+    context-path: /datafeeder
     encoding.enabled: true
     encoding.charset: UTF-8
     encoding.force: true
