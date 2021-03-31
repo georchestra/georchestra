@@ -34,6 +34,12 @@ Default template to apply MetadataRecordProperties.java properties to a record t
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template match="gmd:dateStamp">
+    <gmd:dateStamp>
+      <gco:DateTime><xsl:value-of select="$props//metadataTimestamp" /></gco:DateTime>
+    </gmd:dateStamp>
+  </xsl:template>
+
   <xsl:template
     match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString">
     <gco:CharacterString>
@@ -202,7 +208,9 @@ Default template to apply MetadataRecordProperties.java properties to a record t
   <xsl:template
     match="gmd:referenceSystemInfo//gmd:MD_ReferenceSystem//gmd:referenceSystemIdentifier//gmd:RS_Identifier/gmd:code">
     <gmd:code>
-      <gco:CharacterString><xsl:value-of select="$props//coordinateReferenceSystem" /></gco:CharacterString>
+      <gco:CharacterString>
+        <xsl:value-of select="$props//coordinateReferenceSystem" />
+      </gco:CharacterString>
     </gmd:code>
   </xsl:template>
    
