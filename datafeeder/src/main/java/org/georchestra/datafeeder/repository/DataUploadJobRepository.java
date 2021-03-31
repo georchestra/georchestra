@@ -41,23 +41,19 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
 
     Optional<DataUploadJob> findByJobId(@NonNull UUID jobId);
 
-    @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set analyzeStatus = :status where jobId = :jobId")
     int setAnalyzeStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status);
 
-    @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set publishStatus = :status where jobId = :jobId")
     int setPublishingStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status);
 
-    @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set publishStatus = :status, error = :error where jobId = :jobId")
     int setPublishingStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status,
             @Param("error") String errorMessage);
 
-    @Transactional
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update DataUploadJob set finishedSteps = finishedSteps + 1 where jobId = :jobId")
     int incrementProgress(@Param("jobId") UUID jobId);

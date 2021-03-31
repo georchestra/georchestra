@@ -20,8 +20,12 @@ spring:
       max-request-size: ${datafeeder.file-upload.max-request-size}
       file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
       location:  ${datafeeder.file-upload.temporary-location}
-  jpa.database-platform: org.hibernate.dialect.H2Dialect
-  jpa.hibernate.ddl-auto: update
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: update
+  batch:
+    job.enabled: false #disable automatically running configured jobs at startup time
+    initialize-schema: always
   datasource:
     # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
     url: jdbc:h2:mem:testdb
