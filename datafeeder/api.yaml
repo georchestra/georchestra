@@ -15,6 +15,22 @@ tags:
     description: 'API to control jobs related to publishing geospatial datasets previously uploaded'
 
 paths:
+  /config/frontend:
+    get:
+      tags:
+        - Config
+      description: 'Get the front-end application configuration object'
+      operationId: getFrontendConfig
+      responses:
+        200:
+          description: Front-end application configuration object
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: 'Not authenticated'
+
   /upload:
     post:
       tags:
