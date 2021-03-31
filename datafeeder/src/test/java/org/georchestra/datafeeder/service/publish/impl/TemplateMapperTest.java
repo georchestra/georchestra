@@ -103,8 +103,8 @@ public class TemplateMapperTest {
         String crs = "MD_Metadata/referenceSystemInfo/MD_ReferenceSystem/referenceSystemIdentifier/RS_Identifier/code/CharacterString[text()='%s']";
         assertXpath(dom, crs, mdprops.getCoordinateReferenceSystem());
 
-        // metadata timestamp, computed, now()::ISO8601 (REVISIT?)
-        assertXpath(dom, "MD_Metadata/dateStamp/DateTime");
+        // metadata timestamp, computed, now()::ISO8601
+        assertXpath(dom, "MD_Metadata/dateStamp/DateTime[text()='%s']", mdprops.getMetadataTimestamp());
 
         // metadata language, provided by metadata template, typically "eng" or "fre"
         assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='eng']");
