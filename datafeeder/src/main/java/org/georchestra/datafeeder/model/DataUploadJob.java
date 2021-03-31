@@ -27,6 +27,7 @@ import java.util.UUID;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -35,7 +36,6 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -54,12 +54,11 @@ public class DataUploadJob {
     @Column(unique = true, nullable = false)
     private UUID jobId;
 
-    @CreatedBy
     @Column(name = "created_by", nullable = false)
     private String username;
 
-    @Column(name = "org_name")
-    private String organizationName;
+    @Embedded
+    private UserInfo user = new UserInfo();
 
     @CreatedDate
     @Column(name = "created_date", nullable = false)
@@ -89,6 +88,12 @@ public class DataUploadJob {
 
     private int totalSteps;
     private int finishedSteps;
+
+    public @NonNull UserInfo getUser() {
+        if (this.user == null)
+            this.user = new UserInfo();
+        return this.user;
+    }
 
     public double getProgress() {
         return totalSteps == 0 ? 0d : (double) finishedSteps / totalSteps;

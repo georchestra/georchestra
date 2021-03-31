@@ -74,10 +74,12 @@ georchestra.datadir: src/test/resources/datadir
 datafeeder.publishing:
   geoserver:
     api-url: http://localhost:18080/geoserver/rest
-    public-url: http://localhost:18080/geoserver
+    public-url: https://georchestra.mydomain.org/geoserver
+    log-requests: true
   geonetwork:
     api-url: http://localhost:28080/geonetwork
-    public-url: http://localhost:28080/geonetwork
+    public-url: https://georchestra.mydomain.org/geonetwork
+    log-requests: true
   backend.local:
     port: 15432
     database: georchestra
@@ -104,9 +106,11 @@ datafeeder:
     geoserver:
       api-url: http://localhost:18080/geoserver/rest
       public-url: http://localhost:18080/geoserver
+      log-requests: true
     geonetwork:
       api-url: http://localhost:28080/geonetwork
       public-url: http://localhost:28080/geonetwork
+      log-requests: true
     backend:
       local:
         dbtype: postgis

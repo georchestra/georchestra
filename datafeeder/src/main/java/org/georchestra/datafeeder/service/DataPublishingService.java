@@ -72,7 +72,8 @@ public class DataPublishingService {
             publishing.setDatasetCreationDate(md.getCreationDate());
             publishing.setDatasetCreationProcessDescription(md.getCreationProcessDescription());
             publishing.setKeywords(md.getTags());
-            publishing.setScale(md.getScale());
+            Integer scale = md.getScale() == null ? 25_000 : md.getScale();
+            publishing.setScale(scale);
         }
         publishingBatchService.save(job);
 

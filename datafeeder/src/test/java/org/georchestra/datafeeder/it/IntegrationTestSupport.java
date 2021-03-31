@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.it;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -35,6 +36,7 @@ import java.util.Map;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.BackendConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -53,6 +55,7 @@ import org.springframework.stereotype.Service;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.saxon.functions.ConstantFunction.False;
 
 /**
  * {@link Service @Service} and JUnit {@link Rule @Rule} to aid in integration
@@ -64,6 +67,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     private @Autowired @Getter DataFeederConfigurationProperties appConfiguration;
     private @Autowired @Getter TestRestTemplate template;
+    private @Autowired(required = false) GeoNetworkRemoteService geoNetwork;
 
     @Override
     protected void before() throws Throwable {
@@ -115,11 +119,10 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         assertNotNull(body.toString(), ((Map) body.get("about")).get("resource"));
     }
 
-    private void checkGeoNetworkAvailability() {
+    private void checkGeoNetworkAvailability() throws IOException {
         log.debug("Checking GeoNetwork availability");
-        log.info("TODO: implement checkGeoNetworkAvailability");
-        // TODO maybe check the api client described here:
-        // https://geonetwork-opensource.org/manuals/3.10.x/en/api/the-geonetwork-api.html
+        if (geoNetwork != null)
+            geoNetwork.checkServiceAvailable();
     }
 
     private Connection getConnectionFromParams(Map<String, String> gtParams) throws SQLException {

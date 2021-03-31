@@ -24,6 +24,9 @@
     <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
     <lombok.version>1.18.12</lombok.version>
+
+    <jersey-version>2.29.1</jersey-version>
+
     <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
@@ -136,6 +139,16 @@
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
         <version>2.2.11</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.threeten-jaxb</groupId>
+        <artifactId>threeten-jaxb-core</artifactId>
+        <version>1.2</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>Saxon-HE</artifactId>
+        <version>9.9.1-8</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -265,6 +278,15 @@
       <artifactId>jaxb-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.github.threeten-jaxb</groupId>
+      <artifactId>threeten-jaxb-core</artifactId>
+    </dependency>
+      <!-- Need Saxon for XSLT, the Java8 internal Xalan-based one does not handle "node-set" parameters -->
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
     </dependency>
@@ -276,6 +298,28 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+      <!-- GeoNetwork client library deps -->
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-multipart</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+
     <!-- Testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -320,9 +364,12 @@
           <artifactId>openapi-generator-maven-plugin</artifactId>
           <version>${openapi-generator-maven-plugin.version}</version>
           <inherited>true</inherited>
-          <configuration>
-            <generatorName>spring</generatorName>
-          </configuration>
+        </plugin>
+        <plugin>
+          <!-- for GeoNetwork OpenAPI 2.0 spec -->
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-codegen-maven-plugin</artifactId>
+          <version>2.4.19</version>
         </plugin>
         <plugin>
           <groupId>net.revelc.code.formatter</groupId>
@@ -381,15 +428,37 @@
         <artifactId>openapi-generator-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>generate</id>
+            <id>build-datafeeder-api</id>
             <goals>
               <goal>generate</goal>
             </goals>
             <inherited>true</inherited>
             <configuration>
+              <generatorName>spring</generatorName>
               <configurationFile>${project.basedir}/openapi-generator-api-config.json</configurationFile>
               <ignoreFileOverride>${project.basedir}/openapi-generator-ignore</ignoreFileOverride>
               <inputSpec>${project.basedir}/api.yaml</inputSpec>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-codegen-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>build-geonetwork-client</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <inherited>true</inherited>
+            <configuration>
+              <language>java</language>
+              <configurationFile>${project.basedir}/openapi-generator-geonetwork-api-config.json</configurationFile>
+              <ignoreFileOverride>${project.basedir}/openapi-generator-ignore</ignoreFileOverride>
+              <inputSpec>${project.basedir}/api-geonetwork.yaml</inputSpec>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
             </configuration>
           </execution>
         </executions>
@@ -407,6 +476,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-sources/openapi/src</source>
+                <source>${project.build.directory}/generated-sources/swagger/src</source>
                 <source>${project.build.directory}/generated-sources/mapstruct</source>
               </sources>
             </configuration>

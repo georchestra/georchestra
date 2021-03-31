@@ -155,7 +155,7 @@ public class DataPublishingApiControllerTest {
         mdRequest.setTitle(dset.getName() + " title");
         mdRequest.setAbstract(dset.getName() + " abstract");
         mdRequest.setCreationProcessDescription(dset.getName() + " creation process description");
-        mdRequest.setScale(500_000d);
+        mdRequest.setScale(500_000);
         mdRequest.setTags(Arrays.asList(dset.getName() + " keyword 1", dset.getName() + " keyword 2"));
 
         dsetReq.setMetadata(mdRequest);

@@ -405,8 +405,8 @@ components:
           example: 2017-07-21
         scale:
           description: Optional, scale the data was created for (e.g. 500000 for a 1:500000 scale)
-          type: number
-          format: double
+          type: integer
+          format: int32
           example: 25000
         creationProcessDescription:
           type: string

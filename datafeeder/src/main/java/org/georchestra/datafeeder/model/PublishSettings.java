@@ -21,10 +21,13 @@ package org.georchestra.datafeeder.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 
 import lombok.Data;
@@ -67,8 +70,16 @@ public class PublishSettings {
     private LocalDate datasetCreationDate;
 
     @Column(name = "md_scale")
-    private Double scale;
+    private Integer scale;
 
     @Column(name = "md_creation_process_desc")
     private String datasetCreationProcessDescription;
+
+    @Embedded
+    @AttributeOverrides({ //
+            @AttributeOverride(name = "minx", column = @Column(name = "md_geog_minx")), //
+            @AttributeOverride(name = "maxx", column = @Column(name = "md_geog_maxx")), //
+            @AttributeOverride(name = "miny", column = @Column(name = "md_geog_miny")), //
+            @AttributeOverride(name = "maxy", column = @Column(name = "md_geog_maxy")) })
+    private Envelope geographicBoundingBox;
 }

@@ -69,6 +69,7 @@ public @Data class DataFeederConfigurationProperties {
         private URL publicUrl;
         private String username;
         private String password;
+        private boolean logRequests;
     }
 
     public static @Data class BackendConfiguration {

@@ -33,6 +33,7 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -64,14 +65,14 @@ public class FileUploadApiController implements FileUploadApi {
     public ResponseEntity<UploadJobStatus> uploadFiles(@RequestPart(value = "filename") List<MultipartFile> files) {
         UUID uploadId;
         DataUploadJob state;
-        final String userName = validityService.getUserName();
-        final String orgName = validityService.getUserOrgName();
         if (files.isEmpty()) {
             throw ApiException.badRequest("No files provided in multi-part item 'filename'");
         }
         try {
+            String username = validityService.getUserName();
+            UserInfo userInfo = validityService.getUserInfo();
             uploadId = storageService.saveUploads(files);
-            state = uploadService.createJob(uploadId, userName, orgName);
+            state = uploadService.createJob(uploadId, username, userInfo);
             uploadService.analyze(uploadId);
         } catch (IOException e) {
             e.printStackTrace();

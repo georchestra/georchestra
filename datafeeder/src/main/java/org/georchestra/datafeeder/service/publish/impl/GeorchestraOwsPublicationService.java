@@ -33,7 +33,9 @@ import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.Backe
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.geoserver.openapi.model.catalog.DataStoreInfo;
@@ -77,7 +79,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     public @Override void publish(@NonNull DatasetUploadState dataset) {
         requireNonNull(dataset.getJob());
-        requireNonNull(dataset.getJob().getOrganizationName(), "organization name not provided");
+        requireNonNull(dataset.getJob().getUser().getOrganization(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
@@ -93,11 +95,22 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, dataset));
         }
 
-        FeatureTypeInfo fti = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName, dataset);
-        geoserver.create(fti);
+        FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
+                dataset);
+        FeatureTypeInfo response = geoserver.create(requestBody);
 
         publishing.setPublishedWorkspace(workspaceName);
         publishing.setPublishedName(publishedLayerName);
+
+        EnvelopeInfo latLonBoundingBox = response.getLatLonBoundingBox();
+        if (latLonBoundingBox != null) {
+            Envelope geographicBoundingBox = new Envelope();
+            geographicBoundingBox.setMinx(latLonBoundingBox.getMinx());
+            geographicBoundingBox.setMiny(latLonBoundingBox.getMiny());
+            geographicBoundingBox.setMaxx(latLonBoundingBox.getMaxx());
+            geographicBoundingBox.setMaxy(latLonBoundingBox.getMaxy());
+            publishing.setGeographicBoundingBox(geographicBoundingBox);
+        }
     }
 
     private @NonNull DataStoreInfo buildDataStoreInfo(@NonNull String workspaceName, @NonNull String dataStoreName,
@@ -116,7 +129,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         Map<String, String> connectionParams = new HashMap<>(
                 configProperties.getPublishing().getBackend().getGeoserver());
 
-        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getOrganizationName());
+        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getUser().getOrganization());
         for (String k : connectionParams.keySet()) {
             String v = connectionParams.get(k);
             if ("<schema>".equals(v)) {
@@ -192,7 +205,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     }
 
     private String resolveWorkspace(@NonNull DatasetUploadState dataset) {
-        final @NonNull String orgName = dataset.getJob().getOrganizationName();
+        final @NonNull String orgName = dataset.getJob().getUser().getOrganization();
         final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
 
         WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName);
