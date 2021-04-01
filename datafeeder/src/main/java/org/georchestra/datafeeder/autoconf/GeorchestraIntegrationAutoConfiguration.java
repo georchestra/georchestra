@@ -35,8 +35,12 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("georchestra")
-@Import({ GeorchestraDatadirConfiguration.class, GeorchestraSecurityProxyAuthenticationConfiguration.class,
-        GeorchestraPublishingServicesConfiguration.class })
+@Import({ //
+        GeorchestraDatadirConfiguration.class, //
+        GeorchestraSecurityProxyAuthenticationConfiguration.class, //
+        GeorchestraBatchStoreConfiguration.class, //
+        GeorchestraPublishingServicesConfiguration.class//
+})
 public class GeorchestraIntegrationAutoConfiguration {
 
     @ConfigurationProperties(prefix = "datafeeder")

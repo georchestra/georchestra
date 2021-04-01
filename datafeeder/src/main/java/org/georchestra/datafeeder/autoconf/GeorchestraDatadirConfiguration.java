@@ -18,10 +18,8 @@
  */
 package org.georchestra.datafeeder.autoconf;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
-@Profile("!local")
 @PropertySource(value = { //
         "file:${georchestra.datadir}/default.properties", //
         "file:${georchestra.datadir}/datafeeder/datafeeder.properties" }, //

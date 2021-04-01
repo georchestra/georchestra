@@ -261,7 +261,7 @@ public class FileUploadApiControllerTest {
         List<UploadJobStatus> jobs = response.getBody();
         Set<UUID> expected = Arrays.stream(expectedUserJobs).map(UploadJobStatus::getJobId).collect(Collectors.toSet());
         Set<UUID> actual = jobs.stream().map(UploadJobStatus::getJobId).collect(Collectors.toSet());
-        assertEquals(expected, actual);
+        assertThat(actual, Matchers.hasItems(expected.toArray(new UUID[expectedUserJobs.length])));
     }
 
     @Test
