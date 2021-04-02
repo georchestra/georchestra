@@ -224,13 +224,18 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-          </dependency>
-          <!-- Test scope -->
-          <dependency>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <!-- Test scope -->
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-          </dependency>
+        </dependency>
       </dependencies>
       <repositories>
       <repository>
