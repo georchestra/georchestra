@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.config;
 
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +35,7 @@ import lombok.Data;
  */
 public @Data class DataFeederConfigurationProperties {
 
+    private URI frontEndConfigFile;
     private FileUploadConfig fileUpload = new FileUploadConfig();
     private PublishingConfiguration publishing = new PublishingConfiguration();
 

@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.api;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,20 @@ public abstract class ApiException extends RuntimeException {
 
     public static ApiException badRequest(String format, Object... args) {
         throw new BadRequest(String.format(format, args));
+    }
+
+    public static InternalServerError internalServerError(Throwable cause, String format, Object... args) {
+        throw new InternalServerError(String.format(format, args), cause);
+    }
+
+    @ResponseStatus(value = INTERNAL_SERVER_ERROR)
+    static class InternalServerError extends ApiException {
+        private @Getter final HttpStatus status = INTERNAL_SERVER_ERROR;;
+
+        public InternalServerError(String reason, Throwable cause) {
+            super(reason);
+            super.initCause(cause);
+        }
     }
 
     @ResponseStatus(value = NOT_FOUND)

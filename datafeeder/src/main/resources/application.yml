@@ -34,6 +34,7 @@ spring:
     password: password
 
 datafeeder:
+  front-end-config-file: front-end.config.uri
   file-upload:
     # maximum size allowed for uploaded files. (e.g. 128MB, GB can't be used, only KB or MB)
     max-file-size: ${file-upload.max-file-size:30MB}
@@ -81,6 +82,8 @@ spring:
       connection-timeout: ${dataSource.timeout:2000}
 
 georchestra.datadir: /etc/georchestra
+datafeeder:
+  front-end-config-file: ${front-end.config.uri:${georchestra.datadir}/datafeeder/frontend-config.json}
 ---
 spring:
   profiles: test
