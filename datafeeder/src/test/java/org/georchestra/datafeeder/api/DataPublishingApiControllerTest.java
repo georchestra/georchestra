@@ -102,6 +102,7 @@ public class DataPublishingApiControllerTest {
             assertEquals(expectedMd.getCreationProcessDescription(), publishing.getDatasetCreationProcessDescription());
             assertEquals(expectedMd.getScale(), publishing.getScale());
             assertEquals(expectedMd.getTags(), publishing.getKeywords());
+            assertEquals(dsetReq.getSrs(), publishing.getSrs());
         }
         {
             response = controller.getPublishingStatus(upload.getJobId());
@@ -144,6 +145,29 @@ public class DataPublishingApiControllerTest {
         }
     }
 
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    public void testPublish_SrsSetToNativeSrsIfNotProvidedInPublishRequest() {
+
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(multipartSupport.statePopShapefile(), "statepop");
+
+        DatasetUploadState dset = upload.getDatasets().get(0);
+        DatasetPublishRequest dsetReq = buildRequest(dset);
+        dsetReq.setSrs(null);
+
+        PublishRequest publishRequest = new PublishRequest().datasets(Arrays.asList(dsetReq));
+
+        ResponseEntity<PublishJobStatus> response = controller.publish(upload.getJobId(), publishRequest);
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+
+        DataUploadJob finalJob = testSupport.awaitUntilPublishStateIs(upload.getJobId(), 5, JobStatus.DONE);
+        DatasetUploadState dsetFinal = finalJob.getDatasets().get(0);
+        PublishSettings publishing = dsetFinal.getPublishing();
+
+        String expected = dset.getNativeBounds().getCrs().getSrs();
+        assertEquals(expected, publishing.getSrs());
+    }
+
     private DatasetPublishRequest buildRequest(DatasetUploadState dset) {
         DatasetPublishRequest dsetReq = new DatasetPublishRequest();
         dsetReq.setNativeName(dset.getName());
@@ -161,4 +185,5 @@ public class DataPublishingApiControllerTest {
         dsetReq.setMetadata(mdRequest);
         return dsetReq;
     }
+
 }

@@ -34,6 +34,14 @@ Default template to apply MetadataRecordProperties.java properties to a record t
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template match="gmd:dateStamp">
+    <gmd:dateStamp>
+      <gco:DateTime>
+        <xsl:value-of select="$props//metadataTimestamp" />
+      </gco:DateTime>
+    </gmd:dateStamp>
+  </xsl:template>
+
   <xsl:template
     match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString">
     <gco:CharacterString>
@@ -56,6 +64,38 @@ Default template to apply MetadataRecordProperties.java properties to a record t
           </gco:CharacterString>
         </gmd:keyword>
       </xsl:for-each>
+      <gmd:type>
+        <gmd:MD_KeywordTypeCode
+          codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_KeywordTypeCode"
+          codeListValue="theme" />
+      </gmd:type>
+      <gmd:thesaurusName>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>GEMET - INSPIRE themes, version 1.0</gco:CharacterString>
+          </gmd:title>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>2008-06-01</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode
+                  codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#CI_DateTypeCode"
+                  codeListValue="publication" />
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:identifier>
+            <gmd:MD_Identifier>
+              <gmd:code>
+                <gmx:Anchor
+                  xlink:href="https://sdi.eea.europa.eu/catalogue/srv/api/registries/vocabularies/external.theme.httpinspireeceuropaeutheme-theme">geonetwork.thesaurus.external.theme.httpinspireeceuropaeutheme-theme</gmx:Anchor>
+              </gmd:code>
+            </gmd:MD_Identifier>
+          </gmd:identifier>
+        </gmd:CI_Citation>
+      </gmd:thesaurusName>
     </gmd:MD_Keywords>
   </xsl:template>
 
@@ -202,7 +242,9 @@ Default template to apply MetadataRecordProperties.java properties to a record t
   <xsl:template
     match="gmd:referenceSystemInfo//gmd:MD_ReferenceSystem//gmd:referenceSystemIdentifier//gmd:RS_Identifier/gmd:code">
     <gmd:code>
-      <gco:CharacterString><xsl:value-of select="$props//coordinateReferenceSystem" /></gco:CharacterString>
+      <gco:CharacterString>
+        <xsl:value-of select="$props//coordinateReferenceSystem" />
+      </gco:CharacterString>
     </gmd:code>
   </xsl:template>
    
