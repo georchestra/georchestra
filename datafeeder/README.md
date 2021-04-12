@@ -79,16 +79,37 @@ With the service's REST API being defined as an [Open API 3](api.yaml)  specific
 
 ### Georchestra environment
 
+#### Checkout the datafeeder branch in docker:
+
 Running as a geOrchestra service requires a clone of geOrchestra's docker repository `git@github.com:georchestra/docker.git`.
 
 At this time, being not part of the official distribution, you need to switch to the `datafeeder` branch, which in turn will set the git `config/` submodule to the appropriate datafeeder branch, so that the `config/datafeeder/datafeder.properties` file exists.
 
 ```bash
 git clone git@github.com:georchestra/docker.git
+git checkout datafeeder
 git submodule update --init
 ```
 
-geOrchestra's "security proxy" API Gateway service has been configured to redirect all calls to `/import/**` to this service.
+#### Run geOrchestra docker composition
+
+Run geOrchestra with datafeeder integrated:
+
+```
+docker compose up -d
+```
+
+*geOrchestra*'s "security proxy" API Gateway service has been configured to redirect all calls to `/datafeeder/**` to this service.
+
+Open [https://georchestra-127-0-1-1.traefik.me/](https://georchestra-127-0-1-1.traefik.me/) in your browser.
+
+Log in with these credentials:
+
+* `testuser` / `testuser`
+* `testadmin` / `testadmin`
+
+Once logged in, *datafeeder*'s OpenAPI test UI is available at [https://georchestra-127-0-1-1.traefik.me/datafeeder](https://georchestra-127-0-1-1.traefik.me/datafeeder)
+
 
 ### Standalone
 
@@ -99,6 +120,8 @@ docker-compose -f docker-compose-it.yml up -d
 mvn spring-boot:run -Dspring-boot.run.profiles=georchestra,it
 ```
 or create an equivalent run configuration in your IDE with `org.georchestra.datafeeder.app.DataFeederApplication` as the application's main class.
+
+Then `datafeeder` should start and run at `http://localhost:8080/datafeeder/`
 
 ## Manual testing
 
