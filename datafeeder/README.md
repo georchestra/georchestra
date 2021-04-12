@@ -64,11 +64,18 @@ The integration tests ough to be written in a way that support multiple runs wit
 
 ### Build the docker image:
 
+**database**: while running from the `datafeeder/integration` branch, and until the work is merged to master, you'll need to build the `database` docker image in addition to datafeeder's, for the postgres `datafeeder` schema to be initialized, and prune the database volume.
+
+```bash
+georchestra$ make docker-build-database
+```
+
+To build *datafeeder*'s docker image:
+
 ```bash
 georchestra$ make docker-build-datafeeder
 georchestra$ docker images|grep datafeeder
 georchestra/datafeeder         20.2-SNAPSHOT       a2ca96143b9f        12 seconds ago      376MB
-
 ```
 
 ## Running
