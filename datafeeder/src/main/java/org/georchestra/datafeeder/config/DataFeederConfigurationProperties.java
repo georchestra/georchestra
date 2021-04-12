@@ -18,8 +18,13 @@
  */
 package org.georchestra.datafeeder.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -27,12 +32,17 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import com.google.common.io.ByteStreams;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link ConfigurationProperties @ConfigurationProperties} for the DataFeeder
  * application
  */
+@Slf4j(topic = "org.georchestra.datafeeder.config")
 public @Data class DataFeederConfigurationProperties {
 
     private URI frontEndConfigFile;
@@ -62,8 +72,16 @@ public @Data class DataFeederConfigurationProperties {
     public static @Data class PublishingConfiguration {
 
         private ExternalApiConfiguration geoserver = new ExternalApiConfiguration();
-        private ExternalApiConfiguration geonetwork = new ExternalApiConfiguration();
+        private GeonetworkPublishingConfiguration geonetwork = new GeonetworkPublishingConfiguration();
         private BackendConfiguration backend = new BackendConfiguration();
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class GeonetworkPublishingConfiguration extends ExternalApiConfiguration {
+        private String templateRecordId;
+        private URI templateRecord;
+        private URI templateTransform;
     }
 
     public static @Data class ExternalApiConfiguration {
@@ -94,4 +112,57 @@ public @Data class DataFeederConfigurationProperties {
          */
         private Map<String, String> geoserver = new HashMap<>();
     }
+
+    /**
+     * Loads a resource from a configuration property.
+     * 
+     * @param uri            the resource URI, can be a file or a remote URL
+     * @param configPropName the config property name, used for logging and
+     *                       exception throwing
+     * @return the contents of the resource
+     * 
+     * @throws IllegalArgumentException if the resource can't be loaded for any
+     *                                  reason
+     */
+    public byte[] loadResource(URI uri, String configPropName) {
+        log.info("loading {} from {}", configPropName, uri);
+        final boolean isFile = null == uri.getScheme() || "file".equalsIgnoreCase(uri.getScheme());
+        final byte[] contents = isFile ? loadFile(uri, configPropName) : loadURL(uri, configPropName);
+        return contents;
+    }
+
+    public String loadResourceAsString(URI uri, String configPropName) {
+        byte[] contents = loadResource(uri, configPropName);
+        return new String(contents, StandardCharsets.UTF_8);
+    }
+
+    private byte[] loadURL(URI uri, String configPropName) {
+        URL url;
+        try {
+            url = uri.toURL();
+        } catch (MalformedURLException e) {
+            throw throwIAE(e, "Invalid config: %s=%s", configPropName, uri);
+        }
+        try (InputStream in = url.openStream()) {
+            return ByteStreams.toByteArray(in);
+        } catch (IOException e) {
+            throw throwIAE(e, "Error loading: %s=%s", configPropName, uri);
+        }
+    }
+
+    private byte[] loadFile(URI uri, String configPropName) {
+        Path path = Paths.get(uri.getRawSchemeSpecificPart()).toAbsolutePath();
+        if (!Files.exists(path)) {
+            throw throwIAE(null, "File does not exist: %s=%s, file:%s", configPropName, uri,
+                    path.toAbsolutePath().toString());
+        }
+        uri = path.toUri();
+        return loadURL(uri, configPropName);
+    }
+
+    private IllegalArgumentException throwIAE(Exception cause, String msg, Object... msgParams) {
+        String message = String.format(msg, msgParams);
+        throw new IllegalArgumentException(message, cause);
+    }
+
 }
