@@ -18,14 +18,7 @@
  */
 package org.georchestra.datafeeder.api;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +27,6 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.ByteStreams;
 
 import io.swagger.annotations.Api;
 
@@ -52,8 +44,7 @@ public class ConfigApiController implements ConfigApi {
             throw ApiException.internalServerError(null, "Invalid config: %s=%s", CONFIG_PROPERTY_NAME, uri);
         }
 
-        final boolean isFile = null == uri.getScheme() || "file".equalsIgnoreCase(uri.getScheme());
-        final byte[] contents = isFile ? loadFile(uri) : loadURL(uri);
+        final byte[] contents = props.loadResource(uri, CONFIG_PROPERTY_NAME);
 
         JsonNode node;
         try {
@@ -64,29 +55,4 @@ public class ConfigApiController implements ConfigApi {
         }
         return ResponseEntity.ok(node);
     }
-
-    private byte[] loadURL(URI uri) {
-        URL url;
-        try {
-            url = uri.toURL();
-        } catch (MalformedURLException e) {
-            throw ApiException.internalServerError(e, "Invalid config: %s=%s", CONFIG_PROPERTY_NAME, uri);
-        }
-        try (InputStream in = url.openStream()) {
-            return ByteStreams.toByteArray(in);
-        } catch (IOException e) {
-            throw ApiException.internalServerError(e, "Error loading: %s=%s", CONFIG_PROPERTY_NAME, uri);
-        }
-    }
-
-    private byte[] loadFile(URI uri) {
-        Path path = Paths.get(uri.getRawSchemeSpecificPart()).toAbsolutePath();
-        if (!Files.exists(path)) {
-            throw ApiException.internalServerError(null, "File does not exist: %s=%s, file:%s", CONFIG_PROPERTY_NAME,
-                    uri, path.toAbsolutePath().toString());
-        }
-        uri = path.toUri();
-        return loadURL(uri);
-    }
-
 }
