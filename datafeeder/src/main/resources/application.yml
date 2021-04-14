@@ -1,0 +1,139 @@
+server:
+  servlet:
+    context-path: /datafeeder
+    encoding.enabled: true
+    encoding.charset: UTF-8
+    encoding.force: true
+  error.include-message: always
+
+spring:
+  profiles.active: georchestra
+  application.name: datafeeder-service
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: off
+  batch.job.enabled: false #disable automatically running configured jobs at startup time
+  servlet:
+    # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
+    multipart:
+      max-file-size: ${datafeeder.file-upload.max-file-size}
+      max-request-size: ${datafeeder.file-upload.max-request-size}
+      file-size-threshold: ${datafeeder.file-upload.file-size-threshold}
+      location:  ${datafeeder.file-upload.temporary-location}
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate.ddl-auto: update
+  batch:
+    job.enabled: false #disable automatically running configured jobs at startup time
+    initialize-schema: always
+  datasource:
+    # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+
+datafeeder:
+  front-end-config-file: front-end.config.uri
+  file-upload:
+    # maximum size allowed for uploaded files. (e.g. 128MB, GB can't be used, only KB or MB)
+    max-file-size: ${file-upload.max-file-size:30MB}
+    # maximum size allowed for multipart/form-data requests (e.g. 128MB, GB can't be used, only KB or MB)
+    max-request-size: ${file-upload.max-request-size:256MB}
+    # size threshold after which files will be written to disk.
+    file-size-threshold: ${file-upload.max-size-threshold:1MB}
+    # directory location where files will be stored by the servlet container once the request exceeds the {@link #fileSizeThreshold}
+    temporary-location: ${file-upload.temporary-location:${java.io.tmpdir}/datafeeder/tmp}
+    # directory location where files will be stored.
+    persistent-location: ${file-upload.persistent-location:${java.io.tmpdir}/datafeeder/uploads}
+
+feign:
+  okhttp.enabled: true
+  httpclient.enabled: false 
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+
+logging:
+  level:
+    root: INFO
+    feign: INFO
+    org.georchestra.datafeeder: INFO
+    org.geoserver.openapi: INFO
+    org.geoserver.restconfig: INFO
+---
+spring:
+  profiles: georchestra
+  jpa.database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  datasource:
+    url: jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?currentSchema=${pgsqlSchema:datafeeder}
+    driverClassName: org.postgresql.Driver
+    username: ${pgsqlUser}
+    password: ${pgsqlPassword}
+    # connection pool configuration
+    hikari:
+      pool-name: datafeeder-connection-pool
+      minimum-idle: ${dataSource.minPoolSize:2}
+      idle-timeout: ${dataSource.maxIdleTime:60}
+      maximum-pool-size: ${dataSource.maxPoolSize:10}
+      connection-timeout: ${dataSource.timeout:2000}
+
+georchestra.datadir: /etc/georchestra
+datafeeder:
+  front-end-config-file: ${front-end.config.uri:${georchestra.datadir}/datafeeder/frontend-config.json}
+---
+spring:
+  profiles: test
+  jpa.database-platform: org.hibernate.dialect.H2Dialect
+  jpa.hibernate.ddl-auto: update
+  datasource:
+    # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+      
+georchestra.datadir: src/test/resources/datadir
+---
+spring.profiles: it
+georchestra.datadir: src/test/resources/datadir
+datafeeder:
+  file-upload:
+    max-file-size: 30MB
+    max-request-size: 256MB
+    file-size-threshold: 30MB
+    temporary-location: ${java.io.tmpdir}/datafeeder/tmp
+    persistent-location: ${java.io.tmpdir}/datafeeder/uploads
+  publishing:
+    geoserver:
+      api-url: http://localhost:18080/geoserver/rest
+      public-url: https://georchestra.mydomain.org/geoserver
+      log-requests: true
+    geonetwork:
+      api-url: http://localhost:28080/geonetwork
+      public-url: https://georchestra.mydomain.org/geonetwork
+      log-requests: true
+    backend:
+      local:
+        dbtype: postgis
+        host: localhost
+        schema: public
+        port: 15432
+        database: georchestra
+        user: georchestra
+        passwd: georchestra
+      geoserver:
+        dbtype: postgis
+        host: database
+        schema: <schema>
+        port: 5432
+        database: georchestra
+        user: georchestra
+        passwd: georchestra
+
+feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+logging.level.feign: DEBUG
+logging.level.org.geoserver.openapi: DEBUG

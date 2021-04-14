@@ -1,0 +1,26 @@
+{
+	"library": "spring-boot",
+	"hateoas": "true",
+	"modelPackage": "org.georchestra.datafeeder.api",
+	"apiPackage": "org.georchestra.datafeeder.api",
+	"invokerPackage": "org.georchestra.datafeeder.api",
+	"generateApis": "true",
+	"generateModels": "true",
+	"addCompileSourceRoot": "true",
+	"generateSupportingFiles": "true",
+	"swaggerDocketConfig": "false",
+	"validateSpec": "true",
+	"dateLibrary": "java8",
+	"useTags": "true",
+	"interfaceOnly": "true",
+	"sourceFolder": "src",
+	"useRuntimeException": "true",
+	"useBeanValidation": "true",
+	"performBeanValidation": "true",
+	"generateApiDocumentation": "false",
+	"generateApiTests": "false",
+	"generateModelDocumentation": "false",
+	"generateModelTests": "false",
+	"importMappings": {
+	}
+}

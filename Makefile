@@ -52,8 +52,11 @@ docker-build-analytics: build-deps docker-pull-jetty
 docker-build-mapfishapp: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
+docker-build-datafeeder: 
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
+
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn3
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,atlas
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,atlas,datafeeder
 
 docker-build: docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
