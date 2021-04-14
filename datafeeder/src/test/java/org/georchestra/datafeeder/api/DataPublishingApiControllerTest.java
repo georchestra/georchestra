@@ -18,11 +18,15 @@
  */
 package org.georchestra.datafeeder.api;
 
+import static org.georchestra.datafeeder.api.PublishStatusEnum.DONE;
+import static org.georchestra.datafeeder.api.PublishStatusEnum.PENDING;
+import static org.georchestra.datafeeder.api.PublishStatusEnum.RUNNING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -79,7 +83,7 @@ public class DataPublishingApiControllerTest {
         PublishJobStatus publishJob = response.getBody();
         assertNotNull(publishJob);
         assertEquals(upload.getJobId(), publishJob.getJobId());
-        assertEquals(PublishStatusEnum.PENDING, publishJob.getStatus());
+        assertTrue(publishJob.getStatus() == PENDING || publishJob.getStatus() == RUNNING);
 
         DatasetMetadata expectedMd = dsetReq.getMetadata();
         final String requestedPublishedName = dsetReq.getPublishedName() == null ? dset.getName()
@@ -109,12 +113,12 @@ public class DataPublishingApiControllerTest {
             assertEquals(HttpStatus.OK, response.getStatusCode());
             publishJob = response.getBody();
             assertEquals(upload.getJobId(), publishJob.getJobId());
-            assertEquals(PublishStatusEnum.DONE, publishJob.getStatus());
+            assertEquals(DONE, publishJob.getStatus());
             assertEquals(Double.valueOf(1d), publishJob.getProgress());
             assertEquals(1, publishJob.getDatasets().size());
 
             DatasetPublishingStatus actual = publishJob.getDatasets().get(0);
-            assertEquals(PublishStatusEnum.DONE, actual.getStatus());
+            assertEquals(DONE, actual.getStatus());
             assertNull(actual.getError());
             assertEquals(expectedMd.getTitle(), actual.getTitle());
             assertEquals(dset.getName(), actual.getNativeName());
