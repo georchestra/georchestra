@@ -14,7 +14,6 @@
   <name>Data-Feeder microservice</name>
   <properties>
     <context.name>${project.artifactId}</context.name>
-    <packageDatadirScmVersion>datafeeder</packageDatadirScmVersion>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
@@ -520,35 +519,10 @@
       <id>docker</id>
       <properties>
         <dockerImageName>georchestra/${project.artifactId}:${project.version}</dockerImageName>
-        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-          <plugin>
-            <!-- REVISIT: why don't have the datadir project as a submodule at the project's root folder instead of checking 
-              it out on each service module? -->
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-scm-plugin</artifactId>
-            <version>1.11.2</version>
-            <configuration>
-              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
-              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
-              <pushChanges>false</pushChanges>
-              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
-              <scmVersionType>branch</scmVersionType>
-            </configuration>
-            <executions>
-              <execution>
-                <id>checkout-docker-default-datadir</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>checkout</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <groupId>com.spotify</groupId>
             <artifactId>docker-maven-plugin</artifactId>
