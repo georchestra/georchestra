@@ -604,8 +604,8 @@
                 </goals>
                 <configuration>
                   <awaitCmd>curl</awaitCmd>
-                  <awaitCmdArgs>http://localhost:${geoserver.port}/geoserver/web</awaitCmdArgs>
-                  <awaitTimeout>60</awaitTimeout>
+                  <awaitCmdArgs>http://localhost:${geonetwork.port}/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
+                  <awaitTimeout>120</awaitTimeout>
                 </configuration>
               </execution>
               <execution>
