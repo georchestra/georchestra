@@ -50,7 +50,7 @@ jobs:
 
     - name: "Building docker image"
       if: github.repository == 'georchestra/georchestra'
-      run: ./mvnw clean package docker:build -Pdocker -DskipTests --pl datafeeder -DdockerImageName=georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
+      run: ./mvnw -f datafeeder/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       if: github.repository == 'georchestra/georchestra'
