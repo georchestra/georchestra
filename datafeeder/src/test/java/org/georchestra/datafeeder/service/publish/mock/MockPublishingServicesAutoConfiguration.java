@@ -16,14 +16,20 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.datafeeder.service.publish;
+package org.georchestra.datafeeder.service.publish.mock;
 
-import org.georchestra.datafeeder.service.publish.impl.GeorchestraPublishingServicesConfiguration;
-import org.georchestra.datafeeder.service.publish.mock.MockPublishingServicesConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 
+/**
+ * {@link EnableAutoConfiguration @EnableAutoConfiguration} auto-configuration
+ * to provide mocked up components when the {@code mock} Spring profile is
+ * active.
+ */
 @Configuration
-@Import({ MockPublishingServicesConfiguration.class, GeorchestraPublishingServicesConfiguration.class })
-public class PublishingServicesConfiguration {
+@Profile("mock")
+@Import(MockPublishingServicesConfiguration.class)
+public class MockPublishingServicesAutoConfiguration {
 }

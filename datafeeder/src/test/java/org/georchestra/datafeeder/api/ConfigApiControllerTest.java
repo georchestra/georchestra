@@ -8,6 +8,7 @@ import java.net.URI;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.service.DatasetsService;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 @ActiveProfiles(value = { "georchestra", "test", "mock" })
 public class ConfigApiControllerTest {
 
+    private @MockBean DatasetsService mockDatasetsService;
     private @Autowired ConfigApiController controller;
     private @Autowired DataFeederConfigurationProperties config;
     private @Value("${georchestra.datadir}") String datadir;

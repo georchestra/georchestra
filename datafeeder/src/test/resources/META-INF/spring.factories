@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.georchestra.datafeeder.service.publish.mock.MockPublishingServicesConfiguration
