@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 
 public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFilter {
 
-    private static String AUTH_HEADER = "sec-username";
+    private static String AUTH_HEADER = HeaderNames.SEC_USERNAME;
     private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
     /* The default value is an empty list of trusted proxies */

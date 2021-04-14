@@ -19,14 +19,77 @@
 
 package org.georchestra.security;
 
-import com.google.common.annotations.VisibleForTesting;
+import static org.georchestra.security.HeaderNames.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
+import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
-import org.apache.http.*;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
@@ -46,6 +109,7 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -58,26 +122,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-import java.io.*;
-import java.net.*;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * This proxy provides an indirect access to a remote host to retrieve data.
@@ -143,6 +190,8 @@ public class Proxy {
     private HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
     private FilterRequestsStrategy strategyForFilteringRequests = new AcceptAllRequests();
     private List<String> requireCharsetContentTypes = Collections.emptyList();
+
+    @SuppressWarnings("unused")
     private String defaultCharset = "UTF-8";
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -186,24 +235,16 @@ public class Proxy {
     @PostConstruct
     public void init() throws Exception {
         OGCServicesAppender.setDataSource(ogcStatsDataSource);
-        if (targets != null) {
-            for (String url : targets.values()) {
-                new URL(url); // test that it is a valid URL
-            }
-        }
 
         // georchestra datadir autoconfiguration
         // dependency injection / properties setter() are made by Spring before
         // init() call
-        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+        final boolean loadExternalConfig = (georchestraConfiguration != null) && (georchestraConfiguration.activated());
+        if (loadExternalConfig) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
 
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
-
-            this.targets.clear();
-            for (String target : pTargets.stringPropertyNames()) {
-                this.targets.put(target, pTargets.getProperty(target));
-            }
+            this.targets = Maps.fromProperties(pTargets);
 
             // Configure proxy permissions based on proxy-permissions.xml file in datadir
             String datadirContext = georchestraConfiguration.getContextDataDir();
@@ -216,12 +257,23 @@ public class Proxy {
                     setProxyPermissions(Permissions.parse(fis));
                 } catch (Exception ex) {
                     logger.error("Error during proxy permissions configuration from "
-                            + datadirPermissionsFile.getAbsolutePath());
+                            + datadirPermissionsFile.getAbsolutePath(), ex);
                 }
             }
 
             logger.info("Done.");
         }
+
+        targets.forEach((name, url) -> {
+            final String mapping = name + "=" + url;
+            logger.trace("verifying target mapping " + mapping);
+            try {
+                URL target = new URL(url);
+                logger.trace("target mapping: " + name + "=" + target);
+            } catch (MalformedURLException e) {
+                throw new BeanInitializationException("Invalid target mapping: " + mapping, e);
+            }
+        });
 
         // Create a deny permission for URL with same domain
         String publicDomain = new URL(this.publicUrl).getHost();
@@ -264,9 +316,9 @@ public class Proxy {
         String uri = request.getRequestURI();
 
         URIBuilder uriBuilder = new URIBuilder(uri);
-        Enumeration parameterNames = request.getParameterNames();
+        Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
-            String paramName = (String) parameterNames.nextElement();
+            String paramName = parameterNames.nextElement();
             if (!"login".equals(paramName)) {
                 String[] paramValues = request.getParameterValues(paramName);
                 for (int i = 0; i < paramValues.length; i++) {
@@ -551,9 +603,8 @@ public class Proxy {
 
         if (targets.containsKey(segments[0])) {
             return segments[0];
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -602,7 +653,7 @@ public class Proxy {
 
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                Header[] originalHeaders = proxyingRequest.getHeaders("sec-orgname");
+                Header[] originalHeaders = proxyingRequest.getHeaders(SEC_ORGNAME);
                 String org = "";
                 for (Header originalHeader : originalHeaders) {
                     org = originalHeader.getValue();
@@ -611,7 +662,7 @@ public class Proxy {
                 if (!request.getRequestURI().startsWith("/proxy/")) {
                     String[] roles = new String[] { "" };
                     try {
-                        Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
+                        Header[] rolesHeaders = proxyingRequest.getHeaders(SEC_ROLES);
                         if (rolesHeaders.length > 0) {
                             roles = rolesHeaders[0].getValue().split(";");
                         }
@@ -1018,7 +1069,7 @@ public class Proxy {
     }
 
     public void setTargets(Map<String, String> targets) {
-        this.targets = targets;
+        this.targets = targets == null ? ImmutableMap.of() : ImmutableMap.copyOf(targets);
     }
 
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {

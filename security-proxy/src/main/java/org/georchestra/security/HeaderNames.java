@@ -25,8 +25,11 @@ package org.georchestra.security;
  * @author Jesse on 5/5/2014.
  */
 public class HeaderNames {
+    // well-known header names
     public static final String PROTECTED_HEADER_PREFIX = "sec-";
     public static final String SEC_USERNAME = "sec-username";
+    public static final String SEC_ORG = "sec-org";
+    public static final String SEC_ORGNAME = "sec-orgname";
     public static final String SEC_ROLES = "sec-roles";
     public static final String REFERER_HEADER_NAME = "Referer";
     public static final String IMP_ROLES = "imp-roles";

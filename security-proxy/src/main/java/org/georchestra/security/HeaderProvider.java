@@ -34,7 +34,7 @@ public abstract class HeaderProvider {
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
      * to allow extra headers to be added to the copied headers.
      */
-    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
         return Collections.emptyList();
     }
 
@@ -47,4 +47,7 @@ public abstract class HeaderProvider {
         return Collections.emptyList();
     }
 
+    protected boolean isPreAuthorized(HttpSession session) {
+        return session.getAttribute("pre-auth") != null;
+    }
 }

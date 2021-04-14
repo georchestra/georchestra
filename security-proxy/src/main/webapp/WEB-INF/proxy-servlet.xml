@@ -83,11 +83,6 @@
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1" value="${ldapOrgsRdn}"/>
-                    <constructor-arg index="2">
-                        <map>
-
-                        </map>
-                    </constructor-arg>
                 </bean>
             </list>
         </property>
