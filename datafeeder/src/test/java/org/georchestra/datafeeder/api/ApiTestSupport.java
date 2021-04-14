@@ -105,7 +105,7 @@ public class ApiTestSupport {
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();
-        awaitUntilJobIsOneOf(id, 1, RUNNING, DONE);
+        awaitUntilJobIsOneOf(id, 5, RUNNING, DONE);
         awaitUntilJobIsOneOf(id, 5, DONE);
 
         Optional<DataUploadJob> state = uploadService.findJob(id);
