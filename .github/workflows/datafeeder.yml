@@ -41,7 +41,7 @@ jobs:
       run: ./mvnw -f datafeeder/ test -DskipITs=true -DskipTests=false -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: "Running Integration Tests"
-      run: ./mvnw -f datafeeder/ verify -DskipITs=false -DskipTests=true -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw -f datafeeder/ verify -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'
