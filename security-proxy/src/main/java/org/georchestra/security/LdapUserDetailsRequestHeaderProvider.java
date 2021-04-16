@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -70,6 +72,20 @@ import com.google.common.collect.Maps;
  * {@code sec-username} and {@code sec-roles}), and then any extra request
  * header that can be extracted from the user's LDAP info and is configured in
  * the datadirectory's {@code security-proxy/headers-mapping.properties} file.
+ * <p>
+ * The final set of request headers sent to each specific proxified application
+ * is the aggregation of default headers and service specific headers.
+ * <p>
+ * Header mappings that apply to a specific target service take precedence over
+ * default headers.
+ * <p>
+ * Service name matches the ones assigned in {@code targets-mapping.properties}.
+ * For example, for service {@code analytics},
+ * {@code targets-mappings.properties} contains
+ * {@code analytics=http://analytics:8080/analytics/}, and
+ * {@code headers-mappings.properties} may contain
+ * {@code analytics.sec-firstname=givenName}.
+ * 
  * 
  * @author jeichar
  * @see SecurityRequestHeaderProvider
@@ -87,7 +103,21 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private final Pattern orgSeachMemberOfPattern;
     private final String orgSearchBaseDN;
 
-    private Map<String, String> _headerMapping = ImmutableMap.of();
+    /**
+     * Header mappings that apply to all services (i.e. have no service prefix in
+     * header-mappings.properties), for example: ({@code sec-email=mail}
+     */
+    private Map<String, String> defaultMappinsg = ImmutableMap.of();
+    /**
+     * Header mappings that apply to a specific target service, by service name,
+     * where service name matches the ones assigned in
+     * {@code targets-mapping.properties}. For example, for service
+     * {@code analytics}, {@code targets-mappings.properties} contains
+     * {@code analytics=http://analytics:8080/analytics/}, and
+     * {@code headers-mappings.properties} may contain
+     * {@code analytics.sec-firstname=givenName}.
+     */
+    private Map<String, Map<String, String>> perServiceMappings = ImmutableMap.of();
 
     @Autowired
     private LdapTemplate ldapTemplate;
@@ -108,17 +138,33 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         final boolean loadExternalConfig = (georchestraConfiguration != null) && (georchestraConfiguration.activated());
         if (loadExternalConfig) {
             Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
-            _headerMapping = Maps.fromProperties(pHmap);
+            ImmutableMap<String, String> mappings = Maps.fromProperties(pHmap);
+            this.defaultMappinsg = loadDefaultMappings(mappings);
+            this.perServiceMappings = loadPerServiceMappings(mappings);
         }
     }
 
-    public void setHeadersMapping(Map<String, String> headerNameToLdapPropMappings) {
-        this._headerMapping = headerNameToLdapPropMappings == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(headerNameToLdapPropMappings);
+    private Map<String, String> loadDefaultMappings(ImmutableMap<String, String> mappings) {
+        return mappings.entrySet().stream().filter(e -> e.getKey().indexOf('.') == -1)
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+    }
+
+    private Map<String, Map<String, String>> loadPerServiceMappings(ImmutableMap<String, String> mappings) {
+        Map<String, Map<String, String>> serviceMappings = new HashMap<>();
+        mappings.entrySet().stream().filter(e -> e.getKey().indexOf('.') > 0).forEach(e -> {
+            int index = e.getKey().indexOf('.');
+            String serviceName = e.getKey().substring(0, index);
+            String headerName = e.getKey().substring(index + 1);
+            String headerMapping = e.getValue();
+            Map<String, String> serviceHeaders = serviceMappings.computeIfAbsent(serviceName, s -> new HashMap<>());
+            serviceHeaders.put(headerName, headerMapping);
+        });
+        return serviceMappings;
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
 
         // Don't use this provider for trusted request
         if (isPreAuthorized(session) || isAnnonymous()) {
@@ -128,7 +174,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         synchronized (session) {
             Optional<Collection<Header>> cached = getCachedHeaders(session);
             return cached.orElseGet(() -> {
-                Collection<Header> headers = collectHeaders(session);
+                Collection<Header> headers = collectHeaders(session, targetServiceName);
                 final String username = getCurrentUserName();
                 logger.debug("Storing attributes into session for user :" + username);
                 session.setAttribute(CACHED_USERNAME_KEY, username);
@@ -141,15 +187,29 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     /**
      * Actually performs the building of the request headers list
      */
-    private Collection<Header> collectHeaders(HttpSession session) {
+    private Collection<Header> collectHeaders(HttpSession session, String serviceName) {
         final String username = getCurrentUserName();
 
         List<Header> headers = buildStandardOrganizationHeaders(username);
-        List<Header> userDefinedHeaders = collectHeaderMappings(username, this._headerMapping);
+
+        Map<String, String> mappings = getServiceMappings(serviceName);
+        List<Header> userDefinedHeaders = collectHeaderMappings(username, mappings);
 
         headers.addAll(userDefinedHeaders);
 
         return headers;
+    }
+
+    private Map<String, String> getServiceMappings(String serviceName) {
+        Map<String, String> mappings = this.defaultMappinsg;
+        if (serviceName != null) {
+            Map<String, String> serviceMappings = this.perServiceMappings.get(serviceName);
+            if (serviceMappings != null) {
+                mappings = new HashMap<>(this.defaultMappinsg);
+                mappings.putAll(serviceMappings);
+            }
+        }
+        return mappings;
     }
 
     private List<Header> buildStandardOrganizationHeaders(String username) {

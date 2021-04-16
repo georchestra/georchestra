@@ -81,11 +81,12 @@ public class HeadersManagementStrategy {
      * Copies the request headers from the original request to the proxy request. It
      * may modify the headers slightly
      * 
-     * @param localProxy true if the request targets a security-proxyfied webapp
-     *                   (e.g. mapfishapp, ...), false otherwise
+     * @param localProxy        true if the request targets a security-proxyfied
+     *                          webapp (e.g. mapfishapp, ...), false otherwise
+     * @param targetServiceName
      */
     public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
-            boolean localProxy) {
+            boolean localProxy, String targetServiceName) {
 
         final StringBuilder headersLog = logger.isTraceEnabled()
                 ? new StringBuilder("Request Headers:\n==========================================================\n")
@@ -99,7 +100,7 @@ public class HeadersManagementStrategy {
 
         if (localProxy) {
             handleRequestCookies(originalRequest, proxyRequest, headersLog);
-            applyHeaderProviders(originalRequest, proxyRequest, headersLog);
+            applyHeaderProviders(originalRequest, proxyRequest, headersLog, targetServiceName);
         } else if (forcedReferer != null) {
             addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.forcedReferer);
         }
@@ -111,7 +112,7 @@ public class HeadersManagementStrategy {
     }
 
     private void applyHeaderProviders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
-            StringBuilder headersLog) {
+            StringBuilder headersLog, String targetServiceName) {
 
         final boolean preAuthorized = isPreAuthorized(originalRequest);
         final HttpSession session = originalRequest.getSession();
@@ -124,7 +125,8 @@ public class HeadersManagementStrategy {
                 continue;
             }
 
-            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(session, originalRequest);
+            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(session, originalRequest,
+                    targetServiceName);
             for (Header header : providerHeaders) {
 
                 final String providerHeaderName = header.getName();

@@ -40,7 +40,7 @@ public class HeadersManagementStrategyTest {
         HttpRequestBase proxyRequest = new HttpGet("http://localhost/geonetwork");
         MockHttpServletRequest originalRequest = createTestRequest();
 
-        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, false);
+        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, false, null);
 
         assertFalse(hasHeader("sec-username", proxyRequest));
         assertFalse(hasHeader("sec-roles", proxyRequest));
@@ -84,18 +84,18 @@ public class HeadersManagementStrategyTest {
         MockHttpServletRequest originalRequest = createTestRequest();
         Authentication auth = new UsernamePasswordAuthenticationToken("jeichar", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, true);
+        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, true, null);
         assertTrue(hasHeader("sec-username", proxyRequest));
         assertEquals(proxyRequest.getHeaders("sec-username")[0].getValue(), "jeichar");
 
         proxyRequest = new HttpGet("http://sdi.georchestra.org/geonetwork");
         originalRequest = createTestRequest();
-        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, false);
+        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, false, null);
         assertFalse(hasHeader("sec-username", proxyRequest));
 
         proxyRequest = new HttpGet("http://sdi.georchestra.org/geonetwork");
         originalRequest = createTestRequest();
-        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, true);
+        headerManagement.configureRequestHeaders(originalRequest, proxyRequest, true, null);
         assertTrue(hasHeader("sec-username", proxyRequest));
         assertEquals(proxyRequest.getHeaders("sec-username")[0].getValue(), "jeichar");
     }

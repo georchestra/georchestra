@@ -44,7 +44,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityRequestHeaderProvider extends HeaderProvider {
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();

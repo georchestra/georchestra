@@ -41,7 +41,8 @@ public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     private List<String> trustedUsers = new ArrayList<String>();
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
         if (originalRequest.getHeader(HeaderNames.IMP_USERNAME) != null) {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

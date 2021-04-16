@@ -33,8 +33,14 @@ public abstract class HeaderProvider {
      * Called by
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
      * to allow extra headers to be added to the copied headers.
+     * 
+     * @param session           current session
+     * @param originalRequest   request being proxified
+     * @param targetServiceName service name as defined in
+     *                          {@code targets-mappings.properties}
      */
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
         return Collections.emptyList();
     }
 

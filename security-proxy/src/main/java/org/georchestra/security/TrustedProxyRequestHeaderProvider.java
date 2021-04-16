@@ -18,7 +18,8 @@ public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
     private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
         if (isPreAuthorized(session)) {
             return Collections.emptyList();
         }

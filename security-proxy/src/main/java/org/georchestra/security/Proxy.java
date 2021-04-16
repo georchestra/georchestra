@@ -19,7 +19,8 @@
 
 package org.georchestra.security;
 
-import static org.georchestra.security.HeaderNames.*;
+import static org.georchestra.security.HeaderNames.SEC_ORGNAME;
+import static org.georchestra.security.HeaderNames.SEC_ROLES;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
@@ -649,7 +650,8 @@ public class Proxy {
             logger.debug("Final request -- " + sURL);
 
             HttpRequestBase proxyingRequest = makeRequest(request, sURL);
-            headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
+            String targetServiceName = findMatchingTarget(request);
+            headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy, targetServiceName);
 
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
