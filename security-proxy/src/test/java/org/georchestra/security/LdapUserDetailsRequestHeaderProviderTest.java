@@ -18,8 +18,12 @@
  */
 package org.georchestra.security;
 
-import static org.georchestra.commons.security.SecurityHeaders.*;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_TEL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -50,6 +54,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -281,9 +286,8 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         final String encodedLastName = Base64.getEncoder().encodeToString(lastName.getBytes(StandardCharsets.UTF_8));
         final String expectedGivenName = "{base64}" + encodedGivenName;
         final String expectedLastName = "{base64}" + encodedLastName;
-
-        String decodedGivenName = new String(Base64.getDecoder().decode(encodedGivenName), StandardCharsets.UTF_8);
-        assertEquals(givenName, decodedGivenName);
+        assertEquals(expectedGivenName, SecurityHeaders.encodeBase64(givenName));
+        assertEquals(expectedLastName, SecurityHeaders.encodeBase64(lastName));
 
         Map<String, String> ldapContext = ImmutableMap.of(//
                 "givenName", givenName, //

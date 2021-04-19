@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 by the geOrchestra PSC
+ * Copyright (C) 2009-2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -18,6 +18,9 @@
  */
 
 package org.georchestra.commons.security;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * A collection of header names commonly used by the security-proxy gateway
@@ -40,6 +43,26 @@ public class SecurityHeaders {
     public static final String IMP_USERNAME = "imp-username";
 
     public static String decode(String headerValue) {
+        if (null == headerValue) {
+            return null;
+        }
+        // very simple implementation, we only support base64 so far
+        if (headerValue.startsWith("{base64}")) {
+            String value = headerValue.substring("{base64}".length());
+            byte[] bytes = Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8));
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
         return headerValue;
+    }
+
+    public static String encodeBase64(String headerValue) {
+        if (headerValue == null) {
+            return null;
+        }
+        if (headerValue.isEmpty()) {
+            return "";
+        }
+        String encoded = Base64.getEncoder().encodeToString(headerValue.getBytes(StandardCharsets.UTF_8));
+        return "{base64}" + encoded;
     }
 }

@@ -23,9 +23,7 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,6 +51,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
@@ -313,7 +312,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 Stream<String> values = Collections.list(all).stream().filter(Predicates.notNull())
                         .map(Object::toString);
                 if (base64) {
-                    values = values.map(this::encodeHeaderValueBase64);
+                    values = values.map(SecurityHeaders::encodeBase64);
                 }
                 return values.collect(Collectors.joining(","));
             } finally {
@@ -321,11 +320,6 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             }
         }
         return null;
-    }
-
-    private String encodeHeaderValueBase64(String value) {
-        String encoded = Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
-        return "{base64}" + encoded;
     }
 
     private String getCurrentUserName() {
