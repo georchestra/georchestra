@@ -61,7 +61,7 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
      */
     @Override
     protected Boolean getPreAuthenticatedCredentials(HttpServletRequest request) {
-        return Boolean.parseBoolean(request.getHeader(SEC_PROXY));
+        return Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_PROXY)));
     }
 
     private List<String> extractRoles(HttpServletRequest request) {
