@@ -35,7 +35,9 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
-      run: ./mvnw -f datafeeder/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: |
+          ./mvnw -f commons/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+          ./mvnw -f datafeeder/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running Unit Tests"
       run: ./mvnw -f datafeeder/ test -DskipITs=true -DskipTests=false -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
