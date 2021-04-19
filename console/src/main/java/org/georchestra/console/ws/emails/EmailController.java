@@ -19,8 +19,39 @@
 
 package org.georchestra.console.ws.emails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.activation.DataHandler;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MailDateFormat;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.AttachmentDao;
 import org.georchestra.console.dao.EmailDao;
@@ -50,29 +81,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.activation.DataHandler;
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MailDateFormat;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 @Controller
 public class EmailController {
@@ -180,7 +188,7 @@ public class EmailController {
         this.checkAuthorisation(recipient);
 
         EmailEntry email = new EmailEntry();
-        String sender = request.getHeader("sec-username");
+        String sender = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
         email.setSender(sender);
         email.setRecipient(recipient);
         email.setSubject(subject);
@@ -309,9 +317,15 @@ public class EmailController {
         this.checkBody(payload);
         this.checkRecipient(to, cc, bcc);
 
-        LOG.info("EMail request : user=" + request.getHeader("sec-username") + " to="
-                + this.extractAddress("to", payload) + " cc=" + this.extractAddress("cc", payload) + " bcc="
-                + this.extractAddress("bcc", payload) + " roles=" + request.getHeader("sec-roles"));
+        final String secUsername = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+        final String secRoles = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
+        final String secFirstname = SecurityHeaders.decode(request.getHeader(SEC_FIRSTNAME));
+        final String secLastName = SecurityHeaders.decode(request.getHeader(SEC_LASTNAME));
+        final String secEmail = SecurityHeaders.decode(request.getHeader(SEC_EMAIL));
+
+        LOG.info("EMail request : user=" + secUsername + " to=" + this.extractAddress("to", payload) + " cc="
+                + this.extractAddress("cc", payload) + " bcc=" + this.extractAddress("bcc", payload) + " roles="
+                + secRoles);
 
         LOG.debug("EMail request : " + payload.toString());
 
@@ -321,13 +335,13 @@ public class EmailController {
         // Generate From header
         InternetAddress from = new InternetAddress();
         from.setAddress(emailProxyFromAddress);
-        from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        from.setPersonal(secFirstname + " " + secLastName);
         message.setFrom(from);
 
         // Generate Reply-to header
         InternetAddress replyTo = new InternetAddress();
-        replyTo.setAddress(request.getHeader("sec-email"));
-        replyTo.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        replyTo.setAddress(secEmail);
+        replyTo.setPersonal(secFirstname + " " + secLastName);
         message.setReplyTo(new Address[] { replyTo });
 
         // Generate to, cc and bcc headers

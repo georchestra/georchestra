@@ -19,8 +19,8 @@
 
 package org.georchestra.security;
 
-import static org.georchestra.security.HeaderNames.SEC_ROLES;
-import static org.georchestra.security.HeaderNames.SEC_USERNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -19,11 +19,16 @@
 
 package org.georchestra.console.ws.edituserdetails;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.annotations.VisibleForTesting;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -49,11 +54,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Support for the Edit Account user interactions.
@@ -109,7 +112,8 @@ public class EditUserDetailsFormController {
     @PreAuthorize("isAuthenticated()")
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         try {
-            Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            Account userAccount = this.accountDao.findByUID(username);
             model.addAttribute(createForm(userAccount));
             Org org = orgsDao.findByCommonNameWithExt(userAccount);
             model.addAttribute("org", orgToJson(org));
@@ -178,7 +182,8 @@ public class EditUserDetailsFormController {
             throws IOException {
         String uid = formBean.getUid();
         try {
-            if (!request.getHeader("sec-username").equals(uid))
+            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            if (!username.equals(uid))
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } catch (NullPointerException e) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -202,10 +207,11 @@ public class EditUserDetailsFormController {
         // updates the account details
         try {
 
-            Account originalAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
-            Account modifiedAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            Account originalAccount = this.accountDao.findByUID(username);
+            Account modifiedAccount = this.accountDao.findByUID(username);
             Account account = modify(modifiedAccount, formBean);
-            accountDao.update(account, request.getHeader("sec-username"));
+            accountDao.update(account, username);
 
             model.addAttribute("success", true);
             Org org = orgsDao.findByCommonNameWithExt(account);

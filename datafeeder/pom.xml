@@ -65,6 +65,11 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.georchestra</groupId>
+        <artifactId>georchestra-commons</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.geoserver.community</groupId>
         <artifactId>gs-rest-openapi-java-client</artifactId>
         <version>${gs-rest-java-client.version}</version>
@@ -178,6 +183,10 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.geoserver.community</groupId>
       <artifactId>gs-rest-openapi-java-client</artifactId>

@@ -1,12 +1,16 @@
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.IMP_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.IMP_USERNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jesse on 4/24/2014.
@@ -25,10 +29,10 @@ public class SecurityRequestHeaderFilterTest {
     private void assertUntrustworthyServerFiltering(SecurityRequestHeaderFilter filter,
             MockHttpServletRequest untrustWorthyServer, HttpRequestBase proxyRequest) {
         assertFalse(filter.filter("some-random-header", untrustWorthyServer, proxyRequest));
-        assertTrue(filter.filter("sec-username", untrustWorthyServer, proxyRequest));
-        assertTrue(filter.filter("sec-roles", untrustWorthyServer, proxyRequest));
-        assertTrue(filter.filter("imp-username", untrustWorthyServer, proxyRequest));
-        assertTrue(filter.filter("imp-roles", untrustWorthyServer, proxyRequest));
+        assertTrue(filter.filter(SEC_USERNAME, untrustWorthyServer, proxyRequest));
+        assertTrue(filter.filter(SEC_ROLES, untrustWorthyServer, proxyRequest));
+        assertTrue(filter.filter(IMP_USERNAME, untrustWorthyServer, proxyRequest));
+        assertTrue(filter.filter(IMP_ROLES, untrustWorthyServer, proxyRequest));
     }
 
 }

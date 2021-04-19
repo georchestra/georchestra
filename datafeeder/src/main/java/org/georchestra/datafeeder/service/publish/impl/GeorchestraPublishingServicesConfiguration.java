@@ -18,6 +18,9 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,9 +86,9 @@ public class GeorchestraPublishingServicesConfiguration {
         client.setDebugRequests(config.isLogRequests());
 
         Map<String, String> authHeaders = new HashMap<>();
-        // authHeaders.put("sec-proxy", "true");
-        authHeaders.put("sec-username", "datafeeder-application");
-        authHeaders.put("sec-roles", "ROLE_ADMINISTRATOR");
+        // authHeaders.put(SEC_PROXY, "true");
+        authHeaders.put(SEC_USERNAME, "datafeeder-application");
+        authHeaders.put(SEC_ROLES, "ROLE_ADMINISTRATOR");
 
         client.setRequestHeaderAuth("georchestra", authHeaders);
         return client;

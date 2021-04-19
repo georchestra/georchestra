@@ -19,21 +19,16 @@
 
 package org.georchestra.security;
 
+import org.georchestra.commons.security.SecurityHeaders;
+
 /**
- * A collection of header names used in the proxy.
+ * A collection of header names used in the proxy, besides the ones defined in
+ * {@link SecurityHeaders}
  *
  * @author Jesse on 5/5/2014.
  */
 public class HeaderNames {
-    // well-known header names
     public static final String PROTECTED_HEADER_PREFIX = "sec-";
-    public static final String SEC_USERNAME = "sec-username";
-    public static final String SEC_ORG = "sec-org";
-    public static final String SEC_ORGNAME = "sec-orgname";
-    public static final String SEC_ROLES = "sec-roles";
-    public static final String REFERER_HEADER_NAME = "Referer";
-    public static final String IMP_ROLES = "imp-roles";
-    public static final String IMP_USERNAME = "imp-username";
     // note: JSESSIONID is strictly speaking not a Header,
     // but usual part of the the Cookie / Set-Cookie header
     public static final String JSESSION_ID = "JSESSIONID";
@@ -42,9 +37,9 @@ public class HeaderNames {
     public static final String CONTENT_LENGTH = "content-length";
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
     public static final String HOST = "host";
-    public static final String SEC_PROXY = "sec-proxy";
     public static final String LOCATION = "location";
     public static final String TRANSFER_ENCODING = "Transfer-Encoding";
     public static final String CHUNKED = "chunked";
     public static final String BASIC_AUTH_HEADER = "Authorization";
+    public static final String REFERER_HEADER_NAME = "Referer";
 }

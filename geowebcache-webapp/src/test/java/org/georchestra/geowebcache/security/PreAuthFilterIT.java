@@ -1,5 +1,7 @@
 package org.georchestra.geowebcache.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -7,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.servlet.FilterChain;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,11 +50,11 @@ public class PreAuthFilterIT {
         assertNull(SecurityContextHolder.getContext().getAuthentication());
 
         final String username = "username";
-        request.addHeader("sec-username", username);
+        request.addHeader(SEC_USERNAME, username);
         final String roleAdmin = "ROLE_ADMINISTRATOR";
         final String roleOther = "ROLE_OTHER";
 
-        request.addHeader("sec-roles", roleAdmin + ";" + roleOther);
+        request.addHeader(SEC_ROLES, roleAdmin + ";" + roleOther);
 
         chain = Mockito.mock(FilterChain.class);
         preAuthFilter.doFilter(request, response, chain);

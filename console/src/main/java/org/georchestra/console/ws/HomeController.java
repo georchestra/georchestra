@@ -19,9 +19,9 @@
 
 package org.georchestra.console.ws;
 
-import java.io.File;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,9 +29,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,7 +70,7 @@ public class HomeController {
     @RequestMapping(value = "/")
     public void root(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        String roles = request.getHeader("sec-roles");
+        String roles = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
 
         if (roles != null) {
             String redirectUrl;

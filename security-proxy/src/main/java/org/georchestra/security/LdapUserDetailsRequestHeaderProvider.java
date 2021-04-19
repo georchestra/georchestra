@@ -19,8 +19,8 @@
 
 package org.georchestra.security;
 
-import static org.georchestra.security.HeaderNames.SEC_ORG;
-import static org.georchestra.security.HeaderNames.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

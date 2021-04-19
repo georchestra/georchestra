@@ -1,10 +1,13 @@
 package org.georchestra.lib.springutils;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,7 +32,7 @@ public class GeorchestraUserDetailsService
     protected UserDetails createUserDetails(Authentication token, Collection<? extends GrantedAuthority> authorities) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
                 .getRequest();
-        String secRoles = request.getHeader("sec-roles");
+        String secRoles = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
         List<GrantedAuthority> auth = StringUtils.isEmpty(secRoles) ? AuthorityUtils.NO_AUTHORITIES
                 : semicolonSeparatedStringToAuthorityList(secRoles);
 

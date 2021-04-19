@@ -1,8 +1,20 @@
 package org.georchestra.console.integration;
 
-import com.github.database.rider.core.api.configuration.DBUnit;
-import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
+import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
@@ -11,7 +23,11 @@ import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +45,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.api.DBRider;
 
 @RunWith(SpringRunner.class)
 @EnableWebMvc
@@ -99,7 +110,7 @@ public class UsersIT {
                 .getUsername();
         createUser(userName);
 
-        support.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
+        support.perform(get("/account/userdetails").header(SEC_USERNAME, userName)).andExpect(status().isOk());
     }
 
     @WithMockRandomUidUser
@@ -186,7 +197,7 @@ public class UsersIT {
                 .andExpect(jsonPath("$.geodocs").value(3))//
                 .andExpect(jsonPath("$.ogcStats").value(3));
 
-        this.mockMvc.perform(post("/account/gdpr/delete").header("sec-username", "user1"))//
+        this.mockMvc.perform(post("/account/gdpr/delete").header(SEC_USERNAME, "user1"))//
                 .andExpect(status().isNotFound());
 
     }

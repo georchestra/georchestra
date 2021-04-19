@@ -1,5 +1,7 @@
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
@@ -14,7 +16,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 
 public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFilter {
 
-    private static String AUTH_HEADER = HeaderNames.SEC_USERNAME;
+    private static String AUTH_HEADER = SEC_USERNAME;
     private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
     /* The default value is an empty list of trusted proxies */

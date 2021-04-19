@@ -19,6 +19,11 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.IMP_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.IMP_USERNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,16 +48,15 @@ public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     @Override
     public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
             String targetServiceName) {
-        if (originalRequest.getHeader(HeaderNames.IMP_USERNAME) != null) {
+        if (originalRequest.getHeader(IMP_USERNAME) != null) {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication != null && trustedUsers != null && trustedUsers.contains(authentication.getName())) {
                 List<Header> headers = new ArrayList<Header>(2);
 
-                headers.add(
-                        new BasicHeader(HeaderNames.SEC_USERNAME, originalRequest.getHeader(HeaderNames.IMP_USERNAME)));
-                headers.add(new BasicHeader(HeaderNames.SEC_ROLES, originalRequest.getHeader(HeaderNames.IMP_ROLES)));
+                headers.add(new BasicHeader(SEC_USERNAME, originalRequest.getHeader(IMP_USERNAME)));
+                headers.add(new BasicHeader(SEC_ROLES, originalRequest.getHeader(IMP_ROLES)));
 
                 return headers;
             }

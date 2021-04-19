@@ -19,17 +19,17 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
 import static org.georchestra.security.HeaderNames.BASIC_AUTH_HEADER;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
 import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
-import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
-import static org.georchestra.security.HeaderNames.SEC_PROXY;
-import static org.georchestra.security.HeaderNames.SEC_ROLES;
-import static org.georchestra.security.HeaderNames.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
+import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;

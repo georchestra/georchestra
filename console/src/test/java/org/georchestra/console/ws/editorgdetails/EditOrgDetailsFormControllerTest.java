@@ -1,6 +1,20 @@
 package org.georchestra.console.ws.editorgdetails;
 
-import com.google.common.io.ByteStreams;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
@@ -22,17 +36,7 @@ import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.google.common.io.ByteStreams;
 
 public class EditOrgDetailsFormControllerTest {
     private EditOrgDetailsFormController ctrl;
@@ -101,9 +105,9 @@ public class EditOrgDetailsFormControllerTest {
 
     @Test
     public void testSetupFormChangeUrl() throws IOException {
-        request.addHeader("sec-org", "georTest");
-        request.addHeader("sec-username", "georTest");
-        request.addHeader("sec-role", "REFERENT,THE_ADMIN");
+        request.addHeader(SEC_ORG, "georTest");
+        request.addHeader(SEC_USERNAME, "georTest");
+        request.addHeader(SEC_ROLES, "REFERENT;THE_ADMIN");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         ctrl.logUtils = mockLogUtils;
@@ -117,9 +121,9 @@ public class EditOrgDetailsFormControllerTest {
 
     @Test
     public void testSetupFormWithImage() throws IOException {
-        request.addHeader("sec-username", "georTest");
-        request.addHeader("sec-org", "georTest");
-        request.addHeader("sec-role", "MOMO,REFERENT");
+        request.addHeader(SEC_USERNAME, "georTest");
+        request.addHeader(SEC_ORG, "georTest");
+        request.addHeader(SEC_ROLES, "MOMO;REFERENT");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         ctrl.logUtils = mockLogUtils;

@@ -19,8 +19,8 @@
 
 package org.georchestra.security;
 
-import static org.georchestra.security.HeaderNames.SEC_ORGNAME;
-import static org.georchestra.security.HeaderNames.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
