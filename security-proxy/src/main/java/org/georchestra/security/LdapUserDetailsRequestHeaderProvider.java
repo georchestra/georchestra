@@ -23,7 +23,9 @@ import static org.georchestra.security.HeaderNames.SEC_ORG;
 import static org.georchestra.security.HeaderNames.SEC_ORGNAME;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -59,6 +62,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.util.Assert;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -107,7 +111,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
      * Header mappings that apply to all services (i.e. have no service prefix in
      * header-mappings.properties), for example: ({@code sec-email=mail}
      */
-    private Map<String, String> defaultMappinsg = ImmutableMap.of();
+    Map<String, String> defaultMappinsg = ImmutableMap.of();
     /**
      * Header mappings that apply to a specific target service, by service name,
      * where service name matches the ones assigned in
@@ -117,10 +121,11 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
      * {@code headers-mappings.properties} may contain
      * {@code analytics.sec-firstname=givenName}.
      */
-    private Map<String, Map<String, String>> perServiceMappings = ImmutableMap.of();
+    Map<String, Map<String, String>> perServiceMappings = ImmutableMap.of();
 
     @Autowired
-    private LdapTemplate ldapTemplate;
+    @VisibleForTesting
+    LdapTemplate ldapTemplate;
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
@@ -138,10 +143,14 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         final boolean loadExternalConfig = (georchestraConfiguration != null) && (georchestraConfiguration.activated());
         if (loadExternalConfig) {
             Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
-            ImmutableMap<String, String> mappings = Maps.fromProperties(pHmap);
-            this.defaultMappinsg = loadDefaultMappings(mappings);
-            this.perServiceMappings = loadPerServiceMappings(mappings);
+            loadConfig(pHmap);
         }
+    }
+
+    void loadConfig(Properties pHmap) {
+        ImmutableMap<String, String> mappings = Maps.fromProperties(pHmap);
+        this.defaultMappinsg = loadDefaultMappings(mappings);
+        this.perServiceMappings = loadPerServiceMappings(mappings);
     }
 
     private Map<String, String> loadDefaultMappings(ImmutableMap<String, String> mappings) {
@@ -172,13 +181,10 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         }
 
         synchronized (session) {
-            Optional<Collection<Header>> cached = getCachedHeaders(session);
+            Optional<Collection<Header>> cached = getCachedHeaders(session, targetServiceName);
             return cached.orElseGet(() -> {
                 Collection<Header> headers = collectHeaders(session, targetServiceName);
-                final String username = getCurrentUserName();
-                logger.debug("Storing attributes into session for user :" + username);
-                session.setAttribute(CACHED_USERNAME_KEY, username);
-                session.setAttribute(CACHED_HEADERS_KEY, headers);
+                setCachedHeaders(session, headers, targetServiceName);
                 return headers;
             });
         }
@@ -200,8 +206,8 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         return headers;
     }
 
-    private Map<String, String> getServiceMappings(String serviceName) {
-        Map<String, String> mappings = this.defaultMappinsg;
+    Map<String, String> getServiceMappings(String serviceName) {
+        Map<String, String> mappings = getDefaultMappings();
         if (serviceName != null) {
             Map<String, String> serviceMappings = this.perServiceMappings.get(serviceName);
             if (serviceMappings != null) {
@@ -209,6 +215,11 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 mappings.putAll(serviceMappings);
             }
         }
+        return mappings;
+    }
+
+    Map<String, String> getDefaultMappings() {
+        Map<String, String> mappings = this.defaultMappinsg;
         return mappings;
     }
 
@@ -221,7 +232,8 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         if (orgCn != null) {
             headers.add(new BasicHeader(SEC_ORG, orgCn));
             try {
-                DirContextOperations ctx = this.ldapTemplate.lookupContext("cn=" + orgCn + "," + this.orgSearchBaseDN);
+                String dn = "cn=" + orgCn + "," + this.orgSearchBaseDN;
+                DirContextOperations ctx = this.ldapTemplate.lookupContext(dn);
                 headers.add(new BasicHeader(SEC_ORGNAME, ctx.getStringAttribute("o")));
             } catch (RuntimeException ex) {
                 logger.warn("Cannot find associated org with cn " + orgCn);
@@ -289,12 +301,21 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     private String buildValue(Attributes ldapAttributes, String ldapPropertyName) throws NamingException {
+        boolean base64 = false;
+        if (ldapPropertyName.startsWith("base64:")) {
+            ldapPropertyName = ldapPropertyName.substring("base64:".length());
+            base64 = true;
+        }
         Attribute attribute = ldapAttributes.get(ldapPropertyName);
         if (attribute != null) {
             NamingEnumeration<?> all = attribute.getAll();
             try {
-                return Collections.list(all).stream().filter(Predicates.notNull()).map(Object::toString)
-                        .collect(Collectors.joining(","));
+                Stream<String> values = Collections.list(all).stream().filter(Predicates.notNull())
+                        .map(Object::toString);
+                if (base64) {
+                    values = values.map(this::encodeHeaderValueBase64);
+                }
+                return values.collect(Collectors.joining(","));
             } finally {
                 all.close();
             }
@@ -302,29 +323,53 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         return null;
     }
 
+    private String encodeHeaderValueBase64(String value) {
+        String encoded = Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
+        return "{base64}" + encoded;
+    }
+
     private String getCurrentUserName() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new IllegalStateException("Request is not authenticated");
+        }
         return authentication.getName();
     }
 
-    private Optional<Collection<Header>> getCachedHeaders(HttpSession session) {
+    @VisibleForTesting
+    Optional<Collection<Header>> getCachedHeaders(HttpSession session, String service) {
         final String username = getCurrentUserName();
 
-        final boolean cached = session.getAttribute(CACHED_HEADERS_KEY) != null;
+        final String cacheKey = serviceCacheKey(service);
+        final boolean cached = session.getAttribute(cacheKey) != null;
         if (cached) {
             try {
                 @SuppressWarnings("unchecked")
-                Collection<Header> headers = (Collection<Header>) session.getAttribute(CACHED_HEADERS_KEY);
+                Collection<Header> headers = (Collection<Header>) session.getAttribute(cacheKey);
                 String expectedUsername = (String) session.getAttribute(CACHED_USERNAME_KEY);
 
                 if (username.equals(expectedUsername)) {
                     return Optional.of(headers);
                 }
             } catch (Exception e) {
-                logger.info("Unable to lookup cached user's attributes for user :" + username, e);
+                logger.info("Unable to lookup cached user's attributes for user :" + username + ", service: " + service,
+                        e);
             }
         }
         return Optional.empty();
+    }
+
+    @VisibleForTesting
+    void setCachedHeaders(HttpSession session, Collection<Header> headers, String service) {
+        final String username = getCurrentUserName();
+        final String cacheKey = serviceCacheKey(service);
+        logger.debug("Storing attributes into session for user :" + username + ", service: " + service);
+        session.setAttribute(CACHED_USERNAME_KEY, username);
+        session.setAttribute(cacheKey, new ArrayList<>(headers));
+    }
+
+    private String serviceCacheKey(String service) {
+        return service == null ? CACHED_HEADERS_KEY : CACHED_HEADERS_KEY + "@" + service;
     }
 
     private boolean isAnnonymous() {
