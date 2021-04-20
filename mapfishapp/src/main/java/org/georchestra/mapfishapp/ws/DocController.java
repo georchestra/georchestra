@@ -19,6 +19,7 @@
 
 package org.georchestra.mapfishapp.ws;
 
+import static org.georchestra.commons.security.SecurityHeaders.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -455,7 +457,7 @@ public class DocController {
 
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
-            String fileName = service.saveData(c.getSLD(), request.getHeader("sec-username"));
+            String fileName = service.saveData(c.getSLD(), SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
 
             PrintWriter out = response.getWriter();
             out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + SLD_URL + fileName + "\"}");
@@ -519,7 +521,7 @@ public class DocController {
 
             // let the specific service handles the storage on the server
             // get back the file name under which it is saved
-            String fileName = docService.saveData(fileContent, request.getHeader("sec-username"));
+            String fileName = docService.saveData(fileContent, SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
@@ -596,7 +598,7 @@ public class DocController {
         try {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter out = response.getWriter();
-            out.print(docService.listFiles(request.getHeader("sec-username")).toString(4));
+            out.print(docService.listFiles(SecurityHeaders.decode(request.getHeader(SEC_USERNAME))).toString(4));
         } catch (Exception e) {
             sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -621,7 +623,7 @@ public class DocController {
         fileName = fileName.replaceAll(A_DocService.DOC_PREFIX, "");
 
         try {
-            docService.deleteFile(fileName, request.getHeader("sec-username"));
+            docService.deleteFile(fileName, SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
             response.setContentType("application/json; charset=utf-8");
             PrintWriter out = response.getWriter();
             JSONObject res = new JSONObject();

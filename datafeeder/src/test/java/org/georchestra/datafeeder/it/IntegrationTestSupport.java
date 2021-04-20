@@ -18,6 +18,8 @@
  */
 package org.georchestra.datafeeder.it;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -55,7 +57,6 @@ import org.springframework.stereotype.Service;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.functions.ConstantFunction.False;
 
 /**
  * {@link Service @Service} and JUnit {@link Rule @Rule} to aid in integration
@@ -104,7 +105,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
         ResponseEntity<Map> entity;
         try {
-            entity = doGet(uri, Map.class, "sec-username", "datafeeder", "sec-roles", "ROLE_ADMINISTRATOR");
+            entity = doGet(uri, Map.class, SEC_USERNAME, "datafeeder", SEC_ROLES, "ROLE_ADMINISTRATOR");
         } catch (Exception e) {
             throw new IllegalStateException("Unable to connect to GeoServer at " + uri + ". " + e.getMessage(), e);
         }

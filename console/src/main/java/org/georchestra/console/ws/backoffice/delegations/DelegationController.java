@@ -19,8 +19,18 @@
 
 package org.georchestra.console.ws.backoffice.delegations;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -35,19 +45,12 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 @Controller
 public class DelegationController {
@@ -115,7 +118,7 @@ public class DelegationController {
         delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
         this.delegationDao.save(delegation);
         Account account = accountDao.findByUID(uid);
-        this.roleDao.addUser("ORGADMIN", account, request.getHeader("sec-username"));
+        this.roleDao.addUser("ORGADMIN", account, SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
 
         return delegation.toJSON().toString();
     }
@@ -136,7 +139,8 @@ public class DelegationController {
 
         // TODO deny if request came from delegated admin
         this.delegationDao.delete(uid);
-        this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid), request.getHeader("sec-username"));
+        this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid),
+                SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
         return new JSONObject().put("result", "ok").toString();
     }
 

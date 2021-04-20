@@ -1,5 +1,15 @@
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.IMP_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.IMP_USERNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.http.Header;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -7,19 +17,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 public class ImpersonateUserRequestHeaderProviderTest {
 
     @Test
     public void testGetCustomRequestHeadersUntrustedUser() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HeaderNames.IMP_USERNAME, "imp-user");
-        request.addHeader(HeaderNames.IMP_ROLES, "ROLE_IMP");
+        request.addHeader(IMP_USERNAME, "imp-user");
+        request.addHeader(IMP_ROLES, "ROLE_IMP");
 
         // Reset auth
         SecurityContextHolder.getContext().setAuthentication(null);
@@ -28,31 +32,31 @@ public class ImpersonateUserRequestHeaderProviderTest {
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request).size());
+        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("randomUser", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request).size());
+        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
     }
 
     @Test
     public void testGetCustomRequestHeadersTrustedUser() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(HeaderNames.IMP_USERNAME, "imp-user");
-        request.addHeader(HeaderNames.IMP_ROLES, "ROLE_IMP");
+        request.addHeader(IMP_USERNAME, "imp-user");
+        request.addHeader(IMP_ROLES, "ROLE_IMP");
 
         final ImpersonateUserRequestHeaderProvider provider = new ImpersonateUserRequestHeaderProvider();
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request).size());
+        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("jeichar", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        final Collection<Header> customRequestHeaders = provider.getCustomRequestHeaders(null, request);
+        final Collection<Header> customRequestHeaders = provider.getCustomRequestHeaders(null, request, null);
         assertEquals(2, customRequestHeaders.size());
-        assertContains(customRequestHeaders, HeaderNames.SEC_USERNAME, "imp-user");
-        assertContains(customRequestHeaders, HeaderNames.SEC_ROLES, "ROLE_IMP");
+        assertContains(customRequestHeaders, SEC_USERNAME, "imp-user");
+        assertContains(customRequestHeaders, SEC_ROLES, "ROLE_IMP");
     }
 
     private void assertContains(Collection<Header> customRequestHeaders, String headerName,

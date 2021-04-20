@@ -18,6 +18,14 @@
  */
 package org.georchestra.config.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -84,13 +92,13 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         baseURI = "http://localhost:" + port + contextPath + "/test/security/georchestra";
 
         requestHeaders = new HttpHeaders();
-        requestHeaders.set("sec-proxy", "true");
-        requestHeaders.set("sec-username", "testUserName");
-        requestHeaders.set("sec-email", "test@email.com");
-        requestHeaders.set("sec-firstname", "Test");
-        requestHeaders.set("sec-lastname", "Lastnametest");
-        requestHeaders.set("sec-org", "test-org");
-        requestHeaders.set("sec-orgname", "Test Organization");
+        requestHeaders.set(SEC_PROXY, "true");
+        requestHeaders.set(SEC_USERNAME, "testUserName");
+        requestHeaders.set(SEC_EMAIL, "test@email.com");
+        requestHeaders.set(SEC_FIRSTNAME, "Test");
+        requestHeaders.set(SEC_LASTNAME, "Lastnametest");
+        requestHeaders.set(SEC_ORG, "test-org");
+        requestHeaders.set(SEC_ORGNAME, "Test Organization");
     }
 
     public ResponseEntity<GeorchestraUserDetails> doGet(String relaitvePath) {
@@ -110,7 +118,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     }
 
     public @Test void testAnonymous() {
-        requestHeaders.remove("sec-username");
+        requestHeaders.remove(SEC_USERNAME);
         response = doGet("/anonymous");
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -126,7 +134,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     }
 
     public @Test void testUserRole() {
-        requestHeaders.set("sec-roles", "ROLE_USER");
+        requestHeaders.set(SEC_ROLES, "ROLE_USER");
 
         response = doGet("/anonymous");
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -144,7 +152,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     }
 
     public @Test void testAdministrator() {
-        requestHeaders.set("sec-roles", "ROLE_ADMINISTRATOR");
+        requestHeaders.set(SEC_ROLES, "ROLE_ADMINISTRATOR");
 
         response = doGet("/anonymous");
         assertEquals(HttpStatus.OK, response.getStatusCode());

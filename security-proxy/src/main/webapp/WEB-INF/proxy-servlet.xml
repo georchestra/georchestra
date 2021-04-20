@@ -81,13 +81,10 @@
                     <property name="trustedUsers" value="${trustedUsers:geoserver_privileged_user}"/>
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
-                    <constructor-arg index="0" ref="ldapUserSearch"/>
+                    <constructor-arg index="0" ref="contextSource" />
                     <constructor-arg index="1" value="${ldapOrgsRdn}"/>
-                    <constructor-arg index="2">
-                        <map>
-
-                        </map>
-                    </constructor-arg>
+                    <constructor-arg index="2" value="${ldapUsersRdn}"/>
+                    <constructor-arg index="3" value="${userSearchFilter:(uid={0})}"/>
                 </bean>
             </list>
         </property>

@@ -19,12 +19,15 @@
 
 package org.georchestra.geowebcache.security;
 
-import com.google.common.base.Strings;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,11 +35,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.google.common.base.Strings;
 
 /**
  * A filter that checks the headers of the request and determines if the user is already logged in,
@@ -46,8 +53,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class PreAuthFilter implements Filter {
     private static final Log logger = LogFactory.getLog(PreAuthFilter.class);
-    public static final String SEC_USERNAME = "sec-username";
-    public static final String SEC_ROLES = "sec-roles";
 
     public PreAuthFilter() {
         logger.warn("PreAuthFilter");
@@ -63,7 +68,7 @@ public class PreAuthFilter implements Filter {
             throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            final String username = httpServletRequest.getHeader(SEC_USERNAME);
+            final String username = SecurityHeaders.decode(httpServletRequest.getHeader(SEC_USERNAME));
             if (username != null) {
                 SecurityContext context = SecurityContextHolder.getContext();
                 Authentication authentication = createAuthentication(httpServletRequest);
@@ -92,8 +97,8 @@ public class PreAuthFilter implements Filter {
     }
 
     private Authentication createAuthentication(HttpServletRequest httpServletRequest) {
-        final String username = httpServletRequest.getHeader(SEC_USERNAME);
-        final String rolesString = httpServletRequest.getHeader(SEC_ROLES);
+        final String username = SecurityHeaders.decode(httpServletRequest.getHeader(SEC_USERNAME));
+        final String rolesString = SecurityHeaders.decode(httpServletRequest.getHeader(SEC_ROLES));
         Set<String> roles =
                 Strings.isNullOrEmpty(rolesString)
                         ? Collections.emptySet()

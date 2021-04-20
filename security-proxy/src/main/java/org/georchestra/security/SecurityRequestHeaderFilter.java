@@ -19,11 +19,16 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.IMP_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.IMP_USERNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Filters out sec-username when not from trusted hosts
@@ -35,9 +40,7 @@ public class SecurityRequestHeaderFilter implements HeaderFilter {
 
     @Override
     public boolean filter(String headerName, HttpServletRequest originalRequest, HttpRequestBase proxyRequest) {
-        return headerName.equalsIgnoreCase(HeaderNames.SEC_USERNAME)
-                || headerName.equalsIgnoreCase(HeaderNames.SEC_ROLES)
-                || headerName.equalsIgnoreCase(HeaderNames.IMP_USERNAME)
-                || headerName.equalsIgnoreCase(HeaderNames.IMP_ROLES);
+        return headerName.equalsIgnoreCase(SEC_USERNAME) || headerName.equalsIgnoreCase(SEC_ROLES)
+                || headerName.equalsIgnoreCase(IMP_USERNAME) || headerName.equalsIgnoreCase(IMP_ROLES);
     }
 }

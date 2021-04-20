@@ -1,5 +1,6 @@
 package org.georchestra.console.ws;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.junit.Assert.assertTrue;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,7 +61,7 @@ public class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.addHeader("sec-roles", "ROLE_ADMINISTRATOR");
+        request.addHeader(SEC_ROLES, "ROLE_ADMINISTRATOR");
         ctrl.root(request, response);
 
         assertTrue(response.getRedirectedUrl().endsWith("/account/userdetails"));
@@ -72,7 +73,7 @@ public class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.addHeader("sec-roles", "ROLE_SUPERUSER");
+        request.addHeader(SEC_ROLES, "ROLE_SUPERUSER");
         ctrl.root(request, response);
 
         assertTrue(response.getRedirectedUrl().endsWith("/manager/"));

@@ -22,6 +22,7 @@ package org.georchestra.console.ws.backoffice.users;
 import lombok.Setter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.*;
@@ -56,6 +57,9 @@ import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.io.IOException;
 import java.text.Normalizer;
 import java.text.ParseException;
@@ -495,7 +499,7 @@ public class UsersController {
         this.checkAuthorization(uid);
 
         final Account account = accountDao.findByUID(uid);
-        final String requestOriginator = request.getHeader("sec-username");
+        final String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
         deleteAccount(account, requestOriginator);
         ResponseUtil.writeSuccess(response);
     }

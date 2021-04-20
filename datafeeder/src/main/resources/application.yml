@@ -135,5 +135,12 @@ datafeeder:
         passwd: georchestra
 
 feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
-logging.level.feign: DEBUG
-logging.level.org.geoserver.openapi: DEBUG
+
+logging:
+  level:
+    root: info
+    '[feign]': info
+    '[org.georchestra.datafeeder]': info
+    '[org.georchestra.config.security]': debug
+    '[org.georchestra.config.security.GeorchestraSecurityProxyAuthenticationFilter]': info #mute GeorchestraSecurityProxyAuthenticationFilter superclass a bit
+    '[org.geoserver.openapi]': info

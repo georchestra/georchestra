@@ -19,9 +19,31 @@
 
 package org.georchestra.console.ws.newaccount;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.mail.MessagingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
@@ -32,9 +54,9 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
-import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
@@ -54,24 +76,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-
-import javax.mail.MessagingException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.time.Clock;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Manages the UI Account Form.
@@ -278,7 +282,7 @@ public final class NewAccountFormController {
                 account.setPrivacyPolicyAgreementDate(LocalDate.now(clock));
             }
 
-            String requestOriginator = request.getHeader("sec-username");
+            String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
             accountDao.insert(account, requestOriginator);
             roleDao.addUser(Role.USER, account, requestOriginator);
             orgDao.linkUser(account);

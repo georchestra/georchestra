@@ -19,17 +19,37 @@
 
 package org.georchestra.console.ws.backoffice.orgs;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
-import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
-import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,23 +68,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Controller
 public class OrgsController {
@@ -243,7 +246,8 @@ public class OrgsController {
         }
 
         // log if pending status change
-        if (request.getHeader("sec-username") != null && defaultPending != org.isPending()) {
+        String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+        if (username != null && defaultPending != org.isPending()) {
             logUtils.createLog(org.getId(), AdminLogType.PENDING_ORG_ACCEPTED, null);
         }
         return org;

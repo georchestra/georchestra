@@ -19,6 +19,9 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
 import static org.georchestra.security.HeaderNames.BASIC_AUTH_HEADER;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
@@ -26,9 +29,6 @@ import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
 import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
-import static org.georchestra.security.HeaderNames.SEC_PROXY;
-import static org.georchestra.security.HeaderNames.SEC_ROLES;
-import static org.georchestra.security.HeaderNames.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 
 import java.net.HttpCookie;
@@ -40,12 +40,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -71,7 +71,7 @@ public class HeadersManagementStrategy {
     private boolean noAcceptEncoding = false;
     private List<HeaderProvider> headerProviders = Collections.emptyList();
     private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
-    private String referer = null;
+    private String forcedReferer = null;
 
     public HeadersManagementStrategy() {
         filters.add(new SecurityRequestHeaderFilter());
@@ -80,121 +80,148 @@ public class HeadersManagementStrategy {
     /**
      * Copies the request headers from the original request to the proxy request. It
      * may modify the headers slightly
+     * 
+     * @param localProxy        true if the request targets a security-proxyfied
+     *                          webapp (e.g. mapfishapp, ...), false otherwise
+     * @param targetServiceName
      */
-    @SuppressWarnings("unchecked")
     public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
-            boolean localProxy) {
-        Enumeration<String> headerNames = originalRequest.getHeaderNames();
-        String headerName = null;
+            boolean localProxy, String targetServiceName) {
 
-        HttpSession session = originalRequest.getSession();
+        final StringBuilder headersLog = logger.isTraceEnabled()
+                ? new StringBuilder("Request Headers:\n==========================================================\n")
+                : null;
 
-        StringBuilder headersLog = new StringBuilder("Request Headers:\n");
-        headersLog.append("==========================================================\n");
-
-        if (!localProxy && referer != null) {
-            addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.referer);
+        // see https://github.com/georchestra/georchestra/issues/509:
+        addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
+        if (!HeaderProvider.isPreAuthorized(originalRequest)) {
+            addAllowedIncomingHeaders(originalRequest, proxyRequest, localProxy, headersLog);
         }
 
-        if (session.getAttribute("pre-auth") == null) {
-            while (headerNames.hasMoreElements()) {
-                headerName = headerNames.nextElement();
-                if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
-                    continue;
-                }
-                if (headerName.equalsIgnoreCase(COOKIE_ID)) {
-                    continue;
-                }
-                if (filter(originalRequest, headerName, proxyRequest)) {
-                    continue;
-                }
-                if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
-                    continue;
-                }
-                // It is the HttpClient's lib duty to add this header accordingly.
-                if (headerName.equalsIgnoreCase(TRANSFER_ENCODING)) {
-                    continue;
-                }
-                if (headerName.equalsIgnoreCase(HOST)) {
-                    continue;
-                }
-                // Don't forward basic auth
-                if (headerName.equalsIgnoreCase(BASIC_AUTH_HEADER)) {
-                    continue;
-                }
-                // Don't forward 'sec-*' headers, those headers must be managed by
-                // security-proxy
-                if (headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)) {
-                    continue;
-                }
-                if (!localProxy && referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
+        if (localProxy) {
+            handleRequestCookies(originalRequest, proxyRequest, headersLog);
+            applyHeaderProviders(originalRequest, proxyRequest, headersLog, targetServiceName);
+        } else if (forcedReferer != null) {
+            addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.forcedReferer);
+        }
+
+        if (logger.isTraceEnabled()) {
+            headersLog.append("==========================================================");
+            logger.trace(headersLog.toString());
+        }
+    }
+
+    private void applyHeaderProviders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
+            StringBuilder headersLog, String targetServiceName) {
+
+        final boolean preAuthorized = HeaderProvider.isPreAuthorized(originalRequest);
+        final HttpSession session = originalRequest.getSession();
+        for (HeaderProvider provider : headerProviders) {
+
+            // Don't include headers from security framework for request coming from trusted
+            // proxy
+            if (preAuthorized && !(provider instanceof TrustedProxyRequestHeaderProvider)) {
+                logger.debug("Bypassing header provider : {}", provider.getClass().toString());
+                continue;
+            }
+
+            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(session, originalRequest,
+                    targetServiceName);
+            for (Header header : providerHeaders) {
+
+                final String providerHeaderName = header.getName();
+                logger.debug("Processing  header  {} from {}", providerHeaderName, provider.getClass().toString());
+                // ignore Host and Content-Length header
+                if (isOneOf(providerHeaderName, HOST, CONTENT_LENGTH)) {
                     continue;
                 }
 
+                if (isOneOf(providerHeaderName, SEC_USERNAME, SEC_ROLES)
+                        && proxyRequest.getFirstHeader(providerHeaderName) != null) {
+                    Header[] originalHeaders = proxyRequest.getHeaders(providerHeaderName);
+                    for (Header originalHeader : originalHeaders) {
+                        addHeaderLog(headersLog, originalHeader.getName(), originalHeader.getValue());
+                    }
+                    continue;
+                }
+
+                logger.debug("Adding header to proxied request: {} = {}", providerHeaderName, header.getValue());
+                proxyRequest.addHeader(header);
+                addHeaderLog(headersLog, providerHeaderName, header.getValue());
+            }
+        }
+    }
+
+    private boolean isOneOf(String header, String... names) {
+        for (String name : names) {
+            if (header.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void addAllowedIncomingHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
+            boolean localProxy, StringBuilder headersLog) {
+        for (String headerName : Collections.list(originalRequest.getHeaderNames())) {
+            if (!ignoreIncomingHeader(headerName, originalRequest, proxyRequest, localProxy)) {
                 String value = originalRequest.getHeader(headerName);
                 addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
             }
         }
-        // see https://github.com/georchestra/georchestra/issues/509:
-        addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
-
-        if (localProxy) {
-            handleRequestCookies(originalRequest, proxyRequest, headersLog);
-            for (HeaderProvider provider : headerProviders) {
-
-                // Don't include headers from security framework for request coming from trusted
-                // proxy
-                if (session.getAttribute("pre-auth") != null
-                        && (!(provider instanceof TrustedProxyRequestHeaderProvider))) {
-                    logger.debug("Bypassing header provider : {}", provider.getClass().toString());
-                    continue;
-                }
-
-                for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
-
-                    logger.debug("Processing  header  {} from {}", header.getName(), provider.getClass().toString());
-
-                    if ((header.getName().equalsIgnoreCase(SEC_USERNAME)
-                            || header.getName().equalsIgnoreCase(SEC_ROLES))
-                            && proxyRequest.getHeaders(header.getName()) != null
-                            && proxyRequest.getHeaders(header.getName()).length > 0) {
-                        Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
-                        for (Header originalHeader : originalHeaders) {
-                            headersLog.append("\t" + originalHeader.getName());
-                            headersLog.append("=");
-                            headersLog.append(originalHeader.getValue());
-                            headersLog.append("\n");
-                        }
-                    } else {
-                        // ignore Host and Content-Length header
-                        if (header.getName().equalsIgnoreCase(HttpHeaders.HOST)
-                                || header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
-                            continue;
-
-                        logger.debug("Adding header to proxied request: {} = {}", header.getName(), header.getValue());
-                        proxyRequest.addHeader(header);
-                        headersLog.append("\t" + header.getName());
-                        headersLog.append("=");
-                        headersLog.append(header.getValue());
-                        headersLog.append("\n");
-                    }
-                }
-            }
-        }
-
-        headersLog.append("==========================================================");
-
-        logger.trace(headersLog.toString());
     }
 
-    private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, StringBuilder headersLog, String headerName,
-            String value) {
+    private boolean ignoreIncomingHeader(String headerName, HttpServletRequest originalRequest,
+            HttpRequestBase proxyRequest, boolean localProxy) {
+
+        if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
+            return true;
+        }
+        if (headerName.equalsIgnoreCase(COOKIE_ID)) {
+            return true;
+        }
+        if (filter(originalRequest, headerName, proxyRequest)) {
+            return true;
+        }
+        if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
+            return true;
+        }
+        // It is the HttpClient's lib duty to add this header accordingly.
+        if (headerName.equalsIgnoreCase(TRANSFER_ENCODING)) {
+            return true;
+        }
+        if (headerName.equalsIgnoreCase(HOST)) {
+            return true;
+        }
+        // Don't forward basic auth
+        if (headerName.equalsIgnoreCase(BASIC_AUTH_HEADER)) {
+            return true;
+        }
+        // Don't forward 'sec-*' headers, those headers must be managed by
+        // security-proxy
+        if (headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)) {
+            return true;
+        }
+        if (!localProxy && forcedReferer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, @Nullable StringBuilder headersLog,
+            String headerName, String value) {
         logger.debug("Add Header: {} = {}", headerName, value);
         proxyRequest.addHeader(new BasicHeader(headerName, value));
-        headersLog.append("\t" + headerName);
-        headersLog.append("=");
-        headersLog.append(value);
-        headersLog.append("\n");
+        addHeaderLog(headersLog, headerName, value);
+    }
+
+    private void addHeaderLog(StringBuilder headersLog, String headerName, CharSequence value) {
+        if (headersLog != null) {
+            headersLog.append("\t" + headerName);
+            headersLog.append("=");
+            headersLog.append(value);
+            headersLog.append("\n");
+        }
     }
 
     /**
@@ -217,7 +244,7 @@ public class HeadersManagementStrategy {
      */
     @VisibleForTesting
     public void handleRequestCookies(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
-            StringBuilder headersLog) {
+            @Nullable StringBuilder headersLog) {
 
         Enumeration<String> headers = originalRequest.getHeaders(COOKIE_ID);
         StringBuilder cookies = new StringBuilder();
@@ -259,10 +286,7 @@ public class HeadersManagementStrategy {
             }
         }
 
-        headersLog.append("\t" + COOKIE_ID);
-        headersLog.append("=");
-        headersLog.append(cookies);
-        headersLog.append("\n");
+        addHeaderLog(headersLog, COOKIE_ID, cookies);
 
         proxyRequest.addHeader(new BasicHeader(COOKIE_ID, cookies.toString()));
 
@@ -443,6 +467,6 @@ public class HeadersManagementStrategy {
     }
 
     public void setReferer(String referer) {
-        this.referer = referer;
+        this.forcedReferer = referer;
     }
 }

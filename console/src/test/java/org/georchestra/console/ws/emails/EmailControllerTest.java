@@ -1,5 +1,19 @@
 package org.georchestra.console.ws.emails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.UnsupportedEncodingException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.servlet.http.HttpServletRequest;
+
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
@@ -7,15 +21,6 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
 
 public class EmailControllerTest {
 
@@ -28,10 +33,10 @@ public class EmailControllerTest {
 
         // Mock headers
         this.request = mock(HttpServletRequest.class);
-        when(request.getHeader(eq("sec-roles"))).thenReturn("ROLE_TEST");
-        when(request.getHeader(eq("sec-firstname"))).thenReturn("Test");
-        when(request.getHeader(eq("sec-lastname"))).thenReturn("Admin");
-        when(request.getHeader(eq("sec-email"))).thenReturn("test-admin@georchestra.org");
+        when(request.getHeader(eq(SEC_ROLES))).thenReturn("ROLE_TEST");
+        when(request.getHeader(eq(SEC_FIRSTNAME))).thenReturn("Test");
+        when(request.getHeader(eq(SEC_LASTNAME))).thenReturn("Admin");
+        when(request.getHeader(eq(SEC_EMAIL))).thenReturn("test-admin@georchestra.org");
 
         // Instanciate controller
         this.ctrl = new EmailController();

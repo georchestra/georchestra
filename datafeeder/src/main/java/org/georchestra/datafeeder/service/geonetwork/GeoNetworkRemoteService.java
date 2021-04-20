@@ -18,6 +18,11 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -177,10 +182,10 @@ public class GeoNetworkRemoteService {
 //		reqHeaders.set("Origin", "http://localhost:28080");
 //		reqHeaders.set("Referer", "http://localhost:28080");
 
-        reqHeaders.set("sec-proxy", "true");
-        reqHeaders.set("sec-username", "testadmin");
-        reqHeaders.set("sec-roles", "ROLE_GN_ADMIN");
-        reqHeaders.set("sec-org", "Datafeeder Test");
+        reqHeaders.set(SEC_PROXY, "true");
+        reqHeaders.set(SEC_USERNAME, "testadmin");
+        reqHeaders.set(SEC_ROLES, "ROLE_GN_ADMIN");
+        reqHeaders.set(SEC_ORG, "Datafeeder Test");
         // This is odd, apparently any UUID works as XSRF token, and these two need to
         // be set
         reqHeaders.set("X-XSRF-TOKEN", "c9f33266-e242-4198-a18c-b01290dce5f1");

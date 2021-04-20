@@ -18,38 +18,57 @@
  */
 package org.georchestra.config.security;
 
-import java.util.Arrays;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.util.StringUtils;
 
+import com.google.common.base.Splitter;
+
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Slf4j(topic = "org.georchestra.config.security")
 public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     @Override
     protected GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        final boolean preAuthenticated = Boolean.parseBoolean(request.getHeader("sec-proxy"));
+        if (log.isDebugEnabled()) {
+            log.debug("security-proxy headers: {}",
+                    Collections.list(request.getHeaderNames()).stream().filter(n -> n.startsWith("sec-"))
+                            .map(n -> String.format("%s: '%s'", n, request.getHeader(n)))
+                            .collect(Collectors.joining(",")));
+        }
+        final boolean preAuthenticated = getPreAuthenticatedCredentials(request);
         if (preAuthenticated) {
-            String username = request.getHeader("sec-username");
+            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
             final boolean anonymous = username == null;
             if (anonymous) {
                 username = "anonymousUser";
             }
             List<String> roles = extractRoles(request);
-            String email = request.getHeader("sec-email");
-            String firstName = request.getHeader("sec-firstname");
-            String lastName = request.getHeader("sec-lastname");
-            String organization = request.getHeader("sec-org");
-            String organizationName = request.getHeader("sec-orgname");
-            return new GeorchestraUserDetails(username, roles, email, firstName, lastName, organization,
-                    organizationName, anonymous);
+            String email = SecurityHeaders.decode(request.getHeader(SEC_EMAIL));
+            String firstName = SecurityHeaders.decode(request.getHeader(SEC_FIRSTNAME));
+            String lastName = SecurityHeaders.decode(request.getHeader(SEC_LASTNAME));
+            String organization = SecurityHeaders.decode(request.getHeader(SEC_ORG));
+            String organizationName = SecurityHeaders.decode(request.getHeader(SEC_ORGNAME));
+            GeorchestraUserDetails preAuthPrincipal = new GeorchestraUserDetails(username, roles, email, firstName,
+                    lastName, organization, organizationName, anonymous);
+            log.debug("principal: {}", preAuthPrincipal);
+            return preAuthPrincipal;
         }
         return null;
     }
@@ -59,18 +78,15 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
      */
     @Override
     protected Boolean getPreAuthenticatedCredentials(HttpServletRequest request) {
-        return Boolean.parseBoolean(request.getHeader("sec-proxy"));
+        return Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_PROXY)));
     }
 
     private List<String> extractRoles(HttpServletRequest request) {
-        String rolesHeader = request.getHeader("sec-roles");
+        String rolesHeader = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
         if (StringUtils.isEmpty(rolesHeader)) {
             return Collections.emptyList();
         }
-
-        String[] roles = rolesHeader.split(";");
-        log.info("roles: {}", roles == null ? null : Arrays.toString(roles));
-        return Arrays.stream(roles).filter(StringUtils::hasText).collect(Collectors.toList());
+        return Splitter.on(';').omitEmptyStrings().trimResults().splitToList(rolesHeader);
     }
 
 }

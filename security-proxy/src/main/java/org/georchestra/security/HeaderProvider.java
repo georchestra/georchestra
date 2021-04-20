@@ -19,22 +19,34 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
+
 import java.util.Collection;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpRequestBase;
 
 public abstract class HeaderProvider {
+    protected static final Log logger = LogFactory.getLog(HeaderProvider.class.getPackage().getName());
+
     /**
      * Called by
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
      * to allow extra headers to be added to the copied headers.
+     * 
+     * @param session           current session
+     * @param originalRequest   request being proxified
+     * @param targetServiceName service name as defined in
+     *                          {@code targets-mappings.properties}
      */
-    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
+            String targetServiceName) {
         return Collections.emptyList();
     }
 
@@ -47,4 +59,13 @@ public abstract class HeaderProvider {
         return Collections.emptyList();
     }
 
+    /**
+     * @return {@code true} if the request comes from a trusted proxy and has been
+     *         deemed pre-authorized by setting the {@code pre-auth} request
+     *         attribute to {@code true}
+     * @see ProxyTrustAnotherProxy
+     */
+    public static boolean isPreAuthorized(HttpServletRequest originalRequest) {
+        return Boolean.TRUE.equals(originalRequest.getAttribute(PRE_AUTH_REQUEST_PROPERTY));
+    }
 }

@@ -1,5 +1,6 @@
 package org.georchestra.console.ws.edituserdetails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -119,7 +120,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testSetupForm() throws Exception {
-        request.addHeader("sec-username", "mtester");
+        request.addHeader(SEC_USERNAME, "mtester");
         Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccount);
 
         String ret = ctrl.setupForm(request, response, model);
@@ -132,7 +133,7 @@ public class EditUserDetailsFormControllerTest {
     @Test
     public void testEdit() throws Exception {
         String incredibleDesc = "The incredible, marvelous and wonderfull company which tests georchestra";
-        request.addHeader("sec-username", "mtester");
+        request.addHeader(SEC_USERNAME, "mtester");
         Org org = new Org();
         org.setId("georTest");
         org.setName("geOrchestra testing LLC");
@@ -156,7 +157,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testSetupFormNoOrg() throws Exception {
-        request.addHeader("sec-username", "mtesterNoOrg");
+        request.addHeader(SEC_USERNAME, "mtesterNoOrg");
         Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccountNoOrg);
 
         String ret = ctrl.setupForm(request, response, model);
@@ -166,7 +167,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testEditNoOrg() throws Exception {
-        request.addHeader("sec-username", "mtesterNoOrg");
+        request.addHeader(SEC_USERNAME, "mtesterNoOrg");
         Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccountNoOrg);
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 
@@ -199,7 +200,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testEditUserMissingRequiredField() throws IOException {
-        request.addHeader("sec-username", "mtester");
+        request.addHeader(SEC_USERNAME, "mtester");
         EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao,
@@ -214,7 +215,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void specialValidators() throws IOException {
-        request.addHeader("sec-username", "mtester");
+        request.addHeader(SEC_USERNAME, "mtester");
         EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao,

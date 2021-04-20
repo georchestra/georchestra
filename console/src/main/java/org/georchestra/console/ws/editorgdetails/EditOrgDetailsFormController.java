@@ -18,8 +18,17 @@
  */
 package org.georchestra.console.ws.editorgdetails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+
+import java.io.IOException;
+import java.util.Base64;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
@@ -39,11 +48,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.Base64;
 
 @Controller
 @SessionAttributes(types = EditOrgDetailsFormBean.class)
@@ -84,7 +88,7 @@ public class EditOrgDetailsFormController {
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.GET)
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
     public String setupForm(HttpServletRequest request, Model model) {
-        Org org = this.orgsDao.findByCommonName(request.getHeader("sec-org"));
+        Org org = this.orgsDao.findByCommonName(SecurityHeaders.decode(request.getHeader(SEC_ORG)));
         OrgExt orgExt = this.orgsDao.findExtById(org.getId());
         org.setOrgExt(orgExt);
 

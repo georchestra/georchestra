@@ -19,6 +19,10 @@
 
 package org.georchestra.extractorapp.ws.extractor;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +48,7 @@ import javax.sql.DataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.extractorapp.ws.AbstractEmailFactory;
 import org.georchestra.extractorapp.ws.Email;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionMetadata;
@@ -297,9 +302,9 @@ public class ExtractorController implements ServletContextAware {
             String[] recipients = requests.get(0)._emails;
             Email email = emailFactory.createEmail(request, recipients, url.toString());
 
-            String username = request.getHeader("sec-username");
-            String roles = request.getHeader("sec-roles");
-            String org = request.getHeader("sec-orgname");
+            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            String roles = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
+            String org = SecurityHeaders.decode(request.getHeader(SEC_ORGNAME));
             RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext,
                     testing, username, roles, org, adminCredentials, secureHost, extractionFolderPrefix,
                     maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
