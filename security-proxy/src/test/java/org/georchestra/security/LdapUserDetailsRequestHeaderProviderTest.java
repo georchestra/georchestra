@@ -87,7 +87,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         username = "testUser";
         userSearch = mock(FilterBasedLdapUserSearch.class);
         ldapTemplate = mock(LdapTemplate.class);
-        ldapProvider = new LdapUserDetailsRequestHeaderProvider(userSearch, orgSearchBaseDN);
+        ldapProvider = new LdapUserDetailsRequestHeaderProvider(() -> userSearch, orgSearchBaseDN);
         ldapProvider.ldapTemplate = ldapTemplate;
         session = new MockHttpSession();
 

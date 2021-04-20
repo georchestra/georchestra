@@ -19,6 +19,7 @@
 
 package org.georchestra.security;
 
+import static java.util.Objects.requireNonNull;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -55,11 +57,11 @@ import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
-import org.springframework.util.Assert;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicates;
@@ -95,6 +97,8 @@ import com.google.common.collect.Maps;
  */
 public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
+    private static final String MEMBER_OF_PATTERN = "([^=,]+)=([^=,]+),%s.*";
+
     private static final String CACHED_USERNAME_KEY = "security-proxy-cached-username";
 
     private static final String CACHED_HEADERS_KEY = "security-proxy-cached-attrs";
@@ -102,7 +106,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     protected static final Log logger = LogFactory
             .getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
 
-    private final FilterBasedLdapUserSearch _userSearch;
+    private final Supplier<FilterBasedLdapUserSearch> userSearchFactory;
     private final Pattern orgSearchMemberOfPattern;
     private final String orgSearchBaseDN;
 
@@ -129,12 +133,31 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
 
-    public LdapUserDetailsRequestHeaderProvider(FilterBasedLdapUserSearch userSearch, String orgSearchBaseDN) {
-        Assert.notNull(userSearch, "userSearch must not be null");
-        Assert.notNull(orgSearchBaseDN, "orgSearchBaseDN must not be null");
-        this._userSearch = userSearch;
-        this.orgSearchBaseDN = orgSearchBaseDN;
-        this.orgSearchMemberOfPattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
+    /**
+     * @param contextSource    provider for the base LDAP path
+     * @param ldapOrgsRdn      search base for user organizations (e.g.
+     *                         {@code ou=orgs}
+     * @param ldapUsersRdn     search base for users (e.g. {@code ou=users})
+     * @param userSearchFilter single-user search filter (e.g. {@code uid={0}})
+     */
+    public LdapUserDetailsRequestHeaderProvider(BaseLdapPathContextSource contextSource, String ldapOrgsRdn,
+            String ldapUsersRdn, String userSearchFilter) {
+
+        requireNonNull(contextSource, "contextSource must not be null");
+        requireNonNull(ldapOrgsRdn, "ldapOrgsRdn must not be null");
+        requireNonNull(ldapUsersRdn, "ldapUsersRdn must not be null");
+        requireNonNull(userSearchFilter, "userSearchFilter must not be null");
+
+        this.orgSearchBaseDN = ldapOrgsRdn;
+        this.userSearchFactory = () -> new FilterBasedLdapUserSearch(ldapUsersRdn, userSearchFilter, contextSource);
+        this.orgSearchMemberOfPattern = Pattern.compile(String.format(MEMBER_OF_PATTERN, ldapOrgsRdn));
+    }
+
+    @VisibleForTesting
+    LdapUserDetailsRequestHeaderProvider(Supplier<FilterBasedLdapUserSearch> userSearchFactory, String ldapOrgsRdn) {
+        this.orgSearchBaseDN = ldapOrgsRdn;
+        this.userSearchFactory = userSearchFactory;
+        this.orgSearchMemberOfPattern = Pattern.compile(String.format(MEMBER_OF_PATTERN, ldapOrgsRdn));
     }
 
     @PostConstruct
@@ -244,11 +267,9 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private String loadOrgCn(String username) {
         try {
             // Retreive memberOf attributes
-            // WARN! (groldan) looks like _userSearch is a singleton, so we could be mixing
-            // up setReturningAttributes from concurrent requests (we're synchronized on
-            // session here, not on _userSearch)
-            this._userSearch.setReturningAttributes(new String[] { "memberOf" });
-            DirContextOperations orgData = _userSearch.searchForUser(username);
+            FilterBasedLdapUserSearch userSearch = userSearchFactory.get();
+            userSearch.setReturningAttributes(new String[] { "memberOf" });
+            DirContextOperations orgData = userSearch.searchForUser(username);
             Attribute attributes = orgData.getAttributes().get("memberOf");
             if (attributes != null) {
                 NamingEnumeration<?> all = attributes.getAll();
@@ -263,9 +284,6 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             }
         } catch (javax.naming.NamingException e) {
             logger.error("problem adding headers for request: organization", e);
-        } finally {
-            // restore standard attribute list
-            this._userSearch.setReturningAttributes(null);
         }
         return null;
     }
@@ -274,29 +292,22 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         final List<Header> headers = new ArrayList<>();
         DirContextOperations userData;
         try {
-            userData = _userSearch.searchForUser(username);
+            FilterBasedLdapUserSearch userSearch = userSearchFactory.get();
+            userData = userSearch.searchForUser(username);
         } catch (Exception e) {
             logger.warn("Unable to lookup user:" + username, e);
             return Collections.emptyList();
         }
-        try {
-            final Attributes ldapUserAttributes = userData.getAttributes();
-            mappings.forEach((headerName, ldapPropertyName) -> {
-                try {
-                    final @Nullable String headerValue = buildValue(ldapUserAttributes, ldapPropertyName);
-                    headers.add(new BasicHeader(headerName, headerValue));
-                } catch (javax.naming.NamingException e) {
-                    logger.error("problem adding headers for request:" + headerName, e);
-                }
-            });
-            return headers;
-        } finally {
+        final Attributes ldapUserAttributes = userData.getAttributes();
+        mappings.forEach((headerName, ldapPropertyName) -> {
             try {
-                userData.close();
-            } catch (NamingException e) {
-                logger.warn("error closing ldap context for user :" + username, e);
+                final @Nullable String headerValue = buildValue(ldapUserAttributes, ldapPropertyName);
+                headers.add(new BasicHeader(headerName, headerValue));
+            } catch (javax.naming.NamingException e) {
+                logger.error("problem adding headers for request:" + headerName, e);
             }
-        }
+        });
+        return headers;
     }
 
     private String buildValue(Attributes ldapAttributes, String ldapPropertyName) throws NamingException {
@@ -308,16 +319,11 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         Attribute attribute = ldapAttributes.get(ldapPropertyName);
         if (attribute != null) {
             NamingEnumeration<?> all = attribute.getAll();
-            try {
-                Stream<String> values = Collections.list(all).stream().filter(Predicates.notNull())
-                        .map(Object::toString);
-                if (base64) {
-                    values = values.map(SecurityHeaders::encodeBase64);
-                }
-                return values.collect(Collectors.joining(","));
-            } finally {
-                all.close();
+            Stream<String> values = Collections.list(all).stream().filter(Predicates.notNull()).map(Object::toString);
+            if (base64) {
+                values = values.map(SecurityHeaders::encodeBase64);
             }
+            return values.collect(Collectors.joining(","));
         }
         return null;
     }
