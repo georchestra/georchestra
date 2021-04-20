@@ -25,12 +25,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Supplier;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -48,7 +49,20 @@ import com.google.common.io.CharStreams;
 
 import lombok.NonNull;
 
+/**
+ * Generates an XML metadata record applying the {@link #loadTransform() XML
+ * transform} to the {@link #loadTemplateRecord() template record}, using a
+ * {@link MetadataRecordProperties} as a node-set parameter to the XSL
+ * transformation.
+ * <p>
+ * Using a {@link MetadataRecordProperties} as a node-set parameter to the XSL
+ * transformation means with a single parameter we can provide all the metadata
+ * properties collected during the dataset upload and publish phases.
+ */
 public class TemplateMapper {
+
+    protected static final String DEFAULT_TEMPLATE_RECORD_RESOURCE = "/md_record_template.xml";
+    protected static final String DEFAULT_XSL_RESOURCE = "/default_iso_2005_gmd.xsl";
 
     public Supplier<String> apply(@NonNull MetadataRecordProperties mdProps) {
 
@@ -88,16 +102,40 @@ public class TemplateMapper {
     }
 
     protected String loadTransform() {
-        return loadResource("/default_iso_2005_gmd.xsl");
+        return loadDefaultTransform();
     }
 
     protected String loadTemplateRecord() {
-        return loadResource("/md_record_template.xml");
+        return loadDefaultTemplateRecord();
     }
 
-    protected String loadResource(@NonNull String resource) {
-        try (InputStream in = getClass().getResourceAsStream(resource)) {
-            requireNonNull(in, () -> "Resource not found: " + resource);
+    protected final String loadDefaultTransform() {
+        return loadResource(getDefaultTransformURI());
+    }
+
+    protected final String loadDefaultTemplateRecord() {
+        return loadResource(getDefaultTemplateRecordURI());
+    }
+
+    protected final URI getDefaultTransformURI() {
+        try {
+            return getClass().getResource(DEFAULT_XSL_RESOURCE).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected final URI getDefaultTemplateRecordURI() {
+        try {
+            return getClass().getResource(DEFAULT_TEMPLATE_RECORD_RESOURCE).toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected String loadResource(@NonNull URI uri) {
+        try (InputStream in = uri.toURL().openStream()) {
+            requireNonNull(in, () -> "Resource not found: " + uri);
             return CharStreams.toString(new InputStreamReader(in, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new IllegalStateException(e);
