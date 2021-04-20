@@ -29,6 +29,7 @@ import org.georchestra.commons.security.SecurityHeaders;
  */
 public class HeaderNames {
     public static final String PROTECTED_HEADER_PREFIX = "sec-";
+    public static final String PRE_AUTH_REQUEST_PROPERTY = "pre-auth";
     // note: JSESSIONID is strictly speaking not a Header,
     // but usual part of the the Cookie / Set-Cookie header
     public static final String JSESSION_ID = "JSESSIONID";

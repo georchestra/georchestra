@@ -19,6 +19,8 @@
 
 package org.georchestra.security;
 
+import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -59,11 +61,11 @@ public abstract class HeaderProvider {
 
     /**
      * @return {@code true} if the request comes from a trusted proxy and has been
-     *         deemed pre-authorized by setting the {@code pre-auth} session
+     *         deemed pre-authorized by setting the {@code pre-auth} request
      *         attribute to {@code true}
      * @see ProxyTrustAnotherProxy
      */
-    protected boolean isPreAuthorized(HttpSession session) {
-        return Boolean.TRUE.equals(session.getAttribute("pre-auth"));
+    public static boolean isPreAuthorized(HttpServletRequest originalRequest) {
+        return Boolean.TRUE.equals(originalRequest.getAttribute(PRE_AUTH_REQUEST_PROPERTY));
     }
 }

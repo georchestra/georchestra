@@ -94,7 +94,7 @@ public class HeadersManagementStrategy {
 
         // see https://github.com/georchestra/georchestra/issues/509:
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
-        if (!isPreAuthorized(originalRequest)) {
+        if (!HeaderProvider.isPreAuthorized(originalRequest)) {
             addAllowedIncomingHeaders(originalRequest, proxyRequest, localProxy, headersLog);
         }
 
@@ -114,7 +114,7 @@ public class HeadersManagementStrategy {
     private void applyHeaderProviders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
             StringBuilder headersLog, String targetServiceName) {
 
-        final boolean preAuthorized = isPreAuthorized(originalRequest);
+        final boolean preAuthorized = HeaderProvider.isPreAuthorized(originalRequest);
         final HttpSession session = originalRequest.getSession();
         for (HeaderProvider provider : headerProviders) {
 
@@ -206,11 +206,6 @@ public class HeadersManagementStrategy {
             return true;
         }
         return false;
-    }
-
-    private boolean isPreAuthorized(HttpServletRequest originalRequest) {
-        HttpSession session = originalRequest.getSession();
-        return session.getAttribute("pre-auth") != null;
     }
 
     private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, @Nullable StringBuilder headersLog,

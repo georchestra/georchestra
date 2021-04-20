@@ -12,6 +12,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
+/**
+ * 
+ * @see ProxyTrustAnotherProxy
+ */
 public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
 
     @PostConstruct
@@ -22,7 +26,7 @@ public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
     @Override
     public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
             String targetServiceName) {
-        if (!isPreAuthorized(session)) {
+        if (!isPreAuthorized(originalRequest)) {
             return Collections.emptyList();
         }
         Collection<Header> headers = new ArrayList<Header>();

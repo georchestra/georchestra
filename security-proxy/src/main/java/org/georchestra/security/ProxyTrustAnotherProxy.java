@@ -1,5 +1,6 @@
 package org.georchestra.security;
 
+import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.net.InetAddress;
@@ -66,7 +67,7 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
                 String username = request.getHeader(AUTH_HEADER);
                 if (username != null) {
                     logger.debug("Request from a trusted proxy, so log in user : " + username);
-                    request.getSession().setAttribute("pre-auth", true);
+                    request.setAttribute(PRE_AUTH_REQUEST_PROPERTY, Boolean.TRUE);
                 } else {
                     logger.debug("Request from a trusted proxy, but no sec-username header found");
                 }

@@ -205,7 +205,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             String targetServiceName) {
 
         // Don't use this provider for trusted request
-        if (isPreAuthorized(session) || isAnnonymous()) {
+        if (isPreAuthorized(originalRequest) || isAnnonymous()) {
             return Collections.emptyList();
         }
 
