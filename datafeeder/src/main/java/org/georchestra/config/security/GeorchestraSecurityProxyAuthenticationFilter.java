@@ -18,8 +18,15 @@
  */
 package org.georchestra.config.security;
 
-import static org.georchestra.commons.security.SecurityHeaders.*;
-import java.util.Arrays;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +37,21 @@ import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.util.StringUtils;
 
+import com.google.common.base.Splitter;
+
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Slf4j(topic = "org.georchestra.config.security")
 public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     @Override
     protected GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
+        if (log.isDebugEnabled()) {
+            log.debug("security-proxy headers: {}",
+                    Collections.list(request.getHeaderNames()).stream().filter(n -> n.startsWith("sec-"))
+                            .map(n -> String.format("%s: '%s'", n, request.getHeader(n)))
+                            .collect(Collectors.joining(",")));
+        }
         final boolean preAuthenticated = getPreAuthenticatedCredentials(request);
         if (preAuthenticated) {
             String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
@@ -50,8 +65,10 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
             String lastName = SecurityHeaders.decode(request.getHeader(SEC_LASTNAME));
             String organization = SecurityHeaders.decode(request.getHeader(SEC_ORG));
             String organizationName = SecurityHeaders.decode(request.getHeader(SEC_ORGNAME));
-            return new GeorchestraUserDetails(username, roles, email, firstName, lastName, organization,
-                    organizationName, anonymous);
+            GeorchestraUserDetails preAuthPrincipal = new GeorchestraUserDetails(username, roles, email, firstName,
+                    lastName, organization, organizationName, anonymous);
+            log.debug("principal: {}", preAuthPrincipal);
+            return preAuthPrincipal;
         }
         return null;
     }
@@ -69,10 +86,7 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
         if (StringUtils.isEmpty(rolesHeader)) {
             return Collections.emptyList();
         }
-
-        String[] roles = rolesHeader.split(";");
-        log.info("roles: {}", roles == null ? null : Arrays.toString(roles));
-        return Arrays.stream(roles).filter(StringUtils::hasText).collect(Collectors.toList());
+        return Splitter.on(';').omitEmptyStrings().trimResults().splitToList(rolesHeader);
     }
 
 }
