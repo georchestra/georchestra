@@ -28,8 +28,8 @@ import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
 import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
-import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
+import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -220,7 +220,7 @@ public class HeadersManagementStrategy {
         addHeaderLog(headersLog, headerName, value);
     }
 
-    private void addHeaderLog(StringBuilder headersLog, String headerName, String value) {
+    private void addHeaderLog(StringBuilder headersLog, String headerName, CharSequence value) {
         if (headersLog != null) {
             headersLog.append("\t" + headerName);
             headersLog.append("=");
@@ -291,12 +291,7 @@ public class HeadersManagementStrategy {
             }
         }
 
-        if (headersLog != null) {
-            headersLog.append("\t" + COOKIE_ID);
-            headersLog.append("=");
-            headersLog.append(cookies);
-            headersLog.append("\n");
-        }
+        addHeaderLog(headersLog, COOKIE_ID, cookies);
 
         proxyRequest.addHeader(new BasicHeader(COOKIE_ID, cookies.toString()));
 
