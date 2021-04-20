@@ -131,7 +131,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     public LdapUserDetailsRequestHeaderProvider(FilterBasedLdapUserSearch userSearch, String orgSearchBaseDN) {
         Assert.notNull(userSearch, "userSearch must not be null");
-        // Q: is it ok for orgSearchBaseDN to be null?
+        Assert.notNull(orgSearchBaseDN, "orgSearchBaseDN must not be null");
         this._userSearch = userSearch;
         this.orgSearchBaseDN = orgSearchBaseDN;
         this.orgSeachMemberOfPattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
