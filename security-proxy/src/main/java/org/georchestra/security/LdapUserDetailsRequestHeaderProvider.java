@@ -103,7 +103,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             .getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
 
     private final FilterBasedLdapUserSearch _userSearch;
-    private final Pattern orgSeachMemberOfPattern;
+    private final Pattern orgSearchMemberOfPattern;
     private final String orgSearchBaseDN;
 
     /**
@@ -134,7 +134,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         Assert.notNull(orgSearchBaseDN, "orgSearchBaseDN must not be null");
         this._userSearch = userSearch;
         this.orgSearchBaseDN = orgSearchBaseDN;
-        this.orgSeachMemberOfPattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
+        this.orgSearchMemberOfPattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
     }
 
     @PostConstruct
@@ -254,7 +254,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 NamingEnumeration<?> all = attributes.getAll();
                 while (all.hasMore()) {
                     String memberOf = all.next().toString();
-                    Matcher m = this.orgSeachMemberOfPattern.matcher(memberOf);
+                    Matcher m = this.orgSearchMemberOfPattern.matcher(memberOf);
                     if (m.matches()) {
                         String orgCn = m.group(2);
                         return orgCn;
