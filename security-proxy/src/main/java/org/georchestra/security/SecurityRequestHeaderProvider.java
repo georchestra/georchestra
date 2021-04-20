@@ -28,9 +28,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.springframework.security.core.Authentication;
@@ -42,6 +45,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * {@link Authentication authenticated user}
  */
 public class SecurityRequestHeaderProvider extends HeaderProvider {
+
+    protected static final Log logger = LogFactory
+            .getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
+
+    @PostConstruct
+    public void init() {
+        logger.info(String.format("Will contribute standard header %s", SEC_USERNAME));
+        logger.info(String.format("Will contribute standard header %s", SEC_ROLES));
+    }
 
     @Override
     public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,

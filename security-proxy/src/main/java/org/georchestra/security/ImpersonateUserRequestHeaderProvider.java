@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -44,6 +45,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     private List<String> trustedUsers = new ArrayList<String>();
+
+    @PostConstruct
+    public void init() {
+        logger.info(
+                String.format("User impersonation enabled through request headers %s and %s", IMP_USERNAME, IMP_ROLES));
+    }
 
     @Override
     public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,

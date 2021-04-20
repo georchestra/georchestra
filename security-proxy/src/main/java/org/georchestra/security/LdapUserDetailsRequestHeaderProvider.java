@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,8 +49,6 @@ import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
@@ -102,9 +101,6 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private static final String CACHED_USERNAME_KEY = "security-proxy-cached-username";
 
     private static final String CACHED_HEADERS_KEY = "security-proxy-cached-attrs";
-
-    protected static final Log logger = LogFactory
-            .getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
 
     private final Supplier<FilterBasedLdapUserSearch> userSearchFactory;
     private final Pattern orgSearchMemberOfPattern;
@@ -162,17 +158,28 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     @PostConstruct
     public void init() throws IOException {
+        logger.info(String.format("Will contribute standard header %s", SEC_ORG));
+        logger.info(String.format("Will contribute standard header %s", SEC_ORGNAME));
         final boolean loadExternalConfig = (georchestraConfiguration != null) && (georchestraConfiguration.activated());
         if (loadExternalConfig) {
             Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
+            logger.info("Loading header mappings from "
+                    + new File(georchestraConfiguration.getContextDataDir(), "headers-mapping.properties"));
             loadConfig(pHmap);
+
+            this.defaultMappinsg.forEach((header, property) -> logger
+                    .info(String.format("Loaded default header mapping %s=%s", header, property)));
+            this.perServiceMappings.forEach((service, serviceMappings) -> {
+                serviceMappings.forEach((header, property) -> logger
+                        .info(String.format("Loaded header mapping for service %s: %s=%s", service, header, property)));
+            });
         }
     }
 
     void loadConfig(Properties pHmap) {
-        ImmutableMap<String, String> mappings = Maps.fromProperties(pHmap);
-        this.defaultMappinsg = loadDefaultMappings(mappings);
-        this.perServiceMappings = loadPerServiceMappings(mappings);
+        ImmutableMap<String, String> allMappings = Maps.fromProperties(pHmap);
+        this.defaultMappinsg = loadDefaultMappings(allMappings);
+        this.perServiceMappings = loadPerServiceMappings(allMappings);
     }
 
     private Map<String, String> loadDefaultMappings(ImmutableMap<String, String> mappings) {

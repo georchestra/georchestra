@@ -25,10 +25,14 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpRequestBase;
 
 public abstract class HeaderProvider {
+    protected static final Log logger = LogFactory.getLog(HeaderProvider.class.getPackage().getName());
+
     /**
      * Called by
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
@@ -53,7 +57,13 @@ public abstract class HeaderProvider {
         return Collections.emptyList();
     }
 
+    /**
+     * @return {@code true} if the request comes from a trusted proxy and has been
+     *         deemed pre-authorized by setting the {@code pre-auth} session
+     *         attribute to {@code true}
+     * @see ProxyTrustAnotherProxy
+     */
     protected boolean isPreAuthorized(HttpSession session) {
-        return session.getAttribute("pre-auth") != null;
+        return Boolean.TRUE.equals(session.getAttribute("pre-auth"));
     }
 }
