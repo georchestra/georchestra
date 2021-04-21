@@ -42,6 +42,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataPublishingJobConfiguration {
 
     public static final String JOB_PARAM_ID = "uploadId";
+    public static final String USER_PARAM = "user";
     public static final String JOB_NAME = "publishJob";
 
     private @Autowired JobBuilderFactory jobBuilderFactory;

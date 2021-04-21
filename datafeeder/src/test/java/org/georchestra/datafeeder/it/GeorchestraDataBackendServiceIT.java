@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.it;
 
+import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_SCHEMA_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertFalse;
@@ -62,9 +63,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles(value = { "georchestra", "it" })
 public class GeorchestraDataBackendServiceIT {
 
-    private static final String ORGANIZATION_NAME = "Datafeeder Test Org";
-    private static final String EXPECTED_SCHEMA_NAME = "datafeeder_test_org";
-
     public @Autowired @Rule IntegrationTestSupport support;
     public @Rule TestData testData = new TestData();
 
@@ -81,7 +79,6 @@ public class GeorchestraDataBackendServiceIT {
         support.deleteLocalDatabaseSchema(EXPECTED_SCHEMA_NAME);
 
         job = new DataUploadJob();
-        job.getUser().setOrganization(ORGANIZATION_NAME);
         dataset = new DatasetUploadState();
         dataset.setJob(job);
         publishing = new PublishSettings();
@@ -94,8 +91,9 @@ public class GeorchestraDataBackendServiceIT {
     }
 
     public @Test void prepareBackend_Null_Org_Name() {
-        job.getUser().setOrganization(null);
-        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> service.prepareBackend(job));
+        support.user().setOrganization(null);
+        IllegalStateException ex = assertThrows(IllegalStateException.class,
+                () -> service.prepareBackend(job, support.user()));
         assertThat(ex.getMessage(), containsString("Georchestra organization name not provided"));
     }
 
@@ -103,12 +101,12 @@ public class GeorchestraDataBackendServiceIT {
         List<String> pre = support.getDatabaseSchemas();
         assertFalse(pre.toString(), pre.contains(EXPECTED_SCHEMA_NAME));
 
-        service.prepareBackend(job);
+        service.prepareBackend(job, support.user());
 
         List<String> post = support.getDatabaseSchemas();
         assertTrue(post.toString(), post.contains(EXPECTED_SCHEMA_NAME));
 
-        service.prepareBackend(job);
+        service.prepareBackend(job, support.user());
         post = support.getDatabaseSchemas();
         assertTrue(post.toString(), post.contains(EXPECTED_SCHEMA_NAME));
     }
@@ -116,7 +114,8 @@ public class GeorchestraDataBackendServiceIT {
     public @Test void importDataset_Null_PublishingSettings() {
         dataset.setName("somename");
         dataset.setPublishing(null);
-        NullPointerException ex = assertThrows(NullPointerException.class, () -> service.importDataset(dataset));
+        NullPointerException ex = assertThrows(NullPointerException.class,
+                () -> service.importDataset(dataset, support.user()));
         assertThat(ex.getMessage(), containsString("Dataset 'publishing' settings is null"));
     }
 
@@ -124,12 +123,13 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("somename");
         dataset.setAbsolutePath(null);
 
-        NullPointerException npe = assertThrows(NullPointerException.class, () -> service.importDataset(dataset));
+        NullPointerException npe = assertThrows(NullPointerException.class,
+                () -> service.importDataset(dataset, support.user()));
         assertThat(npe.getMessage(), containsString("absolutePath not provided"));
 
         dataset.setAbsolutePath("/tmp/nonexistent/" + UUID.randomUUID());
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset));
+                () -> service.importDataset(dataset, support.user()));
         assertThat(iae.getMessage(), containsString("Dataset absolutePath is not a file"));
     }
 
@@ -137,7 +137,8 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setAbsolutePath(testData.archSitesShapefile().toAbsolutePath().toString());
         dataset.setName(null);
 
-        NullPointerException npe = assertThrows(NullPointerException.class, () -> service.importDataset(dataset));
+        NullPointerException npe = assertThrows(NullPointerException.class,
+                () -> service.importDataset(dataset, support.user()));
         assertThat(npe.getMessage(), containsString("Dataset name is null"));
     }
 
@@ -146,7 +147,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("invalidName");
 
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset));
+                () -> service.importDataset(dataset, support.user()));
         assertThat(iae.getMessage(), containsString("Dataset name 'invalidName' does not exist"));
     }
 
@@ -154,12 +155,12 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setAbsolutePath(testData.archSitesShapefile().toAbsolutePath().toString());
         dataset.setName("archsites");
 
-        service.prepareBackend(job);
+        service.prepareBackend(job, support.user());
 
-        service.importDataset(dataset);
+        service.importDataset(dataset, support.user());
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
-        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(job));
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
         String typeName = dataset.getName();
         try {
             SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);

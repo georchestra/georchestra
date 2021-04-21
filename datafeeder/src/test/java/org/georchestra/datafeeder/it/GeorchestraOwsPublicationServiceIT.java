@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.it;
 
+import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_WORKSPACE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -77,9 +78,6 @@ public class GeorchestraOwsPublicationServiceIT {
 
     private DatasetUploadState shpDataset;
 
-    private static final String ORG_NAME = "TEST org";
-    private static final String EXPECTED_WORKSPACE = "test_org";
-
     private static final String NATIVE_LAYERNAME = "public_layer";
     private static final String PULISHED_LAYERNAME = "PublicLayer";
 
@@ -120,7 +118,6 @@ public class GeorchestraOwsPublicationServiceIT {
      */
     private DatasetUploadState buildShapefileDatasetFromDefaultGeorchestraDataDirectory() {
         DataUploadJob job = new DataUploadJob();
-        job.getUser().setOrganization(ORG_NAME);
 
         DatasetUploadState dset = new DatasetUploadState();
         dset.setJob(job);
@@ -153,13 +150,13 @@ public class GeorchestraOwsPublicationServiceIT {
         assertFalse(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
 
         assertNull(shpDataset.getPublishing().getPublishedWorkspace());
-        service.publish(shpDataset);
+        service.publish(shpDataset, support.user());
         assertEquals(EXPECTED_WORKSPACE, shpDataset.getPublishing().getPublishedWorkspace());
 
         assertTrue(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
         assertTrue(dataStores.findByWorkspaceAndName(EXPECTED_WORKSPACE, hardCodedStoreName).isPresent());
         List<NamedLink> findFeatureTypes = featureTypes.findFeatureTypes(EXPECTED_WORKSPACE, hardCodedStoreName);
-        System.err.println(findFeatureTypes);
+        // System.err.println(findFeatureTypes);
         assertTrue(featureTypes.getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME).isPresent());
         assertTrue(layers.getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME).isPresent());
     }

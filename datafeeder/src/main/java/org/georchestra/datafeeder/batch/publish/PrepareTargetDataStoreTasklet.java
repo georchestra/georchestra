@@ -20,9 +20,13 @@ package org.georchestra.datafeeder.batch.publish;
 
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
+import org.georchestra.datafeeder.batch.UserInfoPropertyEditor;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.JobStatus;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -30,6 +34,8 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.base.Throwables;
 
@@ -42,13 +48,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PrepareTargetDataStoreTasklet implements Tasklet {
 
-    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
+    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
+    private @Value("#{jobParameters['user']}") String userStr;
+
+    private @Autowired UserInfoPropertyEditor userInfoPropertyEditor;
+    private UserInfo user;
+
+    @PostConstruct
+    public void initBinder() {
+        userInfoPropertyEditor.setAsText(userStr);
+        this.user = userInfoPropertyEditor.getValue();
+    }
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         try {
-            service.prepareTargetStoreForJobDatasets(uploadId);
+            service.prepareTargetStoreForJobDatasets(uploadId, user);
         } catch (RuntimeException e) {
             log.error("Error preparing target store", e);
             String message = e.getMessage();

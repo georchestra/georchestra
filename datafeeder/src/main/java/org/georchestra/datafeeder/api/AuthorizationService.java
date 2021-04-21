@@ -43,6 +43,7 @@ import lombok.NonNull;
 public class AuthorizationService {
 
     private @Autowired DataUploadService uploadService;
+    private @Autowired UserInfoMapper userInfoMapper;
 
     public @NonNull String getUserName() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -56,7 +57,7 @@ public class AuthorizationService {
         Authentication auth = context.getAuthentication();
         Object principal = auth.getPrincipal();
         if (principal instanceof GeorchestraUserDetails) {
-            return ((GeorchestraUserDetails) principal).getOrganization();
+            return ((GeorchestraUserDetails) principal).getOrganization().getId();
         }
         return null;
     }
@@ -89,11 +90,7 @@ public class AuthorizationService {
         UserInfo user = new UserInfo();
         if (principal instanceof GeorchestraUserDetails) {
             GeorchestraUserDetails georUser = (GeorchestraUserDetails) principal;
-            user.setEmail(georUser.getEmail());
-            user.setFirstName(georUser.getFirstName());
-            user.setLastName(georUser.getLastName());
-            user.setOrganization(georUser.getOrganization());
-            user.setOrganizationName(georUser.getOrganizationName());
+            return userInfoMapper.map(georUser);
         }
         return user;
     }

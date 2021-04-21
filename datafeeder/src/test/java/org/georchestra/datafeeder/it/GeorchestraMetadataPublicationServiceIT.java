@@ -79,8 +79,6 @@ public class GeorchestraMetadataPublicationServiceIT {
 
     private DatasetUploadState shpDataset;
 
-    private static final String ORG_NAME = "TEST org";
-
     private static final String NATIVE_LAYERNAME = "public_layer";
     private static final String PULISHED_LAYERNAME = "PublicLayer";
 
@@ -97,11 +95,6 @@ public class GeorchestraMetadataPublicationServiceIT {
 
     private DatasetUploadState buildShapefileDatasetFromDefaultGeorchestraDataDirectory() {
         DataUploadJob job = new DataUploadJob();
-        job.getUser().setOrganization(ORG_NAME);
-        job.getUser().setOrganizationName("Test Organization Full Name");
-        job.getUser().setEmail("testuser@test.com");
-        job.getUser().setFirstName("John");
-        job.getUser().setLastName("Doe");
 
         DatasetUploadState dset = new DatasetUploadState();
         dset.setJob(job);
@@ -147,7 +140,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         publishing.setPublishedName(PULISHED_LAYERNAME);
         publishing.setSrs("EPSG:4326");
 
-        service.publish(shpDataset);
+        service.publish(shpDataset, support.user());
 
         final String createdMdId = publishing.getMetadataRecordId();
         assertNotNull(createdMdId);
@@ -284,8 +277,8 @@ public class GeorchestraMetadataPublicationServiceIT {
     // https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml
     private void assertResponsibleParty(Document dom) {
         final String rp = "MD_Metadata/identificationInfo/MD_DataIdentification/pointOfContact/CI_ResponsibleParty";
-        UserInfo user = this.shpDataset.getJob().getUser();
-        assertPointOfContact(dom, rp, user.getFirstName() + " " + user.getLastName(), user.getOrganizationName(),
+        UserInfo user = support.user();
+        assertPointOfContact(dom, rp, user.getFirstName() + " " + user.getLastName(), user.getOrganization().getName(),
                 user.getEmail(), "", "", "");
     }
 
@@ -297,8 +290,8 @@ public class GeorchestraMetadataPublicationServiceIT {
     // email = sec-email
     private void assertPointOfContact(Document dom) {
         final String poc = "MD_Metadata/contact/CI_ResponsibleParty";
-        UserInfo user = this.shpDataset.getJob().getUser();
-        assertPointOfContact(dom, poc, user.getFirstName() + " " + user.getLastName(), user.getOrganizationName(),
+        UserInfo user = support.user();
+        assertPointOfContact(dom, poc, user.getFirstName() + " " + user.getLastName(), user.getOrganization().getName(),
                 user.getEmail(), "", "", "");
     }
 

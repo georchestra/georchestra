@@ -28,6 +28,7 @@ import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class DataPublishingService {
 
     private @Autowired PublishingBatchService publishingBatchService;
 
-    public void publish(@NonNull UUID uploadId, @NonNull PublishRequest req) {
+    public void publish(@NonNull UUID uploadId, @NonNull PublishRequest req, @NonNull UserInfo user) {
         DataUploadJob job = publishingBatchService.findJob(uploadId);
         for (DatasetPublishRequest dreq : req.getDatasets()) {
             String nativeName = dreq.getNativeName();
@@ -81,7 +82,7 @@ public class DataPublishingService {
         }
         publishingBatchService.save(job);
 
-        publishingBatchService.runJob(uploadId);
+        publishingBatchService.runJob(uploadId, user);
     }
 
 }

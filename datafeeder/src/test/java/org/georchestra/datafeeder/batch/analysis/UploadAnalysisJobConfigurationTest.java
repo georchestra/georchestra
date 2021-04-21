@@ -39,6 +39,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
@@ -85,7 +86,9 @@ public class UploadAnalysisJobConfigurationTest {
     public @Before void before() {
         jobParameters = new HashMap<>();
         testUser = new UserInfo();
-        testUser.setOrganization("test-org");
+        Organization org = new Organization();
+        org.setId("test-org");
+        testUser.setOrganization(org);
     }
 
     private JobParameters jobParameters() {
@@ -105,7 +108,7 @@ public class UploadAnalysisJobConfigurationTest {
     public void step1_ReadUploadPack_single_shapefile() throws IOException {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", testUser);
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = readUploadPack(uploadId);
@@ -139,7 +142,7 @@ public class UploadAnalysisJobConfigurationTest {
     public void analyze_single_shapefile() throws Exception {
         List<MultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.saveUploads(received);
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", testUser);
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);
@@ -179,7 +182,7 @@ public class UploadAnalysisJobConfigurationTest {
         MultipartFile received = multipartSupport.createZipFile("test upload.zip", roads, states, chinesePoly);
 
         UUID uploadId = storageService.saveUploads(Collections.singletonList(received));
-        DataUploadJob initial = uploadService.createJob(uploadId, "testuser", testUser);
+        DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
 
         JobExecution execution = launchJob(uploadId);

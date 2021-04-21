@@ -20,6 +20,9 @@ package org.georchestra.datafeeder.service.publish;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
+
+import lombok.NonNull;
 
 public interface OWSPublicationService {
 
@@ -32,7 +35,7 @@ public interface OWSPublicationService {
      * {@link PublishSettings#getPublishedWorkspace()
      * dataset.getPublishing().getPublishedWorkspace()} must not be {@code null}
      */
-    void publish(DatasetUploadState dataset);
+    void publish(DatasetUploadState dataset, @NonNull UserInfo user);
 
     /**
      * Updates the published dataset metadata on the OWS service for the published

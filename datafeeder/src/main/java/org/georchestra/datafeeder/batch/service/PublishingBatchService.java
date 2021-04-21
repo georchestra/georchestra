@@ -29,6 +29,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
@@ -54,8 +55,8 @@ public class PublishingBatchService {
     private @Autowired OWSPublicationService owsService;
     private @Autowired MetadataPublicationService metadataService;
 
-    public void runJob(@NonNull UUID jobId) {
-        jobManager.launchPublishingProcess(jobId);
+    public void runJob(@NonNull UUID jobId, @NonNull UserInfo user) {
+        jobManager.launchPublishingProcess(jobId, user);
     }
 
     public DataUploadJob findJob(@NonNull UUID jobId) {
@@ -120,11 +121,11 @@ public class PublishingBatchService {
      * @param jobId
      */
     @Transactional
-    public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId) {
+    public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Prepare target store for uploaded datasets", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
 
-        backendService.prepareBackend(job);
+        backendService.prepareBackend(job, user);
 
         job.getDatasets().forEach(dset -> {
             dset.setPublishStatus(JobStatus.RUNNING);
@@ -135,17 +136,17 @@ public class PublishingBatchService {
         save(job);
     }
 
-    public void importDatasetsToTargetDatastore(@NonNull UUID jobId) {
+    public void importDatasetsToTargetDatastore(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: importing datasets to target database", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, backendService::importDataset);
+        doOnEachRunningDataset(job, datasetUploadState -> backendService.importDataset(datasetUploadState, user));
         save(job);
     }
 
-    public void publishDatasetsToGeoServer(@NonNull UUID jobId) {
+    public void publishDatasetsToGeoServer(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Publish datasets to GeoServer", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, owsService::publish);
+        doOnEachRunningDataset(job, datasetUploadState -> owsService.publish(datasetUploadState, user));
         save(job);
     }
 
@@ -154,10 +155,10 @@ public class PublishingBatchService {
         return repository.saveAndFlush(job);
     }
 
-    public void publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId) {
+    public void publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Publish datasets metadata to GeoNetwork", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, metadataService::publish);
+        doOnEachRunningDataset(job, datasetUploadState -> metadataService.publish(datasetUploadState, user));
         save(job);
     }
 

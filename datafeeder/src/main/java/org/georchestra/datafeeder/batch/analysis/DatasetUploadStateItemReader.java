@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 public class DatasetUploadStateItemReader implements ItemReader<DatasetUploadState> {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
+
     private @Autowired DatasetUploadStateRepository repository;
     private Iterator<DatasetUploadState> iterator;
 

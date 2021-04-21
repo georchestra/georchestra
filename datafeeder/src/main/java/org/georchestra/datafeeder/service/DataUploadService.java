@@ -52,8 +52,8 @@ public class DataUploadService {
         return repository.findByJobId(uploadId);
     }
 
-    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username, @NonNull UserInfo user) {
-        return analysisService.createJob(jobId, username, user);
+    public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
+        return analysisService.createJob(jobId, username);
     }
 
     /**

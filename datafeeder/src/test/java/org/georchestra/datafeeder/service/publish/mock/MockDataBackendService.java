@@ -58,8 +58,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     }
 
     @Override
-    public void prepareBackend(@NonNull DataUploadJob job) {
-        Map<String, String> connectionParams = resolveConnectionParams(job);
+    public void prepareBackend(@NonNull DataUploadJob job, @NonNull UserInfo user) {
+        Map<String, String> connectionParams = resolveConnectionParams(job, user);
         try {
             datasetsService.createDataStore(connectionParams);
         } catch (IOException e) {
@@ -69,8 +69,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     }
 
     @Override
-    public void importDataset(@NonNull DatasetUploadState dataset) {
-        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
+    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
+        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob(), user);
         try {
             // use the same native featuretype name for the imported dataset featuretype
             dataset.getPublishing().setImportedName(dataset.getName());
@@ -80,8 +80,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
         }
     }
 
-    private Map<String, String> resolveConnectionParams(DataUploadJob job) {
-        File targetDir = resolveKey(job);
+    private Map<String, String> resolveConnectionParams(DataUploadJob job, @NonNull UserInfo user) {
+        File targetDir = resolveKey(job, user);
         Map<String, String> connectionParams = new HashMap<>();
         String url;
         try {
@@ -95,9 +95,9 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
         return connectionParams;
     }
 
-    private File resolveKey(DataUploadJob job) {
-        UserInfo user = job.getUser();
-        String orgName = user.getOrganization() == null ? NULL_ORG : user.getOrganization();
+    private File resolveKey(DataUploadJob job, UserInfo user) {
+        String orgName = (user.getOrganization() == null || user.getOrganization().getId() == null) ? NULL_ORG
+                : user.getOrganization().getId();
         File directory = baseDirectory.toPath().resolve(job.getJobId().toString()).resolve(orgName).toFile();
         directory.mkdirs();
         this.directories.add(directory);
