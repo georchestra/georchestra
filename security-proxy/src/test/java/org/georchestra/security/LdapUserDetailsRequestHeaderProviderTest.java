@@ -28,120 +28,52 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.security.SecurityHeaders;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
 import com.google.common.collect.ImmutableMap;
 
 public class LdapUserDetailsRequestHeaderProviderTest {
 
+    private LdapHeaderMappingsTestSupport support;
     private LdapUserDetailsRequestHeaderProvider ldapProvider;
-
-    private FilterBasedLdapUserSearch userSearch;
-    private LdapTemplate ldapTemplate;
-
-    private final String orgSearchBaseDN = "ou=orgs";
-
-    private String username;
 
     private HttpSession session;
     private final HttpServletRequest request = new MockHttpServletRequest();
 
     public @Before void before() {
-        username = "testUser";
-        userSearch = mock(FilterBasedLdapUserSearch.class);
-        ldapTemplate = mock(LdapTemplate.class);
-        ldapProvider = new LdapUserDetailsRequestHeaderProvider(() -> userSearch, orgSearchBaseDN);
-        ldapProvider.ldapTemplate = ldapTemplate;
+        support = new LdapHeaderMappingsTestSupport();
+        support.initMockLdapContext();
+        ldapProvider = new LdapUserDetailsRequestHeaderProvider(() -> support.userSearch, support.orgSearchBaseDN);
+        ldapProvider.ldapTemplate = support.ldapTemplate;
+
         session = new MockHttpSession();
 
-        Authentication auth = new TestingAuthenticationToken(username, null);
+        Authentication auth = new TestingAuthenticationToken(support.username, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    public @After void after() {
-
-    }
-
-    @Test
-    public void testLoadConfig_DefaultMappings() {
-        Properties props = new Properties();
-        props.setProperty(SEC_EMAIL, "mail");
-        props.setProperty(SEC_FIRSTNAME, "givenName");
-        ldapProvider.loadConfig(props);
-        assertEquals(ImmutableMap.of(SEC_EMAIL, "mail", SEC_FIRSTNAME, "givenName"), ldapProvider.getDefaultMappings());
-        assertTrue(ldapProvider.perServiceMappings.isEmpty());
-    }
-
-    @Test
-    public void testLoadConfig_ServiceMappings() {
-        Properties props = new Properties();
-        props.setProperty(SEC_EMAIL, "mail");
-        props.setProperty(SEC_FIRSTNAME, "givenName");
-
-        props.setProperty("analytics.sec-lastname", "sn");
-        props.setProperty("analytics.sec-tel", "telephoneNumber");
-
-        props.setProperty("console.sec-email", "mail-override");
-        props.setProperty("console.sec-firstname", "givenName-override");
-        props.setProperty("console.sec-lastname", "sn");
-
-        ldapProvider.loadConfig(props);
-        assertEquals(ImmutableMap.of(SEC_EMAIL, "mail", SEC_FIRSTNAME, "givenName"), ldapProvider.getDefaultMappings());
-        assertEquals(2, ldapProvider.perServiceMappings.size());
-
-        assertEquals(ldapProvider.getDefaultMappings(), ldapProvider.getServiceMappings("mapfishapp"));
-
-        Map<String, String> expected;
-
-        Map<String, String> analytics = ldapProvider.getServiceMappings("analytics");
-        expected = new HashMap<>(ldapProvider.getDefaultMappings());
-        expected.put(SEC_LASTNAME, "sn");
-        expected.put(SEC_TEL, "telephoneNumber");
-        assertEquals(expected, analytics);
-
-        Map<String, String> console = ldapProvider.getServiceMappings("console");
-        expected = new HashMap<>(ldapProvider.getDefaultMappings());
-        expected.put(SEC_EMAIL, "mail-override");
-        expected.put(SEC_FIRSTNAME, "givenName-override");
-        expected.put(SEC_LASTNAME, "sn");
-        assertEquals(expected, console);
     }
 
     @Test
@@ -189,31 +121,27 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
     @Test
     public void testGetCustomRequestHeaders_SetsOrgAndOrgNameStandardHeaders() throws Exception {
-        setupMockLdapContext("test-org", "Test Org Name", null);
-
         String targetServiceName = null;
         Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, targetServiceName);
         headers.forEach(
                 h -> assertEquals("header has more than one value: " + h.toString(), 1, h.getElements().length));
 
         Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
-        assertEquals(ImmutableMap.of(SEC_ORG, "test-org", SEC_ORGNAME, "Test Org Name"), actual);
+        String org = (String) support.orgContextMap.get("cn").get(0);
+        String orgname = (String) support.orgContextMap.get("o").get(0);
+        Map<String, String> expected = ImmutableMap.of(SEC_ORG, org, SEC_ORGNAME, orgname);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void testGetCustomRequestHeaders_defaultHeaders() throws Exception {
-        Map<String, String> ldapContext = ImmutableMap.of("mail", "test@mock.com", "givenName", "Mockfirsname",
-                "mail-override", "test@mock.override.com", "sn", "Mocklastname", "telephoneNumber", "123456");
-
-        setupMockLdapContext("test-org", "Test Org Name", ldapContext);
-
-        Properties props = new Properties();
-        props.setProperty(SEC_EMAIL, "mail");
-        props.setProperty(SEC_FIRSTNAME, "givenName");
-
-        props.setProperty("analytics.sec-email", "mail-override");
-        props.setProperty("analytics.sec-lastname", "sn");
-        props.setProperty("analytics.sec-tel", "telephoneNumber");
+        Map<String, String> props = support.asMap(//
+                SEC_EMAIL, "mail", //
+                SEC_FIRSTNAME, "givenName", //
+                "analytics.sec-email", "base64:mail", //
+                "analytics.sec-lastname", "sn", //
+                "analytics.sec-tel", "telephoneNumber"//
+        );
         this.ldapProvider.loadConfig(props);
 
         String targetServiceName = null;
@@ -223,11 +151,9 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
         Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
 
-        Map<String, String> expected = new HashMap<>();
-        expected.put(SEC_ORG, "test-org");
-        expected.put(SEC_ORGNAME, "Test Org Name");
-        expected.put(SEC_EMAIL, ldapContext.get("mail"));
-        expected.put(SEC_FIRSTNAME, ldapContext.get("givenName"));
+        Map<String, String> expected = support.buildHeaders(//
+                SEC_EMAIL, "mail", //
+                SEC_FIRSTNAME, "givenName");
 
         assertEquals(expected.keySet(), actual.keySet());
         assertEquals("expected default headers on non service-name match", expected, actual);
@@ -235,18 +161,13 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
     @Test
     public void testGetCustomRequestHeaders_ServiceSpecificHeaders() throws Exception {
-        Map<String, String> ldapContext = ImmutableMap.of("mail", "test@mock.com", "givenName", "Mockfirsname",
-                "mail-override", "test@mock.override.com", "sn", "Mocklastname", "telephoneNumber", "123456");
-
-        setupMockLdapContext("test-org", "Test Org Name", ldapContext);
-
-        Properties props = new Properties();
-        props.setProperty(SEC_EMAIL, "mail");
-        props.setProperty(SEC_FIRSTNAME, "givenName");
-
-        props.setProperty("analytics.sec-email", "mail-override");
-        props.setProperty("analytics.sec-lastname", "sn");
-        props.setProperty("analytics.sec-tel", "telephoneNumber");
+        Map<String, String> props = support.asMap(//
+                SEC_EMAIL, "mail", //
+                SEC_FIRSTNAME, "givenName", //
+                "analytics.sec-email", "base64:mail", //
+                "analytics.sec-lastname", "sn", //
+                "analytics.sec-tel", "telephoneNumber"//
+        );
         this.ldapProvider.loadConfig(props);
 
         String targetServiceName = "analytics";
@@ -256,18 +177,18 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
         Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
 
-        Map<String, String> expected = new HashMap<>();
-        expected.put(SEC_ORG, "test-org");
-        expected.put(SEC_ORGNAME, "Test Org Name");
-        expected.put(SEC_FIRSTNAME, ldapContext.get("givenName"));
-        // overridden per-service header
-        expected.put(SEC_EMAIL, ldapContext.get("mail-override"));
-        // per-service headers not present in default headers
-        expected.put(SEC_LASTNAME, ldapContext.get("sn"));
-        expected.put(SEC_TEL, ldapContext.get("telephoneNumber"));
+        Map<String, String> expected = support.buildHeaders(//
+                SEC_EMAIL, "base64:mail", //
+                SEC_FIRSTNAME, "givenName", //
+                SEC_LASTNAME, "sn", //
+                SEC_TEL, "telephoneNumber"//
+        );
 
         assertEquals(expected.keySet(), actual.keySet());
-        assertEquals(expected, actual);
+        expected.forEach((h, v) -> {
+            String returned = actual.get(h);
+            assertEquals(h, v, returned);
+        });
     }
 
     /**
@@ -281,6 +202,9 @@ public class LdapUserDetailsRequestHeaderProviderTest {
     public void testGetCustomRequestHeaders_HeaderValueEncoding_Base64() throws Exception {
         final String givenName = "ガブリエル";
         final String lastName = "ロルダン";
+        support.setProperty("givenName", givenName);
+        support.setProperty("sn", lastName);
+        support.setProperty("mail", "test@mock.com");
 
         final String encodedGivenName = Base64.getEncoder().encodeToString(givenName.getBytes(StandardCharsets.UTF_8));
         final String encodedLastName = Base64.getEncoder().encodeToString(lastName.getBytes(StandardCharsets.UTF_8));
@@ -289,17 +213,10 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         assertEquals(expectedGivenName, SecurityHeaders.encodeBase64(givenName));
         assertEquals(expectedLastName, SecurityHeaders.encodeBase64(lastName));
 
-        Map<String, String> ldapContext = ImmutableMap.of(//
-                "givenName", givenName, //
-                "sn", lastName, //
-                "mail", "test@mock.com", "mail-override", "test@mock.override.com", "telephoneNumber", "123456");
-
-        setupMockLdapContext("test-org", "Test Org Name", ldapContext);
-
-        Properties props = new Properties();
-        props.setProperty(SEC_FIRSTNAME, "base64:givenName");
-        props.setProperty(SEC_LASTNAME, "base64:sn");
-        props.setProperty(SEC_EMAIL, "mail");
+        Map<String, String> props = new HashMap<>();
+        props.put(SEC_FIRSTNAME, "base64:givenName");
+        props.put(SEC_LASTNAME, "base64:sn");
+        props.put(SEC_EMAIL, "mail");
 
         this.ldapProvider.loadConfig(props);
 
@@ -309,63 +226,50 @@ public class LdapUserDetailsRequestHeaderProviderTest {
                 h -> assertEquals("header shall have just one value: " + h.toString(), 1, h.getElements().length));
 
         Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
+        assertEquals("test@mock.com", actual.get(SEC_EMAIL));
         assertEquals(expectedGivenName, actual.get(SEC_FIRSTNAME));
         assertEquals(expectedLastName, actual.get(SEC_LASTNAME));
-        assertEquals("test@mock.com", actual.get(SEC_EMAIL));
     }
 
-    private void setupMockLdapContext(String org, String orgName, Map<String, String> ldapContext) throws Exception {
-
-        Attribute memberOf = mock(Attribute.class);
-        NamingEnumeration<Object> orgs = namingEnumeration("cn=test-org,ou=orgs");// ([^=,]+)=([^=,]+),ou=orgs.*
-        doReturn(orgs).when(memberOf).getAll();
-        DirContextOperations ctx = mock(DirContextOperations.class);
-        when(ctx.getStringAttribute(eq("o"))).thenReturn(orgName);
-        when(ldapTemplate.lookupContext(eq("cn=" + org + ",ou=orgs"))).thenReturn(ctx);
-
-        Attributes userAttributes = mock(Attributes.class);
-        when(userAttributes.get(eq("memberOf"))).thenReturn(memberOf);
-
-        DirContextOperations userProperties = mock(DirContextOperations.class);
-        when(userProperties.getAttributes()).thenReturn(userAttributes);
-
-        when(userSearch.searchForUser(eq(username))).thenReturn(userProperties);
-
-        if (ldapContext != null) {
-            for (Map.Entry<String, String> e : ldapContext.entrySet()) {
-                String name = e.getKey();
-                String value = e.getValue();
-
-                NamingEnumeration<?> propEnum = namingEnumeration(value);
-                Attribute propAttribute = mock(Attribute.class);
-                doReturn(propEnum).when(propAttribute).getAll();
-                when(userAttributes.get(eq(name))).thenReturn(propAttribute);
-            }
+    @Test
+    public void testAllValidHeaders() {
+        List<String> allValidAttributes = new ArrayList<>(LdapHeaderMappings.ALL_VALID_ATTRIBUTES);
+        Map<String, String> config = new HashMap<>();
+        for (int i = 0; i < allValidAttributes.size(); i++) {
+            String header = "sec-" + i;
+            String ldapAtt = allValidAttributes.get(i);
+            config.put(header, ldapAtt);
         }
+        testConfig(config);
     }
 
-    private NamingEnumeration<Object> namingEnumeration(Object... values) {
-        return new NamingEnumeration<Object>() {
-            final Iterator<Object> it = Arrays.asList(values).iterator();
+    @Test
+    public void testAllValidHeaders_encoded() {
+        List<String> allValidAttributes = new ArrayList<>(LdapHeaderMappings.ALL_VALID_ATTRIBUTES);
+        Map<String, String> config = new HashMap<>();
+        for (int i = 0; i < allValidAttributes.size(); i++) {
+            String header = "sec-" + i;
+            String ldapAtt = "base64:" + allValidAttributes.get(i);
+            config.put(header, ldapAtt);
+        }
+        testConfig(config);
+    }
 
-            public @Override boolean hasMoreElements() {
-                return it.hasNext();
-            }
+    private void testConfig(Map<String, String> config) {
+        ldapProvider.loadConfig(config);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, null);
 
-            public @Override Object nextElement() {
-                return it.next();
-            }
+        Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
+        Map<String, String> expected = new HashMap<>();
+        config.forEach((header, att) -> {
+            String expectedValue = support.resolve(header, att);
+            expected.put(header, expectedValue);
+        });
 
-            public @Override Object next() throws NamingException {
-                return it.next();
-            }
-
-            public @Override boolean hasMore() throws NamingException {
-                return hasMoreElements();
-            }
-
-            public @Override void close() throws NamingException {
-            }
-        };
+        expected.forEach((header, value) -> {
+            String mappingStr = String.format("%s=%s", header, config.get(header));
+            assertEquals(mappingStr, value, actual.get(header));
+            LdapUserDetailsRequestHeaderProvider.logger.info(mappingStr + " ok: " + value);
+        });
     }
 }

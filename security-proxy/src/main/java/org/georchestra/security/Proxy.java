@@ -651,6 +651,7 @@ public class Proxy {
 
             HttpRequestBase proxyingRequest = makeRequest(request, sURL);
             String targetServiceName = findMatchingTarget(request);
+            logger.debug("Gathering headers for service " + targetServiceName);
             headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy, targetServiceName);
 
             try {
