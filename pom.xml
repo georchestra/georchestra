@@ -913,6 +913,7 @@
         <module>analytics</module>
         <module>header</module>
         <module>datafeeder</module>
+        <module>datafeeder-ui</module>
       </modules>
     </profile>
     <profile>
@@ -1009,6 +1010,12 @@
       <id>datafeeder</id>
       <modules>
         <module>datafeeder</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>datafeeder-ui</id>
+      <modules>
+        <module>datafeeder-ui</module>
       </modules>
     </profile>
     <profile>
