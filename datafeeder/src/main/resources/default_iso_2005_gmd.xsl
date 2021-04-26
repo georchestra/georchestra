@@ -192,15 +192,15 @@ Default template to apply MetadataRecordProperties.java properties to a record t
       <xsl:call-template name="contactInfo">
         <xsl:with-param name="individualName" select="$props//metadataResponsibleParty//individualName" />
         <xsl:with-param name="organizationName"
-          select="$props//datasetResponsibleParty//organizationName" />
+          select="$props//metadataResponsibleParty//organizationName" />
         <xsl:with-param name="deliveryPoint"
-          select="$props//datasetResponsibleParty//address//deliveryPoint" />
-        <xsl:with-param name="city" select="$props//datasetResponsibleParty//address//city" />
-        <xsl:with-param name="postalCode" select="$props//datasetResponsibleParty//address//postalCode" />
-        <xsl:with-param name="country" select="$props//datasetResponsibleParty//address//country" />
-        <xsl:with-param name="email" select="$props//datasetResponsibleParty//email" />
-        <xsl:with-param name="protocol" select="$props//datasetResponsibleParty//protocol" />
-        <xsl:with-param name="linkage" select="$props//datasetResponsibleParty//linkage" />
+          select="$props//metadataResponsibleParty//address//deliveryPoint" />
+        <xsl:with-param name="city" select="$props//metadataResponsibleParty//address//city" />
+        <xsl:with-param name="postalCode" select="$props//metadataResponsibleParty//address//postalCode" />
+        <xsl:with-param name="country" select="$props//metadataResponsibleParty//address//country" />
+        <xsl:with-param name="email" select="$props//metadataResponsibleParty//email" />
+        <xsl:with-param name="protocol" select="$props//metadataResponsibleParty//protocol" />
+        <xsl:with-param name="linkage" select="$props//metadataResponsibleParty//linkage" />
       </xsl:call-template>
     </gmd:contact>
   </xsl:template>

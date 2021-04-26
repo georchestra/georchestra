@@ -205,5 +205,4 @@ curl -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -
 
 In the future we could also include the (non standard) code-page shapefile sidecar file (in this case it would be `ne_10m_admin_0_countries.cpg`) for automatic recognison of a non-default character encoding for the `.dbf` file; and/or change the dataset's encoding through the API. The `.cpg` file contains `UTF-8`, with which `NAME_JA` should return `{"name": "NAME_JA", "value": "インドネシア"}` instead.
 
-## Contributing
 

@@ -87,13 +87,19 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         Organization org = new Organization();
         org.setId(ORGANIZATION_NAME);
         org.setName("Test Organization Full Name");
+        org.setDescription("Test organization description");
+        org.setLinkage("http://test.org.com");
+        org.setPostalAddress("123 rue du test");
 
         user = new UserInfo();
-        user.setOrganization(org);
+        user.setUsername("testuser");
         user.setOrganization(org);
         user.setEmail("testuser@test.com");
         user.setFirstName("John");
         user.setLastName("Doe");
+        user.setTelephoneNumber("+54-341-1234");
+        user.setPostalAddress("11th street of testing");
+        user.setTitle("Test advocate");
     }
 
     public UserInfo user() {
