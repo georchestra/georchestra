@@ -20,11 +20,14 @@ package org.georchestra.datafeeder.service.publish;
 
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.UserInfo;
+
+import lombok.NonNull;
 
 public interface DataBackendService {
 
-    void prepareBackend(DataUploadJob job);
+    void prepareBackend(DataUploadJob job, @NonNull UserInfo user);
 
-    void importDataset(DatasetUploadState dataset);
+    void importDataset(DatasetUploadState dataset, @NonNull UserInfo user);
 
 }

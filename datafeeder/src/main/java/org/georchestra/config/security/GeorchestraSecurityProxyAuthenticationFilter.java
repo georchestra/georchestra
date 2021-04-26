@@ -18,26 +18,17 @@
  */
 package org.georchestra.config.security;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.util.StringUtils;
-
-import com.google.common.base.Splitter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,27 +37,16 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
 
     @Override
     protected GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        if (log.isDebugEnabled()) {
-            log.debug("security-proxy headers: {}",
-                    Collections.list(request.getHeaderNames()).stream().filter(n -> n.startsWith("sec-"))
-                            .map(n -> String.format("%s: '%s'", n, request.getHeader(n)))
-                            .collect(Collectors.joining(",")));
-        }
         final boolean preAuthenticated = getPreAuthenticatedCredentials(request);
         if (preAuthenticated) {
-            String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-            final boolean anonymous = username == null;
-            if (anonymous) {
-                username = "anonymousUser";
+            Map<String, String> headers = extractSecHeaders(request);
+            if (log.isDebugEnabled()) {
+                log.debug("security-proxy headers: {}",
+                        headers.entrySet().stream().map(n -> String.format("%s: '%s'", n.getKey(), n.getValue()))
+                                .collect(Collectors.joining(",")));
             }
-            List<String> roles = extractRoles(request);
-            String email = SecurityHeaders.decode(request.getHeader(SEC_EMAIL));
-            String firstName = SecurityHeaders.decode(request.getHeader(SEC_FIRSTNAME));
-            String lastName = SecurityHeaders.decode(request.getHeader(SEC_LASTNAME));
-            String organization = SecurityHeaders.decode(request.getHeader(SEC_ORG));
-            String organizationName = SecurityHeaders.decode(request.getHeader(SEC_ORGNAME));
-            GeorchestraUserDetails preAuthPrincipal = new GeorchestraUserDetails(username, roles, email, firstName,
-                    lastName, organization, organizationName, anonymous);
+
+            GeorchestraUserDetails preAuthPrincipal = GeorchestraUserDetails.fromHeaders(headers);
             log.debug("principal: {}", preAuthPrincipal);
             return preAuthPrincipal;
         }
@@ -81,12 +61,10 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
         return Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_PROXY)));
     }
 
-    private List<String> extractRoles(HttpServletRequest request) {
-        String rolesHeader = SecurityHeaders.decode(request.getHeader(SEC_ROLES));
-        if (StringUtils.isEmpty(rolesHeader)) {
-            return Collections.emptyList();
-        }
-        return Splitter.on(';').omitEmptyStrings().trimResults().splitToList(rolesHeader);
+    private Map<String, String> extractSecHeaders(HttpServletRequest request) {
+        return Collections.list(request.getHeaderNames())//
+                .stream()//
+                .filter(name -> name.startsWith("sec-"))//
+                .collect(Collectors.toMap(Function.identity(), name -> request.getHeader(name)));
     }
-
 }

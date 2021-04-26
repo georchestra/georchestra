@@ -29,6 +29,7 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.api.mapper.DataPublishingResponseMapper;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,8 +124,9 @@ public class DataPublishingApiController implements DataPublishingApi {
 
         authorizationService.checkAccessRights(jobId);
 
+        UserInfo user = authorizationService.getUserInfo();
         // launch the async job
-        dataPublishingService.publish(jobId, publishRequest);
+        dataPublishingService.publish(jobId, publishRequest, user);
 
         DataUploadJob upload = getOrNotFound(jobId);
         PublishJobStatus status = mapper.toApi(upload);

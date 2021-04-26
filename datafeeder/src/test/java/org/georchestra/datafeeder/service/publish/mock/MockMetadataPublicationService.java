@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 
 import lombok.NonNull;
@@ -31,7 +32,7 @@ import lombok.NonNull;
 public class MockMetadataPublicationService implements MetadataPublicationService {
 
     @Override
-    public void publish(DatasetUploadState dataset) {
+    public void publish(DatasetUploadState dataset, @NonNull UserInfo user) {
         PublishSettings publishState = dataset.getPublishing();
         Objects.requireNonNull(publishState);
         publishState.setMetadataRecordId(UUID.randomUUID().toString());

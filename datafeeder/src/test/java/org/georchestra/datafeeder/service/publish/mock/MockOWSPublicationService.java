@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class MockOWSPublicationService implements OWSPublicationService {
     private @Autowired MetadataPublicationService metadataService;
 
     @Override
-    public void publish(@NonNull DatasetUploadState dataset) {
+    public void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         log.info("MOCK publishing of OWS datasets for " + dataset.getJob().getJobId() + "/" + dataset.getName());
         PublishSettings publishing = dataset.getPublishing();
         Objects.requireNonNull(publishing);

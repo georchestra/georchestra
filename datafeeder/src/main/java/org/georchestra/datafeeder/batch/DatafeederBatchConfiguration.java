@@ -21,13 +21,31 @@ package org.georchestra.datafeeder.batch;
 import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
 import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
 import org.georchestra.datafeeder.batch.service.BatchServicesConfiguration;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableBatchProcessing
 @Import({ BatchServicesConfiguration.class, UploadAnalysisJobConfiguration.class,
         DataPublishingJobConfiguration.class })
 public class DatafeederBatchConfiguration {
+
+    private @Autowired ObjectMapper objectMapper;
+
+    /**
+     * {@link UserInfo} property editor to allow establishing a user as a job
+     * parameter and read it in steps through
+     * <code> @Value("#{jobParameters['user']}") UserInfo user</code>
+     */
+    @Bean
+    public UserInfoPropertyEditor userInfoPropertyEditor() {
+        return new UserInfoPropertyEditor(objectMapper);
+    }
+
 }

@@ -35,6 +35,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
@@ -77,22 +78,23 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     private @Autowired GeoServerRemoteService geoserver;
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
-    public @Override void publish(@NonNull DatasetUploadState dataset) {
+    public @Override void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         requireNonNull(dataset.getJob());
-        requireNonNull(dataset.getJob().getUser().getOrganization(), "organization name not provided");
+        requireNonNull(user.getOrganization(), "organization name not provided");
+        requireNonNull(user.getOrganization().getId(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing);
         requireNonNull(publishing.getPublishedName());
 
-        final String workspaceName = resolveWorkspace(dataset);
+        final String workspaceName = resolveWorkspace(user);
         final String dataStoreName = resolveDataStoreName(dataset);
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
 
         Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
         if (!dataStore.isPresent()) {
-            geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, dataset));
+            geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, user));
         }
 
         FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
@@ -114,10 +116,10 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     }
 
     private @NonNull DataStoreInfo buildDataStoreInfo(@NonNull String workspaceName, @NonNull String dataStoreName,
-            @NonNull DatasetUploadState dataset) {
+            @NonNull UserInfo user) {
 
         DataStoreInfo ds = new DataStoreInfo();
-        ds.connectionParameters(buildConnectionParameters(dataset));
+        ds.connectionParameters(buildConnectionParameters(user));
         ds.setName(dataStoreName);
         ds.setEnabled(true);
         ds.setWorkspace(new WorkspaceInfo().name(workspaceName));
@@ -125,11 +127,11 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return ds;
     }
 
-    private Map<String, String> buildConnectionParameters(@NonNull DatasetUploadState dataset) {
+    private Map<String, String> buildConnectionParameters(@NonNull UserInfo user) {
         Map<String, String> connectionParams = new HashMap<>(
                 configProperties.getPublishing().getBackend().getGeoserver());
 
-        String schema = nameResolver.resolveDatabaseSchemaName(dataset.getJob().getUser().getOrganization());
+        String schema = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getId());
         for (String k : connectionParams.keySet()) {
             String v = connectionParams.get(k);
             if ("<schema>".equals(v)) {
@@ -204,8 +206,8 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return layerName;
     }
 
-    private String resolveWorkspace(@NonNull DatasetUploadState dataset) {
-        final @NonNull String orgName = dataset.getJob().getUser().getOrganization();
+    private String resolveWorkspace(@NonNull UserInfo user) {
+        final @NonNull String orgName = user.getOrganization().getId();
         final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
 
         WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName);

@@ -68,10 +68,10 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     }
 
     @Override
-    public void publish(@NonNull DatasetUploadState dataset) {
+    public void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         Objects.requireNonNull(dataset.getPublishing());
 
-        MetadataRecordProperties mdProps = toRecordProperties(dataset);
+        MetadataRecordProperties mdProps = toRecordProperties(dataset, user);
         String metadataId = mdProps.getMetadataId();
 
         Supplier<String> record = templateMapper.apply(mdProps);
@@ -79,7 +79,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
-    private MetadataRecordProperties toRecordProperties(DatasetUploadState d) {
+    private MetadataRecordProperties toRecordProperties(@NonNull DatasetUploadState d, @NonNull UserInfo user) {
         PublishSettings p = d.getPublishing();
 
         final String metadataId = UUID.randomUUID().toString();
@@ -125,8 +125,8 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         m.setAccessConstraints("otherRestrictions");
         m.setCharsetEncoding(toCodeListCharset(p.getEncoding()));
         m.setUseConstraints("license");
-        m.setDatasetResponsibleParty(datasetResponsibleParty(d));
-        m.setMetadataResponsibleParty(metadataResponsibleParty(d));
+        m.setDatasetResponsibleParty(datasetResponsibleParty(user));
+        m.setMetadataResponsibleParty(metadataResponsibleParty(user));
         m.setMetadataLanguage("eng");// REVISIT: from config?
         m.setGraphicOverview(graphicOverview(d));
         m.setUpdateFequency("asNeeded");
@@ -209,22 +209,19 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 //	protocol = URL
 //	name = sec-orgname
 //	as in https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml"
-    private ContactInfo metadataResponsibleParty(DatasetUploadState d) {
-        DataUploadJob job = d.getJob();
-        UserInfo user = job.getUser();
-
+    private ContactInfo metadataResponsibleParty(@NonNull UserInfo user) {
         String individualName = individualName(user);
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(user.getOrganization());
-        contact.setOrganizationName(user.getOrganizationName());
+        contact.setName(user.getOrganization().getId());
+        contact.setOrganizationName(user.getOrganization().getName());
         contact.setProtocol("URL");
-        contact.setLinkage(null);// ?? labeledURI from LDAP
+        contact.setLinkage(user.getOrganization().getLinkage());
 
         Address address = new Address();// ?? postalAddress from LDAP (to be discussed)
         contact.setAddress(address);
-        log.warn("TODO: implement metadataResponsibleParty LDAP derived properties");
+        address.setDeliveryPoint(user.getOrganization().getPostalAddress());
         return contact;
     }
 
@@ -241,21 +238,19 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 //	organisationName = sec-orgname
 //	adress = postalAddress from LDAP (to be discussed) 
 //	email = sec-email"
-    private ContactInfo datasetResponsibleParty(DatasetUploadState d) {
-        DataUploadJob job = d.getJob();
-        UserInfo user = job.getUser();
-
+    private ContactInfo datasetResponsibleParty(@NonNull UserInfo user) {
         String individualName = individualName(user);
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(user.getOrganization());
-        contact.setOrganizationName(user.getOrganizationName());
+        contact.setName(user.getOrganization().getId());
+        contact.setOrganizationName(user.getOrganization().getName());
         contact.setProtocol("URL");
-        contact.setLinkage(null);// ?? labeledURI from LDAP
+        contact.setLinkage(user.getOrganization().getLinkage());// ?? labeledURI from LDAP
 
         Address address = new Address();// ?? postalAddress from LDAP (to be discussed)
         contact.setAddress(address);
+        address.setDeliveryPoint(user.getPostalAddress());
         return contact;
     }
 

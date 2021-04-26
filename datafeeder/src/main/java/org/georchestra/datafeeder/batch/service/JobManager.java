@@ -18,10 +18,12 @@
  */
 package org.georchestra.datafeeder.batch.service;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
 import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -34,6 +36,9 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -67,15 +72,15 @@ public class JobManager {
     }
 
     @Async
-    public void launchPublishingProcess(@NonNull UUID jobId) {
+    public void launchPublishingProcess(@NonNull UUID jobId, @NonNull UserInfo user) {
         final Job dataPublishingJob = context.getBean(DataPublishingJobConfiguration.JOB_NAME, Job.class);
-        final String paramName = DataPublishingJobConfiguration.JOB_PARAM_ID;
-        final String paramValue = jobId.toString();
         final boolean identifying = true;
 
         final JobParameters params = new JobParametersBuilder()//
-                .addString(paramName, paramValue, identifying)//
+                .addString(DataPublishingJobConfiguration.JOB_PARAM_ID, jobId.toString(), identifying)//
+                .addString(DataPublishingJobConfiguration.USER_PARAM, toString(user), false)//
                 .toJobParameters();
+
         log.info("Launching publishing job {}", jobId);
         JobExecution execution;
         try {
@@ -88,4 +93,19 @@ public class JobManager {
         log.info("Publishing job {} finished with status {}", jobId, execution.getStatus());
     }
 
+    public static String toString(@NonNull UserInfo user) {
+        try {
+            return new ObjectMapper().writeValueAsString(user);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public UserInfo fromString(@NonNull String serializedUser) {
+        try {
+            return new ObjectMapper().reader().readValue(serializedUser, UserInfo.class);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

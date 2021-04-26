@@ -35,6 +35,8 @@ import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.DataStore;
@@ -69,10 +71,10 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
     @Override
-    public void prepareBackend(@NonNull DataUploadJob job) {
+    public void prepareBackend(@NonNull DataUploadJob job, @NonNull UserInfo user) {
         log.trace("START prepareBackend");
 
-        final Map<String, String> connectionParams = resolveConnectionParams(job);
+        final Map<String, String> connectionParams = resolveConnectionParams(user);
         createSchema(connectionParams);
         try {
             datasetsService.createDataStore(connectionParams);
@@ -121,12 +123,13 @@ public class GeorchestraDataBackendService implements DataBackendService {
     }
 
     @Override
-    public void importDataset(@NonNull DatasetUploadState dataset) {
+    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         requireNonNull(dataset.getName(), "Dataset name is null");
-        requireNonNull(dataset.getJob().getUser().getOrganization(), "Organization is null");
+        requireNonNull(user.getOrganization(), "Organization is null");
+        requireNonNull(user.getOrganization().getId(), "Organization is null");
         requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
 
-        Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob());
+        Map<String, String> connectionParams = resolveConnectionParams(user);
         try {
             String uniqueTargetName = resolveTargetTypeName(dataset, connectionParams);
             dataset.getPublishing().setImportedName(uniqueTargetName);
@@ -154,11 +157,12 @@ public class GeorchestraDataBackendService implements DataBackendService {
         }
     }
 
-    public @VisibleForTesting Map<String, String> resolveConnectionParams(DataUploadJob job) {
+    public @VisibleForTesting Map<String, String> resolveConnectionParams(@NonNull UserInfo user) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
-        String orgName = job.getUser().getOrganization();
+        Organization org = user.getOrganization();
+        String orgName = org == null ? null : org.getId();
         if (orgName == null) {
-            throw new IllegalStateException("Georchestra organization name not provided in job.user.organization");
+            throw new IllegalStateException("Georchestra organization name not provided in job.user.organization.id");
         }
         String schema = nameResolver.resolveDatabaseSchemaName(orgName);
         connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);

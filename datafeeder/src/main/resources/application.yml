@@ -1,4 +1,15 @@
 server:
+  tomcat:
+    #Maximum queue length for incoming connection requests when all possible request processing threads are in use.(100)
+    accept-count: 100
+    #Maximum number of connections that the server accepts and processes at any given time. Once the limit has been reached,
+    #the operating system may still accept connections based on the "acceptCount" property.(8192)
+    max-connections: 512
+    threads:
+      #Maximum amount of worker threads. (200)
+      max: 20
+      #Minimum amount of worker threads. (10)
+      min-spare: 2
   servlet:
     context-path: /datafeeder
     encoding.enabled: true
@@ -12,7 +23,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
     banner-mode: off
-  batch.job.enabled: false #disable automatically running configured jobs at startup time
+  batch:
+    job.enabled: false #disable automatically running configured jobs at startup time
+    initialize-schema: always
   servlet:
     # configuration properties for javax.servlet.MultipartConfigElement, derived from datafeeder.file-upload config
     multipart:
@@ -23,9 +36,6 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate.ddl-auto: update
-  batch:
-    job.enabled: false #disable automatically running configured jobs at startup time
-    initialize-schema: always
   datasource:
     # default to in-memory db for sring-batch and datafeeder object model, overridden in georchestra profile
     url: jdbc:h2:mem:testdb
@@ -68,6 +78,13 @@ logging:
 spring:
   profiles: georchestra
   jpa.database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  batch:
+    job.enabled: false #disable automatically running configured jobs at startup time
+    initialize-schema: always
+    # Overrides the default classpath:/org/springframework/batch/core/schema-postgresql.sql
+    # to replace some VARCHAR(N) column definitions by TEXT. In particular and of most interest,
+    # BATCH_JOB_EXECUTION_PARAMS.STRING_VAL, since we use a JSON representation of a UserInfo as a job parameter
+    schema: classpath:/schema-postgresql.sql
   datasource:
     url: jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?currentSchema=${pgsqlSchema:datafeeder}
     driverClassName: org.postgresql.Driver

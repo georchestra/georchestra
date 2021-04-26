@@ -99,6 +99,8 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         requestHeaders.set(SEC_LASTNAME, "Lastnametest");
         requestHeaders.set(SEC_ORG, "test-org");
         requestHeaders.set(SEC_ORGNAME, "Test Organization");
+        requestHeaders.set("sec-address", "Test Address");
+        requestHeaders.set("sec-linkage", "http://test.com");
     }
 
     public ResponseEntity<GeorchestraUserDetails> doGet(String relaitvePath) {

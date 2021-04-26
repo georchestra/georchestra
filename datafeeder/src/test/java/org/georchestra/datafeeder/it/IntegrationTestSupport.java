@@ -38,6 +38,8 @@ import java.util.Map;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.BackendConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.junit.Rule;
@@ -66,15 +68,36 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public @Service class IntegrationTestSupport extends ExternalResource {
 
+    public static final String ORGANIZATION_NAME = "Datafeeder Test Org";
+    public static final String EXPECTED_SCHEMA_NAME = "datafeeder_test_org";
+    public static final String EXPECTED_WORKSPACE = "datafeeder_test_org";
+
     private @Autowired @Getter DataFeederConfigurationProperties appConfiguration;
     private @Autowired @Getter TestRestTemplate template;
     private @Autowired(required = false) GeoNetworkRemoteService geoNetwork;
+
+    private UserInfo user;
 
     @Override
     protected void before() throws Throwable {
         checkDatabaseAvailability();
         checkGeoServerAvailability();
         checkGeoNetworkAvailability();
+
+        Organization org = new Organization();
+        org.setId(ORGANIZATION_NAME);
+        org.setName("Test Organization Full Name");
+
+        user = new UserInfo();
+        user.setOrganization(org);
+        user.setOrganization(org);
+        user.setEmail("testuser@test.com");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+    }
+
+    public UserInfo user() {
+        return user;
     }
 
     private void checkDatabaseAvailability() throws SQLException {

@@ -20,7 +20,6 @@ package org.georchestra.config.security;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -52,9 +51,12 @@ public class GeorchestraSecurityProxyAuthenticationManager implements Authentica
     }
 
     private PreAuthenticatedAuthenticationToken createAnonymousAuthenticationToken() {
-        List<String> roles = Collections.singletonList("ROLE_ANONYMOUS");
-        GeorchestraUserDetails principal = new GeorchestraUserDetails("anonymousUser", roles, null, null, null, null,
-                null, true);
+        GeorchestraUserDetails principal = new GeorchestraUserDetails();
+        principal.setUsername("anonymousUser");
+        principal.setRoles(Collections.singletonList("ROLE_ANONYMOUS"));
+        principal.setAnonymous(true);
+        principal.setOrganization(new GeorchestraUserDetails.Organization());
+
         Object credentials = null;// i.e. password
         return new PreAuthenticatedAuthenticationToken(principal, credentials, principal.getAuthorities());
     }
