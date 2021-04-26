@@ -18,10 +18,14 @@
  */
 package org.georchestra.commons.security;
 
+import static java.util.Arrays.asList;
 import static org.georchestra.commons.security.SecurityHeaders.decode;
+import static org.georchestra.commons.security.SecurityHeaders.decodeAsList;
 import static org.georchestra.commons.security.SecurityHeaders.encodeBase64;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
+import java.util.List;
 
 import org.junit.Test;
 
@@ -29,7 +33,7 @@ public class SecurityHeadersTest {
 
     @Test
     public void encodeBase64_Null() {
-        assertNull(encodeBase64(null));
+        assertNull(encodeBase64((String) null));
     }
 
     @Test
@@ -102,5 +106,54 @@ public class SecurityHeadersTest {
 
         assertEquals("{}" + givenName, decode(encodeBase64("{}" + givenName)));
         assertEquals("{" + lastName + "}", decode(encodeBase64("{" + lastName + "}")));
+    }
+
+    @Test
+    public void testMultipleValues() {
+        final String givenName = "ガブリエル";
+        final String lastName = "ロルダン";
+        // a header value with a comma itself should always be encoded, up to the user
+        // if it's not, by HTTP spec, multiple header values shall be comma separated
+        final String fullName = lastName + ", " + givenName;
+
+        String encoded = encodeBase64(givenName, lastName, fullName);
+        String decoded = decode(encoded);
+        assertEquals(String.format("%s,%s,%s", givenName, lastName, fullName), decoded);
+
+        List<String> values = decodeAsList(encoded);
+        assertEquals(3, values.size());
+        assertEquals(givenName, values.get(0));
+        assertEquals(lastName, values.get(1));
+        assertEquals(fullName, values.get(2));
+    }
+
+    @Test
+    public void testMultipleValuesWithEmptyElementsPreserved() {
+        final String givenName = "ガブリエル";
+        final String lastName = "ロルダン";
+
+        String encoded = encodeBase64("", givenName, "", lastName, "");
+        String decoded = decode(encoded);
+        assertEquals(String.format(",%s,,%s,", givenName, lastName), decoded);
+
+        List<String> values = decodeAsList(encoded);
+        assertEquals(5, values.size());
+        assertEquals("", values.get(0));
+        assertEquals(givenName, values.get(1));
+        assertEquals("", values.get(2));
+        assertEquals(lastName, values.get(3));
+        assertEquals("", values.get(4));
+    }
+
+    @Test
+    public void testDecodeMultipleValuesNoEncoding() {
+        assertEquals("v1,V2,v3", decode("v1,V2,v3"));
+        assertEquals(",v1,,V2,,v3,", decode(",v1,,V2,,v3,"));
+        assertEquals(",v1,,V2,,v3,,,", decode(",v1,,V2,,v3,,,"));
+        assertEquals(",,,,", decode(",,,,"));
+
+        assertEquals(asList("v1", "V2", "v3"), decodeAsList("v1,V2,v3"));
+        assertEquals(asList("", "v1", "", "V2", "", "v3", ""), decodeAsList(",v1,,V2,,v3,"));
+        assertEquals(asList("", "", ""), decodeAsList(",,"));
     }
 }

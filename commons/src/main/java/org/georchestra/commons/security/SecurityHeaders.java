@@ -20,7 +20,12 @@
 package org.georchestra.commons.security;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A collection of header names commonly used by the security-proxy gateway
@@ -42,27 +47,80 @@ public class SecurityHeaders {
     public static final String IMP_ROLES = "imp-roles";
     public static final String IMP_USERNAME = "imp-username";
 
-    public static String decode(String headerValue) {
+    /**
+     * @return the decoded header value, if it contains multiple values separated by
+     *         a comma, is the returned value
+     */
+    public static String decode(final String headerValue) {
         if (null == headerValue) {
             return null;
         }
+        final boolean isMultipleValues = headerValue.indexOf(',') > -1;
+        if (isMultipleValues) {
+            String[] singleValues = headerValue.split(",", -1);// -1 avoids omitting empty strings
+            String decoded = Stream.of(singleValues).map(SecurityHeaders::decodeSingle).filter(Objects::nonNull)
+                    .collect(Collectors.joining(","));
+            return decoded;
+        }
+        return decodeSingle(headerValue);
+    }
+
+    /**
+     * @return all individual header values decoded; individual values are separated
+     *         by a comma in the argument string
+     */
+    public static List<String> decodeAsList(String headerValue) {
+        if (null == headerValue) {
+            return null;
+        }
+        String[] singleValues = headerValue.split(",", -1);// -1 avoids omitting empty strings
+        List<String> values = Stream.of(singleValues).map(SecurityHeaders::decode).collect(Collectors.toList());
+        return values;
+    }
+
+    private static String decodeSingle(String value) {
+        if (null == value) {
+            return null;
+        }
         // very simple implementation, we only support base64 so far
-        if (headerValue.startsWith("{base64}")) {
-            String value = headerValue.substring("{base64}".length());
+        if (value.startsWith("{base64}")) {
+            value = value.substring("{base64}".length());
             byte[] bytes = Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8));
             return new String(bytes, StandardCharsets.UTF_8);
         }
-        return headerValue;
+        return value;
     }
 
-    public static String encodeBase64(String headerValue) {
-        if (headerValue == null) {
+    /**
+     * @return <code>{base64}</code> prefixed representations of all header values,
+     *         separated by <b>non encoded</b> commas. e.g.
+     *         <code>{base64}<encoded-value-1>,{base64}<ecoded-value-2>,...{base64}<encoded-value-n>
+     */
+    public static String encodeBase64(String... headerValues) {
+        if (headerValues == null) {
             return null;
         }
-        if (headerValue.isEmpty()) {
+        if (headerValues.length == 0) {
             return "";
         }
-        String encoded = Base64.getEncoder().encodeToString(headerValue.getBytes(StandardCharsets.UTF_8));
-        return "{base64}" + encoded;
+        String encoded;
+        if (headerValues.length == 1) {
+            encoded = encodeSingle(headerValues[0]);
+        } else {
+            encoded = Arrays.stream(headerValues).map(SecurityHeaders::encodeSingle).filter(Objects::nonNull)
+                    .collect(Collectors.joining(","));
+        }
+        return encoded;
+    }
+
+    private static String encodeSingle(String value) {
+        if (value == null) {
+            return null;
+        }
+        if (value.isEmpty()) {
+            return "";
+        }
+        String encoded = Base64.getEncoder().encodeToString(value.getBytes(StandardCharsets.UTF_8));
+        return encoded.isEmpty() ? "" : "{base64}" + encoded;
     }
 }

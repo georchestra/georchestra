@@ -19,40 +19,35 @@
 
 package org.georchestra.security;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.commons.security.SecurityHeaders;
+import org.georchestra.security.LdapHeaderMappings.HeaderMapping;
+import org.georchestra.security.LdapHeaderMappings.HeaderMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
@@ -64,7 +59,6 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
@@ -89,7 +83,8 @@ import com.google.common.collect.Maps;
  * {@code analytics=http://analytics:8080/analytics/}, and
  * {@code headers-mappings.properties} may contain
  * {@code analytics.sec-firstname=givenName}.
- * 
+ * <p>
+ * For more information {@link LdapHeaderMappings}
  * 
  * @author jeichar
  * @see SecurityRequestHeaderProvider
@@ -105,22 +100,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private final Supplier<FilterBasedLdapUserSearch> userSearchFactory;
     private final Pattern orgSearchMemberOfPattern;
     private final String orgSearchBaseDN;
-
-    /**
-     * Header mappings that apply to all services (i.e. have no service prefix in
-     * header-mappings.properties), for example: ({@code sec-email=mail}
-     */
-    Map<String, String> defaultMappinsg = ImmutableMap.of();
-    /**
-     * Header mappings that apply to a specific target service, by service name,
-     * where service name matches the ones assigned in
-     * {@code targets-mapping.properties}. For example, for service
-     * {@code analytics}, {@code targets-mappings.properties} contains
-     * {@code analytics=http://analytics:8080/analytics/}, and
-     * {@code headers-mappings.properties} may contain
-     * {@code analytics.sec-firstname=givenName}.
-     */
-    Map<String, Map<String, String>> perServiceMappings = ImmutableMap.of();
+    private final LdapHeaderMappings mappingsSupport = new LdapHeaderMappings();
 
     @Autowired
     @VisibleForTesting
@@ -146,58 +126,34 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
         this.orgSearchBaseDN = ldapOrgsRdn;
         this.userSearchFactory = () -> new FilterBasedLdapUserSearch(ldapUsersRdn, userSearchFilter, contextSource);
-        this.orgSearchMemberOfPattern = Pattern.compile(String.format(MEMBER_OF_PATTERN, ldapOrgsRdn));
+        this.orgSearchMemberOfPattern = Pattern.compile(format(MEMBER_OF_PATTERN, ldapOrgsRdn));
     }
 
     @VisibleForTesting
     LdapUserDetailsRequestHeaderProvider(Supplier<FilterBasedLdapUserSearch> userSearchFactory, String ldapOrgsRdn) {
         this.orgSearchBaseDN = ldapOrgsRdn;
         this.userSearchFactory = userSearchFactory;
-        this.orgSearchMemberOfPattern = Pattern.compile(String.format(MEMBER_OF_PATTERN, ldapOrgsRdn));
+        this.orgSearchMemberOfPattern = Pattern.compile(format(MEMBER_OF_PATTERN, ldapOrgsRdn));
     }
 
     @PostConstruct
     public void init() throws IOException {
-        logger.info(String.format("Will contribute standard header %s", SEC_ORG));
-        logger.info(String.format("Will contribute standard header %s", SEC_ORGNAME));
+        LdapHeaderMappings.EMBEDDED_MAPPINGS
+                .forEach((h, m) -> logger.info(format("Will contribute standard header %s", h)));
+
         final boolean loadExternalConfig = (georchestraConfiguration != null) && (georchestraConfiguration.activated());
         if (loadExternalConfig) {
-            Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
+            Properties mappingsFromFile = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
+            Map<String, String> allMappings = Maps.fromProperties(mappingsFromFile);
             logger.info("Loading header mappings from "
                     + new File(georchestraConfiguration.getContextDataDir(), "headers-mapping.properties"));
-            loadConfig(pHmap);
-
-            this.defaultMappinsg.forEach((header, property) -> logger
-                    .info(String.format("Loaded default header mapping %s=%s", header, property)));
-            this.perServiceMappings.forEach((service, serviceMappings) -> {
-                serviceMappings.forEach((header, property) -> logger
-                        .info(String.format("Loaded header mapping for service %s: %s=%s", service, header, property)));
-            });
+            loadConfig(allMappings);
         }
     }
 
-    void loadConfig(Properties pHmap) {
-        ImmutableMap<String, String> allMappings = Maps.fromProperties(pHmap);
-        this.defaultMappinsg = loadDefaultMappings(allMappings);
-        this.perServiceMappings = loadPerServiceMappings(allMappings);
-    }
-
-    private Map<String, String> loadDefaultMappings(ImmutableMap<String, String> mappings) {
-        return mappings.entrySet().stream().filter(e -> e.getKey().indexOf('.') == -1)
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-    }
-
-    private Map<String, Map<String, String>> loadPerServiceMappings(ImmutableMap<String, String> mappings) {
-        Map<String, Map<String, String>> serviceMappings = new HashMap<>();
-        mappings.entrySet().stream().filter(e -> e.getKey().indexOf('.') > 0).forEach(e -> {
-            int index = e.getKey().indexOf('.');
-            String serviceName = e.getKey().substring(0, index);
-            String headerName = e.getKey().substring(index + 1);
-            String headerMapping = e.getValue();
-            Map<String, String> serviceHeaders = serviceMappings.computeIfAbsent(serviceName, s -> new HashMap<>());
-            serviceHeaders.put(headerName, headerMapping);
-        });
-        return serviceMappings;
+    @VisibleForTesting
+    void loadConfig(Map<String, String> allMappings) {
+        this.mappingsSupport.loadFrom(allMappings);
     }
 
     @Override
@@ -209,130 +165,175 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             return Collections.emptyList();
         }
 
-        synchronized (session) {
-            Optional<Collection<Header>> cached = getCachedHeaders(session, targetServiceName);
-            return cached.orElseGet(() -> {
+        Optional<Collection<Header>> cached = getCachedHeaders(session, targetServiceName);
+        return cached.orElseGet(() -> {
+            synchronized (session) {
                 Collection<Header> headers = collectHeaders(session, targetServiceName);
                 setCachedHeaders(session, headers, targetServiceName);
                 return headers;
-            });
-        }
+            }
+        });
     }
 
     /**
      * Actually performs the building of the request headers list
      */
-    private Collection<Header> collectHeaders(HttpSession session, String serviceName) {
+    private Collection<Header> collectHeaders(HttpSession session, @Nullable String serviceName) {
         final String username = getCurrentUserName();
 
-        List<Header> headers = buildStandardOrganizationHeaders(username);
-
-        Map<String, String> mappings = getServiceMappings(serviceName);
-        List<Header> userDefinedHeaders = collectHeaderMappings(username, mappings);
-
-        headers.addAll(userDefinedHeaders);
-
-        return headers;
-    }
-
-    Map<String, String> getServiceMappings(String serviceName) {
-        Map<String, String> mappings = getDefaultMappings();
-        if (serviceName != null) {
-            Map<String, String> serviceMappings = this.perServiceMappings.get(serviceName);
-            if (serviceMappings != null) {
-                mappings = new HashMap<>(this.defaultMappinsg);
-                mappings.putAll(serviceMappings);
-            }
-        }
-        return mappings;
-    }
-
-    Map<String, String> getDefaultMappings() {
-        Map<String, String> mappings = this.defaultMappinsg;
-        return mappings;
-    }
-
-    private List<Header> buildStandardOrganizationHeaders(String username) {
-        // Add user organization
-        final String orgCn = loadOrgCn(username);
+        final HeaderMappings mappings = serviceName == null ? mappingsSupport.getDefaultMappings()
+                : mappingsSupport.getMappings(serviceName);
+        logger.debug("Collecting headers, service = " + serviceName + ", mappings:" + mappings.all());
 
         List<Header> headers = new ArrayList<>();
-        // add sec-orgname
-        if (orgCn != null) {
-            headers.add(new BasicHeader(SEC_ORG, orgCn));
-            try {
-                String dn = "cn=" + orgCn + "," + this.orgSearchBaseDN;
-                DirContextOperations ctx = this.ldapTemplate.lookupContext(dn);
-                headers.add(new BasicHeader(SEC_ORGNAME, ctx.getStringAttribute("o")));
-            } catch (RuntimeException ex) {
-                logger.warn("Cannot find associated org with cn " + orgCn);
-            }
-        }
-        return headers;
-    }
-
-    private String loadOrgCn(String username) {
         try {
-            // Retreive memberOf attributes
-            FilterBasedLdapUserSearch userSearch = userSearchFactory.get();
-            userSearch.setReturningAttributes(new String[] { "memberOf" });
-            DirContextOperations orgData = userSearch.searchForUser(username);
-            Attribute attributes = orgData.getAttributes().get("memberOf");
-            if (attributes != null) {
-                NamingEnumeration<?> all = attributes.getAll();
-                while (all.hasMore()) {
-                    String memberOf = all.next().toString();
-                    Matcher m = this.orgSearchMemberOfPattern.matcher(memberOf);
-                    if (m.matches()) {
-                        String orgCn = m.group(2);
-                        return orgCn;
-                    }
-                }
-            }
-        } catch (javax.naming.NamingException e) {
-            logger.error("problem adding headers for request: organization", e);
-        }
-        return null;
-    }
+            final DirContextOperations userContext = loadUser(username, mappings.getUserHeaders());
+            final Optional<String> orgCn = findOrgCn(userContext);
+            final Optional<String> manager = findManagerUid(userContext);
 
-    List<Header> collectHeaderMappings(String username, Map<String, String> mappings) {
-        final List<Header> headers = new ArrayList<>();
-        DirContextOperations userData;
-        try {
-            FilterBasedLdapUserSearch userSearch = userSearchFactory.get();
-            userData = userSearch.searchForUser(username);
+            logger.debug(format("Loading %s headers for user %s, org %s, manager %s", //
+                    serviceName == null ? "default" : serviceName, //
+                    username, //
+                    orgCn.orElse(null), //
+                    manager.orElse(null)));
+
+            listcontext("* LDAP user context", userContext);
+            addHeaders(userContext, mappings.getUserHeaders(), headers);
+
+            orgCn.ifPresent(org -> addOrgHeaders(org, mappings, headers));
+            manager.ifPresent(uid -> addManagerHeaders(uid, mappings.getUserManagerHeaders(), headers));
+
+            // Collections.sort(headers, (h1, h2) -> h1.getName().compareTo(h2.getName()));
         } catch (Exception e) {
-            logger.warn("Unable to lookup user:" + username, e);
+            logger.error("Unable to collect headers for user:" + username, e);
             return Collections.emptyList();
         }
-        final Attributes ldapUserAttributes = userData.getAttributes();
-        mappings.forEach((headerName, ldapPropertyName) -> {
-            try {
-                final @Nullable String headerValue = buildValue(ldapUserAttributes, ldapPropertyName);
-                headers.add(new BasicHeader(headerName, headerValue));
-            } catch (javax.naming.NamingException e) {
-                logger.error("problem adding headers for request:" + headerName, e);
-            }
-        });
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Final headers:");
+            headers.forEach(logger::debug);
+        }
         return headers;
     }
 
-    private String buildValue(Attributes ldapAttributes, String ldapPropertyName) throws NamingException {
-        boolean base64 = false;
-        if (ldapPropertyName.startsWith("base64:")) {
-            ldapPropertyName = ldapPropertyName.substring("base64:".length());
-            base64 = true;
+    private void addManagerHeaders(String uid, List<HeaderMapping> mappings, List<Header> target) {
+        if (!mappings.isEmpty()) {
+            DirContextOperations managerContext = userSearchFactory.get().searchForUser(uid);
+            listcontext("* LDAP user's manager context", managerContext);
+            addHeaders(managerContext, mappings, target);
         }
-        Attribute attribute = ldapAttributes.get(ldapPropertyName);
-        if (attribute != null) {
-            NamingEnumeration<?> all = attribute.getAll();
-            Stream<String> values = Collections.list(all).stream().filter(Predicates.notNull()).map(Object::toString);
-            if (base64) {
-                values = values.map(SecurityHeaders::encodeBase64);
+    }
+
+    private void addOrgHeaders(String orgCn, HeaderMappings mappings, List<Header> target) {
+        final String groupDn = format("cn=%s,%s", orgCn, this.orgSearchBaseDN);
+        DirContextOperations orgContext = this.ldapTemplate.lookupContext(groupDn);
+        listcontext("* LDAP org context", orgContext);
+
+        addHeaders(orgContext, mappings.getOrgHeaders(), target);
+
+        final Optional<String> seeAlsoOrgName = findSeeAlsoOrg(orgContext);
+        seeAlsoOrgName.ifPresent(cn -> addOrgExtHeaders(cn, mappings.getOrgExtensionHeaders(), target));
+    }
+
+    private void addOrgExtHeaders(String cn, List<HeaderMapping> mappings, List<Header> target) {
+        if (mappings.isEmpty()) {
+            return;
+        }
+        final String seeAlsoDn = format("o=%s,ou=orgs", cn);
+        DirContextOperations orgExtCtx = this.ldapTemplate.lookupContext(seeAlsoDn);
+        listcontext("* LDAP orgExt context", orgExtCtx);
+        addHeaders(orgExtCtx, mappings, target);
+    }
+
+    private Optional<String> findSeeAlsoOrg(DirContextOperations orgContext) {
+        String seeAlso = orgContext.getStringAttribute("seeAlso");
+        if (null != seeAlso) {
+            Matcher matcher = Pattern.compile("^o=(.*),ou=orgs,.*").matcher(seeAlso);
+            if (matcher.matches()) {
+                String seeAlsoOrg = matcher.group(1);
+                return Optional.of(seeAlsoOrg);
             }
-            return values.collect(Collectors.joining(","));
         }
-        return null;
+        return Optional.empty();
+    }
+
+    private void addHeaders(DirContextOperations context, List<HeaderMapping> mappings, List<Header> target) {
+        mappings.stream()//
+                .map(mapping -> buildHeader(context, mapping))//
+                .filter(Predicates.notNull())//
+                .forEach(target::add);
+
+    }
+
+    private Header buildHeader(DirContextOperations context, HeaderMapping mapping) {
+        String value = buildValue(context, mapping);
+        return value == null ? null : new BasicHeader(mapping.getHeaderName(), value);
+    }
+
+    private Optional<String> findManagerUid(DirContextOperations userContext) {
+        // e.g. uid=testeditor,ou=users,dc=georchestra,dc=org
+        final Pattern pattern = Pattern.compile("^uid=(.*),(ou=users),.*");
+        return Arrays.stream(userContext.getStringAttributes("manager"))//
+                .map(pattern::matcher).filter(Matcher::matches)//
+                .map(matcher -> matcher.group(1))//
+                .findFirst();
+    }
+
+    private DirContextOperations loadUser(String username, List<HeaderMapping> userHeaders) {
+        FilterBasedLdapUserSearch userSearch = userSearchFactory.get();
+        Set<String> attrs = userHeaders.stream()//
+                .map(HeaderMapping::getLdapAttribute)//
+                .collect(Collectors.toSet());
+        attrs.add("memberOf");// to gather the organization cn
+        attrs.add("manager");
+
+        logger.debug("Requesting user attributes: " + attrs);
+        userSearch.setReturningAttributes(attrs.toArray(new String[attrs.size()]));
+
+        return userSearch.searchForUser(username);
+    }
+
+    private Optional<String> findOrgCn(DirContextOperations userContext) {
+        final Optional<String> orgCn = Arrays.stream(userContext.getStringAttributes("memberOf"))//
+                .map(this.orgSearchMemberOfPattern::matcher)//
+                .filter(Matcher::matches).map(matcher -> matcher.group(2)).findFirst();
+        return orgCn;
+    }
+
+    private String buildValue(DirContextOperations context, HeaderMapping mapping) {
+        if (logger.isDebugEnabled())
+            logger.debug(format("Loading header mapping %s=%s", mapping.getHeaderName(), mapping.getLdapAttribute()));
+        String[] values = context.getStringAttributes(mapping.getLdapAttribute());
+        if (values == null) {
+            throw new IllegalArgumentException("LDAP attribute " + mapping.getLdapAttribute() + " is not defined");
+        }
+        if (values.length == 0) {
+            logger.debug(format("Found no values for header mapping %s=%s", mapping.getHeaderName(),
+                    mapping.getLdapAttribute()));
+            return null;
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug(format("Found values for header %s: %s", mapping.getHeaderName(),
+                    Arrays.stream(values).collect(Collectors.joining(","))));
+        }
+        String value = Arrays.stream(values)//
+                .filter(Predicates.notNull())//
+                .map(mapping::encode)//
+                .collect(Collectors.joining(","));
+        return value;
+    }
+
+    private void listcontext(String title, DirContextOperations ctx) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(title);
+            Collections.list(ctx.getAttributes().getAll()).forEach(att -> {
+                try {
+                    logger.debug(format("%s='%s'", att.getID(), att.get()));
+                } catch (Exception e) {
+                    logger.error("Error getting attribute " + att.getID(), e);
+                }
+            });
+        }
     }
 
     private String getCurrentUserName() {
