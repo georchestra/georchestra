@@ -34,6 +34,7 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkResponse;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
@@ -80,20 +81,20 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     }
 
     private MetadataRecordProperties toRecordProperties(@NonNull DatasetUploadState d, @NonNull UserInfo user) {
-        PublishSettings p = d.getPublishing();
+        PublishSettings publishing = d.getPublishing();
 
         final String metadataId = UUID.randomUUID().toString();
 
         MetadataRecordProperties m = new MetadataRecordProperties();
         m.setMetadataId(metadataId);
 
-        m.setName(p.getPublishedName());
-        m.setTitle(p.getTitle());
-        m.setAbstract(p.getAbstract());
-        if (null != p.getKeywords())
-            m.setKeywords(new ArrayList<>(p.getKeywords()));
-        m.setCreationDate(p.getDatasetCreationDate());
-        m.setLineage(p.getDatasetCreationProcessDescription());
+        m.setName(publishing.getPublishedName());
+        m.setTitle(publishing.getTitle());
+        m.setAbstract(publishing.getAbstract());
+        if (null != publishing.getKeywords())
+            m.setKeywords(new ArrayList<>(publishing.getKeywords()));
+        m.setCreationDate(publishing.getDatasetCreationDate());
+        m.setLineage(publishing.getDatasetCreationProcessDescription());
         m.setResourceType("series");
         m.getOnlineResources().add(wmsOnlineResource(d));
         m.getOnlineResources().add(wfsOnlineResource(d));
@@ -106,24 +107,24 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         m.setDistributionFormat("ESRI Shapefile");
         m.setDistributionFormatVersion("1.0");
         // m.setSpatialRepresentation("vector"); REVISIT
-        Envelope bb = p.getGeographicBoundingBox();
+        Envelope bb = publishing.getGeographicBoundingBox();
         if (null != bb) {
             m.setWestBoundLongitude(bb.getMinx());
             m.setEastBoundLongitude(bb.getMaxx());
             m.setSouthBoundLatitude(bb.getMiny());
             m.setNorthBoundLatitude(bb.getMaxy());
         }
-        m.setCoordinateReferenceSystem(p.getSrs());
+        m.setCoordinateReferenceSystem(publishing.getSrs());
         final LocalDateTime now = LocalDateTime.now();
         m.setMetadataPublicationDate(now.toLocalDate());
         m.setMetadataTimestamp(now);
 
-        if (null != p.getScale()) {
-            m.setSpatialResolution(p.getScale().intValue());
+        if (null != publishing.getScale()) {
+            m.setSpatialResolution(publishing.getScale().intValue());
         }
         m.setUseLimitation("ODBL");// REVISIT from config?
         m.setAccessConstraints("otherRestrictions");
-        m.setCharsetEncoding(toCodeListCharset(p.getEncoding()));
+        m.setCharsetEncoding(toCodeListCharset(publishing.getEncoding()));
         m.setUseConstraints("license");
         m.setDatasetResponsibleParty(datasetResponsibleParty(user));
         m.setMetadataResponsibleParty(metadataResponsibleParty(user));
@@ -210,18 +211,20 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 //	name = sec-orgname
 //	as in https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml"
     private ContactInfo metadataResponsibleParty(@NonNull UserInfo user) {
+        Organization org = user.getOrganization();
+
         String individualName = individualName(user);
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(user.getOrganization().getId());
-        contact.setOrganizationName(user.getOrganization().getName());
+        contact.setName(org.getId());
+        contact.setOrganizationName(org.getName());
         contact.setProtocol("URL");
-        contact.setLinkage(user.getOrganization().getLinkage());
+        contact.setLinkage(org.getLinkage());
 
         Address address = new Address();// ?? postalAddress from LDAP (to be discussed)
         contact.setAddress(address);
-        address.setDeliveryPoint(user.getOrganization().getPostalAddress());
+        address.setDeliveryPoint(user.getPostalAddress());
         return contact;
     }
 
@@ -239,18 +242,20 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 //	adress = postalAddress from LDAP (to be discussed) 
 //	email = sec-email"
     private ContactInfo datasetResponsibleParty(@NonNull UserInfo user) {
+        Organization org = user.getOrganization();
+
         String individualName = individualName(user);
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(user.getOrganization().getId());
-        contact.setOrganizationName(user.getOrganization().getName());
+        contact.setName(org.getId());
+        contact.setOrganizationName(org.getName());
         contact.setProtocol("URL");
-        contact.setLinkage(user.getOrganization().getLinkage());// ?? labeledURI from LDAP
+        contact.setLinkage(org.getLinkage());// ?? labeledURI from LDAP
 
         Address address = new Address();// ?? postalAddress from LDAP (to be discussed)
         contact.setAddress(address);
-        address.setDeliveryPoint(user.getPostalAddress());
+        address.setDeliveryPoint(org.getPostalAddress());
         return contact;
     }
 

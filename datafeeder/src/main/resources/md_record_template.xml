@@ -142,30 +142,18 @@
         </gmd:MD_Keywords>
       </gmd:descriptiveKeywords>
       <gmd:resourceConstraints>
-        <gmd:MD_Constraints />
-      </gmd:resourceConstraints>
-      <gmd:resourceConstraints>
         <gmd:MD_LegalConstraints>
           <gmd:accessConstraints>
             <gmd:MD_RestrictionCode
               codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode"
               codeListValue="otherRestrictions" />
           </gmd:accessConstraints>
-          <gmd:otherConstraints>
-            <gmx:Anchor
-              xlink:href="http://inspire.ec.europa.eu/metadata-codelist/LimitationsOnPublicAccess/noLimitations">No limitations to public access</gmx:Anchor>
-          </gmd:otherConstraints>
-        </gmd:MD_LegalConstraints>
-      </gmd:resourceConstraints>
-      <gmd:resourceConstraints>
-        <gmd:MD_LegalConstraints>
           <gmd:useConstraints>
             <gmd:MD_RestrictionCode
-              codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode"
-              codeListValue="license" />
+              codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_RestrictionCode" codeListValue="license" />
           </gmd:useConstraints>
           <gmd:otherConstraints>
-            <gco:CharacterString>Template</gco:CharacterString>
+            <gmx:Anchor xlink:href="http://inspire.ec.europa.eu/metadata-codelist/LimitationsOnPublicAccess/noLimitations">No limitations to public access</gmx:Anchor>
           </gmd:otherConstraints>
         </gmd:MD_LegalConstraints>
       </gmd:resourceConstraints>

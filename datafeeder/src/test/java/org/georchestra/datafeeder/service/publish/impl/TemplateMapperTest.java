@@ -173,14 +173,14 @@ public class TemplateMapperTest {
         String spatialRes = "MD_Metadata/identificationInfo/MD_DataIdentification/spatialResolution/MD_Resolution/equivalentScale/MD_RepresentativeFraction/denominator/Integer[text()='%s']";
         assertXpath(dom, spatialRes, mdprops.getSpatialResolution());
 
-        // use limitation, user input, default: CONFIG (typically "ODBL")
-        // REVISIT assertXpath(dom,
-        // dataIdentXpath+"/resourceConstraints/MD_LegalConstraints/useLimitation");
-
         // access constraints, provided by metadata template,
         // codeListValue="otherRestrictions"
         String legalXpath = "MD_Metadata/identificationInfo/MD_DataIdentification/resourceConstraints/MD_LegalConstraints";
         assertXpath(dom, legalXpath + "/accessConstraints/MD_RestrictionCode[@codeListValue='otherRestrictions']");
+
+        // use limitation, user input, default: CONFIG (typically "ODBL")
+        // assertXpath(dom,
+        // dataIdentXpath+"/resourceConstraints/MD_LegalConstraints/useLimitation");
 
         // use constraints, provided by metadata template, codeListValue="license"
         assertXpath(dom, legalXpath + "/useConstraints/MD_RestrictionCode[@codeListValue='license']");

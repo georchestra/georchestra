@@ -278,8 +278,11 @@ public class GeorchestraMetadataPublicationServiceIT {
     private void assertResponsibleParty(Document dom) {
         final String rp = "MD_Metadata/identificationInfo/MD_DataIdentification/pointOfContact/CI_ResponsibleParty";
         UserInfo user = support.user();
-        assertPointOfContact(dom, rp, user.getFirstName() + " " + user.getLastName(), user.getOrganization().getName(),
-                user.getEmail(), "", "", "");
+        String individualName = user.getFirstName() + " " + user.getLastName();
+        String organizationName = user.getOrganization().getName();
+        String email = user.getEmail();
+        String address = user.getOrganization().getPostalAddress();
+        assertPointOfContact(dom, rp, individualName, organizationName, email, address);
     }
 
     // /gmd:MD_Metadata/gmd:contact
@@ -291,12 +294,16 @@ public class GeorchestraMetadataPublicationServiceIT {
     private void assertPointOfContact(Document dom) {
         final String poc = "MD_Metadata/contact/CI_ResponsibleParty";
         UserInfo user = support.user();
-        assertPointOfContact(dom, poc, user.getFirstName() + " " + user.getLastName(), user.getOrganization().getName(),
-                user.getEmail(), "", "", "");
+        String individualName = user.getFirstName() + " " + user.getLastName();
+        String organizationName = user.getOrganization().getName();
+        String email = user.getEmail();
+        String postalAddress = user.getPostalAddress();
+
+        assertPointOfContact(dom, poc, individualName, organizationName, email, postalAddress);
     }
 
     private void assertPointOfContact(Document dom, String CI_ResponsiblePartyXPath, String individualName,
-            String organizationName, String email, String address, String city, String postalCode) {
+            String organizationName, String email, String address) {
         final String base = CI_ResponsiblePartyXPath;
 
         assertXpath(dom, base + "/individualName/CharacterString[text()='%s']", individualName);
@@ -304,9 +311,7 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         String addrXpath = base + "/contactInfo/CI_Contact/address/CI_Address/%s/CharacterString[text()='%s']";
         assertXpath(dom, addrXpath, "electronicMailAddress", email);
-//		assertXpath(dom, addrXpath, "deliveryPoint", address);
-//		assertXpath(dom, addrXpath, "city", city);
-//		assertXpath(dom, addrXpath, "postalCode", postalCode);
+        assertXpath(dom, addrXpath, "deliveryPoint", address);
     }
 
     private void assertOnlineResource(Document dom, String protocol, String name, String description) {
