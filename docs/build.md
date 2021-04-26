@@ -25,7 +25,7 @@ In your `~/.m2/settings.xml`, add a mirror:
    <mirror>
      <id>artifactory-georchestra</id>
      <mirrorOf>*</mirrorOf>
-     <url>https://packages.georchestra.org/artifactory/maven</url>
+     <url>https://artifactory.georchestra.org/artifactory/maven</url>
    </mirror>
  </mirrors>
 </settings>
