@@ -28,7 +28,7 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 (cd ${buildpath};
  ${python} -c "import pip"
  if [ $? != 0 ]; then
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
     ${python} get-pip.py
     rm get-pip.py
  fi
@@ -37,11 +37,11 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
    ${python} -m pip install virtualenv
  fi
  ${venv}/bin/jsbuild -h > /dev/null
- if  [ ! -d ${venv} ] || [ $? -eq 0 ]; then
+ if  [ ! -d ${venv} ] || [ $? -ne 0 ]; then
      echo "creating virtual env and installing jstools..."
      rm -rf ${venv}
      ${python} -m virtualenv ${venv}
-     ${venv}/bin/python -m pip install jstools==0.6 -i https://pypi.python.org/simple/
+     ${venv}/bin/python -m pip install jstools==0.6
      echo "done."
  fi;
 
