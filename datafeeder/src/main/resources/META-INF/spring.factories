@@ -1,3 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.georchestra.datafeeder.autoconf.GeorchestraIntegrationAutoConfiguration,\
-org.georchestra.datafeeder.autoconf.CloudNativeGeonetworkIntegrationAutoConfiguration
+org.georchestra.datafeeder.autoconf.GeorchestraDatadirAutoConfiguration,\
+org.georchestra.datafeeder.autoconf.GeorchestraNotificationsAutoConfiguration,\
+org.georchestra.datafeeder.autoconf.CloudNativeGeonetworkIntegrationAutoConfiguration,\
+org.georchestra.datafeeder.email.DataFeederNotificationsAutoConfiguration
