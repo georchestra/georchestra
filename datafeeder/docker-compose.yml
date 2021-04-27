@@ -19,6 +19,13 @@ volumes:
   geonetwork_datadir:
 
 services:
+  smtp:
+    image: camptocamp/smtp-sink:latest
+    #volumes:
+    #  - smtp_maildir:/home/smtp/Maildir/
+    ports:
+      - ${SMTP_PORT}:25
+    restart: always
   ldap:
     image: georchestra/ldap:latest
     environment:

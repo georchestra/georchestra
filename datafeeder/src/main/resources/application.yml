@@ -97,7 +97,6 @@ spring:
       idle-timeout: ${dataSource.maxIdleTime:60}
       maximum-pool-size: ${dataSource.maxPoolSize:10}
       connection-timeout: ${dataSource.timeout:2000}
-
 georchestra.datadir: /etc/georchestra
 datafeeder:
   front-end-config-file: ${front-end.config.uri:${georchestra.datadir}/datafeeder/frontend-config.json}

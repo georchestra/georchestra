@@ -209,9 +209,27 @@ In the future we could also include the (non standard) code-page shapefile sidec
 
 ## Email notifications
 
+Spring mail is used to send notifications when jobs start, finish, or fail; with the following dependency:
+
 ```
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
 ```
+
+The geOrchestra datadir's `datafeeder/datafeeder.properties` contains the SMTP configuration properties, like:
+
+```
+spring.mail.host=${smtpHost}
+spring.mail.port=${smtpPort}
+spring.mail.username: 
+spring.mail.password: 
+spring.mail.protocol: smtp
+spring.mail.test-connection: true
+spring.mail.properties.mail.smtp.auth: false
+spring.mail.properties.mail.smtp.starttls.enable: false
+```
+
+If theese configuration properties are not provided, the application simply won't send emails (see 
+`DataFeederNotificationsAutoConfiguration` and `GeorchestraNotificationsAutoConfiguration`).
