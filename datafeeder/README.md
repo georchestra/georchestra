@@ -42,14 +42,14 @@ For integration testing, some external services are required. For instance:
 - A geOrchestra GeoNetwork instance
 - A PostgreSQL database with PostGIS extension, for which we're using geOrchestra's `database` docker image
 
-There is a docker composition with just the required extenal services in the `docker-compose-it.yml` file.
+There is a docker composition with just the required extenal services in the `docker-compose.yml` file.
 
 A normal build with no extra aguments (e.g. `mvn verify`) will take care of running the docker composition before the integration tests are run, and shut it down afterwards. This is performed by the `com.dkanejs.maven.plugins:docker-compose-maven-plugin`, launching the composition at maven's `pre-integration-test` phase, and shutting it down during `post-integration-test`.
 
 Since this process may take a while, during development it is desirable to have the composition already running through several runs of the integration tests suite. To do so, launch the composition manually with
 
 ```bash
-$ docker-compose -f docker-compose-it.yml up -d
+$ docker-compose -f docker-compose.yml up -d
 ```
 
 With that in place, run the tests as many times as needed from the IDE or the console by enabling the `docker-compose.skip` flag:
@@ -123,7 +123,7 @@ Once logged in, *datafeeder*'s OpenAPI test UI is available at [https://georches
 Run from within the `datafeeder` root folder with:
 
 ```bash
-docker-compose -f docker-compose-it.yml up -d
+docker-compose -f docker-compose.yml up -d
 mvn spring-boot:run -Dspring-boot.run.profiles=georchestra,it
 ```
 or create an equivalent run configuration in your IDE with `org.georchestra.datafeeder.app.DataFeederApplication` as the application's main class.
