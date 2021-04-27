@@ -59,12 +59,12 @@ public class GeoNetworkRemoteServiceTest {
 
     @Test(expected = NullPointerException.class)
     public void buildMetadataRecordURI_NullId() {
-        service.buildMetadataRecordURI(null);
+        service.buildMetadataRecordIdentifier(null);
     }
 
     @Test
     public void buildMetadataRecordURI() {
-        URI uri = service.buildMetadataRecordURI("testid");
+        URI uri = service.buildMetadataRecordIdentifier("testid");
         assertNotNull(uri);
         assertEquals("https://test.georchestra.mydomain.org/geonetwork?uuid=testid", uri.toString());
     }

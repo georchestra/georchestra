@@ -52,6 +52,7 @@ import org.geoserver.openapi.v1.model.Layer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link OWSPublicationService} relying on {@link GeoServerRemoteService} to
@@ -71,6 +72,7 @@ import lombok.NonNull;
  * {@code datafeeder.publishing.backend.geoserver.*} property map.
  * </ul>
  */
+@Slf4j
 public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     private @Autowired MetadataPublicationService metadataPublicationService;
@@ -99,6 +101,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
         FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
                 dataset);
+
         FeatureTypeInfo response = geoserver.create(requestBody);
 
         publishing.setPublishedWorkspace(workspaceName);
@@ -112,6 +115,43 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             geographicBoundingBox.setMaxx(latLonBoundingBox.getMaxx());
             geographicBoundingBox.setMaxy(latLonBoundingBox.getMaxy());
             publishing.setGeographicBoundingBox(geographicBoundingBox);
+        }
+    }
+
+    public @Override void addMetadataLink(@NonNull DatasetUploadState dataset) {
+        PublishSettings publishing = dataset.getPublishing();
+
+        requireNonNull(publishing);
+        requireNonNull(publishing.getPublishedWorkspace());
+        requireNonNull(publishing.getPublishedName());
+        requireNonNull(publishing.getMetadataRecordId());
+
+        final String workspace = publishing.getPublishedWorkspace();
+        final String dataStore = resolveDataStoreName(dataset);
+        final String layerName = publishing.getPublishedName();
+        final String metadataRecordId = publishing.getMetadataRecordId();
+
+        FeatureTypeInfo fti = geoserver.findFeatureTypeInfo(workspace, dataStore, layerName)
+                .orElseThrow(() -> new IllegalArgumentException("FeatureType not found"));
+
+        MetadataLinkInfo metadatalink = buildMetadataLink(metadataRecordId);
+
+        FeatureTypeInfo toUpdate = new FeatureTypeInfo();
+        toUpdate.setNativeName(fti.getNativeName());
+        toUpdate.setName(fti.getName());
+        toUpdate.setNamespace(fti.getNamespace());
+        toUpdate.setStore(new DataStoreInfo());
+        toUpdate.getStore().setName(fti.getStore().getName());
+        toUpdate.getStore().setWorkspace(new WorkspaceInfo());
+        toUpdate.getStore().getWorkspace().setName(fti.getStore().getWorkspace().getName());
+        // toUpdate.addMetadatalinksItem(metadatalink);
+
+        // TODO: revisit, giving an error.
+        try {
+            log.warn("Unable to add metadatalinks to geoserver feature type, its REST API doesn't yet work with JSON");
+            // geoserver.update(toUpdate);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -215,37 +255,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return ws.getName();
     }
 
-    public @Override void addMetadataLink(@NonNull DatasetUploadState dataset) {
-        PublishSettings publishing = dataset.getPublishing();
-
-        requireNonNull(publishing);
-        requireNonNull(publishing.getPublishedWorkspace());
-        requireNonNull(publishing.getPublishedName());
-        requireNonNull(publishing.getMetadataRecordId());
-
-        final String workspace = publishing.getPublishedWorkspace();
-        final String dataStore = resolveDataStoreName(dataset);
-        final String layerName = publishing.getPublishedName();
-        final String metadataRecordId = publishing.getMetadataRecordId();
-
-        FeatureTypeInfo fti = geoserver.findFeatureTypeInfo(workspace, dataStore, layerName)
-                .orElseThrow(() -> new IllegalArgumentException("FeatureType not found"));
-
-        MetadataLinkInfo metadatalink = buildMetadataLink(metadataRecordId);
-
-        fti.addMetadatalinksItem(metadatalink);
-
-        // TODO: revisit, giving an error.
-        // geoserver.update(fti);
-    }
-
     private MetadataLinkInfo buildMetadataLink(String metadataRecordId) {
-        final URI recordURI = metadataPublicationService.buildMetadataRecordURI(metadataRecordId);
+        final URI recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId);
         MetadataLinkInfo info = new MetadataLinkInfo();
         info.setId(metadataRecordId);
         info.setContent(recordURI.toString());
-        info.setMetadataType("ISO-19139");// TODO: revisit correct value
-        // info.setAbout("???");
+        info.setMetadataType("ISO19115:2003");// TODO: revisit correct value
+        info.setAbout("XML metadata record");
         return info;
     }
 

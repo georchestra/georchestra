@@ -174,14 +174,6 @@ public class GeoNetworkRemoteService {
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
 
         HttpHeaders reqHeaders = new HttpHeaders();
-        /// reqHeaders.set("Host", "localhost:28080");
-        // reqHeaders.set("Accept", "application/json");
-        // reqHeaders.set("Content-Type", "application/xml");
-        // reqHeaders.set("User-Agent", "curl/7.68.0");
-
-//		reqHeaders.set("Origin", "http://localhost:28080");
-//		reqHeaders.set("Referer", "http://localhost:28080");
-
         reqHeaders.set(SEC_PROXY, "true");
         reqHeaders.set(SEC_USERNAME, "testadmin");
         reqHeaders.set(SEC_ROLES, "ROLE_GN_ADMIN");
@@ -193,7 +185,7 @@ public class GeoNetworkRemoteService {
         return reqHeaders;
     }
 
-    public URI buildMetadataRecordURI(@NonNull String recordId) {
+    public URI buildMetadataRecordIdentifier(@NonNull String recordId) {
         UriComponentsBuilder builder;
         try {
             URL publicURL = this.config.getPublicUrl();
@@ -204,5 +196,14 @@ public class GeoNetworkRemoteService {
         String queryString = "uuid=" + recordId;
         builder.query(queryString);
         return builder.build().toUri();
+    }
+
+    // e.g.
+    // http://localhost:28080/geonetwork/srv/api/0.1/records/2bd68e79-7fb1-443b-8709-3570b19a3d6f/formatters/xml
+    public URI buildMetadataRecordXmlURI(@NonNull String recordId) {
+        URL publicURL = this.config.getPublicUrl();
+        String xmlMdRecord = String.format("%s/srv/api/0.1/records/%s/formatters/xml", publicURL, recordId);
+        URI uri = URI.create(xmlMdRecord).normalize();
+        return uri;
     }
 }
