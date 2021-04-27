@@ -55,7 +55,7 @@ public class MockOWSPublicationService implements OWSPublicationService {
         PublishSettings publishing = dataset.getPublishing();
         Objects.requireNonNull(publishing);
         Objects.requireNonNull(publishing.getMetadataRecordId());
-        URI metadataLink = metadataService.buildMetadataRecordURI(publishing.getMetadataRecordId());
+        URI metadataLink = metadataService.buildMetadataRecordURL(publishing.getMetadataRecordId());
         // non-mock service should update the geoserver feature type adding the md link
         // here
         log.info("MOCK added metadata link " + metadataLink);

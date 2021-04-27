@@ -61,7 +61,7 @@ public class GeoNetworkRemoteServiceIT {
 
     @Test
     public void buildMetadataRecordURI() {
-        URI recordUri = service.buildMetadataRecordURI("someid");
+        URI recordUri = service.buildMetadataRecordIdentifier("someid");
         assertEquals("https://georchestra.mydomain.org/geonetwork?uuid=someid", recordUri.toString());
     }
 

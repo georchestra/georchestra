@@ -29,7 +29,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
-import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
@@ -64,8 +63,8 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     }
 
     @Override
-    public URI buildMetadataRecordURI(@NonNull String recordId) {
-        return geonetwork.buildMetadataRecordURI(recordId);
+    public URI buildMetadataRecordURL(@NonNull String recordId) {
+        return geonetwork.buildMetadataRecordXmlURI(recordId);
     }
 
     @Override
@@ -100,7 +99,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         m.getOnlineResources().add(wfsOnlineResource(d));
         m.getOnlineResources().add(downloadOnlineResource(d));
 
-        URI uniqueResourceIdentifier = geonetwork.buildMetadataRecordURI(metadataId);
+        URI uniqueResourceIdentifier = geonetwork.buildMetadataRecordIdentifier(metadataId);
         m.setDataIdentifier(uniqueResourceIdentifier);
 
         m.setDatasetLanguage("eng");// REVISIT, from config?

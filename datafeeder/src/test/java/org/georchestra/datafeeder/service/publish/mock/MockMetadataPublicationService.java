@@ -39,7 +39,7 @@ public class MockMetadataPublicationService implements MetadataPublicationServic
     }
 
     @Override
-    public URI buildMetadataRecordURI(@NonNull String recordId) {
+    public URI buildMetadataRecordURL(@NonNull String recordId) {
         return URI.create("https://mock.csw.org/?id=" + recordId);
     }
 

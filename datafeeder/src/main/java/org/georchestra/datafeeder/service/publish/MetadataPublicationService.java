@@ -29,5 +29,5 @@ public interface MetadataPublicationService {
 
     void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user);
 
-    URI buildMetadataRecordURI(@NonNull String recordId);
+    URI buildMetadataRecordURL(@NonNull String recordId);
 }
