@@ -50,15 +50,15 @@ public class JobManager {
     private @Autowired ApplicationContext context;
 
     @Async
-    public void launchUploadJobAnalysis(@NonNull UUID jobId) {
+    public void launchUploadJobAnalysis(@NonNull UUID jobId, @NonNull UserInfo user) {
         final Job uploadAnalysisJob = context.getBean(UploadAnalysisJobConfiguration.JOB_NAME, Job.class);
-        final String paramName = UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME;
-        final String paramValue = jobId.toString();
-        final boolean identifying = true;
 
+        final boolean identifying = true;
         final JobParameters params = new JobParametersBuilder()//
-                .addString(paramName, paramValue, identifying)//
+                .addString(UploadAnalysisJobConfiguration.JOB_PARAM_NAME, jobId.toString(), identifying)//
+                .addString(UploadAnalysisJobConfiguration.USER_PARAM, toString(user), false)//
                 .toJobParameters();
+
         log.info("Launching analisys job {}", jobId);
         JobExecution execution;
         try {

@@ -61,8 +61,8 @@ public class DataUploadStateInitializer implements Tasklet {
     private @Autowired @Setter DataUploadAnalysisService service;
 
     public @Override RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        Objects.requireNonNull(uploadId, () -> String
-                .format("Job parameter not provided: " + UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
+        Objects.requireNonNull(uploadId,
+                () -> String.format("Job parameter not provided: " + UploadAnalysisJobConfiguration.JOB_PARAM_NAME));
         service.initialize(uploadId);
         return RepeatStatus.FINISHED;
     }

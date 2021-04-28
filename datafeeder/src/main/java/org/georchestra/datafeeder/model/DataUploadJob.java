@@ -34,7 +34,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -73,9 +72,11 @@ public class DataUploadJob {
     private Date lastModifiedDate;
 
     @Column(nullable = false)
+    @Basic(fetch = FetchType.EAGER)
     private JobStatus analyzeStatus = JobStatus.PENDING;
 
     @Column(nullable = false)
+    @Basic(fetch = FetchType.EAGER)
     private JobStatus publishStatus = JobStatus.PENDING;
 
     @Lob
@@ -95,5 +96,10 @@ public class DataUploadJob {
 
     public Optional<DatasetUploadState> getDataset(@NonNull String nativeName) {
         return getDatasets().stream().filter(d -> nativeName.equals(d.getName())).findFirst();
+    }
+
+    public Optional<DatasetUploadState> firstDataset() {
+        List<DatasetUploadState> dsets = getDatasets();
+        return dsets == null || dsets.isEmpty() ? Optional.empty() : Optional.of(dsets.get(0));
     }
 }

@@ -35,6 +35,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.SampleProperty;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DatasetMetadata;
@@ -88,8 +89,8 @@ public class DataUploadAnalysisService {
         return saved;
     }
 
-    public void runJob(@NonNull UUID jobId) {
-        jobManager.launchUploadJobAnalysis(jobId);
+    public void runJob(@NonNull UUID jobId, @NonNull UserInfo user) {
+        jobManager.launchUploadJobAnalysis(jobId, user);
     }
 
     /**

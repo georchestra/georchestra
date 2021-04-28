@@ -20,13 +20,23 @@ package org.georchestra.datafeeder.batch.publish;
 
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
+import org.georchestra.datafeeder.batch.UserInfoPropertyEditor;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
+import org.georchestra.datafeeder.event.PublishFailedEvent;
+import org.georchestra.datafeeder.event.PublishFinishedEvent;
+import org.georchestra.datafeeder.event.PublishStartedEvent;
+import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.JobStatus;
+import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +45,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionListener {
 
-    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
+    private @Autowired ApplicationEventPublisher eventPublisher;
+    private @Autowired DataUploadJobRepository repository;
+
+    private @Value("#{jobParameters['uploadId']}") UUID uploadId;
+    private @Value("#{jobParameters['user']}") String userStr;
+
+    private @Autowired UserInfoPropertyEditor userInfoPropertyEditor;
+    private UserInfo user;
+
+    @PostConstruct
+    public void initBinder() {
+        userInfoPropertyEditor.setAsText(userStr);
+        this.user = userInfoPropertyEditor.getValue();
+    }
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -49,9 +72,14 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
         case STARTED:
             try {
                 service.initializeJobPublishingStatus(uploadId);
+                DataUploadJob job = repository.getOne(uploadId);
+                eventPublisher.publishEvent(new PublishStartedEvent(job, user));
             } catch (RuntimeException e) {
                 String message = e.getMessage();
                 service.setPublishingStatusError(uploadId, message);
+
+                DataUploadJob job = repository.getOne(uploadId);
+                eventPublisher.publishEvent(new PublishFailedEvent(job, user, e));
                 throw e;
             }
             break;
@@ -68,10 +96,18 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
         final BatchStatus status = jobExecution.getStatus();
         log.info("publish job id: {}, status: {}", uploadId, status);
         switch (status) {
-        case COMPLETED:
-        case ABANDONED:
-        case FAILED:
+        case COMPLETED: {
             service.summarize(uploadId);
+            DataUploadJob job = repository.getOne(uploadId);
+            eventPublisher.publishEvent(new PublishFinishedEvent(job, user));
+        }
+            break;
+        case ABANDONED:
+        case FAILED: {
+            service.summarize(uploadId);
+            DataUploadJob job = repository.getOne(uploadId);
+            eventPublisher.publishEvent(new PublishFailedEvent(job, user, null));
+        }
             break;
         case STOPPING:
         case STOPPED:

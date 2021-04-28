@@ -26,12 +26,12 @@ import org.springframework.mail.MailMessage;
 
 public interface DatafeederEmailFactory {
 
-    Optional<MailMessage> createAckMessage(DataUploadJob source, UserInfo user);
+    Optional<MailMessage> createAckMessage(DataUploadJob job, UserInfo user);
 
-    Optional<MailMessage> createAnalysisFailureMessage(DataUploadJob source, UserInfo user);
+    Optional<MailMessage> createPublishFinishedMessage(DataUploadJob job, UserInfo user);
 
-    Optional<MailMessage> createPublishFailureMessage(DataUploadJob source, UserInfo user);
+    Optional<MailMessage> createAnalysisFailureMessage(DataUploadJob job, UserInfo user, Exception cause);
 
-    Optional<MailMessage> createPublishFinishedMessage(DataUploadJob source, UserInfo user);
+    Optional<MailMessage> createPublishFailureMessage(DataUploadJob job, UserInfo user, Exception cause);
 
 }

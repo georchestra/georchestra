@@ -233,3 +233,61 @@ spring.mail.properties.mail.smtp.starttls.enable: false
 
 If theese configuration properties are not provided, the application simply won't send emails (see 
 `DataFeederNotificationsAutoConfiguration` and `GeorchestraNotificationsAutoConfiguration`).
+
+## Email message templates
+
+A message template consists of a number of one-line header parts, followed by the full message body.
+
+Variables on a message template are specified using `${variable-name}` notation.
+These variable names can be any of the ones defined below, or an application context property. In any case, the property
+must exist or the application will fail to start up.
+
+Note the contents of the message templates can be modified while the application is running, and the changes will be picked
+up the next time an email is to be sent. However, be careful of using valid property names, validation
+of such properties occurs only during application start-up.
+
+Here's a small template example:
+
+```
+to: ${user.email}
+cc: ${administratorEmail}
+bcc:
+sender: ${administratorEmail}
+from: Georchestra Importer Application
+subject:
+body:
+
+Dear ${user.name}, 
+....
+```
+
+The following variables are resolved against the job's user, dataset, or publishing attributes:
+
+* `${user.name}`:
+* `${user.lastName}`:
+* `${user.email}`:
+* `${job.id}`:
+* `${job.createdAt}`:
+* `${job.error}`:
+* `${job.analizeStatus}`:
+* `${job.publishStatus}`:
+* `${dataset.name}`:
+* `${dataset.featureCount}`:
+* `${dataset.encoding}`:
+* `${dataset.nativeBounds}`:
+* `${publish.tableName}`:
+* `${publish.layerName}`:
+* `${publish.workspace}`:
+* `${publish.srs}`:
+* `${publish.encoding}`:
+* `${metadata.id}`:
+* `${metadata.title}`:
+* `${metadata.abstract}`:
+* `${metadata.creationDate}`:
+* `${metadata.lineage}`:
+* `${metadata.latLonBoundingBox}`:
+* `${metadata.keywords}`:
+* `${metadata.scale}`:
+
+Additionally, any other <code>${property}</code> will be resolved against the application context 
+(for example, any property specified in `default.properties` or `datafeeder.properties`).

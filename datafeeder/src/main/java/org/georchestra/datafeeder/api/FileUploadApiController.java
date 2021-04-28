@@ -33,6 +33,7 @@ import javax.annotation.security.RolesAllowed;
 import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -71,9 +72,9 @@ public class FileUploadApiController implements FileUploadApi {
             String username = validityService.getUserName();
             uploadId = storageService.saveUploads(files);
             state = uploadService.createJob(uploadId, username);
-            uploadService.analyze(uploadId);
+            UserInfo user = validityService.getUserInfo();
+            uploadService.analyze(uploadId, user);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);// TODO translate to ResponseStatusException
         }
         UploadJobStatus response = mapper.toApi(state);

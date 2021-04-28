@@ -57,7 +57,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableBatchProcessing
 public class UploadAnalysisJobConfiguration {
 
-    public static final String UPLOAD_ID_JOB_PARAM_NAME = "uploadId";
+    public static final String JOB_PARAM_NAME = "uploadId";
+    public static final String USER_PARAM = "user";
     public static final String JOB_NAME = "analyzeUploadJob";
 
     private @Autowired JobBuilderFactory jobs;
