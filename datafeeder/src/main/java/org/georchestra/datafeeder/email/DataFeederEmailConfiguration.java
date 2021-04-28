@@ -23,6 +23,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  * when jobs start, fail, or succeed.
  */
 @Configuration
+@Profile({ "!test" }) // REVISIT
 @ConditionalOnBean({ DatafeederEmailFactory.class, JavaMailSender.class })
 @Slf4j
 public class DataFeederEmailConfiguration {
@@ -44,7 +46,7 @@ public class DataFeederEmailConfiguration {
     }
 
     @Bean
-    public EmailSendingService georchestraEmailSendingService() {
+    public EmailSendingService emailSendingService() {
         log.info("Email job notifications is enabled");
         return new EmailSendingService();
     }

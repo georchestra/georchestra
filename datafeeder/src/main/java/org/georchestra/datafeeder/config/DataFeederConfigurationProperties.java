@@ -48,6 +48,15 @@ public @Data class DataFeederConfigurationProperties {
     private URI frontEndConfigFile;
     private FileUploadConfig fileUpload = new FileUploadConfig();
     private PublishingConfiguration publishing = new PublishingConfiguration();
+    private EmailConfig email = new EmailConfig();
+
+    public static @Data class EmailConfig {
+        boolean send;
+        URI ackTemplate;
+        URI analysisFailedTemplate;
+        URI publishFailedTemplate;
+        URI publishSuccessTemplate;
+    }
 
     public static @Data class FileUploadConfig {
         /** maximum size allowed for uploaded files. */

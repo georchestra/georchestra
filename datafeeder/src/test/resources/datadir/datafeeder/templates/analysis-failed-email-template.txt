@@ -1,0 +1,43 @@
+to: ${user.email}
+cc: ${administratorEmail}
+bcc:
+sender: ${administratorEmail}
+from: Georchestra Importer Application
+subject: Problem analyzing your ${dataset.name} dataset
+body:
+
+Dear ${user.name}, 
+
+We're sorry to inform you that a problem occurred during the
+analysis phase for the ${dataset.name} you've uploaded.
+
+Here's the full information:
+
+user.name: ${user.name}
+user.lastName: ${user.lastName}
+user.email: ${user.email}
+job.id: ${job.id}
+job.createdAt: ${job.createdAt}
+job.error: ${job.error}
+job.analizeStatus: ${job.analizeStatus}
+job.publishStatus: ${job.publishStatus}
+dataset.name: ${dataset.name}
+dataset.featureCount: ${dataset.featureCount}
+dataset.encoding: ${dataset.encoding}
+dataset.nativeBounds: ${dataset.nativeBounds}
+publish.tableName: ${publish.tableName}
+publish.layerName: ${publish.layerName}
+publish.workspace: ${publish.workspace}
+publish.srs: ${publish.srs}
+publish.encoding: ${publish.encoding}
+metadata.id: ${metadata.id}
+metadata.title: ${metadata.title}
+metadata.abstract: ${metadata.abstract}
+metadata.creationDate: ${metadata.creationDate}
+metadata.lineage: ${metadata.lineage}
+metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
+metadata.keywords: ${metadata.keywords}
+metadata.scale: ${metadata.scale}
+
+---
+Sent by ${instanceName}

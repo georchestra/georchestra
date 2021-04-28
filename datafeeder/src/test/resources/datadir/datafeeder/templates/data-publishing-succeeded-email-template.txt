@@ -1,0 +1,41 @@
+to: ${user.email}
+cc: ${administratorEmail}
+bcc:
+sender: ${administratorEmail}
+from: Georchestra Importer Application
+subject: Your ${dataset.name} dataset has been published
+body:
+
+Dear ${user.name}, 
+
+We're pleased to inform you that your ${dataset.name} dataset
+has been published.
+
+user.name: ${user.name}
+user.lastName: ${user.lastName}
+user.email: ${user.email}
+job.id: ${job.id}
+job.createdAt: ${job.createdAt}
+job.error: ${job.error}
+job.analizeStatus: ${job.analizeStatus}
+job.publishStatus: ${job.publishStatus}
+dataset.name: ${dataset.name}
+dataset.featureCount: ${dataset.featureCount}
+dataset.encoding: ${dataset.encoding}
+dataset.nativeBounds: ${dataset.nativeBounds}
+publish.tableName: ${publish.tableName}
+publish.layerName: ${publish.layerName}
+publish.workspace: ${publish.workspace}
+publish.srs: ${publish.srs}
+publish.encoding: ${publish.encoding}
+metadata.id: ${metadata.id}
+metadata.title: ${metadata.title}
+metadata.abstract: ${metadata.abstract}
+metadata.creationDate: ${metadata.creationDate}
+metadata.lineage: ${metadata.lineage}
+metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
+metadata.keywords: ${metadata.keywords}
+metadata.scale: ${metadata.scale}
+
+---
+Sent by ${instanceName}

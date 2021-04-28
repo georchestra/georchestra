@@ -21,17 +21,22 @@ package org.georchestra.datafeeder.email;
 import java.util.Optional;
 
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 
 import org.georchestra.datafeeder.event.AnalysisFailedEvent;
 import org.georchestra.datafeeder.event.AnalysisStartedEvent;
 import org.georchestra.datafeeder.event.PublishFailedEvent;
 import org.georchestra.datafeeder.event.PublishFinishedEvent;
+import org.georchestra.datafeeder.model.DataUploadJob;
+import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,41 +51,66 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public @Service class EmailSendingService {
 
+    private @Autowired DataUploadJobRepository repository;
+
     private @Autowired JavaMailSender emailSender;
 
     private @Autowired DatafeederEmailFactory templateEngine;
 
+    @Async
+    @Transactional
     @EventListener(AnalysisStartedEvent.class)
-    public void sendAckEmail(AnalysisStartedEvent event) {
+    public void sendAckEmail(AnalysisStartedEvent event) throws InterruptedException {
         log.info("Sending ack email");
-        Optional<MailMessage> message = templateEngine.createAckMessage(event.getSource(), event.getUser());
+        DataUploadJob job = event.getSource();
+        // HACK: wait a little while for a dataset to be recognized
+        Thread.sleep(2000);
+        job = repository.getOne(event.getSource().getJobId());
+        UserInfo user = event.getUser();
+        Optional<MailMessage> message = templateEngine.createAckMessage(job, user);
         send(message);
     }
 
+    @Async
+    @Transactional
     @EventListener(AnalysisFailedEvent.class)
     public void sendAnalysisFailedEmail(AnalysisFailedEvent event) {
         log.info("Sending analysis failure email");
-        Optional<MailMessage> message = templateEngine.createAnalysisFailureMessage(event.getSource(), event.getUser());
+        DataUploadJob job = repository.getOne(event.getSource().getJobId());
+        UserInfo user = event.getUser();
+        Optional<MailMessage> message = templateEngine.createAnalysisFailureMessage(job, user, event.getCause());
         send(message);
     }
 
+    @Async
+    @Transactional
     @EventListener(PublishFailedEvent.class)
     public void sendPublishFailedEmail(PublishFailedEvent event) {
         log.info("Sending publication failure email");
-        Optional<MailMessage> message = templateEngine.createPublishFailureMessage(event.getSource(), event.getUser());
+        DataUploadJob job = repository.getOne(event.getSource().getJobId());
+        UserInfo user = event.getUser();
+        Optional<MailMessage> message = templateEngine.createPublishFailureMessage(job, user, event.getCause());
         send(message);
     }
 
+    @Async
+    @Transactional
     @EventListener(PublishFinishedEvent.class)
     public void sendPublishFinishedEmail(PublishFinishedEvent event) {
         log.info("Sending publication failure email");
-        Optional<MailMessage> message = templateEngine.createPublishFinishedMessage(event.getSource(), event.getUser());
+        DataUploadJob job = repository.getOne(event.getSource().getJobId());
+        UserInfo user = event.getUser();
+        Optional<MailMessage> message = templateEngine.createPublishFinishedMessage(job, user);
         send(message);
     }
 
     private void send(Optional<MailMessage> message) {
-        if (message.isPresent()) {
+        if (!message.isPresent()) {
+            return;
+        }
+        try {
             MailMessage mailMessage = message.get();
+            log.info(mailMessage.toString());
             if (mailMessage instanceof MimeMailMessage) {
                 MimeMessage mimeMessage = ((MimeMailMessage) mailMessage).getMimeMessage();
                 emailSender.send(mimeMessage);
@@ -91,6 +121,8 @@ public @Service class EmailSendingService {
                         "Unknown mail message type, expected MimeMailMessage or SimpleMailMessage, got "
                                 + mailMessage.getClass().getCanonicalName());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

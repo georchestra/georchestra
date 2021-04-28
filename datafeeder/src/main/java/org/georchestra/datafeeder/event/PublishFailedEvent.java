@@ -21,10 +21,15 @@ package org.georchestra.datafeeder.event;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
 
+import lombok.Getter;
+
 public class PublishFailedEvent extends DatafeederEvent<DataUploadJob> {
     private static final long serialVersionUID = 1L;
 
-    public PublishFailedEvent(DataUploadJob source, UserInfo user) {
+    private @Getter Exception cause;
+
+    public PublishFailedEvent(DataUploadJob source, UserInfo user, Exception error) {
         super(source, user);
+        this.cause = error;
     }
 }

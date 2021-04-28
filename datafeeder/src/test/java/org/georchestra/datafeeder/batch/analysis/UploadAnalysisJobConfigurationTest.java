@@ -100,8 +100,8 @@ public class UploadAnalysisJobConfigurationTest {
         JobExecution execution = readUploadPack(null);
         ExitStatus exitStatus = execution.getExitStatus();
         assertEquals("FAILED", exitStatus.getExitCode());
-        assertThat(exitStatus.getExitDescription(), containsString(
-                "Job parameter not provided: " + UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME));
+        assertThat(exitStatus.getExitDescription(),
+                containsString("Job parameter not provided: " + UploadAnalysisJobConfiguration.JOB_PARAM_NAME));
     }
 
     @Test
@@ -215,7 +215,7 @@ public class UploadAnalysisJobConfigurationTest {
         if (uploadId != null) {
             String parameter = uploadId.toString();
             boolean identifying = true;
-            this.jobParameters.put(UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
+            this.jobParameters.put(UploadAnalysisJobConfiguration.JOB_PARAM_NAME,
                     new JobParameter(parameter, identifying));
         }
         JobParameters params = jobParameters();
@@ -227,7 +227,7 @@ public class UploadAnalysisJobConfigurationTest {
         if (uploadId != null) {
             String parameter = uploadId.toString();
             boolean identifying = true;
-            this.jobParameters.put(UploadAnalysisJobConfiguration.UPLOAD_ID_JOB_PARAM_NAME,
+            this.jobParameters.put(UploadAnalysisJobConfiguration.JOB_PARAM_NAME,
                     new JobParameter(parameter, identifying));
         }
         JobParameters params = jobParameters();

@@ -63,8 +63,8 @@ public class DataUploadService {
      * datasets} list.
      */
     @Async
-    public void analyze(@NonNull UUID uploadId) {
-        analysisService.runJob(uploadId);
+    public void analyze(@NonNull UUID uploadId, @NonNull UserInfo user) {
+        analysisService.runJob(uploadId, user);
     }
 
     public List<DataUploadJob> findAllJobs() {
