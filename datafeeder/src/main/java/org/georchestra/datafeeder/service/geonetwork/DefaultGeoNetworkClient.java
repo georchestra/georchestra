@@ -19,8 +19,10 @@
 package org.georchestra.datafeeder.service.geonetwork;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ws.rs.client.Client;
 
@@ -31,36 +33,55 @@ import org.fao.geonet.client.RecordsApi;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.MeResponse;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
-import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.glassfish.jersey.client.ClientProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
-    private @Autowired(required = false) DataFeederConfigurationProperties config;
+    private @Setter URL apiUrl;
+    private String username;
+    private String password;
+    private Map<String, String> authHeaders;
+    private @Setter boolean debugRequests;
+
+    public DefaultGeoNetworkClient() {
+    }
+
+    public DefaultGeoNetworkClient(@NonNull URL apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
+    public @Override void setBasicAuth(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public @Override void setHeadersAuth(Map<String, String> authHeaders) {
+        this.authHeaders = authHeaders;
+    }
 
     @Override
-    public void checkServiceAvailable(@NonNull String baseUrl, @NonNull HttpHeaders reqHeaders) throws IOException {
-        ApiClient client = newApiClient(baseUrl, reqHeaders);
-        client.setDebugging(debugRequests());
+    public void checkServiceAvailable() throws IOException {
+        ApiClient client = newApiClient();
         MeApi meApi = new MeApi(client);
         MeResponse me;
         try {
             me = meApi.getMe();
             if (me == null) {
-                throw new IOException("Unable to get calling user information from geonetwork at " + baseUrl);
+                throw new IOException(
+                        "Unable to get calling user information from geonetwork at " + client.getBasePath());
             }
             String id = me.getId();
             String username = me.getUsername();
             String organisation = me.getOrganisation();
-            log.info("GeoNetwork availability checked at {}, received user id:{}, username:{}, org:{}", baseUrl, id,
-                    username, organisation);
+            log.info("GeoNetwork availability checked at {}, received user id:{}, username:{}, org:{}",
+                    client.getBasePath(), id, username, organisation);
         } catch (ApiException e) {
             log.warn("Error checking geonetwork availability", e);
             throw new IOException(e.getMessage(), e);
@@ -71,11 +92,9 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
      * @param baseUrl e.g. {@code http://localhost:8080/geonetwork}
      */
     @Override
-    public GeoNetworkResponse putXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
-            @NonNull String metadataId, @NonNull String xmlRecord) {
+    public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord) {
 
-        ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
-        client.setDebugging(debugRequests());
+        ApiClient client = newApiClient();
         // RecordsApi api = client.buildClient(RecordsApi.class);
         RecordsApi api = new RecordsApi(client);
 
@@ -134,46 +153,27 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
     }
 
     @Override
-    public String getXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
-            @NonNull String recordId) {
+    public String getXmlRecord(@NonNull String recordId) {
 
-        ApiClient client = newApiClient(baseUrl, additionalRequestHeaders);
-        client.setDebugging(debugRequests());
+        ApiClient client = newApiClient();
 
         RecordsApi api = new RecordsApi(client);
         String record = api.getRecord(recordId, "application/xml");
         return record;
     }
 
-    private boolean debugRequests() {
-        return this.config != null && this.config.getPublishing().getGeonetwork().isLogRequests();
-    }
-
-    private ApiClient newApiClient(@NonNull String baseUrl, @NonNull HttpHeaders authHeaders) {
+    private ApiClient newApiClient() {
+        Objects.requireNonNull(this.apiUrl, () -> getClass().getSimpleName() + ": API URL is not set");
+        final String baseUrl = this.apiUrl.toExternalForm();
         ApiClient client = new ApiClient();
-//        Builder feignBuilder = client.getFeignBuilder();
-//        // use okhttp client, the default one doesn't send request headers correctly
-//        feignBuilder.client(new OkHttpClient());
-//
-//        // replace the Encoder, which would encode the xml literal as a JSON string
-//        Encoder encoder = new Encoder() {
-//            public @Override void encode(Object object, Type bodyType, RequestTemplate template)
-//                    throws EncodeException {
-//                if (String.class.equals(bodyType)) {
-//                    byte[] body = ((String) object).getBytes(StandardCharsets.UTF_8);
-//                    template.body(body, StandardCharsets.UTF_8);
-//                    return;
-//                }
-//                throw new UnsupportedOperationException();
-//            }
-//        };
-//        feignBuilder.encoder(encoder);
-
         client.setBasePath(baseUrl);
-//        client.setRequestHeaderAuth("georchestra", authHeaders);
-        for (String name : authHeaders.keySet()) {
-            String value = authHeaders.getFirst(name);
-            client.addDefaultHeader(name, value);
+        client.setDebugging(this.debugRequests);
+
+        if (this.username != null) {
+            client.setUsername(this.username);
+            client.setPassword(this.password);
+        } else if (this.authHeaders != null) {
+            this.authHeaders.forEach(client::addDefaultHeader);
         }
         return client;
     }

@@ -19,19 +19,23 @@
 package org.georchestra.datafeeder.service.geonetwork;
 
 import java.io.IOException;
-
-import org.springframework.http.HttpHeaders;
+import java.net.URL;
+import java.util.Map;
 
 import lombok.NonNull;
 
 public interface GeoNetworkClient {
 
-    void checkServiceAvailable(String url, HttpHeaders reqHeaders) throws IOException;
+    void setApiUrl(URL apiUrl);
 
-    GeoNetworkResponse putXmlRecord(String url, HttpHeaders additionalRequestHeaders, String metadataId,
-            String xmlRecord);
+    void setBasicAuth(String username, String password);
 
-    String getXmlRecord(@NonNull String baseUrl, @NonNull HttpHeaders additionalRequestHeaders,
-            @NonNull String recordId);
+    void setHeadersAuth(Map<String, String> authHeaders);
+
+    void checkServiceAvailable() throws IOException;
+
+    GeoNetworkResponse putXmlRecord(String metadataId, String xmlRecord);
+
+    String getXmlRecord(@NonNull String recordId);
 
 }

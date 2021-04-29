@@ -18,11 +18,6 @@
  */
 package org.georchestra.datafeeder.service.geonetwork;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_PROXY;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,7 +26,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -125,14 +119,9 @@ public class GeoNetworkRemoteService {
      * @return
      */
     public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString) {
-
-        final URL apiBaseURL = this.config.getApiUrl();
-        final String url = apiBaseURL.toString();
         final String xmlRecord = xmlRecordAsString.get();
 
-        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
-
-        GeoNetworkResponse response = client.putXmlRecord(url, reqHeaders, metadataId, xmlRecord);
+        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord);
 
         HttpStatus statusCode = response.getStatus();
         String statusText = response.getStatusText();
@@ -149,40 +138,11 @@ public class GeoNetworkRemoteService {
     }
 
     public void checkServiceAvailable() throws IOException {
-        final URL apiBaseURL = this.config.getApiUrl();
-        final String url = apiBaseURL.toString();
-
-        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
-
-        client.checkServiceAvailable(url, reqHeaders);
+        client.checkServiceAvailable();
     }
 
     public String getRecordById(@NonNull String metadataId) {
-
-        final URL apiBaseURL = this.config.getApiUrl();
-        final String url = apiBaseURL.toString();
-
-        HttpHeaders reqHeaders = createAdditionalRequestHeaders();
-
-        String response = client.getXmlRecord(url, reqHeaders, metadataId);
-
-        return response;
-    }
-
-    private HttpHeaders createAdditionalRequestHeaders() {
-        // Allow passing restricted headers
-        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
-
-        HttpHeaders reqHeaders = new HttpHeaders();
-        reqHeaders.set(SEC_PROXY, "true");
-        reqHeaders.set(SEC_USERNAME, "testadmin");
-        reqHeaders.set(SEC_ROLES, "ROLE_GN_ADMIN");
-        reqHeaders.set(SEC_ORG, "Datafeeder Test");
-        // This is odd, apparently any UUID works as XSRF token, and these two need to
-        // be set
-        reqHeaders.set("X-XSRF-TOKEN", "c9f33266-e242-4198-a18c-b01290dce5f1");
-        reqHeaders.set("Cookie", "XSRF-TOKEN=c9f33266-e242-4198-a18c-b01290dce5f1");
-        return reqHeaders;
+        return client.getXmlRecord(metadataId);
     }
 
     public URI buildMetadataRecordIdentifier(@NonNull String recordId) {

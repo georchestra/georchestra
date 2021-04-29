@@ -96,9 +96,23 @@ public @Data class DataFeederConfigurationProperties {
     public static @Data class ExternalApiConfiguration {
         private URL apiUrl;
         private URL publicUrl;
+        private boolean logRequests;
+        private Auth auth = new Auth();
+    }
+
+    public static @Data class Auth {
+        public static enum AuthType {
+            none, basic, headers
+        }
+
+        private AuthType type = AuthType.none;
+        private BasicAuth basic;
+        private Map<String, String> headers = new HashMap<>();
+    }
+
+    public static @Data class BasicAuth {
         private String username;
         private String password;
-        private boolean logRequests;
     }
 
     public static @Data class BackendConfiguration {
