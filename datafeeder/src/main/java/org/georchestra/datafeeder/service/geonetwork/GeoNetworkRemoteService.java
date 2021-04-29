@@ -199,10 +199,10 @@ public class GeoNetworkRemoteService {
     }
 
     // e.g.
-    // http://localhost:28080/geonetwork/srv/api/0.1/records/2bd68e79-7fb1-443b-8709-3570b19a3d6f/formatters/xml
+    // http://localhost:28080/geonetwork/srv/api/records/2bd68e79-7fb1-443b-8709-3570b19a3d6f/formatters/xml
     public URI buildMetadataRecordXmlURI(@NonNull String recordId) {
         URL publicURL = this.config.getPublicUrl();
-        String xmlMdRecord = String.format("%s/srv/api/0.1/records/%s/formatters/xml", publicURL, recordId);
+        String xmlMdRecord = String.format("%s/srv/api/records/%s/formatters/xml", publicURL, recordId);
         URI uri = URI.create(xmlMdRecord).normalize();
         return uri;
     }
