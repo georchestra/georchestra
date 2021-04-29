@@ -37,6 +37,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -273,10 +274,9 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private Optional<String> findManagerUid(DirContextOperations userContext) {
         // e.g. uid=testeditor,ou=users,dc=georchestra,dc=org
         final Pattern pattern = Pattern.compile("^uid=(.*),(ou=users),.*");
-        return Arrays.stream(userContext.getStringAttributes("manager"))//
-                .map(pattern::matcher).filter(Matcher::matches)//
-                .map(matcher -> matcher.group(1))//
-                .findFirst();
+        String managerDn = userContext.getStringAttribute("manager");
+        return Optional.ofNullable(managerDn).map(pattern::matcher).filter(Matcher::matches)//
+                .map(matcher -> matcher.group(1));
     }
 
     private DirContextOperations loadUser(String username, List<HeaderMapping> userHeaders) {
@@ -294,20 +294,20 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     private Optional<String> findOrgCn(DirContextOperations userContext) {
-        final Optional<String> orgCn = Arrays.stream(userContext.getStringAttributes("memberOf"))//
+        Optional<String[]> memberOf = Optional.ofNullable(userContext.getStringAttributes("memberOf"));
+        memberOf.map(Arrays::stream);
+        final Optional<String> orgCn = memberOf.map(Arrays::stream).orElse(Stream.empty())//
                 .map(this.orgSearchMemberOfPattern::matcher)//
                 .filter(Matcher::matches).map(matcher -> matcher.group(2)).findFirst();
         return orgCn;
     }
 
     private String buildValue(DirContextOperations context, HeaderMapping mapping) {
-        if (logger.isDebugEnabled())
+        if (logger.isDebugEnabled()) {
             logger.debug(format("Loading header mapping %s=%s", mapping.getHeaderName(), mapping.getLdapAttribute()));
-        String[] values = context.getStringAttributes(mapping.getLdapAttribute());
-        if (values == null) {
-            throw new IllegalArgumentException("LDAP attribute " + mapping.getLdapAttribute() + " is not defined");
         }
-        if (values.length == 0) {
+        String[] values = context.getStringAttributes(mapping.getLdapAttribute());
+        if (values == null || values.length == 0) {
             logger.debug(format("Found no values for header mapping %s=%s", mapping.getHeaderName(),
                     mapping.getLdapAttribute()));
             return null;
