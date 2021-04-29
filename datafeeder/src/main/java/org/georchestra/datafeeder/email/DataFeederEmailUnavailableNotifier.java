@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @ConditionalOnMissingBean({ DatafeederEmailFactory.class, JavaMailSender.class })
-@Slf4j
+@Slf4j(topic = "org.georchestra.datafeeder.email")
 public class DataFeederEmailUnavailableNotifier {
     public @PostConstruct void notifyEmailsUnavailable() {
         log.warn("Either an email server or email factory have not been configured, email notifications turned off");

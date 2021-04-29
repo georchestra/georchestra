@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
  * A {@link DatafeederEmailFactory} must be provided to create the actual
  * messages based on the target integration ecosystem (e.g. georchestra).
  */
-@Slf4j
+@Slf4j(topic = "org.georchestra.datafeeder.email")
 public @Service class EmailSendingService {
 
     private @Autowired DataUploadJobRepository repository;
