@@ -18,13 +18,22 @@
  */
 package org.georchestra.datafeeder.email;
 
+import java.util.Arrays;
+import java.util.stream.StreamSupport;
+
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,8 +47,10 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Profile({ "!test" }) // REVISIT
 @ConditionalOnBean({ DatafeederEmailFactory.class, JavaMailSender.class })
-@Slf4j
+@Slf4j(topic = "org.georchestra.datafeeder.email")
 public class DataFeederEmailConfiguration {
+
+    private @Autowired Environment env;
 
     public @PostConstruct void notifyAvailability() {
         log.info("Enabling email job notifications");
@@ -47,7 +58,19 @@ public class DataFeederEmailConfiguration {
 
     @Bean
     public EmailSendingService emailSendingService() {
-        log.info("Email job notifications is enabled");
+        log.info("Email job notifications is enabled. Properties:");
+        MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
+        StreamSupport.stream(sources.spliterator(), false).filter(ps -> ps instanceof EnumerablePropertySource)
+                .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames()).flatMap(Arrays::<String>stream)
+                .filter(propName -> propName.startsWith("spring.mail.")).forEach(propName -> {
+                    String value = env.getProperty(propName);
+                    if (propName.contains("passw")) {
+                        value = StringUtils.hasText(value) ? (value.charAt(0) + "*****") : "<empty>";
+                    } else if (!StringUtils.hasText(value)) {
+                        value = "<empty>";
+                    }
+                    log.info("{}={}", propName, value);
+                });
         return new EmailSendingService();
     }
 
