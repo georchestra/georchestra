@@ -32,6 +32,8 @@ import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.mail.MailAuthenticationException;
+import org.springframework.mail.MailException;
 import org.springframework.mail.MailMessage;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -108,8 +110,8 @@ public @Service class EmailSendingService {
         if (!message.isPresent()) {
             return;
         }
+        MailMessage mailMessage = message.get();
         try {
-            MailMessage mailMessage = message.get();
             log.info(mailMessage.toString());
             if (mailMessage instanceof MimeMailMessage) {
                 MimeMessage mimeMessage = ((MimeMailMessage) mailMessage).getMimeMessage();
@@ -121,8 +123,12 @@ public @Service class EmailSendingService {
                         "Unknown mail message type, expected MimeMailMessage or SimpleMailMessage, got "
                                 + mailMessage.getClass().getCanonicalName());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MailAuthenticationException e) {
+            log.warn("Authentication error sending mail message", e);
+        } catch (MailException e) {
+            log.warn("Error sending mail message", e);
+        } catch (RuntimeException e) {
+            log.warn("Unknown error sending mail message", e);
         }
     }
 
