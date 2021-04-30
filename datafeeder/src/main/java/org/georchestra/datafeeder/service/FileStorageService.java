@@ -46,8 +46,8 @@ public class FileStorageService {
 
     /**
      */
-    public UUID saveUploads(@NonNull List<MultipartFile> received) throws IOException {
-        UploadPackage pack = initializePackage();
+    public UploadPackage createPackageFromUpload(@NonNull List<MultipartFile> received) throws IOException {
+        UploadPackage pack = createEmptyPackage();
         try {
             for (MultipartFile mpf : received) {
                 addFileToPackage(pack, mpf);
@@ -56,7 +56,7 @@ public class FileStorageService {
             deletePackage(pack.getId());
             throw e;
         }
-        return pack.getId();
+        return pack;
     }
 
     public void addFileToPackage(@NonNull UploadPackage pack, @NonNull MultipartFile mpf) throws IOException {
@@ -68,7 +68,7 @@ public class FileStorageService {
         }
     }
 
-    public UploadPackage initializePackage() throws IOException {
+    public UploadPackage createEmptyPackage() throws IOException {
         UUID packageId = UUID.randomUUID();
         Path root = resolve(packageId);
         Files.createDirectory(root);

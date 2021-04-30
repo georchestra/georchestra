@@ -78,6 +78,7 @@ logging:
 spring:
   profiles: georchestra
   jpa.database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  jpa.hibernate.ddl-auto: update
   batch:
     job.enabled: false #disable automatically running configured jobs at startup time
     initialize-schema: always

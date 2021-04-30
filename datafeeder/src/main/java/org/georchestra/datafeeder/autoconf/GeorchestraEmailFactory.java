@@ -399,11 +399,22 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
             .build();
 
     private static Optional<PublishSettings> publishing(MessageData d) {
-        return d.getJob().firstDataset().map(DatasetUploadState::getPublishing);
+        return dataset(d).map(DatasetUploadState::getPublishing);
     }
 
     private static Optional<DatasetUploadState> dataset(MessageData d) {
-        return d.getJob().firstDataset();
+        DataUploadJob job = d.getJob();
+        // REVISIT: we'll be returning the first published dataset if at least one has
+        // been published, or the first uploaded one at all otherwise.
+        // this could only be an issue if the user uploaded several shapefiles in a zip
+        // file, which btw is out of scope for the current app, so although we do
+        // support uploading and publishing multiple shapefiles, the UI doesn't. but
+        // this would need to be revisited in the event it does.
+        List<DatasetUploadState> publishableDatasets = job.getPublishableDatasets();
+        if (!publishableDatasets.isEmpty()) {
+            return Optional.of(publishableDatasets.get(0));
+        }
+        return job.firstDataset();
     }
 
     private static String str(Optional<?> o) {

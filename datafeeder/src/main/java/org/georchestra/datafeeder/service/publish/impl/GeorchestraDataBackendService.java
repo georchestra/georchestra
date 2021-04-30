@@ -70,10 +70,15 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private @Autowired DataFeederConfigurationProperties props;
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
+    /**
+     * Sets up, if necessary, the target geotools {@link DataStore} where to import
+     * the {@link DataUploadJob} datasets to.
+     * <p>
+     * This will create a schema in the target postgres database matching the
+     * {@link UserInfo#getOrganization()}'s short name.
+     */
     @Override
-    public void prepareBackend(@NonNull DataUploadJob job, @NonNull UserInfo user) {
-        log.trace("START prepareBackend");
-
+    public void prepareBackend(@NonNull DataUploadJob unused, @NonNull UserInfo user) {
         final Map<String, String> connectionParams = resolveConnectionParams(user);
         createSchema(connectionParams);
         try {
@@ -129,13 +134,22 @@ public class GeorchestraDataBackendService implements DataBackendService {
         requireNonNull(user.getOrganization().getId(), "Organization is null");
         requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
 
-        Map<String, String> connectionParams = resolveConnectionParams(user);
+        final Map<String, String> connectionParams = resolveConnectionParams(user);
+        final String postgresSchema = connectionParams.get(PostgisNGDataStoreFactory.SCHEMA.key);
+        String uniqueTargetName;
         try {
-            String uniqueTargetName = resolveTargetTypeName(dataset, connectionParams);
+            uniqueTargetName = resolveTargetTypeName(dataset, connectionParams);
+        } catch (Exception e) {
+            log.error("Error resolving unique database table name for {}", dataset.getName(), e);
+            throw new RuntimeException(e);
+        }
+        try {
             dataset.getPublishing().setImportedName(uniqueTargetName);
+            log.info("Importing dataset {} into PostGIS as {}.{}", dataset.getName(), postgresSchema, uniqueTargetName);
             datasetsService.importDataset(dataset, connectionParams);
         } catch (IOException e) {
-            log.warn("Error importing dataset", e);
+            log.error("Error importing dataset {} into PostGIS as {}.{}", dataset.getName(), postgresSchema,
+                    uniqueTargetName, e);
             throw new RuntimeException(e);
         }
     }

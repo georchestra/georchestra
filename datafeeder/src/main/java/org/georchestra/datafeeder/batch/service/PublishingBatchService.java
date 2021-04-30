@@ -127,7 +127,7 @@ public class PublishingBatchService {
 
         backendService.prepareBackend(job, user);
 
-        job.getDatasets().forEach(dset -> {
+        job.getPublishableDatasets().forEach(dset -> {
             dset.setPublishStatus(JobStatus.RUNNING);
             if (dset.getPublishing() == null) {
                 dset.setPublishing(new PublishSettings());
@@ -175,7 +175,7 @@ public class PublishingBatchService {
     }
 
     private void doOnEachRunningDataset(DataUploadJob job, Consumer<DatasetUploadState> consumer) {
-        for (DatasetUploadState dataset : job.getDatasets()) {
+        for (DatasetUploadState dataset : job.getPublishableDatasets()) {
             if (JobStatus.RUNNING == dataset.getPublishStatus()) {
                 try {
                     consumer.accept(dataset);
@@ -193,10 +193,10 @@ public class PublishingBatchService {
         log.info("Publish {}: summarize status", jobId);
         DataUploadJob job = this.findJob(jobId);
         if (job.getPublishStatus() != JobStatus.ERROR) {
-            JobStatus status = determineJobStatus(job.getDatasets());
+            JobStatus status = determineJobStatus(job.getPublishableDatasets());
             job.setPublishStatus(status);
             if (JobStatus.ERROR == status) {
-                String errorMessage = buildErrorMessage(job.getDatasets());
+                String errorMessage = buildErrorMessage(job.getPublishableDatasets());
                 log.info("Publish {}: summarized status is ERROR '{}'", jobId, errorMessage);
                 job.setError(errorMessage);
             }

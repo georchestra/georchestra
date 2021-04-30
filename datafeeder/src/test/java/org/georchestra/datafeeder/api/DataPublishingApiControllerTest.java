@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -170,6 +171,70 @@ public class DataPublishingApiControllerTest {
 
         String expected = dset.getNativeBounds().getCrs().getSrs();
         assertEquals(expected, publishing.getSrs());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
+    public void testPublish_PublishesOnlySpecifiedDatasetOutOfMultipleUploadedInZipFile() throws IOException {
+        MultipartFile zipFile;
+        {
+            List<MultipartFile> archsites = multipartSupport.archSitesShapefile();
+            List<MultipartFile> bugsites = multipartSupport.bugSitesShapefile();
+            List<MultipartFile> roads = multipartSupport.roadsShapefile();
+
+            zipFile = multipartSupport.createZipFile("zipfile1.zip", archsites, bugsites, roads);
+        }
+
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(zipFile, "archsites", "bugsites", "roads");
+        testPublishSingleDataset(upload, "bugsites");
+    }
+
+    private void testPublishSingleDataset(final DataUploadJob upload, final String nativeName) {
+        DatasetUploadState dsetToPublish = upload.getDataset(nativeName).orElseThrow(IllegalStateException::new);
+        DatasetPublishRequest dsetReq = buildRequest(dsetToPublish);
+
+        PublishRequest publishRequest = new PublishRequest().addDatasetsItem(dsetReq);
+
+        ResponseEntity<PublishJobStatus> response = controller.publish(upload.getJobId(), publishRequest);
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        PublishJobStatus publishJob = response.getBody();
+        assertNotNull(publishJob);
+        assertEquals(upload.getJobId(), publishJob.getJobId());
+        assertTrue(publishJob.getStatus() == PENDING || publishJob.getStatus() == RUNNING);
+
+        DataUploadJob finalJob = testSupport.awaitUntilPublishStateIs(upload.getJobId(), 5, JobStatus.DONE);
+        List<DatasetUploadState> publishableDatasets = finalJob.getPublishableDatasets();
+        assertEquals(1, publishableDatasets.size());
+        assertEquals(nativeName, publishableDatasets.get(0).getName());
+
+        {
+            DatasetMetadata expectedMd = dsetReq.getMetadata();
+            final String requestedPublishedName = dsetReq.getPublishedName() == null ? dsetToPublish.getName()
+                    : dsetReq.getPublishedName();
+            final String expectedPublishedName = requestedPublishedName + "_mock";
+            final String expectedWorkspace = "mock_workspace";
+
+            response = controller.getPublishingStatus(upload.getJobId());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            publishJob = response.getBody();
+            assertEquals(upload.getJobId(), publishJob.getJobId());
+            assertEquals(DONE, publishJob.getStatus());
+            assertEquals(Double.valueOf(1d), publishJob.getProgress());
+            assertEquals(upload.getDatasets().size(), publishJob.getDatasets().size());
+
+            DatasetPublishingStatus actual = publishJob.getDatasets().stream()
+                    .filter(d -> d.getNativeName().equals(nativeName)).findFirst()
+                    .orElseThrow(IllegalStateException::new);
+
+            assertEquals(DONE, actual.getStatus());
+            assertNull(actual.getError());
+            assertEquals(expectedMd.getTitle(), actual.getTitle());
+            assertEquals(dsetToPublish.getName(), actual.getNativeName());
+            assertEquals(expectedPublishedName, actual.getPublishedName());
+            assertEquals(expectedWorkspace, actual.getPublishedWorkspace());
+            assertNotNull(actual.getMetadataRecordId());
+        }
+
     }
 
     private DatasetPublishRequest buildRequest(DatasetUploadState dset) {
