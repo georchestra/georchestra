@@ -18,14 +18,19 @@
  */
 package org.georchestra.datafeeder.service.publish.impl;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
-import java.util.HashMap;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.Auth;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.Auth.AuthType;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.BasicAuth;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.GeonetworkPublishingConfiguration;
 import org.georchestra.datafeeder.service.geonetwork.DefaultGeoNetworkClient;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkClient;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
@@ -38,6 +43,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.util.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Configuration providing strategy beans to publish uploaded datasets to
@@ -48,6 +56,7 @@ import org.springframework.context.annotation.Profile;
  */
 @Configuration
 @Profile("!mock")
+@Slf4j(topic = "org.georchestra.datafeeder.service.publish")
 public class GeorchestraPublishingServicesConfiguration {
 
     private @Autowired DataFeederConfigurationProperties config;
@@ -71,7 +80,18 @@ public class GeorchestraPublishingServicesConfiguration {
     }
 
     public @Bean GeoNetworkClient geoNetworkClient() {
-        return new DefaultGeoNetworkClient();
+        GeonetworkPublishingConfiguration config = this.config.getPublishing().getGeonetwork();
+        URL apiUrl = config.getApiUrl();
+
+        DefaultGeoNetworkClient client = new DefaultGeoNetworkClient();
+        client.setApiUrl(apiUrl);
+        client.setDebugRequests(config.isLogRequests());
+        log.info("Configuring authentication for GeoNetwork REST API at {}", apiUrl);
+        setAuth("GeoNetwork", //
+                config.getAuth(), //
+                client::setHeadersAuth, //
+                client::setBasicAuth);
+        return client;
     }
 
     public @Bean TemplateMapper templateMapper() {
@@ -79,19 +99,55 @@ public class GeorchestraPublishingServicesConfiguration {
     }
 
     public @Bean GeoServerClient geoServerApiClient(DataFeederConfigurationProperties props) {
-        ExternalApiConfiguration config = props.getPublishing().getGeoserver();
-        String restApiEntryPoint = config.getApiUrl().toExternalForm();
+        final ExternalApiConfiguration config = props.getPublishing().getGeoserver();
+        final String restApiEntryPoint = config.getApiUrl().toExternalForm();
 
         GeoServerClient client = new GeoServerClient(restApiEntryPoint);
         client.setDebugRequests(config.isLogRequests());
+        log.info("Configuring authentication for GeoServer REST API at {}", restApiEntryPoint);
+        setAuth("GeoServer", //
+                config.getAuth(), //
+                headers -> client.setRequestHeaderAuth("georchestra", headers), //
+                client::setBasicAuth);
 
-        Map<String, String> authHeaders = new HashMap<>();
-        // authHeaders.put(SEC_PROXY, "true");
-        authHeaders.put(SEC_USERNAME, "datafeeder-application");
-        authHeaders.put(SEC_ROLES, "ROLE_ADMINISTRATOR");
-
-        client.setRequestHeaderAuth("georchestra", authHeaders);
         return client;
+    }
+
+    private void setAuth(String serviceName, Auth auth, Consumer<Map<String, String>> headersSetter,
+            BiConsumer<String, String> basicSetter) {
+        AuthType type = auth.getType();
+        if (type == AuthType.headers) {
+            // Allow passing restricted headers to the downstream service
+            System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+
+            Map<String, String> headers = auth.getHeaders() == null ? Collections.emptyMap() : auth.getHeaders();
+            headersSetter.accept(headers);
+            if (headers.isEmpty()) {
+                log.warn("{} REST API uses HTTP headers authentication but no headers were provided", serviceName);
+            } else {
+                log.info("{} REST API uses HTTP headers based authentication. Header names: {}", serviceName,
+                        headers.keySet());
+            }
+        } else if (type == AuthType.basic) {
+            BasicAuth basic = auth.getBasic();
+            Objects.requireNonNull(basic == null ? null : basic.getUsername(), () -> String.format(
+                    "%s REST API client configured to use HTTP Basic authentication but no credentials provided",
+                    serviceName));
+
+            String username = basic.getUsername();
+            String password = basic.getPassword();
+            basicSetter.accept(username, password);
+            if (StringUtils.hasText(password)) {
+                log.info("{} REST API client uses HTTP-Basic authentication. User name: {}", serviceName, username);
+            } else {
+                log.warn("{} REST API client uses HTTP-Basic authentication but no password is provided. User name: {}",
+                        serviceName, username);
+            }
+        } else if (type == AuthType.none || type == null) {
+            log.info("No authentication configuration provided to use {}'s REST API", serviceName);
+        } else {
+            throw new IllegalArgumentException("Uknown AuthType: " + type);
+        }
     }
 
     public @Bean GeoServerRemoteService geoServerRemoteService() {

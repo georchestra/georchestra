@@ -21,7 +21,6 @@ package org.georchestra.datafeeder.service.geonetwork;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -33,7 +32,6 @@ import java.net.URL;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 public class GeoNetworkRemoteServiceTest {
@@ -80,11 +78,10 @@ public class GeoNetworkRemoteServiceTest {
                         + "<gmd:MD_Metadata>\n",
                 id);//
 
-        String expectedURL = "http://geonetwork:8080/geonetwork";
         GeoNetworkResponse response = new GeoNetworkResponse();
         response.setStatus(HttpStatus.CREATED);
 
-        when(mockClient.putXmlRecord(eq(expectedURL), any(HttpHeaders.class), eq(id), eq(record))).thenReturn(response);
+        when(mockClient.putXmlRecord(eq(id), eq(record))).thenReturn(response);
 
         GeoNetworkResponse ret = service.publish(id, () -> record);
         assertSame(response, ret);
