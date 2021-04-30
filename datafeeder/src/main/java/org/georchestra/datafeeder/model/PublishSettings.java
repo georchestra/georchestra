@@ -35,6 +35,9 @@ import lombok.Data;
 @Data
 @Embeddable
 public class PublishSettings {
+    @Column(name = "publish")
+    private Boolean publish = false;
+
     @Column(name = "imported_name")
     private String importedName;
 
@@ -82,4 +85,8 @@ public class PublishSettings {
             @AttributeOverride(name = "miny", column = @Column(name = "md_geog_miny")), //
             @AttributeOverride(name = "maxy", column = @Column(name = "md_geog_maxy")) })
     private Envelope geographicBoundingBox;
+
+    public boolean getPublish() {
+        return this.publish == null ? false : this.publish.booleanValue();
+    }
 }

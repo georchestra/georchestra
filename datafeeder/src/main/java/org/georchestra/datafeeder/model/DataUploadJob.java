@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -89,6 +90,23 @@ public class DataUploadJob {
 
     public double getProgress() {
         return totalSteps == 0 ? 0d : (double) finishedSteps / totalSteps;
+    }
+
+    /**
+     * @return all uploaded datasets
+     */
+    public List<DatasetUploadState> getDatasets() {
+        return this.datasets;
+    }
+
+    /**
+     * @return all uploaded datasets that have been marked as
+     *         {@link PublishSettings#isPublish() intended to be published} by
+     *         inspecting {@code DatasetUploadState.getPublishing().isPublish()}
+     */
+    public List<DatasetUploadState> getPublishableDatasets() {
+        return getDatasets().stream().filter(d -> d.getPublishing() != null && d.getPublishing().getPublish())
+                .collect(Collectors.toList());
     }
 
     public Optional<DatasetUploadState> getDataset(@NonNull String nativeName) {

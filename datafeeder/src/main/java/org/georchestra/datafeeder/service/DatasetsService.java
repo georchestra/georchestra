@@ -377,14 +377,14 @@ public class DatasetsService {
 
     public void importDataset(@NonNull DatasetUploadState d, @NonNull Map<String, String> connectionParams)
             throws IOException {
-        requireNonNull(d.getPublishing());
-        requireNonNull(d.getPublishing().getImportedName(), "imported type name not provided");
-
+        final PublishSettings publishing = d.getPublishing();
+        requireNonNull(publishing);
+        requireNonNull(publishing.getImportedName(), "imported type name not provided");
         DataStore sourceDs = resolveSourceDataStore(d);
         try {
             SimpleFeatureSource source = resolveFeatureSource(sourceDs, d);
             SimpleFeatureType sourceType = source.getSchema();
-            String targetTypeName = d.getPublishing().getImportedName();
+            String targetTypeName = publishing.getImportedName();
             SimpleFeatureType targetType;
             {
                 SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();

@@ -48,15 +48,17 @@ public class DataPublishingService {
 
     public void publish(@NonNull UUID uploadId, @NonNull PublishRequest req, @NonNull UserInfo user) {
         DataUploadJob job = publishingBatchService.findJob(uploadId);
+
+        job.getDatasets().forEach(dset -> {
+            dset.setPublishing(new PublishSettings());
+        });
+
         for (DatasetPublishRequest dreq : req.getDatasets()) {
             String nativeName = dreq.getNativeName();
-            DatasetUploadState dset = job.getDataset(nativeName)
-                    .orElseThrow(() -> new IllegalArgumentException("Dataset " + nativeName + " does not exist"));
+            DatasetUploadState dset = getDataset(job, nativeName);
             PublishSettings publishing = dset.getPublishing();
-            if (publishing == null) {
-                publishing = new PublishSettings();
-                dset.setPublishing(publishing);
-            }
+            // set publish to true only for the requested datasets
+            publishing.setPublish(true);
             String requestedPublishedName = dreq.getPublishedName() == null ? nativeName : dreq.getPublishedName();
             publishing.setPublishedName(requestedPublishedName);
             String srs = dreq.getSrs();
@@ -83,6 +85,12 @@ public class DataPublishingService {
         publishingBatchService.save(job);
 
         publishingBatchService.runJob(uploadId, user);
+    }
+
+    private DatasetUploadState getDataset(DataUploadJob job, String nativeName) {
+        DatasetUploadState dset = job.getDataset(nativeName)
+                .orElseThrow(() -> new IllegalArgumentException("Dataset " + nativeName + " does not exist"));
+        return dset;
     }
 
 }

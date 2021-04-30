@@ -35,6 +35,7 @@ import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -90,6 +91,10 @@ public class ApiTestSupport {
         Set<UUID> expected = Arrays.stream(expectedUserJobs).map(UploadJobStatus::getJobId).collect(Collectors.toSet());
         Set<UUID> actual = jobs.stream().map(UploadJobStatus::getJobId).collect(Collectors.toSet());
         assertEquals(expected, actual);
+    }
+
+    public DataUploadJob uploadAndWaitForSuccess(MultipartFile uploadedFile, String... expectedDatasetNames) {
+        return uploadAndWaitForSuccess(Collections.singletonList(uploadedFile), expectedDatasetNames);
     }
 
     public DataUploadJob uploadAndWaitForSuccess(List<MultipartFile> uploadedFiles, String... expectedDatasetNames) {
