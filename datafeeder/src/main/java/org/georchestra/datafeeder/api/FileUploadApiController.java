@@ -36,6 +36,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
+import org.georchestra.datafeeder.service.UploadPackage;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,8 @@ public class FileUploadApiController implements FileUploadApi {
         }
         try {
             String username = validityService.getUserName();
-            uploadId = storageService.saveUploads(files);
+            UploadPackage uploadPack = storageService.createPackageFromUpload(files);
+            uploadId = uploadPack.getId();
             state = uploadService.createJob(uploadId, username);
             UserInfo user = validityService.getUserInfo();
             uploadService.analyze(uploadId, user);

@@ -39,7 +39,9 @@ import com.google.common.annotations.VisibleForTesting;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class UploadPackage {
 
     private FileStorageService service;
@@ -81,6 +83,7 @@ public class UploadPackage {
     }
 
     public void unpack(@NonNull String archiveRelativeFileName) throws IOException {
+        log.info("Unpacking {}", archiveRelativeFileName);
         Path archive = resolve(archiveRelativeFileName);
         if (!Files.exists(archive)) {
             throw new FileNotFoundException(archiveRelativeFileName + " not found under " + id);

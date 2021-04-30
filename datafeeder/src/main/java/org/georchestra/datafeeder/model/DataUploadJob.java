@@ -56,9 +56,6 @@ public class DataUploadJob {
     @Column(name = "created_by", nullable = false)
     private String username;
 
-//    @Transient
-//    private UserInfo user = new UserInfo();
-
     @CreatedDate
     @Column(name = "created_date", nullable = false)
     private Date createdDate;

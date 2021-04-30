@@ -79,8 +79,8 @@ public class DataUploadAnalysisService {
      *                                  {@link FileStorageService}
      */
     public DataUploadJob createJob(@NonNull UUID jobId, @NonNull String username) {
-        log.info("Creating DataUploadState from UploadPackage {}", jobId);
-        getUploadPack(jobId);
+        log.info("Creating PENDING DataUploadJob for upload package {}", jobId);
+        UploadPackage uploadPack = getUploadPack(jobId);
         DataUploadJob state = new DataUploadJob();
         state.setJobId(jobId);
         state.setAnalyzeStatus(JobStatus.PENDING);
@@ -244,9 +244,7 @@ public class DataUploadAnalysisService {
 
     private UploadPackage getUploadPack(UUID jobId) {
         try {
-            UploadPackage uploadPack = fileStore.find(jobId);
-            log.info("Creating PENDING DataUploadJob for upload package {}", uploadPack.getId());
-            return uploadPack;
+            return fileStore.find(jobId);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Upload pack " + jobId + " does not exist");
         } catch (IOException e) {

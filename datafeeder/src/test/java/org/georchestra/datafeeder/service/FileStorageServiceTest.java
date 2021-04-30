@@ -66,8 +66,8 @@ public class FileStorageServiceTest {
     }
 
     public @Test void testInitializePackage() throws IOException {
-        UploadPackage p1 = service.initializePackage();
-        UploadPackage p2 = service.initializePackage();
+        UploadPackage p1 = service.createEmptyPackage();
+        UploadPackage p2 = service.createEmptyPackage();
         assertNotNull(p1);
         assertNotNull(p2);
         assertNotNull(p1.getId());
@@ -84,8 +84,8 @@ public class FileStorageServiceTest {
 
     @Test(expected = NullPointerException.class)
     public void testFind() throws IOException {
-        UploadPackage p1 = service.initializePackage();
-        UploadPackage p2 = service.initializePackage();
+        UploadPackage p1 = service.createEmptyPackage();
+        UploadPackage p2 = service.createEmptyPackage();
 
         UploadPackage found1 = service.find(p1.getId());
         UploadPackage found2 = service.find(p2.getId());
@@ -99,8 +99,8 @@ public class FileStorageServiceTest {
 
     @Test(expected = NullPointerException.class)
     public void testDeletePackage() throws IOException {
-        UploadPackage p1 = service.initializePackage();
-        UploadPackage p2 = service.initializePackage();
+        UploadPackage p1 = service.createEmptyPackage();
+        UploadPackage p2 = service.createEmptyPackage();
 
         Path root1 = root.resolve(p1.getId().toString());
         Path root2 = root.resolve(p2.getId().toString());
@@ -126,9 +126,9 @@ public class FileStorageServiceTest {
         assertEquals(root.resolve(id.toString()), service.resolve(id));
     }
 
-    public @Test void testSaveUploadsNoFiles() throws IOException {
+    public @Test void createPackageFromUpload_NoFiles() throws IOException {
         List<MultipartFile> received = Collections.emptyList();
-        UUID id = service.saveUploads(received);
+        UUID id = service.createPackageFromUpload(received).getId();
         assertNotNull(id);
         UploadPackage pack = service.find(id);
         assertNotNull(pack);
@@ -137,24 +137,24 @@ public class FileStorageServiceTest {
         assertTrue(pack.findAll().isEmpty());
     }
 
-    public @Test void testSaveUploadsSingleFile() throws IOException {
+    public @Test void createPackageFromUpload_SingleFile() throws IOException {
         List<MultipartFile> received = Arrays.asList(multipartSupport.createFakeFile("test.geojson", 1024));
-        UUID id = service.saveUploads(received);
+        UUID id = service.createPackageFromUpload(received).getId();
         verifyUploads(id, received);
     }
 
-    public @Test void testSaveUploadsMultipleFiles() throws IOException {
+    public @Test void createPackageFromUpload_MultipleFiles() throws IOException {
         List<MultipartFile> received = Arrays.asList(//
                 multipartSupport.createFakeFile("test.shp", 4096), //
                 multipartSupport.createFakeFile("test.shx", 1024), //
                 multipartSupport.createFakeFile("test.prj", 128), //
                 multipartSupport.createFakeFile("test.dbf", 1024 * 1024)//
         );
-        UUID id = service.saveUploads(received);
+        UUID id = service.createPackageFromUpload(received).getId();
         verifyUploads(id, received);
     }
 
-    public @Test void testSaveUploadsZipFileIsExtractedAutomatically() throws IOException {
+    public @Test void createPackageFromUpload_ZipFileIsExtractedAutomatically() throws IOException {
         List<MultipartFile> zipped = Arrays.asList(//
                 multipartSupport.createFakeFile("test.shp", 4096), //
                 multipartSupport.createFakeFile("test.shx", 1024), //
@@ -169,7 +169,7 @@ public class FileStorageServiceTest {
                 multipartSupport.createFakeFile("test3.geojson", 1024)//
         );
         MultipartFile zipFile = multipartSupport.createZipFile("test.zip", zipped);
-        final UUID id = service.saveUploads(Collections.singletonList(zipFile));
+        final UUID id = service.createPackageFromUpload(Collections.singletonList(zipFile)).getId();
 
         List<MultipartFile> expected = new ArrayList<>(zipped);
         expected.add(zipFile);
