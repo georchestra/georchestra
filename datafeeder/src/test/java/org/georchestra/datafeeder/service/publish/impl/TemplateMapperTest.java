@@ -104,7 +104,10 @@ public class TemplateMapperTest {
         assertXpath(dom, crs, mdprops.getCoordinateReferenceSystem());
 
         // metadata timestamp, computed, now()::ISO8601
-        assertXpath(dom, "MD_Metadata/dateStamp/DateTime[text()='%s']", mdprops.getMetadataTimestamp());
+        // note: using starts-with to avoid false failures due to trailing zero in
+        // mdprops.getMetadataTimestamp() (e.g. text() can be '2021-05-03T16:49:48.850'
+        // and mdprops.getMetadataTimestamp() can be '2021-05-03T16:49:48.85')
+        assertXpath(dom, "MD_Metadata/dateStamp/DateTime[starts-with(text(), '%s')]", mdprops.getMetadataTimestamp());
 
         // metadata language, provided by metadata template, typically "eng" or "fre"
         assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='eng']");
