@@ -143,7 +143,6 @@ public class FileUploadApiControllerTest {
         DataUploadJob job = testSupport.awaitUntilJobIsOneOf(id, 3, ERROR);
         job = uploadService.findJob(job.getJobId()).orElse(null);
         assertEquals(1, job.getDatasets().size());
-        assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
 
         testSupport.assertDataset(job.getDatasets(), "test", ERROR);
@@ -180,7 +179,6 @@ public class FileUploadApiControllerTest {
         DataUploadJob job = testSupport.awaitUntilJobIsOneOf(id, 3, ERROR);
         job = this.uploadService.findJob(job.getJobId()).orElse(null);
         assertEquals(3, job.getDatasets().size());
-        assertEquals("failed job should report full progress", 1d, job.getProgress(), 0d);
         assertNotNull(job.getError());
 
         testSupport.assertDataset(job.getDatasets(), "archsites", DONE);

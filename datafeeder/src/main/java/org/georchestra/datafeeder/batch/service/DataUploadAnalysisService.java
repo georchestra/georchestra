@@ -132,7 +132,6 @@ public class DataUploadAnalysisService {
             throw new IllegalStateException(e);
         }
 
-        int errored = 0;
         for (String fileRelativePath : datasetFiles) {
             Path path = uploadPack.resolve(fileRelativePath);
             List<String> typeNames;
@@ -142,15 +141,11 @@ public class DataUploadAnalysisService {
                 fileDatasets.forEach(d -> d.setJob(job));
                 job.getDatasets().addAll(fileDatasets);
             } catch (Exception e) {
-                errored++;
                 DatasetUploadState dataset = createFailedDataset(fileRelativePath, path, e);
                 dataset.setJob(job);
                 job.getDatasets().add(dataset);
             }
         }
-        int totalSteps = job.getDatasets().size() - errored;
-        job.setTotalSteps(totalSteps);
-        job.setFinishedSteps(0);
         jobRepository.save(job);
     }
 

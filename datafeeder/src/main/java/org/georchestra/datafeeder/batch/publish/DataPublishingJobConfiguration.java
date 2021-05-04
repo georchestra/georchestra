@@ -48,6 +48,10 @@ public class DataPublishingJobConfiguration {
     private @Autowired JobBuilderFactory jobBuilderFactory;
     private @Autowired StepBuilderFactory stepBuilderFactory;
 
+    public @Bean PublishJobProgressTracker publishJobProgressTracker() {
+        return new PublishJobProgressTracker();
+    }
+
     public @Bean PublishingBatchService publishingBatchService() {
         return new PublishingBatchService();
     }

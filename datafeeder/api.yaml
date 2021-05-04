@@ -299,6 +299,9 @@ components:
     PublishStatusEnum:
       type: string
       enum: [PENDING, RUNNING, DONE, ERROR]
+    PublishStepEnum:
+      type: string
+      enum: [SKIPPED, SCHEDULED, DATA_IMPORT_STARTED, DATA_IMPORT_FINISHED, OWS_PUBLISHING_STARTED, OWS_PUBLISHING_FINISHED, METADATA_PUBLISHING_STARTED, METADATA_PUBLISHING_FINISHED, OWS_METADATA_UPDATE_STARTED, OWS_METADATA_UPDATE_FINISHED, COMPLETED]
 
     UploadJobStatus:
       type: object
@@ -505,3 +508,16 @@ components:
         error:
           type: string
           description: short description of the error that prevents the dataset to be published
+        publish:
+          type: boolean
+          description: true if this dataset is scheduled to be published (as requested through a PublishRequest)
+        progress:
+          description: Estimated completion progress, from 0 to 1.
+          type: number
+          format: double
+          minimum: 0.0
+          maximum: 1.0
+          default: 0.0
+        progressStep:
+          $ref: '#/components/schemas/PublishStepEnum'
+          

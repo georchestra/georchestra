@@ -49,7 +49,7 @@ public class GeoNetworkTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.publishDatasetsMetadataToGeoNetwork(uploadId, user);
+        service.step3_publishDatasetsMetadataToGeoNetwork(uploadId, user);
         return RepeatStatus.FINISHED;
     }
 }

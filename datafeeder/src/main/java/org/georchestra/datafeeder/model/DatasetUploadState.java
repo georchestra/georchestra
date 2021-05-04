@@ -99,5 +99,5 @@ public class DatasetUploadState {
     private List<SampleProperty> sampleProperties = new ArrayList<>();
 
     @Embedded
-    private PublishSettings publishing;
+    private PublishSettings publishing = new PublishSettings();
 }

@@ -116,7 +116,6 @@ public class ApiTestSupport {
         Optional<DataUploadJob> state = uploadService.findJob(id);
         assertTrue(state.isPresent());
         assertNull(state.get().getError());
-        assertEquals(1d, state.get().getProgress(), 0d);
         List<DatasetUploadState> datasets = state.get().getDatasets();
 
         assertEquals(expectedDatasetNames.length, datasets.size());

@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import org.georchestra.datafeeder.api.AuthorizationService;
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.DatasetsService;
@@ -76,6 +77,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
     private @MockBean DataPublishingService mockDataPublishingService;
     private @MockBean MetadataPublicationService mockMetadataPublicationService;
     private @MockBean DatasetsService mockDatasetsService;
+    private @MockBean PublishJobProgressTracker mockPublishJobProgressTracker;
 
     private @LocalServerPort int port;
     private @Value("${server.servlet.context-path}") String contextPath;

@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.georchestra.datafeeder.api.AuthorizationService;
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.FileUploadConfig;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
@@ -65,6 +66,7 @@ public class GeorchestraIntegrationAutoConfigurationTest {
     private @MockBean DataPublishingService mockDataPublishingService;
     private @MockBean MetadataPublicationService mockMetadataPublicationService;
     private @MockBean DatasetsService mockDatasetsService;
+    private @MockBean PublishJobProgressTracker mockPublishJobProgressTracker;
 
     private @Autowired ApplicationContext context;
 

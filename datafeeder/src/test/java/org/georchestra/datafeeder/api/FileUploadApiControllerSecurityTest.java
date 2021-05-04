@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.api;
 import java.util.Collections;
 
 import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.FileStorageService;
@@ -46,6 +47,7 @@ public class FileUploadApiControllerSecurityTest {
     private @MockBean FileUploadResponseMapper mapper;
     private @MockBean AuthorizationService mockDataUploadValidityService;
     private @MockBean DataPublishingService mockDataPublishingService;
+    private @MockBean PublishJobProgressTracker mockPublishJobProgressTracker;
 
     private @Autowired FileUploadApi controller;
 

@@ -32,6 +32,7 @@ import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.shapefile.ShapefileDirectoryFactory;
+import org.opengis.util.ProgressListener;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileSystemUtils;
@@ -69,12 +70,13 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     }
 
     @Override
-    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
+    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user,
+            @NonNull ProgressListener progressListener) {
         Map<String, String> connectionParams = resolveConnectionParams(dataset.getJob(), user);
         try {
             // use the same native featuretype name for the imported dataset featuretype
             dataset.getPublishing().setImportedName(dataset.getName());
-            datasetsService.importDataset(dataset, connectionParams);
+            datasetsService.importDataset(dataset, connectionParams, progressListener);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

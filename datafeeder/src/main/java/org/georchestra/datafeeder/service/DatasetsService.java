@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,11 +45,13 @@ import org.georchestra.datafeeder.service.DataSourceMetadata.DataSourceType;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FeatureReader;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -61,12 +64,14 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.ProgressListener;
 import org.springframework.lang.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -375,15 +380,18 @@ public class DatasetsService {
         }
     }
 
-    public void importDataset(@NonNull DatasetUploadState d, @NonNull Map<String, String> connectionParams)
-            throws IOException {
+    public void importDataset(@NonNull DatasetUploadState d, @NonNull Map<String, String> connectionParams,
+            ProgressListener listener) throws IOException {
         final PublishSettings publishing = d.getPublishing();
         requireNonNull(publishing);
         requireNonNull(publishing.getImportedName(), "imported type name not provided");
         DataStore sourceDs = resolveSourceDataStore(d);
         try {
-            SimpleFeatureSource source = resolveFeatureSource(sourceDs, d);
-            SimpleFeatureType sourceType = source.getSchema();
+            final String sourceNativeName = resolveTypeName(sourceDs, d);
+            final int featureCount = featureCount(sourceDs.getFeatureSource(sourceNativeName));
+            FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+            reader = sourceDs.getFeatureReader(new Query(sourceNativeName), Transaction.AUTO_COMMIT);
+            SimpleFeatureType sourceType = reader.getFeatureType();
             String targetTypeName = publishing.getImportedName();
             SimpleFeatureType targetType;
             {
@@ -396,7 +404,7 @@ public class DatasetsService {
             try {
                 createSchema(targetType, targetds);
                 SimpleFeatureStore target = (SimpleFeatureStore) targetds.getFeatureSource(targetTypeName);
-                importData(source, target);
+                importData(reader, target, featureCount, listener);
             } finally {
                 targetds.dispose();
             }
@@ -405,15 +413,18 @@ public class DatasetsService {
         }
     }
 
-    private void importData(SimpleFeatureSource source, SimpleFeatureStore target) throws IOException {
+    private void importData(FeatureReader<SimpleFeatureType, SimpleFeature> source, SimpleFeatureStore target,
+            int featureCount, ProgressListener listener) throws IOException {
+
         log.info("Uploading data to {}", target.getSchema().getTypeName());
         final String typeName = target.getSchema().getTypeName();
         final Stopwatch sw = Stopwatch.createStarted();
 
+        source = new ProgressReportingSimpleFeatureReader(source, featureCount, listener);
         Transaction gtTx = new DefaultTransaction();
         try {
             target.setTransaction(gtTx);
-            target.addFeatures(source.getFeatures());
+            target.setFeatures(source);
             gtTx.commit();
             log.info("Data imported to {} in {}", typeName, sw.stop());
         } catch (IOException e) {
@@ -421,6 +432,51 @@ public class DatasetsService {
             gtTx.rollback();
             throw e;
         }
+    }
+
+    /**
+     * {@link FeatureReader} decorator the reports progress to a
+     * {@link ProgressListener} at {@link FeatureReader#next()}
+     */
+    @RequiredArgsConstructor
+    static class ProgressReportingSimpleFeatureReader implements SimpleFeatureReader {
+
+        private final FeatureReader<SimpleFeatureType, SimpleFeature> source;
+        private final int featureCount;
+        private final ProgressListener listener;
+
+        private int count;
+        private SimpleFeature last;
+
+        public @Override SimpleFeatureType getFeatureType() {
+            return source.getFeatureType();
+        }
+
+        public @Override SimpleFeature next() throws IOException, IllegalArgumentException, NoSuchElementException {
+            if (last == null) {
+                listener.started();
+            }
+            SimpleFeature f = source.next();
+            if (featureCount > 0) {
+                count++;
+                float percent = (count * 100f) / featureCount;
+                listener.progress(percent);
+            }
+            return f;
+        }
+
+        public @Override boolean hasNext() throws IOException {
+            boolean hasNext = source.hasNext();
+            if (!hasNext) {
+                listener.progress(100f);
+            }
+            return hasNext;
+        }
+
+        public @Override void close() throws IOException {
+            listener.complete();
+        }
+
     }
 
     private void createSchema(SimpleFeatureType featureType, DataStore targetds) throws IOException {
@@ -449,7 +505,7 @@ public class DatasetsService {
         return loadDataStore(path, charset);
     }
 
-    private SimpleFeatureSource resolveFeatureSource(DataStore store, DatasetUploadState d) throws IOException {
+    private String resolveTypeName(DataStore store, DatasetUploadState d) throws IOException {
         final String sourceNativeName = d.getName();
         {
             String[] typeNames = store.getTypeNames();
@@ -458,7 +514,6 @@ public class DatasetsService {
                         + "' does not exist. Type names in provided file: " + Arrays.toString(typeNames));
             }
         }
-        SimpleFeatureSource orig = store.getFeatureSource(sourceNativeName);
-        return orig;
+        return sourceNativeName;
     }
 }

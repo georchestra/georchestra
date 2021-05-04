@@ -25,6 +25,10 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetProgress;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetPublishingStep;
+import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.JobProgress;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
@@ -34,10 +38,13 @@ import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geotools.data.util.DefaultProgressListener;
+import org.opengis.util.ProgressListener;
 import org.springframework.batch.core.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -54,6 +61,7 @@ public class PublishingBatchService {
     private @Autowired DataBackendService backendService;
     private @Autowired OWSPublicationService owsService;
     private @Autowired MetadataPublicationService metadataService;
+    private @Autowired PublishJobProgressTracker progressTracker;
 
     public void runJob(@NonNull UUID jobId, @NonNull UserInfo user) {
         jobManager.launchPublishingProcess(jobId, user);
@@ -114,6 +122,7 @@ public class PublishingBatchService {
         checkAnalisisComplete(job);
         job.setPublishStatus(JobStatus.RUNNING);
         save(job);
+        this.progressTracker.initialize(job);
     }
 
     /**
@@ -121,7 +130,7 @@ public class PublishingBatchService {
      * @param jobId
      */
     @Transactional
-    public void prepareTargetStoreForJobDatasets(@NonNull UUID jobId, @NonNull UserInfo user) {
+    public void step0_prepareTargetStoreForJobDatasets(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Prepare target store for uploaded datasets", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
 
@@ -136,17 +145,30 @@ public class PublishingBatchService {
         save(job);
     }
 
-    public void importDatasetsToTargetDatastore(@NonNull UUID jobId, @NonNull UserInfo user) {
+    public void step1_importDatasetsToTargetDatastore(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: importing datasets to target database", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, datasetUploadState -> backendService.importDataset(datasetUploadState, user));
+        doOnEachRunningDataset(job, datasetUploadState -> {
+            JobProgress jobProgress = this.progressTracker.get(job.getJobId());
+            DatasetProgress datasetProgress = jobProgress.getProgress(datasetUploadState.getId());
+            datasetProgress.setStep(DatasetPublishingStep.DATA_IMPORT_STARTED);
+            ProgressListener listener = new DataImportProgressListener(datasetProgress);
+            backendService.importDataset(datasetUploadState, user, listener);
+            datasetProgress.setStep(DatasetPublishingStep.DATA_IMPORT_FINISHED);
+        });
         save(job);
     }
 
-    public void publishDatasetsToGeoServer(@NonNull UUID jobId, @NonNull UserInfo user) {
+    public void step2_publishDatasetsToGeoServer(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Publish datasets to GeoServer", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, datasetUploadState -> owsService.publish(datasetUploadState, user));
+        doOnEachRunningDataset(job, datasetUploadState -> {
+            JobProgress jobProgress = this.progressTracker.get(job.getJobId());
+            DatasetProgress datasetProgress = jobProgress.getProgress(datasetUploadState.getId());
+            datasetProgress.setStep(DatasetPublishingStep.OWS_PUBLISHING_STARTED);
+            owsService.publish(datasetUploadState, user);
+            datasetProgress.setStep(DatasetPublishingStep.OWS_PUBLISHING_FINISHED);
+        });
         save(job);
     }
 
@@ -155,20 +177,31 @@ public class PublishingBatchService {
         return repository.saveAndFlush(job);
     }
 
-    public void publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId, @NonNull UserInfo user) {
+    public void step3_publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Publish datasets metadata to GeoNetwork", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
-        doOnEachRunningDataset(job, datasetUploadState -> metadataService.publish(datasetUploadState, user));
+        doOnEachRunningDataset(job, datasetUploadState -> {
+            JobProgress jobProgress = this.progressTracker.get(job.getJobId());
+            DatasetProgress datasetProgress = jobProgress.getProgress(datasetUploadState.getId());
+            datasetProgress.setStep(DatasetPublishingStep.METADATA_PUBLISHING_STARTED);
+            metadataService.publish(datasetUploadState, user);
+            datasetProgress.setStep(DatasetPublishingStep.METADATA_PUBLISHING_FINISHED);
+        });
         save(job);
     }
 
-    public void addMetadataLinksToGeoServerDatasets(@NonNull UUID jobId) {
+    public void step4_addMetadataLinksToGeoServerDatasets(@NonNull UUID jobId) {
         log.info("Publish {}: Add metadata links to GeoServer layer infos", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);
         doOnEachRunningDataset(job, dset -> {
             if (JobStatus.RUNNING == dset.getPublishStatus()) {
+                JobProgress jobProgress = this.progressTracker.get(job.getJobId());
+                DatasetProgress datasetProgress = jobProgress.getProgress(dset.getId());
+                datasetProgress.setStep(DatasetPublishingStep.OWS_METADATA_UPDATE_STARTED);
                 owsService.addMetadataLink(dset);
+                datasetProgress.setStep(DatasetPublishingStep.OWS_METADATA_UPDATE_FINISHED);
                 dset.setPublishStatus(JobStatus.DONE);
+                datasetProgress.setStep(DatasetPublishingStep.COMPLETED);
             }
         });
         save(job);
@@ -180,28 +213,32 @@ public class PublishingBatchService {
                 try {
                     consumer.accept(dataset);
                 } catch (Exception e) {
+                    log.error(e.getMessage(), e);
                     dataset.setPublishStatus(JobStatus.ERROR);
                     dataset.setError(e.getMessage());
                 }
             }
         }
-        save(job);
     }
 
     @Transactional
     public void summarize(@NonNull UUID jobId) {
         log.info("Publish {}: summarize status", jobId);
         DataUploadJob job = this.findJob(jobId);
-        if (job.getPublishStatus() != JobStatus.ERROR) {
-            JobStatus status = determineJobStatus(job.getPublishableDatasets());
-            job.setPublishStatus(status);
-            if (JobStatus.ERROR == status) {
-                String errorMessage = buildErrorMessage(job.getPublishableDatasets());
-                log.info("Publish {}: summarized status is ERROR '{}'", jobId, errorMessage);
-                job.setError(errorMessage);
+        try {
+            if (job.getPublishStatus() != JobStatus.ERROR) {
+                JobStatus status = determineJobStatus(job.getPublishableDatasets());
+                job.setPublishStatus(status);
+                if (JobStatus.ERROR == status) {
+                    String errorMessage = buildErrorMessage(job.getPublishableDatasets());
+                    log.info("Publish {}: summarized status is ERROR '{}'", jobId, errorMessage);
+                    job.setError(errorMessage);
+                }
             }
+            save(job);
+        } finally {
+            this.progressTracker.dispose(job.getJobId());
         }
-        save(job);
     }
 
     private JobStatus determineJobStatus(List<DatasetUploadState> datasets) {
@@ -222,4 +259,15 @@ public class PublishingBatchService {
                         .map(d -> d.getName() + ": " + d.getError()).collect(Collectors.joining("\n"));
     }
 
+    @RequiredArgsConstructor
+    private static class DataImportProgressListener extends DefaultProgressListener {
+
+        private final PublishJobProgressTracker.DatasetProgress datasetProgressTracker;
+
+        public @Override void progress(float percent) {
+            super.progress(percent);
+            float percentFactor = percent / 100f;
+            this.datasetProgressTracker.setImportProgress(percentFactor);
+        }
+    }
 }

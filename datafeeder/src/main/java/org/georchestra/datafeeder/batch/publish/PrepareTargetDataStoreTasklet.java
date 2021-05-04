@@ -64,7 +64,7 @@ public class PrepareTargetDataStoreTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         try {
-            service.prepareTargetStoreForJobDatasets(uploadId, user);
+            service.step0_prepareTargetStoreForJobDatasets(uploadId, user);
         } catch (RuntimeException e) {
             log.error("Error preparing target store", e);
             String message = e.getMessage();

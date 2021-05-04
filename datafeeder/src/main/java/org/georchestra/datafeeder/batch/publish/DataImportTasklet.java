@@ -54,7 +54,7 @@ public class DataImportTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.importDatasetsToTargetDatastore(uploadId, user);
+        service.step1_importDatasetsToTargetDatastore(uploadId, user);
         return RepeatStatus.FINISHED;
     }
 
