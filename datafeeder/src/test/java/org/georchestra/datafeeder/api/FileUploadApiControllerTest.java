@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.api;
 
 import static org.georchestra.datafeeder.model.JobStatus.DONE;
 import static org.georchestra.datafeeder.model.JobStatus.ERROR;
+import static org.georchestra.datafeeder.model.JobStatus.RUNNING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +31,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -44,10 +46,10 @@ import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,6 +78,7 @@ public class FileUploadApiControllerTest {
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
     private @Autowired FileUploadApi controller;
+    private @Autowired FileStorageService storageService;
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
@@ -294,38 +297,84 @@ public class FileUploadApiControllerTest {
         }
     }
 
-    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
-    public void testRemoveJob_ok_when_running_and_abort_is_true() {
+    public void testRemoveJob_ok_when_running_and_abort_is_true() throws Exception {
         UploadJobStatus job1 = testSupport.upload(multipartSupport.archSitesShapefile());
         UploadJobStatus job2 = testSupport.upload(multipartSupport.roadsShapefile());
-        UUID id1 = job1.getJobId();
-        UUID id2 = job2.getJobId();
+        final UUID id1 = job1.getJobId();
+        final UUID id2 = job2.getJobId();
 
         final Boolean abort = true;
-        assertEquals(OK, controller.removeJob(id1, abort));
-        assertEquals(OK, controller.removeJob(id2, abort));
 
-        assertEquals(NOT_FOUND, controller.findUploadJob(id1).getStatusCode());
-        assertEquals(NOT_FOUND, controller.findUploadJob(id2).getStatusCode());
+        testSupport.awaitUntilJobIsOneOf(id1, 5, RUNNING);
+        assertEquals(OK, controller.removeJob(id1, abort).getStatusCode());
+
+        testSupport.awaitUntilJobIsOneOf(id2, 5, RUNNING, DONE);
+        assertEquals(OK, controller.removeJob(id2, abort).getStatusCode());
+
+        try {
+            controller.findUploadJob(id1);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
+        try {
+            controller.findUploadJob(id2);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
+
+        try {
+            storageService.find(id1);
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
+        try {
+            storageService.find(id2);
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
+        Thread.sleep(10000);
     }
 
-    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
-    public void testRemoveJob_conflict_if_running_and_abort_not_specified() {
+    public void testRemoveJob_conflict_if_running_and_abort_not_specified() throws Exception {
         UploadJobStatus job1 = testSupport.upload(multipartSupport.archSitesShapefile());
         UploadJobStatus job2 = testSupport.upload(multipartSupport.roadsShapefile());
         UUID id1 = job1.getJobId();
         UUID id2 = job2.getJobId();
 
         final Boolean abort = true;
-        assertEquals(OK, controller.removeJob(id1, abort));
-        assertEquals(OK, controller.removeJob(id2, abort));
+        assertEquals(OK, controller.removeJob(id1, abort).getStatusCode());
+        assertEquals(OK, controller.removeJob(id2, abort).getStatusCode());
 
-        assertEquals(NOT_FOUND, controller.findUploadJob(id1).getStatusCode());
-        assertEquals(NOT_FOUND, controller.findUploadJob(id2).getStatusCode());
+        try {
+            controller.findUploadJob(id1);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
+
+        try {
+            controller.findUploadJob(id2);
+            fail("expected NOT_FOUND exception");
+        } catch (ApiException expected) {
+            assertEquals(NOT_FOUND, expected.getStatus());
+        }
+
+        try {
+            storageService.find(id1);
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
+        try {
+            storageService.find(id2);
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
     }
 
     @Test
@@ -343,7 +392,6 @@ public class FileUploadApiControllerTest {
         }
     }
 
-    @Ignore("waiting for implementation of remove as part of GSGEODPT43-88")
     @Test
     public void testRemoveJob_administrator_can_remove_other_users_jobs() {
         testSupport.setCallingUser("testuser", "USER", "SOMEOTHERROLE");

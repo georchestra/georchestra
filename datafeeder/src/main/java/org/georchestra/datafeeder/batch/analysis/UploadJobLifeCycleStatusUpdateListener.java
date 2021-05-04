@@ -102,7 +102,10 @@ public class UploadJobLifeCycleStatusUpdateListener implements JobExecutionListe
             eventPublisher.publishEvent(new AnalysisFinishedEvent(job, user));
         }
             break;
-        case ABANDONED:
+        case ABANDONED: {
+
+        }
+            break;
         case FAILED: {
             service.summarize(uploadId);
             DataUploadJob job = repository.getOne(uploadId);

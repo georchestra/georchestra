@@ -82,7 +82,7 @@ public class DataUploadJob {
     @Basic(fetch = FetchType.EAGER)
     private String error;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<DatasetUploadState> datasets = new ArrayList<>();
 
     @Deprecated

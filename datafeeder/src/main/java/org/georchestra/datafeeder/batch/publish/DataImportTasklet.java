@@ -22,22 +22,25 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.georchestra.datafeeder.batch.DatafeederTasklet;
 import org.georchestra.datafeeder.batch.UserInfoPropertyEditor;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Tasklet to copy Datasets into the configured target data store (usually a
  * PostGIS database).
  * 
  */
-public class DataImportTasklet implements Tasklet {
+@Slf4j
+public class DataImportTasklet implements DatafeederTasklet {
 
     private @Autowired PublishingBatchService service;
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
@@ -56,6 +59,11 @@ public class DataImportTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         service.step1_importDatasetsToTargetDatastore(uploadId, user);
         return RepeatStatus.FINISHED;
+    }
+
+    @Override
+    public void stop() {
+        log.warn("Implement {}.stop()!!!", getClass().getSimpleName());
     }
 
 }

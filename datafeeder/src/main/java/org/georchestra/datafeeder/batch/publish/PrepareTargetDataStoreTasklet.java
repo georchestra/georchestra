@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
+import org.georchestra.datafeeder.batch.DatafeederTasklet;
 import org.georchestra.datafeeder.batch.UserInfoPropertyEditor;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.georchestra.datafeeder.model.DataUploadJob;
@@ -29,13 +30,10 @@ import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 
 import com.google.common.base.Throwables;
 
@@ -46,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  * PostGIS database, that might require creating a postgis database, or schema).
  */
 @Slf4j
-public class PrepareTargetDataStoreTasklet implements Tasklet {
+public class PrepareTargetDataStoreTasklet implements DatafeederTasklet {
 
     private @Autowired PublishingBatchService service;
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
@@ -80,4 +78,8 @@ public class PrepareTargetDataStoreTasklet implements Tasklet {
         return RepeatStatus.FINISHED;
     }
 
+    @Override
+    public void stop() {
+        log.warn("Implement {}.stop()!!!", getClass().getSimpleName());
+    }
 }

@@ -20,15 +20,18 @@ package org.georchestra.datafeeder.batch.publish;
 
 import java.util.UUID;
 
+import org.georchestra.datafeeder.batch.DatafeederTasklet;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-public class GeoServerGeoNetworkUpdateTasklet implements Tasklet {
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class GeoServerGeoNetworkUpdateTasklet implements DatafeederTasklet {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired PublishingBatchService service;
@@ -37,5 +40,10 @@ public class GeoServerGeoNetworkUpdateTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         service.step4_addMetadataLinksToGeoServerDatasets(uploadId);
         return RepeatStatus.FINISHED;
+    }
+
+    @Override
+    public void stop() {
+        log.warn("Implement {}.stop()!!!", getClass().getSimpleName());
     }
 }

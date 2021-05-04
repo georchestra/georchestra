@@ -19,6 +19,9 @@
 package org.georchestra.datafeeder.batch.service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.batch.analysis.UploadAnalysisJobConfiguration;
@@ -26,10 +29,16 @@ import org.georchestra.datafeeder.batch.publish.DataPublishingJobConfiguration;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobExecutionNotRunningException;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.NoSuchJobException;
+import org.springframework.batch.core.launch.NoSuchJobExecutionException;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
@@ -39,6 +48,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Objects;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +57,8 @@ import lombok.extern.slf4j.Slf4j;
 public class JobManager {
 
     private @Autowired JobLauncher jobLauncher;
+    private @Autowired JobOperator jobOperator;
+    private @Autowired JobExplorer jobExplorer;
     private @Autowired ApplicationContext context;
 
     @Async
@@ -91,6 +103,54 @@ public class JobManager {
             throw new RuntimeException("Error running job " + jobId, e);
         }
         log.info("Publishing job {} finished with status {}", jobId, execution.getStatus());
+    }
+
+    public void abort(@NonNull UUID jobId) {
+        abort(UploadAnalysisJobConfiguration.JOB_NAME, jobId);
+        abort(DataPublishingJobConfiguration.JOB_NAME, jobId);
+    }
+
+    private void abort(@NonNull String jobName, @NonNull UUID uploadId) {
+        Optional<JobExecution> jobExecution = findRunnningExecution(jobName, uploadId);
+        if (!jobExecution.isPresent()) {
+            log.info("job execution {}/{} not running, re-trying", jobName, uploadId);
+            return;
+        }
+        jobExecution.ifPresent(execution -> {
+            final long executionId = execution.getId();
+            try {
+                // sends a stop signal, doesn't mean the job is actuall stopped once the method
+                // returns
+                boolean stopSignalSent = jobOperator.stop(executionId);
+                if (!stopSignalSent) {
+                    log.warn("Stop signal for batch job execution {}/{} was not sent", jobName, executionId);
+                }
+            } catch (NoSuchJobExecutionException e) {
+                log.warn("Requested batch job execution {}/{} no longer exists", jobName, executionId);
+                return;
+            } catch (JobExecutionNotRunningException e) {
+                log.warn("Requested batch job execution {}/{} is not running, no need to abort", jobName, executionId);
+                return;
+            }
+            try {
+                log.info("Abandoning batch job execution {}/{}", jobName, executionId);
+                jobOperator.abandon(executionId);
+            } catch (NoSuchJobExecutionException | JobExecutionAlreadyRunningException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private Optional<JobExecution> findRunnningExecution(@NonNull String jobName, @NonNull UUID uploadId) {
+        Set<JobExecution> runningExecutions = jobExplorer.findRunningJobExecutions(jobName);
+        for (JobExecution execution : runningExecutions) {
+            JobParameters jobParameters = execution.getJobParameters();
+            String jobIdParam = jobParameters.getString("uploadId");
+            if (Objects.equal(uploadId.toString(), jobIdParam)) {
+                return Optional.of(execution);
+            }
+        }
+        return Optional.empty();
     }
 
     public static String toString(@NonNull UserInfo user) {

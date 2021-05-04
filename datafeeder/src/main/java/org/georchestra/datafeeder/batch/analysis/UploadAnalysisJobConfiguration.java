@@ -84,7 +84,7 @@ public class UploadAnalysisJobConfiguration {
         return new UploadJobLifeCycleStatusUpdateListener();
     }
 
-    public @Bean Step initializeDataUploadState(DataUploadStateInitializer initializer) {
+    public @Bean Step initializeDataUploadState(DataUploadStateInitializerTasklet initializer) {
         return steps.get("initializeDataUploadState")//
                 .tasklet(initializer)//
                 .transactionManager(platformTransactionManager)//

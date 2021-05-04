@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.georchestra.datafeeder.api.FileUploadApiController;
 import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -47,6 +49,7 @@ public class DataUploadService {
     private @Autowired DataUploadJobRepository repository;
     private @Autowired DataUploadAnalysisService analysisService;
     private @Autowired DatasetsService datasetsService;
+    private @Autowired FileStorageService storageService;
 
     public Optional<DataUploadJob> findJob(UUID uploadId) {
         return repository.findByJobId(uploadId);
@@ -75,12 +78,16 @@ public class DataUploadService {
         return repository.findAllByUsernameOrderByCreatedDateDesc(userName);
     }
 
+    @Transactional
     public void abortAndRemove(@NonNull UUID jobId) {
-        throw new UnsupportedOperationException("unimplemented");
+        analysisService.abort(jobId);
+        remove(jobId);
     }
 
+    @Transactional
     public void remove(@NonNull UUID jobId) {
         repository.deleteById(jobId);
+        storageService.deletePackage(jobId);
     }
 
     public SimpleFeature sampleFeature(@NonNull UUID jobId, @NonNull String typeName, int featureN, Charset encoding,

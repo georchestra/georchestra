@@ -33,9 +33,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -95,7 +101,9 @@ public class DatasetUploadState {
     private String encoding;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "dataset_sample_properties")
+    @CollectionTable(name = "dataset_sample_properties", joinColumns = @JoinColumn(name = "dataset_upload_state_id"))
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Cascade(value = { CascadeType.ALL })
     private List<SampleProperty> sampleProperties = new ArrayList<>();
 
     @Embedded

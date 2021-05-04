@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.batch.analysis;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.georchestra.datafeeder.batch.DatafeederTasklet;
 import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * {@link Tasklet} that prepares the initial state of a {@link DataUploadJob},
@@ -55,7 +57,8 @@ import lombok.Setter;
  */
 @Component
 @StepScope
-public class DataUploadStateInitializer implements Tasklet {
+@Slf4j
+public class DataUploadStateInitializerTasklet implements DatafeederTasklet {
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Autowired @Setter DataUploadAnalysisService service;
@@ -65,5 +68,10 @@ public class DataUploadStateInitializer implements Tasklet {
                 () -> String.format("Job parameter not provided: " + UploadAnalysisJobConfiguration.JOB_PARAM_NAME));
         service.initialize(uploadId);
         return RepeatStatus.FINISHED;
+    }
+
+    @Override
+    public void stop() {
+        log.warn("Implement {}.stop()!!!", getClass().getSimpleName());
     }
 }

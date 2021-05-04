@@ -157,6 +157,7 @@ public class DataUploadAnalysisService {
         final Path path = Paths.get(item.getAbsolutePath());
         final String typeName = item.getName();
         try {
+            Thread.sleep(5000);
             DatasetMetadata datasetMetadata = datasetsService.describe(path, typeName);
             item.setAnalyzeStatus(JobStatus.DONE);
             item.setEncoding(datasetMetadata.getEncoding());
@@ -268,5 +269,9 @@ public class DataUploadAnalysisService {
         dataset.setAnalyzeStatus(JobStatus.ERROR);
         dataset.setError(e.getMessage());
         return dataset;
+    }
+
+    public void abort(@NonNull UUID jobId) {
+        jobManager.abort(jobId);
     }
 }
