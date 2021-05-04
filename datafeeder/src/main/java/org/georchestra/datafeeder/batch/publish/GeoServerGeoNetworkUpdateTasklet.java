@@ -35,7 +35,7 @@ public class GeoServerGeoNetworkUpdateTasklet implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-        service.addMetadataLinksToGeoServerDatasets(uploadId);
+        service.step4_addMetadataLinksToGeoServerDatasets(uploadId);
         return RepeatStatus.FINISHED;
     }
 }

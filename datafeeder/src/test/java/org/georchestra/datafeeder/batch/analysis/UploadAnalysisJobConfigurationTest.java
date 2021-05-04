@@ -156,7 +156,6 @@ public class UploadAnalysisJobConfigurationTest {
         assertEquals(uploadId, state.getJobId());
         assertEquals(JobStatus.DONE, state.getAnalyzeStatus());
         assertEquals(1, state.getDatasets().size());
-        assertEquals(1.0, state.getProgress(), 0d);
 
         DatasetUploadState dset = state.getDatasets().get(0);
         assertEquals(JobStatus.DONE, dset.getAnalyzeStatus());
@@ -196,9 +195,6 @@ public class UploadAnalysisJobConfigurationTest {
         assertEquals(uploadId, state.getJobId());
         assertEquals(JobStatus.DONE, state.getAnalyzeStatus());
         assertEquals(3, state.getDatasets().size());
-        assertEquals(3, state.getTotalSteps());
-        assertEquals(3, state.getFinishedSteps());
-        assertEquals(1.0, state.getProgress(), 0d);
 
         List<DatasetUploadState> dsets = datasetRepository.findAllByJobId(uploadId);
         assertEquals(3, dsets.size());

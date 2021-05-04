@@ -54,7 +54,4 @@ public interface DataUploadJobRepository extends JpaRepository<DataUploadJob, UU
     int setPublishingStatus(@Param("jobId") UUID jobId, @Param("status") JobStatus status,
             @Param("error") String errorMessage);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update DataUploadJob set finishedSteps = finishedSteps + 1 where jobId = :jobId")
-    int incrementProgress(@Param("jobId") UUID jobId);
 }

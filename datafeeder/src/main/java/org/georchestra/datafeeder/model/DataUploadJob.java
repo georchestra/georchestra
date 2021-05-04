@@ -85,12 +85,10 @@ public class DataUploadJob {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<DatasetUploadState> datasets = new ArrayList<>();
 
+    @Deprecated
     private int totalSteps;
+    @Deprecated
     private int finishedSteps;
-
-    public double getProgress() {
-        return totalSteps == 0 ? 0d : (double) finishedSteps / totalSteps;
-    }
 
     /**
      * @return all uploaded datasets

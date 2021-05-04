@@ -43,6 +43,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.geotools.jdbc.JDBCDataStore;
+import org.opengis.util.ProgressListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -128,7 +129,8 @@ public class GeorchestraDataBackendService implements DataBackendService {
     }
 
     @Override
-    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
+    public void importDataset(@NonNull DatasetUploadState dataset, @NonNull UserInfo user,
+            @NonNull ProgressListener progressListener) {
         requireNonNull(dataset.getName(), "Dataset name is null");
         requireNonNull(user.getOrganization(), "Organization is null");
         requireNonNull(user.getOrganization().getId(), "Organization is null");
@@ -146,7 +148,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
         try {
             dataset.getPublishing().setImportedName(uniqueTargetName);
             log.info("Importing dataset {} into PostGIS as {}.{}", dataset.getName(), postgresSchema, uniqueTargetName);
-            datasetsService.importDataset(dataset, connectionParams);
+            datasetsService.importDataset(dataset, connectionParams, progressListener);
         } catch (IOException e) {
             log.error("Error importing dataset {} into PostGIS as {}.{}", dataset.getName(), postgresSchema,
                     uniqueTargetName, e);

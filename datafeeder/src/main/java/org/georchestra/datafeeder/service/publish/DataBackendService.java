@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.service.publish;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.opengis.util.ProgressListener;
 
 import lombok.NonNull;
 
@@ -28,6 +29,6 @@ public interface DataBackendService {
 
     void prepareBackend(DataUploadJob job, @NonNull UserInfo user);
 
-    void importDataset(DatasetUploadState dataset, @NonNull UserInfo user);
+    void importDataset(DatasetUploadState dataset, @NonNull UserInfo user, @NonNull ProgressListener progressListener);
 
 }

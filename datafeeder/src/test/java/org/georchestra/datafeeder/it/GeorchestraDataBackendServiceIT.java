@@ -42,11 +42,13 @@ import org.georchestra.datafeeder.test.TestData;
 import org.geotools.data.DataStore;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.util.NullProgressListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengis.util.ProgressListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,6 +75,8 @@ public class GeorchestraDataBackendServiceIT {
     private DataUploadJob job;
     private DatasetUploadState dataset;
     private PublishSettings publishing;
+
+    private ProgressListener importProgressListener = new NullProgressListener();
 
     public @Before void before() throws SQLException {
         testConnection = support.createLocalPostgisConnection();
@@ -115,7 +119,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("somename");
         dataset.setPublishing(null);
         NullPointerException ex = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user()));
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(ex.getMessage(), containsString("Dataset 'publishing' settings is null"));
     }
 
@@ -124,12 +128,12 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setAbsolutePath(null);
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user()));
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(npe.getMessage(), containsString("absolutePath not provided"));
 
         dataset.setAbsolutePath("/tmp/nonexistent/" + UUID.randomUUID());
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset, support.user()));
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset absolutePath is not a file"));
     }
 
@@ -138,7 +142,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName(null);
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user()));
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(npe.getMessage(), containsString("Dataset name is null"));
     }
 
@@ -147,7 +151,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("invalidName");
 
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset, support.user()));
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset name 'invalidName' does not exist"));
     }
 
@@ -157,7 +161,7 @@ public class GeorchestraDataBackendServiceIT {
 
         service.prepareBackend(job, support.user());
 
-        service.importDataset(dataset, support.user());
+        service.importDataset(dataset, support.user(), importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
         DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));

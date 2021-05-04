@@ -77,7 +77,7 @@ public class DataPublishingApiControllerTest {
         DatasetUploadState dset = upload.getDatasets().get(0);
         DatasetPublishRequest dsetReq = buildRequest(dset);
 
-        PublishRequest publishRequest = new PublishRequest().datasets(Arrays.asList(dsetReq));
+        PublishRequest publishRequest = new PublishRequest().addDatasetsItem(dsetReq);
 
         ResponseEntity<PublishJobStatus> response = controller.publish(upload.getJobId(), publishRequest);
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
@@ -160,7 +160,7 @@ public class DataPublishingApiControllerTest {
         DatasetPublishRequest dsetReq = buildRequest(dset);
         dsetReq.setSrs(null);
 
-        PublishRequest publishRequest = new PublishRequest().datasets(Arrays.asList(dsetReq));
+        PublishRequest publishRequest = new PublishRequest().addDatasetsItem(dsetReq);
 
         ResponseEntity<PublishJobStatus> response = controller.publish(upload.getJobId(), publishRequest);
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());

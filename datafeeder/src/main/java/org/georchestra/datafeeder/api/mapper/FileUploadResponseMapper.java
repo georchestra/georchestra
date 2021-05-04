@@ -26,17 +26,20 @@ import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", uses = CRSMapper.class)
+@Mapper(componentModel = "spring", uses = CRSMapper.class, unmappedSourcePolicy = ReportingPolicy.WARN, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface FileUploadResponseMapper {
 
-    @Mappings({ @Mapping(target = "status", source = "analyzeStatus") })
+    @Mapping(target = "status", source = "analyzeStatus")
+    @Mapping(target = "progress", ignore = true) // set by setJobProgress() @Aftermapping
     UploadJobStatus toApi(DataUploadJob state);
 
-    @Mappings({ @Mapping(target = "status", source = "analyzeStatus") })
+    @Mapping(target = "status", source = "analyzeStatus")
     DatasetUploadStatus toApi(DatasetUploadState dataset);
 
     BoundingBox toApi(BoundingBoxMetadata bounds);
@@ -56,6 +59,24 @@ public interface FileUploadResponseMapper {
             return AnalysisStatusEnum.ERROR;
         default:
             throw new IllegalArgumentException("Unexpected enum constant: " + jobStatus);
+        }
+    }
+
+    /**
+     * Analysis job doesn't really do progress reporting, it proved to be too fast
+     * to justify it
+     */
+    default @AfterMapping void setJobProgress(DataUploadJob source, @MappingTarget UploadJobStatus target) {
+        switch (source.getAnalyzeStatus()) {
+        case DONE:
+        case ERROR:
+            target.setProgress(1.0);
+            break;
+        case PENDING:
+        case RUNNING:
+        default:
+            target.setProgress(0.0);
+            break;
         }
     }
 }
