@@ -159,6 +159,6 @@ logging:
     root: info
     '[feign]': info
     '[org.georchestra.datafeeder]': info
-    '[org.georchestra.config.security]': debug
+    '[org.georchestra.config.security]': info
     '[org.georchestra.config.security.GeorchestraSecurityProxyAuthenticationFilter]': info #mute GeorchestraSecurityProxyAuthenticationFilter superclass a bit
     '[org.geoserver.openapi]': info

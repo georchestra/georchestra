@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.batch.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -35,6 +36,7 @@ import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
+import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
@@ -58,6 +60,7 @@ public class PublishingBatchService {
     private @Autowired JobManager jobManager;
 
     private @Autowired DataUploadJobRepository repository;
+    private @Autowired DatasetUploadStateRepository datasetRepository;
     private @Autowired DataBackendService backendService;
     private @Autowired OWSPublicationService owsService;
     private @Autowired MetadataPublicationService metadataService;
@@ -208,21 +211,35 @@ public class PublishingBatchService {
     }
 
     private void doOnEachRunningDataset(DataUploadJob job, Consumer<DatasetUploadState> consumer) {
+        List<RuntimeException> errors = new ArrayList<>();
         for (DatasetUploadState dataset : job.getPublishableDatasets()) {
             if (JobStatus.RUNNING == dataset.getPublishStatus()) {
                 try {
                     consumer.accept(dataset);
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
+                } catch (RuntimeException e) {
+                    // we need to leave the spring-batch job complete normally or the
+                    // publishStatus/error won't be persisted, as spring-batch and our JPA
+                    // repositories share the same entity manager. If a publish process failed and
+                    // the exception was re-thrown, spring-batch would abort the current
+                    // transaction.
+                    String error = e.getMessage();
+                    log.error(error, e);
                     dataset.setPublishStatus(JobStatus.ERROR);
-                    dataset.setError(e.getMessage());
+                    dataset.setError(error);
+                    errors.add(e);
+                }
+            }
+        }
+        if (!errors.isEmpty()) {
+            for (DatasetUploadState dataset : job.getPublishableDatasets()) {
+                if (dataset.getPublishStatus() == JobStatus.RUNNING) {
+                    dataset.setPublishStatus(JobStatus.PENDING);
                 }
             }
         }
     }
 
-    @Transactional
-    public void summarize(@NonNull UUID jobId) {
+    public DataUploadJob summarize(@NonNull UUID jobId) {
         log.info("Publish {}: summarize status", jobId);
         DataUploadJob job = this.findJob(jobId);
         try {
@@ -239,6 +256,7 @@ public class PublishingBatchService {
         } finally {
             this.progressTracker.dispose(job.getJobId());
         }
+        return job;
     }
 
     private JobStatus determineJobStatus(List<DatasetUploadState> datasets) {

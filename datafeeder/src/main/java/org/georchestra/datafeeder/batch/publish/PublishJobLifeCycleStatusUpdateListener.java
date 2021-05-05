@@ -99,15 +99,24 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
         log.info("publish job id: {}, status: {}", uploadId, status);
         switch (status) {
         case COMPLETED: {
-            service.summarize(uploadId);
-            DataUploadJob job = repository.getOne(uploadId);
-            eventPublisher.publishEvent(new PublishFinishedEvent(job, user));
+            // Check for DataUploadJob.publishStatus,
+            // we need to leave the spring-batch job complete normally or the
+            // publishStatus/error won't be persisted, as spring-batch and our JPA
+            // repositories share the same entity manager. If a publish process failed and
+            // the exception was re-thrown, spring-batch would abort the current
+            // transaction.
+            DataUploadJob job = service.summarize(uploadId);
+            if (job.getPublishStatus() == JobStatus.DONE) {
+                eventPublisher.publishEvent(new PublishFinishedEvent(job, user));
+            } else if (job.getPublishStatus() == JobStatus.ERROR) {
+                eventPublisher.publishEvent(new PublishFailedEvent(job, user, null));
+            }
             storageService.deletePackage(uploadId);
         }
             break;
         case ABANDONED:
         case FAILED: {
-            service.summarize(uploadId);
+//			service.summarize(uploadId);
             DataUploadJob job = repository.getOne(uploadId);
             eventPublisher.publishEvent(new PublishFailedEvent(job, user, null));
         }

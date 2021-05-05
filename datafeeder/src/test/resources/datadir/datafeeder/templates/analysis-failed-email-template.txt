@@ -9,9 +9,20 @@ body:
 Dear ${user.name}, 
 
 We're sorry to inform you that a problem occurred during the
-analysis phase for the ${dataset.name} you've uploaded.
+analysis phase for the ${dataset.name} dataset you have provided
+on ${job.createdAt}.
 
-Here's the full information:
+The platform administrator has been notified too.
+
+Job identifier: ${job.id}
+Reported error: ${job.error}
+
+You can access the job page at this location: ${publicUrl}/import/${job.id}
+
+---
+Sent by ${instanceName}
+
+--- For debugging purposes, full list of available job properties: ---
 
 user.name: ${user.name}
 user.lastName: ${user.lastName}
@@ -38,6 +49,3 @@ metadata.lineage: ${metadata.lineage}
 metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
 metadata.keywords: ${metadata.keywords}
 metadata.scale: ${metadata.scale}
-
----
-Sent by ${instanceName}

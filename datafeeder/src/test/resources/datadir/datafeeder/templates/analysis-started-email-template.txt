@@ -6,10 +6,16 @@ from: Georchestra Importer Application
 subject: Analysis process started for your ${dataset.name} dataset
 body:
 
-Dear ${user.name}, 
+Dear ${user.name},
 
 Your ${dataset.name} dataset was received correctly and is currently being analyzed.
 
+You can access the job page at this location: ${publicUrl}/import/${job.id}
+
+---
+Sent by ${instanceName}
+
+--- For debugging purposes, full list of available job properties: ---
 user.name: ${user.name}
 user.lastName: ${user.lastName}
 user.email: ${user.email}
@@ -35,6 +41,3 @@ metadata.lineage: ${metadata.lineage}
 metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
 metadata.keywords: ${metadata.keywords}
 metadata.scale: ${metadata.scale}
-
----
-Sent by ${instanceName}
