@@ -31,6 +31,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
+import org.georchestra.datafeeder.service.FileStorageService;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -48,6 +49,7 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
     private @Autowired PublishingBatchService service;
     private @Autowired ApplicationEventPublisher eventPublisher;
     private @Autowired DataUploadJobRepository repository;
+    private @Autowired FileStorageService storageService;
 
     private @Value("#{jobParameters['uploadId']}") UUID uploadId;
     private @Value("#{jobParameters['user']}") String userStr;
@@ -100,6 +102,7 @@ public class PublishJobLifeCycleStatusUpdateListener implements JobExecutionList
             service.summarize(uploadId);
             DataUploadJob job = repository.getOne(uploadId);
             eventPublisher.publishEvent(new PublishFinishedEvent(job, user));
+            storageService.deletePackage(uploadId);
         }
             break;
         case ABANDONED:

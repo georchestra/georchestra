@@ -30,6 +30,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +45,7 @@ import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.hamcrest.Matchers;
@@ -72,6 +74,7 @@ public class FileUploadApiControllerTest {
 
     private @Autowired ApiTestSupport testSupport;
     private @Autowired DataUploadService uploadService;
+    private @Autowired FileStorageService storageService;
 
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
@@ -264,7 +267,7 @@ public class FileUploadApiControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
-    public void testRemoveJob_ok_when_job_is_done() {
+    public void testRemoveJob_ok_when_job_is_done() throws IOException {
         UploadJobStatus job1 = testSupport.upload(multipartSupport.archSitesShapefile());
         UploadJobStatus job2 = testSupport.upload(multipartSupport.roadsShapefile());
         UUID id1 = job1.getJobId();
@@ -283,6 +286,12 @@ public class FileUploadApiControllerTest {
         } catch (ApiException expected) {
             assertEquals(NOT_FOUND, expected.getStatus());
         }
+        try {
+            this.storageService.find(id1);
+            fail("Expected FileNotFoundException");
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
 
         assertEquals(OK, controller.findUploadJob(id2).getStatusCode());
         assertEquals(OK, controller.removeJob(id2, abort).getStatusCode());
@@ -291,6 +300,12 @@ public class FileUploadApiControllerTest {
             fail("expected NOT_FOUND exception");
         } catch (ApiException expected) {
             assertEquals(NOT_FOUND, expected.getStatus());
+        }
+        try {
+            this.storageService.find(id2);
+            fail("Expected FileNotFoundException");
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
         }
     }
 
