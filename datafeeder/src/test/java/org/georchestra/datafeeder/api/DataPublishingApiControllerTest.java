@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,13 +66,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class DataPublishingApiControllerTest {
 
     private @Autowired ApiTestSupport testSupport;
+    private @Autowired FileStorageService storageService;
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
     private @Autowired DataPublishingApi controller;
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
-    public void testPublish_SingleShapefile() {
+    public void testPublish_SingleShapefile() throws IOException {
         List<MultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
         DataUploadJob upload = testSupport.uploadAndWaitForSuccess(shapefileFiles, "statepop");
 
@@ -127,6 +130,14 @@ public class DataPublishingApiControllerTest {
             assertEquals(expectedWorkspace, actual.getPublishedWorkspace());
             assertNotNull(actual.getMetadataRecordId());
         }
+
+        try {
+            this.storageService.find(upload.getJobId());
+            fail("Expected FileNotFoundException, data on disk should have been removed once the job completed");
+        } catch (FileNotFoundException expected) {
+            assertTrue(true);
+        }
+
     }
 
     @Test
