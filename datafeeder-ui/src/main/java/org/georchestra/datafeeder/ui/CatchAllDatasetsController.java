@@ -15,6 +15,8 @@ import java.io.OutputStream;
 public class CatchAllDatasetsController {
 
     private void serveIndexHtml(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setHeader("Content-Type", "text/html;charset=UTF-8");
+
         OutputStream os = response.getOutputStream();
         InputStream is = request.getServletContext().getResourceAsStream("/index.html");
         IOUtils.copy(is, os);
