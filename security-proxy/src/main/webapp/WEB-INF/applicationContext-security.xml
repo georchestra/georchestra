@@ -96,7 +96,7 @@
         <!-- preemptive basic auth -->
         <!-- note that this will prevent access to public layers for users with no account -->
         <!-- Comma-separated list of user agents, eg: ".*ArcGIS.*,.*uDig.*,.*QGIS.*" -->
-        <property name="userAgents" value="${userAgents:}"/>
+        <property name="userAgents" value="#{'${userAgents:}'.split(',')}"/>
         <property name="ignoreHttps" value="true" />
         <property name="credentialsCharset" value="UTF-8"/>
     </bean>
