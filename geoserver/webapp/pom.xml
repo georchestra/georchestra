@@ -418,7 +418,7 @@
       </dependencies>
     </profile>
     <profile>
-      <id>importer</id>
+      <id>gs-importer</id>
       <dependencies>
         <dependency>
           <groupId>org.geoserver.importer</groupId>
