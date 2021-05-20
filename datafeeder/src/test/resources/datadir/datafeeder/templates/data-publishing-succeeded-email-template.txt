@@ -9,7 +9,20 @@ body:
 Dear ${user.name}, 
 
 We're pleased to inform you that your ${dataset.name} dataset
-has been published.
+submitted on ${job.createdAt} has been correctly processed and published.
+
+Browse to the following URL to access a map preview of the published layer:
+
+${publicUrl}/geoserver/${publish.workspace}/wms/reflect?format=application/openlayers&LAYERS=${publish.layerName}
+
+And to this URL to access its published metadata:
+
+${publicUrl}/geonetwork/srv/eng/catalog.search#/metadata/${metadata.id}
+
+---
+Sent by ${instanceName}
+
+--- For debugging purposes, full list of available job properties: ---
 
 user.name: ${user.name}
 user.lastName: ${user.lastName}
@@ -36,6 +49,3 @@ metadata.lineage: ${metadata.lineage}
 metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
 metadata.keywords: ${metadata.keywords}
 metadata.scale: ${metadata.scale}
-
----
-Sent by ${instanceName}

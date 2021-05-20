@@ -8,10 +8,21 @@ body:
 
 Dear ${user.name}, 
 
-We're sorry to inform you that the publcation process for your
-${dataset.name} dataset failed.
+We're sorry to inform you that the publication process for your
+${dataset.name} dataset failed submitted on ${job.createdAt}
+has encountered an error and could not finish correctly. 
 
-Here's the full information:
+The platform administrator has been notified too.
+
+Job identifier: ${job.id}
+Reported error: ${job.error}
+
+You can access the job page at this location: ${publicUrl}/import/${job.id}
+
+---
+Sent by ${instanceName}
+
+--- For debugging purposes, full list of available job properties: ---
 
 user.name: ${user.name}
 user.lastName: ${user.lastName}
@@ -38,6 +49,3 @@ metadata.lineage: ${metadata.lineage}
 metadata.latLonBoundingBox: ${metadata.latLonBoundingBox}
 metadata.keywords: ${metadata.keywords}
 metadata.scale: ${metadata.scale}
-
----
-Sent by ${instanceName}

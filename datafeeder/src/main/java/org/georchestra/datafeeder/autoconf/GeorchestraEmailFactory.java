@@ -358,9 +358,9 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
         return propertyName;
     }
 
-    private Set<String> extractVariableNames(String messageTemplate) {
-        Matcher matcher = Pattern.compile("\\$\\{.*\\}").matcher(messageTemplate);
+    static Set<String> extractVariableNames(String messageTemplate) {
         Set<String> varNames = new TreeSet<>();
+        Matcher matcher = Pattern.compile("\\$(\\{(\\w+\\.)*\\w+\\})").matcher(messageTemplate);
         while (matcher.find()) {
             String varName = matcher.group(0);
             varNames.add(varName);
