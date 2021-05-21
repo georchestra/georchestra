@@ -110,6 +110,8 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
+import org.georchestra.security.webdav.PropFindMethod;
+import org.georchestra.security.webdav.SearchMethod;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -370,8 +372,7 @@ public class Proxy {
      * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
-    @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
-            TRACE })
+    @RequestMapping(value = "/**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
@@ -957,7 +958,25 @@ public class Proxy {
         try {
             URL url = new URL(sURL);
             URI uri = buildUri(url);
-            HttpMethod meth = HttpMethod.resolve(request.getMethod());
+            String method = request.getMethod();
+            // handles webdav specific verbs
+            if (PropFindMethod.METHOD_NAME.equalsIgnoreCase(method)) {
+                PropFindMethod pfm = new PropFindMethod(uri);
+                int contentLength = request.getContentLength();
+                ServletInputStream inputStream = request.getInputStream();
+                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+                pfm.setEntity(entity);
+                return pfm;
+            } else if (SearchMethod.METHOD_NAME.equalsIgnoreCase(method)) {
+                SearchMethod sm = new SearchMethod(uri);
+                int contentLength = request.getContentLength();
+                ServletInputStream inputStream = request.getInputStream();
+                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+                sm.setEntity(entity);
+                return sm;
+            }
+
+            HttpMethod meth = HttpMethod.resolve(method);
 
             switch (meth) {
             case GET: {
@@ -1033,7 +1052,6 @@ public class Proxy {
                 logger.error(msg);
                 throw new IllegalArgumentException(msg);
             }
-
             }
         } catch (URISyntaxException e) {
             logger.error("ERROR creating URI from " + sURL, e);
