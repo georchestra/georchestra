@@ -6,6 +6,9 @@ RUN groupadd -r -g 630 geo && \
     mkdir /opt/app && \
     chown geo:geo /opt/app
 
+# where to store file uploads, should be mapped to a volume
+RUN mkdir /tmp/datafeeder && chown geo:geo /tmp/datafeeder
+
 USER geo
 EXPOSE 8080
 
