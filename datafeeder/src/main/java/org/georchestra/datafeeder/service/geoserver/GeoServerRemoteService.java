@@ -79,23 +79,21 @@ public class GeoServerRemoteService {
         return client().workspaces().getAsInfo(name);
     }
 
-    public @NonNull WorkspaceInfo getOrCreateWorkspace(@NonNull String workspaceName) {
+    public @NonNull WorkspaceInfo getOrCreateWorkspace(@NonNull String workspaceName, @NonNull String namespaceURI) {
         Optional<WorkspaceInfo> found = findWorkspace(workspaceName);
         if (found.isPresent()) {
             return found.get();
         }
         LOCKS.writeLock(workspaceName).lock();
         try {
-            return findWorkspaceInternal(workspaceName).orElseGet(() -> createWorkspace(workspaceName));
+            return findWorkspaceInternal(workspaceName).orElseGet(() -> createWorkspace(workspaceName, namespaceURI));
         } finally {
             LOCKS.writeLock(workspaceName).unlock();
         }
     }
 
-    /**
-     * @throws ServerException
-     */
-    private @NonNull WorkspaceInfo createWorkspace(@NonNull String workspaceName) {
+    private @NonNull WorkspaceInfo createWorkspace(@NonNull String workspaceName, @NonNull String namespaceURI) {
+        log.info("Creating workspace {} with namespace URI {}", workspaceName, namespaceURI);
         final WorkspacesClient workspaces = this.client().workspaces();
 
         LOCKS.writeLock(workspaceName).lock();
@@ -108,7 +106,7 @@ public class GeoServerRemoteService {
             wsInfo = workspaces.getAsInfo(workspaceName).orElseThrow(
                     () -> new IllegalStateException("Workspace " + workspaceName + " not found after creation"));
             try {
-                configureNamespace(wsInfo);
+                configureNamespace(workspaceName, namespaceURI);
             } catch (RuntimeException e) {
                 workspaces.delete(workspaceName);
                 throw e;
@@ -119,16 +117,13 @@ public class GeoServerRemoteService {
         }
     }
 
-    private void configureNamespace(final WorkspaceInfo wsInfo) {
+    private void configureNamespace(@NonNull String workspaceName, @NonNull String namespaceURI) {
         final NamespacesClient namespaces = this.client().namespaces();
 
-        final String workspaceName = wsInfo.getName();
-        String defaultNamespaceURI = "https://georchestra.org/datafeeder/" + wsInfo.getName();
         // change the namespace URI associated to the workspace
         NamespaceInfo nsInfo = namespaces.findByPrefix(workspaceName)
                 .orElseThrow(() -> new IllegalStateException("NamespaceInfo not found for workspace " + workspaceName));
-
-        nsInfo.setUri(defaultNamespaceURI);
+        nsInfo.setUri(namespaceURI);
         namespaces.update(nsInfo.getPrefix(), nsInfo);
     }
 
