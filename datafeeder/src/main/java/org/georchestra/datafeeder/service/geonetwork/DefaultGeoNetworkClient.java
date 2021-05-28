@@ -23,13 +23,16 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.ws.rs.client.Client;
 
 import org.fao.geonet.client.ApiClient;
 import org.fao.geonet.client.ApiException;
+import org.fao.geonet.client.GroupsApi;
 import org.fao.geonet.client.MeApi;
 import org.fao.geonet.client.RecordsApi;
+import org.fao.geonet.client.model.Group;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.MeResponse;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
@@ -92,7 +95,7 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
      * @param baseUrl e.g. {@code http://localhost:8080/geonetwork}
      */
     @Override
-    public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord) {
+    public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName) {
 
         ApiClient client = newApiClient();
         // RecordsApi api = client.buildClient(RecordsApi.class);
@@ -105,7 +108,6 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         final Boolean recursiveSearch = false;
         final Boolean assignToCatalog = false;
         final String uuidProcessing = "NOTHING";
-        final String group = null;
         final List<String> category = null;
         final Boolean rejectIfInvalid = false;
         final String transformWith = null;
@@ -115,8 +117,11 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         final Boolean publishToAll = true;
 
         SimpleMetadataProcessingReport report;
+
+        Optional<Integer> groupId = findGroupId(client, groupName);
+        final String group = groupId.map(i -> i.toString()).orElse(null);
         try {
-            log.info("Inserting record {} to GeoNetwork", metadataId);
+            log.info("Inserting record {} to GeoNetwork, under group {}({})", metadataId, groupName, group);
             report = api.insert(metadataType, xml, url, serverFolder, recursiveSearch, assignToCatalog, uuidProcessing,
                     group, category, rejectIfInvalid, transformWith, schema, extra, publishToAll);
 
@@ -150,6 +155,17 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         Map<String, List<InfoReport>> metadataInfos = report.getMetadataInfos();
         log.info("Created metadata record {}", metadataInfos);
         return r;
+    }
+
+    private Optional<Integer> findGroupId(ApiClient client, String groupName) {
+        if (groupName == null) {
+            return Optional.empty();
+        }
+        GroupsApi groupsApi = new GroupsApi(client);
+        Boolean withReservedGroup = null;
+        String profile = null;
+        List<Group> groups = groupsApi.getGroups(withReservedGroup, profile);
+        return groups.stream().filter(g -> groupName.equals(g.getName())).map(Group::getId).findFirst();
     }
 
     @Override

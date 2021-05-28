@@ -70,7 +70,9 @@ public class GeoNetworkRemoteServiceIT {
         final String id = UUID.randomUUID().toString();
         final String record = loadSampleRecord(id);
 
-        GeoNetworkResponse response = service.publish(id, () -> record);
+        // we don't have gn groups in the it compose?
+        String group = null;
+        GeoNetworkResponse response = service.publish(id, () -> record, group);
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatus());
 

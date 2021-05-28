@@ -75,7 +75,12 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         String metadataId = mdProps.getMetadataId();
 
         Supplier<String> record = templateMapper.apply(mdProps);
-        GeoNetworkResponse response = geonetwork.publish(metadataId, record);
+        Organization organization = user.getOrganization();
+        // The metadata is inserted into the group which already exists due to
+        // GeoNetwork's LDAP sync (which currently garantees that a geonetwork group
+        // exists for the publishing organization)
+        String mdGroupId = organization.getId();
+        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId);
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
