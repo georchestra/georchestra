@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraOwsPublicationService;
-import org.geoserver.openapi.v1.model.NamedLink;
+import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
 import org.geoserver.openapi.v1.model.WorkspaceSummary;
 import org.geoserver.restconfig.client.DataStoresClient;
 import org.geoserver.restconfig.client.FeatureTypesClient;
@@ -78,7 +77,19 @@ public class GeorchestraOwsPublicationServiceIT {
 
     private DatasetUploadState shpDataset;
 
-    private static final String NATIVE_LAYERNAME = "public_layer";
+    /**
+     * Native layer name for the uploaded file e.g. as resolved from the shapefile
+     * file name
+     */
+    private static final String NATIVE_LAYERNAME = "Public Layer";
+    /**
+     * Layer name as imported into the target store (e.g., lower-cased, replaced
+     * space by underscore
+     */
+    private static final String IMPORTED_LAYERNAME = "public_layer";
+    /**
+     * Layer name as published to geoserver (e.g. overrides the IMPORTED_LAYERNAME)
+     */
     private static final String PULISHED_LAYERNAME = "PublicLayer";
 
     public @Before void setup() {
@@ -134,6 +145,7 @@ public class GeorchestraOwsPublicationServiceIT {
         PublishSettings publishing = new PublishSettings();
         dset.setPublishing(publishing);
         publishing.setPublishedName(PULISHED_LAYERNAME);
+        publishing.setImportedName(IMPORTED_LAYERNAME);
         publishing.setKeywords(Arrays.asList("tag1", "tag 2"));
         publishing.setSrs("EPSG:4326");
         return dset;
@@ -155,10 +167,11 @@ public class GeorchestraOwsPublicationServiceIT {
 
         assertTrue(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
         assertTrue(dataStores.findByWorkspaceAndName(EXPECTED_WORKSPACE, hardCodedStoreName).isPresent());
-        List<NamedLink> findFeatureTypes = featureTypes.findFeatureTypes(EXPECTED_WORKSPACE, hardCodedStoreName);
-        // System.err.println(findFeatureTypes);
-        assertTrue(featureTypes.getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME).isPresent());
+        Optional<FeatureTypeInfo> featureType = featureTypes.getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName,
+                PULISHED_LAYERNAME);
+        assertTrue(featureType.isPresent());
         assertTrue(layers.getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME).isPresent());
+        assertEquals(IMPORTED_LAYERNAME, featureType.get().getNativeName());
     }
 
 }

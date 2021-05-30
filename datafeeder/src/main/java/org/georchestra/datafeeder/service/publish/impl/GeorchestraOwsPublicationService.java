@@ -88,7 +88,10 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
         PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing);
-        requireNonNull(publishing.getPublishedName());
+        requireNonNull(publishing.getPublishedName(),
+                "publishedName is required to assign a layer name to the geoserver feature type");
+        requireNonNull(publishing.getImportedName(),
+                "importedName is required to resolve the native feature type name");
 
         final String workspaceName = resolveWorkspace(user);
         final String dataStoreName = resolveDataStoreName(dataset);
@@ -191,7 +194,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         PublishSettings publishing = dataset.getPublishing();
         FeatureTypeInfo ft = new FeatureTypeInfo();
 
-        ft.setNativeName(dataset.getName());
+        ft.setNativeName(publishing.getImportedName());
         ft.setName(layerName);
         ft.setNamespace(new NamespaceInfo().prefix(workspace));
 
