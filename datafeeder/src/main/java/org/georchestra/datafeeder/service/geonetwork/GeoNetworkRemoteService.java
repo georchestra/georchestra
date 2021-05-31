@@ -111,17 +111,13 @@ public class GeoNetworkRemoteService {
      * </code>
      * </pre>
      * 
-     * @param metadataId
-     * 
-     * @param metadataId
-     * 
-     * @param xmlRecordAsString
      * @return
      */
-    public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString) {
+    public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString,
+            String group) {
         final String xmlRecord = xmlRecordAsString.get();
 
-        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord);
+        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord, group);
 
         HttpStatus statusCode = response.getStatus();
         String statusText = response.getStatusText();

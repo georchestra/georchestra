@@ -34,7 +34,7 @@ public interface GeoNetworkClient {
 
     void checkServiceAvailable() throws IOException;
 
-    GeoNetworkResponse putXmlRecord(String metadataId, String xmlRecord);
+    GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName);
 
     String getXmlRecord(@NonNull String recordId);
 
