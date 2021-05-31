@@ -249,8 +249,9 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     private String resolveWorkspace(@NonNull UserInfo user) {
         final @NonNull String orgName = user.getOrganization().getId();
         final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
-
-        WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName);
+        String baseNamespaceURI = this.configProperties.getPublishing().getGeoserver().getBaseNamespaceURI();
+        String namespaceURI = URI.create(baseNamespaceURI + "/" + workspaceName).normalize().toString();
+        WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName, namespaceURI);
 
         return ws.getName();
     }

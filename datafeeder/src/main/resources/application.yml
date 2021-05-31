@@ -56,6 +56,9 @@ datafeeder:
     temporary-location: ${file-upload.temporary-location:${java.io.tmpdir}/datafeeder/tmp}
     # directory location where files will be stored.
     persistent-location: ${file-upload.persistent-location:${java.io.tmpdir}/datafeeder/uploads}
+  publishing:
+    geoserver:
+      baseNamespaceURI: ${publicUrl}/import
 
 feign:
   okhttp.enabled: true
@@ -130,6 +133,7 @@ datafeeder:
       api-url: http://localhost:18080/geoserver/rest
       public-url: https://georchestra.mydomain.org/geoserver
       log-requests: true
+      baseNamespaceURI: ${publicUrl}/import
     geonetwork:
       api-url: http://localhost:28080/geonetwork
       public-url: https://georchestra.mydomain.org/geonetwork

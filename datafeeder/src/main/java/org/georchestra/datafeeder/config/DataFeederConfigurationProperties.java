@@ -44,7 +44,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j(topic = "org.georchestra.datafeeder.config")
 public @Data class DataFeederConfigurationProperties {
-
     private URI frontEndConfigFile;
     private FileUploadConfig fileUpload = new FileUploadConfig();
     private PublishingConfiguration publishing = new PublishingConfiguration();
@@ -79,8 +78,7 @@ public @Data class DataFeederConfigurationProperties {
     }
 
     public static @Data class PublishingConfiguration {
-
-        private ExternalApiConfiguration geoserver = new ExternalApiConfiguration();
+        private GeoServerPublishingConfiguration geoserver = new GeoServerPublishingConfiguration();
         private GeonetworkPublishingConfiguration geonetwork = new GeonetworkPublishingConfiguration();
         private BackendConfiguration backend = new BackendConfiguration();
     }
@@ -91,6 +89,12 @@ public @Data class DataFeederConfigurationProperties {
         private String templateRecordId;
         private URI templateRecord;
         private URI templateTransform;
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    public static class GeoServerPublishingConfiguration extends ExternalApiConfiguration {
+        private String baseNamespaceURI;
     }
 
     public static @Data class ExternalApiConfiguration {
