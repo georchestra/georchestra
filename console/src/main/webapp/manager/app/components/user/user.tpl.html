@@ -43,7 +43,7 @@
         <hr>
 
         <div class="pull-right">
-          <button ng-click="user.save()" class="btn btn-primary" translate data-ng-disabled="!adminUserForm.$valid">user.save</button>
+          <button ng-click="user.save()" class="btn btn-primary" translate data-ng-disabled="user.user.pending || !adminUserForm.$valid">user.save</button>
         </div>
 
       </div>
