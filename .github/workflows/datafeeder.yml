@@ -36,6 +36,7 @@ jobs:
 
     - name: "Installing & checking formatting"
       run: |
+          ./mvnw --non-recursive --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
           ./mvnw -f commons/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
           ./mvnw -f datafeeder/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
