@@ -87,9 +87,9 @@ public class UsersIT {
 
         support.perform(put("/private/users/" + userName)
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
-                        .replace("psc", "cra")));
+                        .replace("psc", "C2C")));
 
-        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("cra"))
+        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
                 .andExpect(jsonPath("$.uid").value(newUserName));
     }
 
