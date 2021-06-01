@@ -128,11 +128,15 @@ public class RolesControllerTest {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
+        // reset any spring security context that may have been set in previous test.
+        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+
         // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
         Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin", null, role);
         SecurityContextHolder.getContext().setAuthentication(auth);
+
     }
 
     @Test(expected = Exception.class)
