@@ -61,6 +61,18 @@
         <location>/WEB-INF/views/forbidden.jsp</location>
     </error-page>
     <filter>
+      <filter-name>encodingFilter</filter-name>
+      <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+      <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+      </init-param>
+      <init-param>
+        <param-name>forceEncoding</param-name>
+        <param-value>true</param-value>
+      </init-param>
+    </filter>
+    <filter>
         <filter-name>UrlRewriteFilter</filter-name>
         <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
     </filter>
@@ -68,6 +80,10 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+    <filter-mapping>
+      <filter-name>encodingFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>UrlRewriteFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -84,164 +100,5 @@
       <res-type>javax.sql.DataSource</res-type>
       <res-auth>Container</res-auth>
     </resource-ref-->
-
-    <!-- Locale encodings - override default from $JETTY_HOME/etc/webdefault.xml  -->
-    <locale-encoding-mapping-list>
-        <locale-encoding-mapping>
-            <locale>ar</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>be</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>bg</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>ca</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>cs</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>da</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>de</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>el</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>en</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>es</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>et</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>fi</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>fr</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>hr</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>hu</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>is</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>it</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>iw</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>ja</locale>
-            <encoding>Shift_JIS</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>ko</locale>
-            <encoding>EUC-KR</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>lt</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>lv</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>mk</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>nl</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>no</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>pl</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>pt</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>ro</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>ru</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sh</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sk</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sl</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sq</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sr</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>sv</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>tr</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>uk</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>zh</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-        <locale-encoding-mapping>
-            <locale>zh_TW</locale>
-            <encoding>UTF-8</encoding>
-        </locale-encoding-mapping>
-    </locale-encoding-mapping-list>
+    
 </web-app>
