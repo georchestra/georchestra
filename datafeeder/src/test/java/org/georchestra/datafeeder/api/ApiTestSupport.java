@@ -78,8 +78,8 @@ public class ApiTestSupport {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
-    public UploadJobStatus upload(List<MultipartFile> files) {
-        ResponseEntity<UploadJobStatus> response = uploadController.uploadFiles(files);
+    public UploadJobStatus upload(List<? extends MultipartFile> files) {
+        ResponseEntity<UploadJobStatus> response = uploadController.uploadFiles(castToMultipartFiles(files));
         assertEquals(ACCEPTED, response.getStatusCode());
         return response.getBody();
     }
@@ -97,9 +97,10 @@ public class ApiTestSupport {
         return uploadAndWaitForSuccess(Collections.singletonList(uploadedFile), expectedDatasetNames);
     }
 
-    public DataUploadJob uploadAndWaitForSuccess(List<MultipartFile> uploadedFiles, String... expectedDatasetNames) {
-
-        ResponseEntity<UploadJobStatus> response = uploadController.uploadFiles(uploadedFiles);
+    public DataUploadJob uploadAndWaitForSuccess(List<? extends MultipartFile> uploadedFiles,
+            String... expectedDatasetNames) {
+        List<MultipartFile> files = castToMultipartFiles(uploadedFiles);
+        ResponseEntity<UploadJobStatus> response = uploadController.uploadFiles(files);
 
         assertEquals(ACCEPTED, response.getStatusCode());
         UploadJobStatus initialStatus = response.getBody();
@@ -110,8 +111,8 @@ public class ApiTestSupport {
         assertTrue(initialStatus.getDatasets().isEmpty());
 
         final UUID id = initialStatus.getJobId();
-        awaitUntilJobIsOneOf(id, 5, RUNNING, DONE);
-        awaitUntilJobIsOneOf(id, 5, DONE);
+        awaitUntilJobIsOneOf(id, 15, RUNNING, DONE);
+        awaitUntilJobIsOneOf(id, 15, DONE);
 
         Optional<DataUploadJob> state = uploadService.findJob(id);
         assertTrue(state.isPresent());
@@ -123,6 +124,11 @@ public class ApiTestSupport {
             assertDataset(datasets, datasetName, DONE);
         }
         return state.get();
+    }
+
+    private List<MultipartFile> castToMultipartFiles(List<? extends MultipartFile> uploadedFiles) {
+        List<MultipartFile> files = uploadedFiles.stream().map(MultipartFile.class::cast).collect(Collectors.toList());
+        return files;
     }
 
     public void assertDataset(@NonNull List<DatasetUploadState> datasets, @NonNull String name,

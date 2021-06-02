@@ -48,12 +48,14 @@ import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
+import org.geotools.data.crs.ForceCoordinateSystemFeatureReader;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureReader;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -389,12 +391,31 @@ public class DatasetsService {
         final PublishSettings publishing = d.getPublishing();
         requireNonNull(publishing);
         requireNonNull(publishing.getImportedName(), "imported type name not provided");
+        requireNonNull(publishing.getSrs(), "Dataset publish settings must provide the dataset's SRS");
+
+        final CoordinateReferenceSystem targetCRS;
+        try {
+            targetCRS = CRS.decode(publishing.getSrs());
+        } catch (FactoryException e) {
+            throw new IOException(e);
+        }
+
         DataStore sourceDs = resolveSourceDataStore(d);
         try {
             final String sourceNativeName = resolveTypeName(sourceDs, d);
             final int featureCount = featureCount(sourceDs.getFeatureSource(sourceNativeName));
             FeatureReader<SimpleFeatureType, SimpleFeature> reader;
             reader = sourceDs.getFeatureReader(new Query(sourceNativeName), Transaction.AUTO_COMMIT);
+            if (!CRS.equalsIgnoreMetadata(targetCRS, reader.getFeatureType().getCoordinateReferenceSystem())) {
+                if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
+                    throw new UnsupportedOperationException("Reprojection is not yet implemented");
+                }
+                try {
+                    reader = new ForceCoordinateSystemFeatureReader(reader, targetCRS);
+                } catch (SchemaException e) {
+                    throw new IOException(e);
+                }
+            }
             SimpleFeatureType sourceType = reader.getFeatureType();
             String targetTypeName = publishing.getImportedName();
             SimpleFeatureType targetType;

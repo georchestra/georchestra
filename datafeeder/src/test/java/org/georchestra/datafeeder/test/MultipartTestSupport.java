@@ -21,13 +21,17 @@ package org.georchestra.datafeeder.test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.geotools.TestData;
 import org.junit.rules.ExternalResource;
@@ -35,39 +39,66 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.io.ByteStreams;
-import com.sun.mail.handlers.multipart_mixed;
 
 import lombok.NonNull;
 
 public class MultipartTestSupport extends ExternalResource {
 
-    public List<MultipartFile> archSitesShapefile() {
+    public List<MockMultipartFile> archSitesShapefile() {
         return loadGeoToolsTestFiles("shapes/archsites.shp", "shapes/archsites.dbf", "shapes/archsites.prj",
                 "shapes/archsites.shx");
     }
 
-    public List<MultipartFile> bugSitesShapefile() {
+    public List<MockMultipartFile> bugSitesShapefile() {
         return loadGeoToolsTestFiles("shapes/bugsites.shp", "shapes/bugsites.dbf", "shapes/bugsites.prj",
                 "shapes/bugsites.shx");
     }
 
-    public List<MultipartFile> roadsShapefile() {
+    public List<MockMultipartFile> roadsShapefile() {
         return loadGeoToolsTestFiles("shapes/roads.shp", "shapes/roads.dbf", "shapes/roads.prj", "shapes/roads.shx");
     }
 
-    public List<MultipartFile> statePopShapefile() {
+    public List<MockMultipartFile> statePopShapefile() {
         return loadGeoToolsTestFiles("shapes/statepop.shp", "shapes/statepop.dbf", "shapes/statepop.prj",
                 "shapes/statepop.shx");
     }
 
     // test("shapes/chinese_poly.shp", Charset.forName("GB18030"));
-    public List<MultipartFile> chinesePolyShapefile() {
+    public List<MockMultipartFile> chinesePolyShapefile() {
         return loadGeoToolsTestFiles("shapes/chinese_poly.shp", "shapes/chinese_poly.dbf", "shapes/chinese_poly.prj",
                 "shapes/chinese_poly.shx");
     }
 
-    public List<MultipartFile> renameDataset(String newName, List<MultipartFile> datasetFiles) throws IOException {
-        List<MultipartFile> renamed = new ArrayList<>();
+    public List<MockMultipartFile> loadDatafeederTestShapefile(String typeName, boolean loadPrj) {
+        String[] names = Stream.of(".shp", ".dbf", ".shx", ".prj").filter(ext -> loadPrj ? true : !".prj".equals(ext))
+                .map(ext -> typeName + ext).toArray(String[]::new);
+        return datafeederTestData(names);
+    }
+
+    public Path datafeederTestFile(String file) {
+        try {
+            URI uri = getClass().getResource("/org/geotools/test-data/datafeeder/" + file).toURI();
+            return Paths.get(uri);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Loads {@code fileNames} from
+     * {@code src/test/resources/org/geotools/test-data/datafeeder/}
+     * 
+     * @param fileNames file names to load relative to
+     *                  {@code src/test/resources/org/geotools/test-data/datafeeder/}
+     */
+    public List<MockMultipartFile> datafeederTestData(String... fileNames) {
+        String[] names = Arrays.stream(fileNames).map(name -> "datafeeder/" + name).toArray(String[]::new);
+        return loadGeoToolsTestFiles(names);
+    }
+
+    public List<MockMultipartFile> renameDataset(String newName, List<? extends MultipartFile> datasetFiles)
+            throws IOException {
+        List<MockMultipartFile> renamed = new ArrayList<>();
         for (MultipartFile f : datasetFiles) {
             String extension = FilenameUtils.getExtension(f.getOriginalFilename());
             String name = String.format("%s.%s", newName, extension);
@@ -76,8 +107,8 @@ public class MultipartTestSupport extends ExternalResource {
         return renamed;
     }
 
-    private List<MultipartFile> loadGeoToolsTestFiles(String... names) {
-        List<MultipartFile> files = new ArrayList<>();
+    private List<MockMultipartFile> loadGeoToolsTestFiles(String... names) {
+        List<MockMultipartFile> files = new ArrayList<>();
         for (String name : names) {
             try {
                 files.add(loadGeoToolsTestFile(name));
@@ -88,7 +119,7 @@ public class MultipartTestSupport extends ExternalResource {
         return files;
     }
 
-    private MultipartFile loadGeoToolsTestFile(String testDataPath) throws IOException {
+    private MockMultipartFile loadGeoToolsTestFile(String testDataPath) throws IOException {
         try (InputStream in = TestData.openStream(testDataPath)) {
             byte[] contents = ByteStreams.toByteArray(in);
             String name = Paths.get(testDataPath).getFileName().toString();
@@ -96,12 +127,12 @@ public class MultipartTestSupport extends ExternalResource {
         }
     }
 
-    public MultipartFile createFakeFile(@NonNull String name, int fileSize) {
+    public MockMultipartFile createFakeFile(@NonNull String name, int fileSize) {
         byte[] content = createContents(fileSize);
         return createMultipartFile(name, content);
     }
 
-    public MultipartFile createMultipartFile(String originalFileName, byte[] content) {
+    public MockMultipartFile createMultipartFile(String originalFileName, byte[] content) {
         String contentType = null;
         String formFieldName = "filename";
         String originalFilename = originalFileName;
@@ -116,11 +147,12 @@ public class MultipartTestSupport extends ExternalResource {
     }
 
     @SafeVarargs
-    public final MultipartFile createZipFile(String zipfileName, List<MultipartFile>... filesets) throws IOException {
+    public final MockMultipartFile createZipFile(String zipfileName, List<? extends MultipartFile>... filesets)
+            throws IOException {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-            for (List<MultipartFile> files : filesets) {
+            for (List<? extends MultipartFile> files : filesets) {
                 for (MultipartFile zipped : files) {
                     String name = zipped.getOriginalFilename();
                     byte[] content = zipped.getBytes();

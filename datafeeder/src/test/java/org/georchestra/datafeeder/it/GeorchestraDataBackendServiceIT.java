@@ -22,32 +22,39 @@ import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_SCHE
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
+import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraDataBackendService;
+import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.georchestra.datafeeder.test.TestData;
 import org.geotools.data.DataStore;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.util.NullProgressListener;
+import org.geotools.referencing.CRS;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -65,11 +72,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles(value = { "georchestra", "it" })
 public class GeorchestraDataBackendServiceIT {
 
+    static final String WKT_2154_ESRI = "PROJCS[\"RGF_1993_Lambert_93\",GEOGCS[\"GCS_RGF_1993\",DATUM[\"D_RGF_1993\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Lambert_Conformal_Conic\"],PARAMETER[\"False_Easting\",700000.0],PARAMETER[\"False_Northing\",6600000.0],PARAMETER[\"Central_Meridian\",3.0],PARAMETER[\"Standard_Parallel_1\",49.0],PARAMETER[\"Standard_Parallel_2\",44.0],PARAMETER[\"Latitude_Of_Origin\",46.5],UNIT[\"Meter\",1.0]]";
+    static final String WKT_2154_OGC = "PROJCS[\"RGF93 / Lambert-93\",GEOGCS[\"RGF93\",DATUM[\"Reseau_Geodesique_Francais_1993\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6171\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4171\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"standard_parallel_1\",49],PARAMETER[\"standard_parallel_2\",44],PARAMETER[\"latitude_of_origin\",46.5],PARAMETER[\"central_meridian\",3],PARAMETER[\"false_easting\",700000],PARAMETER[\"false_northing\",6600000],AUTHORITY[\"EPSG\",\"2154\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
+
     public @Autowired @Rule IntegrationTestSupport support;
     public @Rule TestData testData = new TestData();
 
     public @Autowired GeorchestraDataBackendService service;
     public @Autowired DatasetsService datasetsService;
+    public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
 
     private Connection testConnection;
     private DataUploadJob job;
@@ -126,6 +137,7 @@ public class GeorchestraDataBackendServiceIT {
     public @Test void importDataset_AbsoluteFile_Preconditions() {
         dataset.setName("somename");
         dataset.setAbsolutePath(null);
+        dataset.getPublishing().setSrs("EPSG:4326");
 
         NullPointerException npe = assertThrows(NullPointerException.class,
                 () -> service.importDataset(dataset, support.user(), importProgressListener));
@@ -149,18 +161,113 @@ public class GeorchestraDataBackendServiceIT {
     public @Test void importDataset_Invalid_NativeName() throws IOException {
         dataset.setAbsolutePath(testData.archSitesShapefile().toAbsolutePath().toString());
         dataset.setName("invalidName");
-
+        dataset.getPublishing().setSrs("EPSG:4326");
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
                 () -> service.importDataset(dataset, support.user(), importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset name 'invalidName' does not exist"));
     }
 
-    public @Test void importDataset_Shapefile() throws IOException {
+    public @Test void importDataset_Target_SRS_not_provided() throws IOException {
         dataset.setAbsolutePath(testData.archSitesShapefile().toAbsolutePath().toString());
         dataset.setName("archsites");
 
-        service.prepareBackend(job, support.user());
+        NullPointerException iae = assertThrows(NullPointerException.class,
+                () -> service.importDataset(dataset, support.user(), importProgressListener));
+        assertThat(iae.getMessage(), containsString("Dataset publish settings must provide the dataset's SRS"));
+    }
 
+    public @Test void importDataset_Shapefile_unknown_native_crs_code_force_request_crs() throws Exception {
+
+        Path path = testData.archSitesShapefile().toAbsolutePath();
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("archsites");
+
+        final String EPSG_26713_ESRI_WKT = "PROJCS[\"NAD_1927_UTM_Zone_13N\", GEOGCS[\"GCS_North_American_1927\", DATUM[\"D_North_American_1927\", SPHEROID[\"Clarke_1866\", 6378206.4, 294.9786982]], PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]], PROJECTION[\"Transverse_Mercator\"], PARAMETER[\"central_meridian\", -105.0], PARAMETER[\"latitude_of_origin\", 0.0], PARAMETER[\"scale_factor\", 0.9996], PARAMETER[\"false_easting\", 500000.0], PARAMETER[\"false_northing\", 0.0], UNIT[\"m\", 1.0], AXIS[\"x\", EAST], AXIS[\"y\", NORTH]]";
+        final CoordinateReferenceSystem nativeCRS = CRS.parseWKT(EPSG_26713_ESRI_WKT);
+
+        CoordinateReferenceSystemMetadata crs = datasetsService.describe(path).getDatasets().get(0).getNativeBounds()
+                .getCrs();
+        assertNull(crs.getSrs());
+        assertNotNull(crs.getWKT());
+        CoordinateReferenceSystem esri_26713 = CRS.parseWKT(crs.getWKT());
+        assertEquals(nativeCRS, esri_26713);
+
+        // force importing as EPSG:26713 without reprojecting
+        dataset.getPublishing().setSrs("EPSG:26713");
+        dataset.getPublishing().setSrsReproject(false);
+
+        service.prepareBackend(job, support.user());
+        service.importDataset(dataset, support.user(), importProgressListener);
+
+        DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        String origTypeName = dataset.getName();
+        String importedName = dataset.getPublishing().getImportedName();
+        try {
+            SimpleFeatureSource orig = sourceds.getFeatureSource(origTypeName);
+            SimpleFeatureSource imported = targetds.getFeatureSource(importedName);
+            assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+            CoordinateReferenceSystem origCRS = orig.getSchema().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem importedCRS = imported.getSchema().getCoordinateReferenceSystem();
+            assertNotNull(origCRS);
+            assertNotNull(importedCRS);
+            assertEquals(esri_26713, origCRS);
+            assertEquals(CRS.decode("EPSG:26713"), importedCRS);
+        } finally {
+            sourceds.dispose();
+            targetds.dispose();
+        }
+    }
+
+    public @Test void importDataset_Shapefile_missing_native_crs_import_force_requested_srs() throws Exception {
+
+        Path path = multipartSupport.datafeederTestFile("circuits_2154_no_prj.shp").toAbsolutePath();
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("circuits_2154_no_prj");
+
+        assertNull(datasetsService.describe(path).getDatasets().get(0).getNativeBounds().getCrs());
+
+        // request import to force CRS as EPSG:2154
+        dataset.getPublishing().setSrs("EPSG:2154");
+        dataset.getPublishing().setSrsReproject(false);
+
+        service.prepareBackend(job, support.user());
+        service.importDataset(dataset, support.user(), importProgressListener);
+
+        DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        String origTypeName = dataset.getName();
+        String importedName = dataset.getPublishing().getImportedName();
+        try {
+            SimpleFeatureSource orig = sourceds.getFeatureSource(origTypeName);
+            SimpleFeatureSource imported = targetds.getFeatureSource(importedName);
+            assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+            assertNull(orig.getSchema().getCoordinateReferenceSystem());
+            CoordinateReferenceSystem importedCRS = imported.getSchema().getCoordinateReferenceSystem();
+            assertNotNull(importedCRS);
+            assertEquals(CRS.decode("EPSG:2154"), importedCRS);
+        } finally {
+            sourceds.dispose();
+            targetds.dispose();
+        }
+    }
+
+    public @Test void importDataset_Shapefile_override_native_crs_with_request_srs() throws Exception {
+
+        Path path = multipartSupport.datafeederTestFile("states_4326.shp");
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("states_4326");
+
+        CoordinateReferenceSystemMetadata crs = datasetsService.describe(path).getDatasets().get(0).getNativeBounds()
+                .getCrs();
+        String srs = crs.getSrs();
+        assertEquals("EPSG:4326", srs);
+
+        // import as EPSG:4327, overriding the native 4326 crs
+        dataset.getPublishing().setSrs("EPSG:4327");
+        dataset.getPublishing().setSrsReproject(false);
+
+        service.prepareBackend(job, support.user());
         service.importDataset(dataset, support.user(), importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
@@ -170,6 +277,49 @@ public class GeorchestraDataBackendServiceIT {
             SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);
             SimpleFeatureSource imported = targetds.getFeatureSource(typeName);
             assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+
+            CoordinateReferenceSystem origCRS = orig.getSchema().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem importedCRS = imported.getSchema().getCoordinateReferenceSystem();
+            assertNotNull(origCRS);
+            assertNotNull(importedCRS);
+            assertTrue(CRS.equalsIgnoreMetadata(CRS.decode("EPSG:4326"), origCRS));
+            assertEquals(CRS.decode("EPSG:4327"), importedCRS);
+        } finally {
+            sourceds.dispose();
+            targetds.dispose();
+        }
+    }
+
+    public @Test void importDataset_Shapefile_known_native_crs() throws Exception {
+
+        Path path = multipartSupport.datafeederTestFile("states_4326.shp");
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("states_4326");
+
+        CoordinateReferenceSystemMetadata crs = datasetsService.describe(path).getDatasets().get(0).getNativeBounds()
+                .getCrs();
+        String srs = crs.getSrs();
+        assertEquals("EPSG:4326", srs);
+
+        dataset.getPublishing().setSrs("EPSG:4326");
+
+        service.prepareBackend(job, support.user());
+        service.importDataset(dataset, support.user(), importProgressListener);
+
+        DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        String typeName = dataset.getName();
+        try {
+            SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);
+            SimpleFeatureSource imported = targetds.getFeatureSource(typeName);
+            assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+            CoordinateReferenceSystem origCRS = orig.getSchema().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem importedCRS = imported.getSchema().getCoordinateReferenceSystem();
+            assertNotNull(origCRS);
+            assertNotNull(importedCRS);
+            CoordinateReferenceSystem ogcWGS84 = CRS.decode("EPSG:4326");
+            assertTrue(CRS.equalsIgnoreMetadata(ogcWGS84, origCRS));
+            assertEquals(ogcWGS84, importedCRS);
         } finally {
             sourceds.dispose();
             targetds.dispose();

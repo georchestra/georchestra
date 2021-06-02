@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.autoconf;
 import org.georchestra.datafeeder.email.DatafeederEmailFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +31,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 /**
  * Configuration for sending emails upon application events like job
  * started/failed/succeeded based on georchestra's email configuration
+ * <p>
+ * This configuration will be enabled if the mail sender is configured (i.e.
+ * there is a {@link JavaMailSender} in the application context), and the
+ * configuration property {@code datafeeder.email.send} is {@code true} or not
+ * defined (i.e. defaults to {@code true})
  */
 @Configuration
 @Profile("georchestra")
 @AutoConfigureAfter(MailSenderAutoConfiguration.class)
 @ConditionalOnBean(JavaMailSender.class)
+@ConditionalOnProperty(prefix = "datafeeder.email", name = "send", havingValue = "true", matchIfMissing = true)
 public class GeorchestraNotificationsAutoConfiguration {
 
     @Bean
