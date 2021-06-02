@@ -191,6 +191,35 @@ public class FileUploadApiControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
+    public void testUploadFiles_ZipfileWithSpacesFileNames() throws IOException {
+        final String datasetName = "test with spaces";
+        MultipartFile zipFile;
+        {
+            List<MultipartFile> orig = multipartSupport.statePopShapefile();
+            List<MultipartFile> contents = multipartSupport.renameDataset(datasetName, orig);
+            zipFile = multipartSupport.createZipFile(datasetName + ".zip", contents);
+        }
+
+        final List<MultipartFile> received = Collections.singletonList(zipFile);
+        final ResponseEntity<UploadJobStatus> response = controller.uploadFiles(received);
+
+        assertEquals(ACCEPTED, response.getStatusCode());
+        UploadJobStatus initialStatus = response.getBody();
+        assertEquals(AnalysisStatusEnum.PENDING, initialStatus.getStatus());
+        assertTrue(initialStatus.getDatasets().isEmpty());
+
+        final UUID id = initialStatus.getJobId();
+
+        DataUploadJob job = testSupport.awaitUntilJobIsOneOf(id, 3, DONE);
+        job = this.uploadService.findJob(job.getJobId()).orElse(null);
+        assertEquals(1, job.getDatasets().size());
+        assertEquals(datasetName, job.getDatasets().get(0).getName());
+
+        testSupport.assertDataset(job.getDatasets(), datasetName, DONE);
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = "USER")
     public void testFindUploadJob() {
         UploadJobStatus archsitesJob = testSupport.upload(multipartSupport.archSitesShapefile());
         UploadJobStatus statepopJob = testSupport.upload(multipartSupport.statePopShapefile());
