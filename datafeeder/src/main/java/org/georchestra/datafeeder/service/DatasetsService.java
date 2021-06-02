@@ -326,7 +326,11 @@ public class DatasetsService {
         if (isShapefile(path)) {
             URL url;
             try {
-                url = path.toUri().toURL();
+                // white space handling. We don't want "file name.shp" to be "file%20name.shp",
+                // or the "native type name" will also be "file%20name"
+                Path parent = path.getParent();
+                Path fileName = path.getFileName();
+                url = new URL(String.format("file://%s/%s", parent.toAbsolutePath(), fileName.toString()));
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }

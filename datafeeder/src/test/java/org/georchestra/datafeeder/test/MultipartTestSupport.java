@@ -27,12 +27,15 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.geotools.TestData;
 import org.junit.rules.ExternalResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.common.io.ByteStreams;
+import com.sun.mail.handlers.multipart_mixed;
 
 import lombok.NonNull;
 
@@ -61,6 +64,16 @@ public class MultipartTestSupport extends ExternalResource {
     public List<MultipartFile> chinesePolyShapefile() {
         return loadGeoToolsTestFiles("shapes/chinese_poly.shp", "shapes/chinese_poly.dbf", "shapes/chinese_poly.prj",
                 "shapes/chinese_poly.shx");
+    }
+
+    public List<MultipartFile> renameDataset(String newName, List<MultipartFile> datasetFiles) throws IOException {
+        List<MultipartFile> renamed = new ArrayList<>();
+        for (MultipartFile f : datasetFiles) {
+            String extension = FilenameUtils.getExtension(f.getOriginalFilename());
+            String name = String.format("%s.%s", newName, extension);
+            renamed.add(createMultipartFile(name, f.getBytes()));
+        }
+        return renamed;
     }
 
     private List<MultipartFile> loadGeoToolsTestFiles(String... names) {
