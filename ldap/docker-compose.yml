@@ -10,7 +10,7 @@ services:
     build: ./
     secrets:
       - slapd_password
-      - gs_master_passwd
+      - geoserver_privileged_user_passwd
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
