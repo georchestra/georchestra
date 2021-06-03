@@ -17,7 +17,7 @@ services:
       - SLAPD_ADDITIONAL_MODULES=groupofmembers,openssh
       - SLAPD_PASSWORD_FILE=/run/secrets/slapd_password
       - SLAPD_PASSWORD=
-      - GS_MASTER_PASSWORD_FILE=/run/secrets/gs_master_passwd
+      - GEOSERVER_PRIVILEGED_USER_PASSWORD_FILE=/run/secrets/geoserver_privileged_user_passwd
       - SLAPD_LOG_LEVEL=32768
     volumes:
       - ldap_data_test:/var/lib/ldap
@@ -28,5 +28,5 @@ services:
 secrets:
   slapd_password:
     file: ./secrets/slapd_password.txt
-  gs_master_passwd:
-    file: ./secrets/gs_master_passwd.txt
+  geoserver_privileged_user_passwd:
+    file: ./secrets/geoserver_privileged_user_passwd.txt
