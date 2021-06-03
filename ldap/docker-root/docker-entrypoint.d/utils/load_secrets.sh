@@ -26,6 +26,6 @@ file_env() {
 # (usual way of passing secrets)
 file_env 'SLAPD_PASSWORD'
 
-# Accept GS_MASTER_PASSWORD_FILE containing the password
+# Accept GEOSERVER_PRIVILEGED_USER_PASSWORD_FILE containing the password
 # Allows to change the geoserver master password on first run
-file_env 'GS_MASTER_PASSWORD'
+file_env 'GEOSERVER_PRIVILEGED_USER_PASSWORD'
