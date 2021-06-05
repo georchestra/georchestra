@@ -127,7 +127,7 @@ public class DatasetsService {
             Query query = new Query();
             if (srs != null) {
                 CoordinateReferenceSystem crs = CRS.decode(srs);
-                if (reproject) {
+                if (reproject && fs.getSchema().getCoordinateReferenceSystem() != null) {
                     query.setCoordinateSystemReproject(crs);
                 } else {
                     query.setCoordinateSystem(crs);
@@ -153,7 +153,7 @@ public class DatasetsService {
             query.setMaxFeatures(1);
             if (srs != null) {
                 CoordinateReferenceSystem crs = CRS.decode(srs);
-                if (srsReproject) {
+                if (srsReproject && fs.getSchema().getCoordinateReferenceSystem() != null) {
                     query.setCoordinateSystemReproject(crs);
                 } else {
                     query.setCoordinateSystem(crs);
