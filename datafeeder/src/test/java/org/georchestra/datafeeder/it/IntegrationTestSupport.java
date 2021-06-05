@@ -55,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -130,13 +131,14 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         assertNotNull(apiUrl);
 
         String path = Paths.get(apiUrl.getPath()).resolve("about/version.json").toString();
-        String uri = apiUrl.toURI().resolve(path).toString();
+        String gsRequestUri = apiUrl.toURI().resolve(path).toString();
 
         ResponseEntity<Map> entity;
         try {
-            entity = doGet(uri, Map.class, SEC_USERNAME, "datafeeder", SEC_ROLES, "ROLE_ADMINISTRATOR");
+            entity = doGet(gsRequestUri, Map.class, SEC_USERNAME, "datafeeder", SEC_ROLES, "ROLE_ADMINISTRATOR");
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to connect to GeoServer at " + uri + ". " + e.getMessage(), e);
+            throw new IllegalStateException("Unable to connect to GeoServer at " + gsRequestUri + ". " + e.getMessage(),
+                    e);
         }
         assertEquals("Unexpected status code, check configured credentials for " + apiUrl, HttpStatus.OK,
                 entity.getStatusCode());
@@ -169,7 +171,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         }
     }
 
-    public <T> ResponseEntity<T> doGet(String uri, Class<T> type, String... requestHeadersKvps) {
+    public <T> ResponseEntity<T> doGet(String fullURL, Class<T> type, String... requestHeadersKvps) {
         HttpHeaders headers = new HttpHeaders();
         if (null != requestHeadersKvps) {
             for (int i = 0; i < requestHeadersKvps.length; i += 2) {
@@ -180,7 +182,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        return template.exchange(uri, HttpMethod.GET, requestEntity, type);
+        return template.exchange(fullURL, HttpMethod.GET, requestEntity, type);
     }
 
     public void deleteLocalDatabaseSchema(@NonNull String schema) throws SQLException {

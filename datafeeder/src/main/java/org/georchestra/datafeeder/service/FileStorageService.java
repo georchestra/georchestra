@@ -46,7 +46,7 @@ public class FileStorageService {
 
     /**
      */
-    public UploadPackage createPackageFromUpload(@NonNull List<MultipartFile> received) throws IOException {
+    public UploadPackage createPackageFromUpload(@NonNull List<? extends MultipartFile> received) throws IOException {
         UploadPackage pack = createEmptyPackage();
         try {
             for (MultipartFile mpf : received) {

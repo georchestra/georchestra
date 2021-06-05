@@ -25,14 +25,17 @@ import org.georchestra.datafeeder.api.DatasetMetadata;
 import org.georchestra.datafeeder.api.DatasetPublishRequest;
 import org.georchestra.datafeeder.api.PublishRequest;
 import org.georchestra.datafeeder.batch.service.PublishingBatchService;
+import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service provider for {@link DataPublishingApiController}
@@ -41,6 +44,7 @@ import lombok.NonNull;
  * the controller, which in turn only takes care of the HTTP API layer,
  * delegating all processing to this service.
  */
+@Slf4j
 @Service
 public class DataPublishingService {
 
@@ -61,10 +65,7 @@ public class DataPublishingService {
             publishing.setPublish(true);
             String requestedPublishedName = dreq.getPublishedName() == null ? nativeName : dreq.getPublishedName();
             publishing.setPublishedName(requestedPublishedName);
-            String srs = dreq.getSrs();
-            if (srs == null && null != dset.getNativeBounds() && null != dset.getNativeBounds().getCrs()) {
-                srs = dset.getNativeBounds().getCrs().getSrs();
-            }
+            String srs = resolvePublishSRS(dset.getNativeBounds().getCrs(), dreq.getSrs());
             publishing.setSrs(srs);
             publishing.setSrsReproject(dreq.getSrsReproject());
             String encoding = dreq.getEncoding();
@@ -85,6 +86,39 @@ public class DataPublishingService {
         publishingBatchService.save(job);
 
         publishingBatchService.runJob(uploadId, user);
+    }
+
+    /**
+     * 
+     * @param nativeCRS  the datasets native CRS as identified from the upload, may
+     *                   be {@code null}
+     * @param requestSRS the EPSG code string requested through the dataset publish
+     *                   request body, may be {@code null}
+     * @return the EPSG code to publish the dataset with
+     * @throws IllegalArgumentException if both {@code nativeCRS} and
+     *                                  {@code requestSRS} are {@code null}
+     */
+    private @NonNull String resolvePublishSRS(@Nullable CoordinateReferenceSystemMetadata nativeCRS,
+            @Nullable String requestSRS) {
+
+        String srs;
+        if (requestSRS == null) {
+            if (nativeCRS == null) {
+                throw new IllegalArgumentException(
+                        "No SRS provided in the publish request, and no native CRS provided in the uploaded dataset");
+            }
+            srs = nativeCRS.getSrs();
+            if (srs == null) {
+                throw new IllegalArgumentException(
+                        "No SRS provided in the publish request, and the native CRS EPSG code was not recognized");
+            } else {
+                log.debug("Publishing using the native SRS {}", requestSRS);
+            }
+        } else {
+            log.debug("Publishing using the requested SRS {}", requestSRS);
+            srs = requestSRS;
+        }
+        return srs;
     }
 
     private DatasetUploadState getDataset(DataUploadJob job, String nativeName) {

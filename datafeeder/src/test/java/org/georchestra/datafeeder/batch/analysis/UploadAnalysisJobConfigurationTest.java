@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,7 +107,7 @@ public class UploadAnalysisJobConfigurationTest {
 
     @Test
     public void step1_ReadUploadPack_single_shapefile() throws IOException {
-        List<MultipartFile> received = multipartSupport.roadsShapefile();
+        List<MockMultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.createPackageFromUpload(received).getId();
         DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
@@ -140,7 +141,7 @@ public class UploadAnalysisJobConfigurationTest {
 
     @Test
     public void analyze_single_shapefile() throws Exception {
-        List<MultipartFile> received = multipartSupport.roadsShapefile();
+        List<MockMultipartFile> received = multipartSupport.roadsShapefile();
         UUID uploadId = storageService.createPackageFromUpload(received).getId();
         DataUploadJob initial = uploadService.createJob(uploadId, "testuser");
         assertEquals(JobStatus.PENDING, initial.getAnalyzeStatus());
@@ -174,9 +175,9 @@ public class UploadAnalysisJobConfigurationTest {
 
     @Test
     public void analyze_zipfile_multiple_shapefiles() throws Exception {
-        List<MultipartFile> roads = multipartSupport.roadsShapefile();
-        List<MultipartFile> states = multipartSupport.statePopShapefile();
-        List<MultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
+        List<MockMultipartFile> roads = multipartSupport.roadsShapefile();
+        List<MockMultipartFile> states = multipartSupport.statePopShapefile();
+        List<MockMultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
 
         MultipartFile received = multipartSupport.createZipFile("test upload.zip", roads, states, chinesePoly);
 

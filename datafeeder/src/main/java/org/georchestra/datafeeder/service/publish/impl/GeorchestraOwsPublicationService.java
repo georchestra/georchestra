@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -184,7 +185,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return new HashMap<>(connectionParams);
     }
 
-    private String resolveDataStoreName(@NonNull DatasetUploadState dataset) {
+    public String resolveDataStoreName(@NonNull DatasetUploadState dataset) {
         return "datafeeder";
     }
 
@@ -205,12 +206,17 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         ft.setEnabled(true);
         // ft.setKeywords(buildKeywords(publishing.getKeywords()));
 
+        String importedSRS = publishing.getSrs();
+        Objects.requireNonNull(importedSRS, "Dataset imported SRS not provided in PublishSettings");
+        ft.setSrs(importedSRS);
+
         BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
         if (nativeBounds != null) {
-            ft.setNativeBoundingBox(buildEnvelope(nativeBounds));
-            ft.setNativeCRS(nativeBounds.getCrs().getSrs());
+            EnvelopeInfo envelopeInfo = buildEnvelope(nativeBounds);
+            envelopeInfo.setCrs(importedSRS);
+            ft.setNativeBoundingBox(envelopeInfo);
+            ft.setNativeCRS(importedSRS);
         }
-        ft.setSrs(publishing.getSrs());
         if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
             ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
         } else {
@@ -228,8 +234,6 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             return null;
 
         EnvelopeInfo env = new EnvelopeInfo();
-        if (bounds.getCrs() != null)
-            env.setCrs(bounds.getCrs().getSrs());
         return env.minx(bounds.getMinx()).maxx(bounds.getMaxx()).miny(bounds.getMiny()).maxy(bounds.getMaxy());
     }
 

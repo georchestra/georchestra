@@ -39,6 +39,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
+import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
@@ -54,6 +56,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -74,7 +77,7 @@ public class DataPublishingApiControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testPublish_SingleShapefile() throws IOException {
-        List<MultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
+        List<MockMultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
         DataUploadJob upload = testSupport.uploadAndWaitForSuccess(shapefileFiles, "statepop");
 
         DatasetUploadState dset = upload.getDatasets().get(0);
@@ -143,7 +146,7 @@ public class DataPublishingApiControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testPublish_ValidateRequiredFields() {
-        List<MultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
+        List<MockMultipartFile> shapefileFiles = multipartSupport.statePopShapefile();
         DataUploadJob upload = testSupport.uploadAndWaitForSuccess(shapefileFiles, "statepop");
 
         // minimum required fields: nativeName, metadata.title, metadata.abstract
@@ -163,11 +166,38 @@ public class DataPublishingApiControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
-    public void testPublish_SrsSetToNativeSrsIfNotProvidedInPublishRequest() {
+    public void testPublish_PublishesOnlySpecifiedDatasetOutOfMultipleUploadedInZipFile() throws IOException {
+        MultipartFile zipFile;
+        {
+            List<MockMultipartFile> archsites = multipartSupport.archSitesShapefile();
+            List<MockMultipartFile> bugsites = multipartSupport.bugSitesShapefile();
+            List<MockMultipartFile> roads = multipartSupport.roadsShapefile();
+
+            zipFile = multipartSupport.createZipFile("zipfile1.zip", archsites, bugsites, roads);
+        }
+
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(zipFile, "archsites", "bugsites", "roads");
+        testPublishSingleDataset(upload, "bugsites");
+    }
+
+    /**
+     * CRS use case:
+     * <ul>
+     * <li>DatasetPublishRequest does not indicate an
+     * {@link DatasetPublishRequest#getSrs() SRS}
+     * <li>Native CRS is known through
+     * {@link CoordinateReferenceSystemMetadata#getSrs()
+     * DatasetUploadStatet.getNativeBounds().getCrs().getSrs()} (i.e., a known EPSG
+     * code has been recognized)
+     * </ul>
+     */
+    @WithMockUser(username = "testuser", roles = "USER")
+    public @Test void testPublish_SrsSetToNativeSrsIfNotProvidedInPublishRequest() {
 
         DataUploadJob upload = testSupport.uploadAndWaitForSuccess(multipartSupport.statePopShapefile(), "statepop");
 
         DatasetUploadState dset = upload.getDatasets().get(0);
+
         DatasetPublishRequest dsetReq = buildRequest(dset);
         dsetReq.setSrs(null);
 
@@ -182,22 +212,6 @@ public class DataPublishingApiControllerTest {
 
         String expected = dset.getNativeBounds().getCrs().getSrs();
         assertEquals(expected, publishing.getSrs());
-    }
-
-    @Test
-    @WithMockUser(username = "testuser", roles = "USER")
-    public void testPublish_PublishesOnlySpecifiedDatasetOutOfMultipleUploadedInZipFile() throws IOException {
-        MultipartFile zipFile;
-        {
-            List<MultipartFile> archsites = multipartSupport.archSitesShapefile();
-            List<MultipartFile> bugsites = multipartSupport.bugSitesShapefile();
-            List<MultipartFile> roads = multipartSupport.roadsShapefile();
-
-            zipFile = multipartSupport.createZipFile("zipfile1.zip", archsites, bugsites, roads);
-        }
-
-        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(zipFile, "archsites", "bugsites", "roads");
-        testPublishSingleDataset(upload, "bugsites");
     }
 
     private void testPublishSingleDataset(final DataUploadJob upload, final String nativeName) {

@@ -61,6 +61,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -84,7 +85,7 @@ public class FileUploadApiControllerTest {
     @WithMockUser(username = "testuser", roles = "USER")
     public void testUploadFiles_SingleShapefile() {
 
-        List<MultipartFile> shapefileFiles = multipartSupport.archSitesShapefile();
+        List<MockMultipartFile> shapefileFiles = multipartSupport.archSitesShapefile();
 
         testSupport.uploadAndWaitForSuccess(shapefileFiles, "archsites");
     }
@@ -92,11 +93,11 @@ public class FileUploadApiControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testUploadFiles_ZipfileWithMultipleShapefiles() throws IOException {
-        List<MultipartFile> archsites = multipartSupport.archSitesShapefile();
-        List<MultipartFile> bugsites = multipartSupport.bugSitesShapefile();
-        List<MultipartFile> roads = multipartSupport.roadsShapefile();
-        List<MultipartFile> statepop = multipartSupport.statePopShapefile();
-        List<MultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
+        List<MockMultipartFile> archsites = multipartSupport.archSitesShapefile();
+        List<MockMultipartFile> bugsites = multipartSupport.bugSitesShapefile();
+        List<MockMultipartFile> roads = multipartSupport.roadsShapefile();
+        List<MockMultipartFile> statepop = multipartSupport.statePopShapefile();
+        List<MockMultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
 
         MultipartFile zipFile = multipartSupport.createZipFile("shapefiles.zip", archsites, bugsites, roads, statepop,
                 chinesePoly);
@@ -110,11 +111,11 @@ public class FileUploadApiControllerTest {
     @WithMockUser(username = "testuser", roles = "USER")
     public void testUploadFiles_TwoZipFilesWithShapefiles() throws IOException {
 
-        List<MultipartFile> archsites = multipartSupport.archSitesShapefile();
-        List<MultipartFile> bugsites = multipartSupport.bugSitesShapefile();
-        List<MultipartFile> roads = multipartSupport.roadsShapefile();
-        List<MultipartFile> statepop = multipartSupport.statePopShapefile();
-        List<MultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
+        List<MockMultipartFile> archsites = multipartSupport.archSitesShapefile();
+        List<MockMultipartFile> bugsites = multipartSupport.bugSitesShapefile();
+        List<MockMultipartFile> roads = multipartSupport.roadsShapefile();
+        List<MockMultipartFile> statepop = multipartSupport.statePopShapefile();
+        List<MockMultipartFile> chinesePoly = multipartSupport.chinesePolyShapefile();
 
         MultipartFile zipFile1 = multipartSupport.createZipFile("zipfile1.zip", archsites, bugsites);
         MultipartFile zipFile2 = multipartSupport.createZipFile("zipfile2.zip", roads, statepop, chinesePoly);
@@ -156,14 +157,14 @@ public class FileUploadApiControllerTest {
     public void testUploadFiles_ZipfileWithMultipleShapefiles_SomeFilesCorrupted() throws IOException {
         MultipartFile zipFile;
         {
-            List<MultipartFile> corruptFile = Arrays.asList(//
+            List<MockMultipartFile> corruptFile = Arrays.asList(//
                     multipartSupport.createFakeFile("test.shp", 4096), //
                     multipartSupport.createFakeFile("test.shx", 1024), //
                     multipartSupport.createFakeFile("test.prj", 128), //
                     multipartSupport.createFakeFile("test.dbf", 1024)//
             );
-            List<MultipartFile> archsites = multipartSupport.archSitesShapefile();
-            List<MultipartFile> bugsites = multipartSupport.bugSitesShapefile();
+            List<MockMultipartFile> archsites = multipartSupport.archSitesShapefile();
+            List<MockMultipartFile> bugsites = multipartSupport.bugSitesShapefile();
 
             zipFile = multipartSupport.createZipFile("shapefiles.zip", archsites, bugsites, corruptFile);
         }
@@ -195,8 +196,8 @@ public class FileUploadApiControllerTest {
         final String datasetName = "test with spaces";
         MultipartFile zipFile;
         {
-            List<MultipartFile> orig = multipartSupport.statePopShapefile();
-            List<MultipartFile> contents = multipartSupport.renameDataset(datasetName, orig);
+            List<MockMultipartFile> orig = multipartSupport.statePopShapefile();
+            List<MockMultipartFile> contents = multipartSupport.renameDataset(datasetName, orig);
             zipFile = multipartSupport.createZipFile(datasetName + ".zip", contents);
         }
 
@@ -402,7 +403,7 @@ public class FileUploadApiControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testSampleFeatureEncoding() throws IOException {
-        List<MultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
+        List<MockMultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
         DataUploadJob upload = testSupport.uploadAndWaitForSuccess(uploadFiles, "chinese_poly");
         DatasetUploadState dataset = upload.getDatasets().get(0);
         assertEquals("Expected default shapefile encoding when no .cpg file is provided", "ISO-8859-1",
@@ -428,7 +429,7 @@ public class FileUploadApiControllerTest {
     @Test
     @WithMockUser(username = "testuser", roles = "USER")
     public void testSampleFeatureEncodingDetected() throws IOException {
-        List<MultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
+        List<MockMultipartFile> uploadFiles = multipartSupport.chinesePolyShapefile();
         // correct chinese_poly's dbf charset: GB18030, NAME: 黑龙江省
         uploadFiles.add(
                 multipartSupport.createMultipartFile("chinese_poly.cpg", "GB18030".getBytes(StandardCharsets.UTF_8)));

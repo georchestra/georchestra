@@ -113,8 +113,11 @@ public class GeorchestraIntegrationAutoConfigurationTest {
         assertEquals("datafeeder", local.get("database"));
 
         Map<String, String> gsBackendTemplate = publishing.getBackend().getGeoserver();
+        // just a random test property to assert props are loaded from
+        // datafeeder.properties
+        assertEquals("true", gsBackendTemplate.get("testFromDatafeederPropertiesFile"));
+
         assertEquals("postgis", gsBackendTemplate.get("dbtype"));
-        assertEquals("java:comp/env/jdbc/datafeeder", gsBackendTemplate.get("jndiReferenceName"));
         assertEquals("false", gsBackendTemplate.get("Loose bbox"));
         assertEquals("true", gsBackendTemplate.get("Estimated extends"));
     }
