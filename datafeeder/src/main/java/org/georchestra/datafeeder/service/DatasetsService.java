@@ -543,17 +543,26 @@ public class DatasetsService {
         }
     }
 
-    public @VisibleForTesting DataStore resolveSourceDataStore(@NonNull DatasetUploadState d) throws IOException {
-        PublishSettings publishing = d.getPublishing();
+    public @VisibleForTesting DataStore resolveSourceDataStore(@NonNull DatasetUploadState dataset) throws IOException {
+        PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing, "Dataset 'publishing' settings is null");
-        requireNonNull(d.getAbsolutePath(), "Dataset file absolutePath not provided");
+        requireNonNull(dataset.getAbsolutePath(), "Dataset file absolutePath not provided");
 
-        Path path = Paths.get(d.getAbsolutePath());
+        Path path = Paths.get(dataset.getAbsolutePath());
         if (!Files.isRegularFile(path)) {
             throw new IllegalArgumentException("Dataset absolutePath is not a file: " + path);
         }
 
-        String encoding = publishing.getEncoding() == null ? d.getEncoding() : publishing.getEncoding();
+        String encoding = "UTF-8";
+        if (publishing.getEncoding() != null) {
+            encoding = publishing.getEncoding();
+            log.info("Loading source data from {} using requested character encoding {}", path, encoding);
+        } else if (dataset.getEncoding() != null) {
+            encoding = dataset.getEncoding();
+            log.info("Loading source data from {} using native character encoding {}", path, encoding);
+        } else {
+            log.info("Loading source data from {} default fallback character encoding UTF-8", path);
+        }
         Charset charset = encoding == null ? null : Charset.forName(encoding);
         return loadDataStore(path, charset);
     }
