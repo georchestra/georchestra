@@ -100,17 +100,17 @@ public class GeorchestraIntegrationAutoConfigurationTest {
         assertNotNull(publishing.getGeonetwork());
         assertNotNull(publishing.getBackend());
 
-        assertEquals(new URL("http://localhost:8080/geoserver/rest"), publishing.getGeoserver().getApiUrl());
+        assertEquals(new URL("http://geoserver:8080/geoserver/rest"), publishing.getGeoserver().getApiUrl());
         assertEquals("properties loaded from src/test/resources/datadir/**?",
                 new URL("https://georchestra.test.org/geoserver"), publishing.getGeoserver().getPublicUrl());
-        assertEquals(new URL("http://localhost:8081/geonetwork"), publishing.getGeonetwork().getApiUrl());
+        assertEquals(new URL("http://geonetwork:8080/geonetwork"), publishing.getGeonetwork().getApiUrl());
         assertEquals("properties loaded from src/test/resources/datadir/**?",
                 new URL("https://georchestra.test.org/geonetwork"), publishing.getGeonetwork().getPublicUrl());
 
         Map<String, String> local = publishing.getBackend().getLocal();
         assertEquals("postgis", local.get("dbtype"));
-        assertEquals("localhost", local.get("host"));
-        assertEquals("datafeeder", local.get("database"));
+        assertEquals("database", local.get("host"));
+        assertEquals("georchestra", local.get("database"));
 
         Map<String, String> gsBackendTemplate = publishing.getBackend().getGeoserver();
         // just a random test property to assert props are loaded from

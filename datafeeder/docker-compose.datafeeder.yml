@@ -1,0 +1,18 @@
+# Docker composition to run integration tests against.
+# Sets up required external services:
+version: '3.8'
+
+volumes:
+  datafeeder_uploads:
+
+services:
+  datafeeder:
+    image: georchestra/datafeeder:latest
+    volumes:
+      - ./src/test/resources/datadir:/etc/georchestra
+      - datafeeder_uploads:/tmp/datafeeder
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - ${DATAFEEDER_PORT}:8080
+
