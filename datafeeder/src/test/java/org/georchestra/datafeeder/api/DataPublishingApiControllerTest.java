@@ -214,6 +214,33 @@ public class DataPublishingApiControllerTest {
         assertEquals(expected, publishing.getSrs());
     }
 
+    /**
+     * 
+     */
+    @WithMockUser(username = "testuser", roles = "USER")
+    public @Test void testPublish_Request_encoding() {
+
+        DataUploadJob upload = testSupport.uploadAndWaitForSuccess(multipartSupport.chinesePolyShapefile(),
+                "chinese_poly");
+
+        DatasetUploadState dset = upload.getDatasets().get(0);
+
+        // correct chinese_poly's dbf charset: GB18030, NAME: 黑龙江省
+        final String encoding = "GB18030";
+
+        DatasetPublishRequest dsetReq = buildRequest(dset);
+        dsetReq.setEncoding(encoding);
+
+        ResponseEntity<PublishJobStatus> response = controller.publish(upload.getJobId(),
+                new PublishRequest().addDatasetsItem(dsetReq));
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+
+        DataUploadJob finalJob = testSupport.awaitUntilPublishStateIs(upload.getJobId(), 5, JobStatus.DONE);
+        DatasetUploadState dsetFinal = finalJob.getDatasets().get(0);
+        PublishSettings publishing = dsetFinal.getPublishing();
+        assertEquals(encoding, publishing.getEncoding());
+    }
+
     private void testPublishSingleDataset(final DataUploadJob upload, final String nativeName) {
         DatasetUploadState dsetToPublish = upload.getDataset(nativeName).orElseThrow(IllegalStateException::new);
         DatasetPublishRequest dsetReq = buildRequest(dsetToPublish);

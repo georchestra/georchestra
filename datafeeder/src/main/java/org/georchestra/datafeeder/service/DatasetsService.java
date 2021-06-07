@@ -104,8 +104,9 @@ public class DatasetsService {
 
     public DatasetMetadata describe(@NonNull Path path, @NonNull String typeName) {
         Map<String, String> params = resolveConnectionParameters(path);
-        DataStore ds = loadDataStore(params);
+        DataStore ds = null;
         try {
+            ds = loadDataStore(params);
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
             DatasetMetadata md = describe(fs);
             if (isShapefile(path)) {
@@ -116,13 +117,15 @@ public class DatasetsService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            ds.dispose();
+            if (ds != null)
+                ds.dispose();
         }
     }
 
     public BoundingBoxMetadata getBounds(Path path, @NonNull String typeName, String srs, boolean reproject) {
-        DataStore ds = loadDataStore(path);
+        DataStore ds = null;
         try {
+            ds = loadDataStore(path);
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
             Query query = new Query();
             if (srs != null) {
@@ -138,15 +141,17 @@ public class DatasetsService {
         } catch (FactoryException | IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         } finally {
-            ds.dispose();
+            if (ds != null)
+                ds.dispose();
         }
     }
 
     public SimpleFeature getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
             String srs, boolean srsReproject) {
 
-        DataStore ds = loadDataStore(path, encoding);
+        DataStore ds = null;
         try {
+            ds = loadDataStore(path, encoding);
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
             Query query = new Query();
             query.setStartIndex(featureIndex);
@@ -169,7 +174,8 @@ public class DatasetsService {
         } catch (FactoryException | IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         } finally {
-            ds.dispose();
+            if (ds != null)
+                ds.dispose();
         }
     }
 
@@ -205,10 +211,11 @@ public class DatasetsService {
     public DataSourceMetadata describe(@NonNull Path path) {
         final Map<String, String> parameters = resolveConnectionParameters(path);
         DataSourceType dataSourceType = resolveDataSourceType(path, parameters);
-        DataStore ds = loadDataStore(parameters);
+        DataStore ds = null;
 
         List<DatasetMetadata> mds = new ArrayList<>();
         try {
+            ds = loadDataStore(parameters);
             String[] typeNames = ds.getTypeNames();
             for (String typeName : typeNames) {
                 SimpleFeatureSource fs = ds.getFeatureSource(typeName);
@@ -222,7 +229,8 @@ public class DatasetsService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            ds.dispose();
+            if (ds != null)
+                ds.dispose();
         }
         DataSourceMetadata dsm = new DataSourceMetadata();
         dsm.setConnectionParameters(parameters);
@@ -297,27 +305,22 @@ public class DatasetsService {
         return Optional.empty();
     }
 
-    final @VisibleForTesting @NonNull DataStore loadDataStore(@NonNull Path path) {
+    final @VisibleForTesting @NonNull DataStore loadDataStore(@NonNull Path path) throws IOException {
         Map<String, String> params = resolveConnectionParameters(path);
         return loadDataStore(params);
     }
 
-    private @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) {
+    private @NonNull DataStore loadDataStore(@NonNull Path path, @Nullable Charset encoding) throws IOException {
         Map<String, String> params = resolveConnectionParameters(path);
         if (encoding != null)
             params.put(ShapefileDataStoreFactory.DBFCHARSET.key, encoding.name());
         return loadDataStore(params);
     }
 
-    public @VisibleForTesting @NonNull DataStore loadDataStore(Map<String, String> params) {
-        DataStore ds;
-        try {
-            ds = DataStoreFinder.getDataStore(params);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public @VisibleForTesting @NonNull DataStore loadDataStore(Map<String, String> params) throws IOException {
+        DataStore ds = DataStoreFinder.getDataStore(params);
         if (ds == null) {
-            throw new IllegalArgumentException("Unable to resolve dataset with parameters " + params);
+            throw new IOException("Unable to resolve dataset with parameters " + params);
         }
         return ds;
     }
@@ -393,49 +396,74 @@ public class DatasetsService {
         requireNonNull(publishing.getImportedName(), "imported type name not provided");
         requireNonNull(publishing.getSrs(), "Dataset publish settings must provide the dataset's SRS");
 
+        final CoordinateReferenceSystem targetCRS = decodeCRS(publishing.getSrs());
+        final DataStore sourceStore = resolveSourceDataStore(d);
+        final DataStore targetStore;
+        try {
+            targetStore = loadDataStore(connectionParams);
+        } catch (IOException e) {
+            sourceStore.dispose();
+            throw e;
+        }
+
+        try {
+            final String sourceNativeName = resolveTypeName(sourceStore, d.getName());
+            final int featureCount = featureCount(sourceStore.getFeatureSource(sourceNativeName));
+            try (FeatureReader<SimpleFeatureType, SimpleFeature> reader = getReader(sourceStore, sourceNativeName,
+                    targetCRS, publishing.getSrsReproject())) {
+
+                final SimpleFeatureType sourceType = reader.getFeatureType();
+                final String targetTypeName = publishing.getImportedName();
+                SimpleFeatureStore target = createTarget(targetStore, targetTypeName, sourceType);
+                importData(reader, target, featureCount, listener);
+            }
+        } finally {
+            sourceStore.dispose();
+            targetStore.dispose();
+        }
+    }
+
+    private SimpleFeatureStore createTarget(DataStore targetStore, String targetTypeName, SimpleFeatureType sourceType)
+            throws IOException {
+
+        SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
+        ftb.init(sourceType);
+        ftb.setName(targetTypeName);
+        SimpleFeatureType targetType = ftb.buildFeatureType();
+
+        createSchema(targetType, targetStore);
+        return (SimpleFeatureStore) targetStore.getFeatureSource(targetTypeName);
+    }
+
+    private FeatureReader<SimpleFeatureType, SimpleFeature> getReader(DataStore sourceStore, String sourceNativeName,
+            CoordinateReferenceSystem targetCRS, Boolean srsReproject) throws IOException {
+
+        Query query = new Query(sourceNativeName);
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = sourceStore.getFeatureReader(query,
+                Transaction.AUTO_COMMIT);
+        final CoordinateReferenceSystem sourceCRS = reader.getFeatureType().getCoordinateReferenceSystem();
+
+        if (!CRS.equalsIgnoreMetadata(targetCRS, sourceCRS)) {
+            if (Boolean.TRUE.equals(srsReproject)) {
+                throw new UnsupportedOperationException("Reprojection is not yet implemented");
+            }
+            try {
+                reader = new ForceCoordinateSystemFeatureReader(reader, targetCRS);
+            } catch (SchemaException e) {
+                throw new IOException(e);
+            }
+        }
+        return reader;
+    }
+
+    private CoordinateReferenceSystem decodeCRS(String srs) throws IOException {
         final CoordinateReferenceSystem targetCRS;
         try {
-            targetCRS = CRS.decode(publishing.getSrs());
+            targetCRS = CRS.decode(srs);
         } catch (FactoryException e) {
             throw new IOException(e);
         }
-
-        DataStore sourceDs = resolveSourceDataStore(d);
-        try {
-            final String sourceNativeName = resolveTypeName(sourceDs, d);
-            final int featureCount = featureCount(sourceDs.getFeatureSource(sourceNativeName));
-            FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-            reader = sourceDs.getFeatureReader(new Query(sourceNativeName), Transaction.AUTO_COMMIT);
-            if (!CRS.equalsIgnoreMetadata(targetCRS, reader.getFeatureType().getCoordinateReferenceSystem())) {
-                if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
-                    throw new UnsupportedOperationException("Reprojection is not yet implemented");
-                }
-                try {
-                    reader = new ForceCoordinateSystemFeatureReader(reader, targetCRS);
-                } catch (SchemaException e) {
-                    throw new IOException(e);
-                }
-            }
-            SimpleFeatureType sourceType = reader.getFeatureType();
-            String targetTypeName = publishing.getImportedName();
-            SimpleFeatureType targetType;
-            {
-                SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
-                ftb.init(sourceType);
-                ftb.setName(targetTypeName);
-                targetType = ftb.buildFeatureType();
-            }
-            DataStore targetds = loadDataStore(connectionParams);
-            try {
-                createSchema(targetType, targetds);
-                SimpleFeatureStore target = (SimpleFeatureStore) targetds.getFeatureSource(targetTypeName);
-                importData(reader, target, featureCount, listener);
-            } finally {
-                targetds.dispose();
-            }
-        } finally {
-            sourceDs.dispose();
-        }
+        return targetCRS;
     }
 
     private void importData(FeatureReader<SimpleFeatureType, SimpleFeature> source, SimpleFeatureStore target,
@@ -515,7 +543,7 @@ public class DatasetsService {
         }
     }
 
-    public @VisibleForTesting DataStore resolveSourceDataStore(@NonNull DatasetUploadState d) {
+    public @VisibleForTesting DataStore resolveSourceDataStore(@NonNull DatasetUploadState d) throws IOException {
         PublishSettings publishing = d.getPublishing();
         requireNonNull(publishing, "Dataset 'publishing' settings is null");
         requireNonNull(d.getAbsolutePath(), "Dataset file absolutePath not provided");
@@ -530,8 +558,7 @@ public class DatasetsService {
         return loadDataStore(path, charset);
     }
 
-    private String resolveTypeName(DataStore store, DatasetUploadState d) throws IOException {
-        final String sourceNativeName = d.getName();
+    private String resolveTypeName(DataStore store, final String sourceNativeName) throws IOException {
         {
             String[] typeNames = store.getTypeNames();
             if (!Arrays.asList(typeNames).contains(sourceNativeName)) {
