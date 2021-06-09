@@ -60,40 +60,40 @@
   <!--
   Retrive a WMS capabilities document.
   -->
-  <xsl:function name="geonet:get-wms-capabilities" as="node()">
-    <xsl:param name="url" as="xs:string"/>
-    <xsl:param name="version" as="xs:string"/>
+<!--   <xsl:function name="geonet:get-wms-capabilities" as="node()"> -->
+<!--     <xsl:param name="url" as="xs:string"/> -->
+<!--     <xsl:param name="version" as="xs:string"/> -->
 
-    <xsl:copy-of
-      select="geonet:get-wxs-capabilities($url, 'WMS', $version)"/>
+<!--     <xsl:copy-of -->
+<!--       select="geonet:get-wxs-capabilities($url, 'WMS', $version)"/> -->
 
-  </xsl:function>
+<!--   </xsl:function> -->
 
-  <xsl:function name="geonet:get-wxs-capabilities" as="node()">
-    <xsl:param name="url" as="xs:string"/>
-    <xsl:param name="type" as="xs:string"/>
-    <xsl:param name="version" as="xs:string"/>
-    <xsl:variable name="sep" select="if (contains($url, '?')) then '&amp;' else '?'"/>
+<!--   <xsl:function name="geonet:get-wxs-capabilities" as="node()"> -->
+<!--     <xsl:param name="url" as="xs:string"/> -->
+<!--     <xsl:param name="type" as="xs:string"/> -->
+<!--     <xsl:param name="version" as="xs:string"/> -->
+<!--     <xsl:variable name="sep" select="if (contains($url, '?')) then '&amp;' else '?'"/> -->
 
-    <xsl:variable name="proxyhost"><xsl:value-of select="java:getSettingValue('system/proxy/host')"/></xsl:variable>
-    <xsl:variable name="baseHost"><xsl:value-of select="java:getSettingValue('system/server/host')"/></xsl:variable>
-    <xsl:variable name="protocol"><xsl:value-of select="java:getSettingValue('system/server/protocol')"/></xsl:variable>
-    <xsl:variable name="basePort">
-      <xsl:choose>
-        <xsl:when test="$protocol = 'https'">
-          <xsl:value-of select="java:getSettingValue('system/server/securePort')"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="java:getSettingValue('system/server/port')"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
+<!--     <xsl:variable name="proxyhost"><xsl:value-of select="java:getSettingValue('system/proxy/host')"/></xsl:variable> -->
+<!--     <xsl:variable name="baseHost"><xsl:value-of select="java:getSettingValue('system/server/host')"/></xsl:variable> -->
+<!--     <xsl:variable name="protocol"><xsl:value-of select="java:getSettingValue('system/server/protocol')"/></xsl:variable> -->
+<!--     <xsl:variable name="basePort"> -->
+<!--       <xsl:choose> -->
+<!--         <xsl:when test="$protocol = 'https'"> -->
+<!--           <xsl:value-of select="java:getSettingValue('system/server/securePort')"/> -->
+<!--         </xsl:when> -->
+<!--         <xsl:otherwise> -->
+<!--           <xsl:value-of select="java:getSettingValue('system/server/port')"/> -->
+<!--         </xsl:otherwise> -->
+<!--       </xsl:choose> -->
+<!--     </xsl:variable> -->
         
-    <xsl:variable name="fullUrl"><xsl:value-of select="concat($url, $sep, 'SERVICE=', $type, '&amp;VERSION=', $version, '&amp;REQUEST=GetCapabilities')"/></xsl:variable>
+<!--     <xsl:variable name="fullUrl"><xsl:value-of select="concat($url, $sep, 'SERVICE=', $type, '&amp;VERSION=', $version, '&amp;REQUEST=GetCapabilities')"/></xsl:variable> -->
 
-    <xsl:copy-of select="java:getUrlContent($fullUrl)"/>
+<!--     <xsl:copy-of select="java:getUrlContent($fullUrl)"/> -->
 
-  </xsl:function>
+<!--   </xsl:function> -->
 
   <!-- Create a GetMap request for the layer which could be used to set a thumbnail.
   TODO : add projection, width, heigth

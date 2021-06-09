@@ -23,7 +23,8 @@
   -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:exslt="http://exslt.org/common" xmlns:geonet="http://www.fao.org/geonetwork"
+                xmlns:exslt="http://exslt.org/common" 
+                xmlns:geonet="http://www.fao.org/geonetwork"
                 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
                 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                 xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -32,7 +33,8 @@
                 xmlns:gmd="http://www.isotc211.org/2005/gmd"
                 xmlns:srv="http://www.isotc211.org/2005/srv"
                 xmlns:util="java:org.fao.geonet.util.XslUtil"
-                version="2.0" exclude-result-prefixes="#all">
+                version="2.0" 
+                exclude-result-prefixes="#all">
   <!--
       Analyze topic categories and INSPIRE themes in the metadata record and suggest to add matching :
 
