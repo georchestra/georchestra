@@ -50,8 +50,10 @@
   -->
   <xsl:import href="process-utility.xsl"/>
 
+<!--   <xsl:variable name="inspire-th" -->
+<!--                 select="document(concat('file:///', replace(util:getConfigValue('codeListDir'), '\\', '/'), '/external/thesauri/theme/httpinspireeceuropaeutheme-theme.rdf'))"/> -->
   <xsl:variable name="inspire-th"
-                select="document(concat('file:///', replace(util:getConfigValue('codeListDir'), '\\', '/'), '/external/thesauri/theme/httpinspireeceuropaeutheme-theme.rdf'))"/>
+                select="document('external/thesauri/theme/httpinspireeceuropaeutheme-theme.rdf')"/>
 
   <xsl:variable name="itheme-topiccat-map">
     <!-- <entry>
