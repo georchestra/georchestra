@@ -10,12 +10,7 @@ volumes:
   postgresql_data:
   ldap_data:
   ldap_config:
-#  geoserver_geodata:
   geoserver_datadir:
-#  geoserver_tiles:
-#  geoserver_native_libs:
-#  mapfishapp_uploads:
-#  extractorapp_extracts:
   geonetwork_datadir:
 
 services:
@@ -52,11 +47,8 @@ services:
     depends_on:
       - ldap
     volumes:
-#      - ./config:/etc/georchestra
+      - ./src/test/resources/datadir:/etc/georchestra
       - geoserver_datadir:/mnt/geoserver_datadir
-#      - geoserver_geodata:/mnt/geoserver_geodata
-#      - geoserver_tiles:/mnt/geoserver_tiles
-#      - geoserver_native_libs:/mnt/geoserver_native_libs
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
@@ -70,7 +62,7 @@ services:
       - ldap
       - database
     volumes:
-#      - ./config:/etc/georchestra
+      # - ./src/test/resources/datadir:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
@@ -79,4 +71,3 @@ services:
     ports:
       - ${GEONETWORK_PORT}:8080
     restart: always
-

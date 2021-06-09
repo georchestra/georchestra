@@ -121,6 +121,14 @@ georchestra.datadir: src/test/resources/datadir
 ---
 spring.profiles: it
 georchestra.datadir: src/test/resources/datadir
+
+# Overrides from default.properties
+pgsqlHost: localhost
+pgsqlPort: 15432
+pgsqlDatabase: georchestra
+pgsqlUser: georchestra
+pgsqlPassword: georchestra
+
 datafeeder:
   file-upload:
     max-file-size: 30MB
