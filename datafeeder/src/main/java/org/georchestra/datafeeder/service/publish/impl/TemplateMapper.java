@@ -20,11 +20,13 @@ package org.georchestra.datafeeder.service.publish.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -50,8 +52,8 @@ import com.google.common.io.CharStreams;
 import lombok.NonNull;
 
 /**
- * Generates an XML metadata record applying the {@link #loadTransform() XML
- * transform} to the {@link #loadTemplateRecord() template record}, using a
+ * Generates an XML metadata record applying the {@link #resolveTransformURI()
+ * XML transform} to the {@link #loadTemplateRecord() template record}, using a
  * {@link MetadataRecordProperties} as a node-set parameter to the XSL
  * transformation.
  * <p>
@@ -67,14 +69,15 @@ public class TemplateMapper {
     public Supplier<String> apply(@NonNull MetadataRecordProperties mdProps) {
 
         final String templateRecord = loadTemplateRecord();
-        final String xslTransform = loadTransform();
+        final URI xslTransform = resolveTransformURI();
         final StringWriter target = new StringWriter();
         requireNonNull(templateRecord, "templateRecord is null");
         requireNonNull(xslTransform, "xslTransform is null");
-        try {
+        try (InputStream xslInputStream = xslTransform.toURL().openStream()) {
             TransformerFactory factory = TransformerFactory.newInstance();
-            Source xslt = new StreamSource(new StringReader(xslTransform));
-            Transformer transformer = factory.newTransformer(xslt);
+            String systemId = xslTransform.toASCIIString();
+            Source xsltSource = new StreamSource(xslInputStream, systemId);
+            Transformer transformer = factory.newTransformer(xsltSource);
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
@@ -96,21 +99,19 @@ public class TemplateMapper {
             throw new IllegalStateException("Error creating transformation source", e);
         } catch (TransformerException e) {
             throw new IllegalStateException("Error applying transformation", e);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error applying transformation", e);
         }
 
         return target::toString;
     }
 
-    protected String loadTransform() {
-        return loadDefaultTransform();
+    protected URI resolveTransformURI() {
+        return getDefaultTransformURI();
     }
 
     protected String loadTemplateRecord() {
         return loadDefaultTemplateRecord();
-    }
-
-    protected final String loadDefaultTransform() {
-        return loadResource(getDefaultTransformURI());
     }
 
     protected final String loadDefaultTemplateRecord() {
