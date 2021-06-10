@@ -20,12 +20,14 @@ package org.georchestra.datafeeder.service.publish.mock;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
+import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 
@@ -39,8 +41,8 @@ public class MockMetadataPublicationService implements MetadataPublicationServic
     }
 
     @Override
-    public URI buildMetadataRecordURL(@NonNull String recordId) {
-        return URI.create("https://mock.csw.org/?id=" + recordId);
+    public Optional<URI> buildMetadataRecordURL(@NonNull String recordId, MediaType contentType) {
+        return Optional.of(URI.create("https://mock.csw.org/?id=" + recordId + "&type=" + contentType.getType()));
     }
 
 }

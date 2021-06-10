@@ -201,7 +201,7 @@ public class PublishingBatchService {
                 JobProgress jobProgress = this.progressTracker.get(job.getJobId());
                 DatasetProgress datasetProgress = jobProgress.getProgress(dset.getId());
                 datasetProgress.setStep(DatasetPublishingStep.OWS_METADATA_UPDATE_STARTED);
-                owsService.addMetadataLink(dset);
+                owsService.addMetadataLinks(dset);
                 datasetProgress.setStep(DatasetPublishingStep.OWS_METADATA_UPDATE_FINISHED);
                 dset.setPublishStatus(JobStatus.DONE);
                 datasetProgress.setStep(DatasetPublishingStep.COMPLETED);

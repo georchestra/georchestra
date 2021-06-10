@@ -19,9 +19,11 @@
 package org.georchestra.datafeeder.service.publish;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 
@@ -29,5 +31,5 @@ public interface MetadataPublicationService {
 
     void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user);
 
-    URI buildMetadataRecordURL(@NonNull String recordId);
+    Optional<URI> buildMetadataRecordURL(@NonNull String recordId, MediaType contentType);
 }

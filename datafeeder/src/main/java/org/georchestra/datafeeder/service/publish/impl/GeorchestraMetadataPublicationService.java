@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, 2021 by the geOrchestra PSC
+* Copyright (C) 2020, 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -41,6 +42,7 @@ import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.ContactInfo;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.OnlineResource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.NonNull;
@@ -63,8 +65,14 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     }
 
     @Override
-    public URI buildMetadataRecordURL(@NonNull String recordId) {
-        return geonetwork.buildMetadataRecordXmlURI(recordId);
+    public Optional<URI> buildMetadataRecordURL(@NonNull String recordId, @NonNull MediaType contentType) {
+        URI uri = null;
+        if (contentType.isCompatibleWith(MediaType.TEXT_XML)) {
+            uri = geonetwork.buildMetadataRecordXmlURI(recordId);
+        } else if (contentType.isCompatibleWith(MediaType.TEXT_HTML)) {
+            uri = geonetwork.buildMetadataRecordHtmlURI(recordId);
+        }
+        return Optional.ofNullable(uri);
     }
 
     @Override

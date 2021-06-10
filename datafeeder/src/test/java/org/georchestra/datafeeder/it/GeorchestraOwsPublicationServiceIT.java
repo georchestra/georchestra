@@ -25,14 +25,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.GeonetworkPublishingConfiguration;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
@@ -43,6 +48,7 @@ import org.georchestra.datafeeder.service.publish.impl.GeorchestraOwsPublication
 import org.geoserver.openapi.model.catalog.AttributionInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
 import org.geoserver.openapi.model.catalog.MetadataEntry;
+import org.geoserver.openapi.model.catalog.MetadataLinkInfo;
 import org.geoserver.openapi.model.catalog.MetadataMap;
 import org.geoserver.openapi.v1.model.Layer;
 import org.geoserver.openapi.v1.model.WorkspaceSummary;
@@ -79,7 +85,7 @@ public class GeorchestraOwsPublicationServiceIT {
 
     public @Autowired @Rule IntegrationTestSupport support;
 
-    private @Autowired GeoServerClient client;
+    private @Autowired GeoServerClient geoServerClient;
     private @Autowired GeorchestraOwsPublicationService service;
     private @Autowired DataFeederConfigurationProperties configProperties;
 
@@ -103,7 +109,7 @@ public class GeorchestraOwsPublicationServiceIT {
     private static final String PULISHED_LAYERNAME = "PublicLayer";
 
     public @Before void setup() {
-        client.setDebugRequests(true);
+        geoServerClient.setDebugRequests(true);
         deleteWorkspace(EXPECTED_WORKSPACE);
         shpDataset = buildShapefileDatasetFromDefaultGeorchestraDataDirectory();
 
@@ -119,7 +125,7 @@ public class GeorchestraOwsPublicationServiceIT {
         try {
             // clean up here instead of at @After in case some failing test remainings need
             // to be diagnosed in geoserver
-            WorkspacesClient workspaces = client.workspaces();
+            WorkspacesClient workspaces = geoServerClient.workspaces();
             Optional<WorkspaceSummary> workspace = workspaces.findByName(workspaceName);
             if (workspace.isPresent()) {
                 workspaces.deleteRecursively(workspaceName);
@@ -163,10 +169,10 @@ public class GeorchestraOwsPublicationServiceIT {
 
     @Test
     public void testPublishSingleShapefile() {
-        WorkspacesClient workspaces = client.workspaces();
-        DataStoresClient dataStores = client.dataStores();
-        FeatureTypesClient featureTypes = client.featureTypes();
-        LayersClient layers = client.layers();
+        WorkspacesClient workspaces = geoServerClient.workspaces();
+        DataStoresClient dataStores = geoServerClient.dataStores();
+        FeatureTypesClient featureTypes = geoServerClient.featureTypes();
+        LayersClient layers = geoServerClient.layers();
 
         assertFalse(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
 
@@ -188,7 +194,7 @@ public class GeorchestraOwsPublicationServiceIT {
         final UserInfo user = support.user();
         service.publish(shpDataset, user);
 
-        Layer layer = client.layers().getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME)
+        Layer layer = geoServerClient.layers().getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
         AttributionInfo attribution = layer.getAttribution();
         assertNotNull(attribution);
@@ -202,7 +208,7 @@ public class GeorchestraOwsPublicationServiceIT {
         final UserInfo user = support.user();
         service.publish(shpDataset, user);
 
-        FeatureTypesClient featureTypes = client.featureTypes();
+        FeatureTypesClient featureTypes = geoServerClient.featureTypes();
         FeatureTypeInfo featureType = featureTypes
                 .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
@@ -214,5 +220,48 @@ public class GeorchestraOwsPublicationServiceIT {
                 .collect(Collectors.toMap(MetadataEntry::getAtKey, MetadataEntry::getValue));
         assertEquals("3600", values.get("cacheAgeMax"));
         assertEquals("true", values.get("cachingEnabled"));
+    }
+
+    @Test
+    public void addMetadataLinks() {
+        DatasetUploadState dataset = shpDataset;
+        final UserInfo user = support.user();
+        service.publish(dataset, user);
+
+        // fake publishing of metadata record...
+        final String metadataRecordId = UUID.randomUUID().toString();
+        dataset.getPublishing().setMetadataRecordId(metadataRecordId);
+
+        // test addMetadataLinks...
+        service.addMetadataLinks(dataset);
+
+        GeonetworkPublishingConfiguration gnConfig = this.configProperties.getPublishing().getGeonetwork();
+        URL publicURL = gnConfig.getPublicUrl();
+        final String xmlLink = String.format("%s/srv/api/records/%s/formatters/xml", publicURL, metadataRecordId);
+        final String lang = "eng";
+        final String htmlLink = String.format("%s/srv/%s/catalog.search#/metadata/%s", publicURL, lang,
+                metadataRecordId);
+
+        FeatureTypeInfo featureType = geoServerClient.featureTypes()
+                .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
+                .orElseThrow(NoSuchElementException::new);
+
+        assertNotNull(featureType.getMetadataLinks());
+        List<MetadataLinkInfo> links = featureType.getMetadataLinks().getMetadataLink();
+        assertNotNull(links);
+        assertEquals(2, links.size());
+
+        Map<String, MetadataLinkInfo> byType = links.stream()
+                .collect(Collectors.toMap(MetadataLinkInfo::getType, Function.identity()));
+        MetadataLinkInfo xml = byType.get("text/xml");
+        MetadataLinkInfo html = byType.get("text/html");
+
+        assertEquals("ISO19115:2003", xml.getMetadataType());
+        assertEquals("ISO19115:2003", html.getMetadataType());
+        assertNull(xml.getAbout());
+        assertNull(html.getAbout());
+
+        assertEquals(xmlLink, xml.getContent());
+        assertEquals(htmlLink, html.getContent());
     }
 }

@@ -49,6 +49,7 @@ import org.geoserver.openapi.model.catalog.KeywordInfo;
 import org.geoserver.openapi.model.catalog.LayerInfo;
 import org.geoserver.openapi.model.catalog.MetadataEntry;
 import org.geoserver.openapi.model.catalog.MetadataLinkInfo;
+import org.geoserver.openapi.model.catalog.MetadataLinks;
 import org.geoserver.openapi.model.catalog.MetadataMap;
 import org.geoserver.openapi.model.catalog.NamespaceInfo;
 import org.geoserver.openapi.model.catalog.ProjectionPolicy;
@@ -56,6 +57,7 @@ import org.geoserver.openapi.model.catalog.WorkspaceInfo;
 import org.geoserver.openapi.v1.model.DataStoreResponse;
 import org.geoserver.openapi.v1.model.Layer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -145,24 +147,30 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         }
     }
 
-    public @Override void addMetadataLink(@NonNull DatasetUploadState dataset) {
-        PublishSettings publishing = dataset.getPublishing();
-
+    public @Override void addMetadataLinks(@NonNull DatasetUploadState dataset) {
+        final PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing);
-        requireNonNull(publishing.getPublishedWorkspace());
-        requireNonNull(publishing.getPublishedName());
-        requireNonNull(publishing.getMetadataRecordId());
 
         final String workspace = publishing.getPublishedWorkspace();
         final String dataStore = resolveDataStoreName(dataset);
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
+        log.debug("Adding metadata links to {}:{}", workspace, layerName);
+        requireNonNull(workspace);
+        requireNonNull(layerName);
+        requireNonNull(metadataRecordId);
+
         FeatureTypeInfo fti = geoserver.findFeatureTypeInfo(workspace, dataStore, layerName)
                 .orElseThrow(() -> new IllegalArgumentException("FeatureType not found"));
 
-        MetadataLinkInfo metadatalink = buildMetadataLink(metadataRecordId);
+        Optional<MetadataLinkInfo> xmlLink = buildMetadataLink(metadataRecordId, MediaType.TEXT_XML);
+        Optional<MetadataLinkInfo> htmlLink = buildMetadataLink(metadataRecordId, MediaType.TEXT_HTML);
 
+        if (!(xmlLink.isPresent() || htmlLink.isPresent())) {
+            log.info("MetadataPublicationService does not support creating XML or HTML links");
+            return;
+        }
         FeatureTypeInfo toUpdate = new FeatureTypeInfo();
         toUpdate.setNativeName(fti.getNativeName());
         toUpdate.setName(fti.getName());
@@ -171,14 +179,17 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         toUpdate.getStore().setName(fti.getStore().getName());
         toUpdate.getStore().setWorkspace(new WorkspaceInfo());
         toUpdate.getStore().getWorkspace().setName(fti.getStore().getWorkspace().getName());
-        // toUpdate.addMetadatalinksItem(metadatalink);
 
-        // TODO: revisit, giving an error.
+        MetadataLinks metadataLinks = new MetadataLinks();
+        xmlLink.ifPresent(metadataLinks::addMetadataLinkItem);
+        htmlLink.ifPresent(metadataLinks::addMetadataLinkItem);
+        toUpdate.setMetadataLinks(metadataLinks);
         try {
             log.warn("Unable to add metadatalinks to geoserver feature type, its REST API doesn't yet work with JSON");
-            // geoserver.update(toUpdate);
-        } catch (Exception e) {
-            e.printStackTrace();
+            geoserver.update(toUpdate);
+        } catch (RuntimeException e) {
+            log.error("Error adding metadata links to {}:{} ({})", workspace, layerName, metadataLinks, e);
+            throw e;
         }
     }
 
@@ -290,14 +301,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return ws.getName();
     }
 
-    private MetadataLinkInfo buildMetadataLink(String metadataRecordId) {
-        final URI recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId);
-        MetadataLinkInfo info = new MetadataLinkInfo();
-        info.setType("application/xml");
-        info.setContent(recordURI.toString());
-        info.setMetadataType("ISO19115:2003");// TODO: revisit correct value
-        info.setAbout("XML metadata record");
-        return info;
+    private Optional<MetadataLinkInfo> buildMetadataLink(String metadataRecordId, final MediaType contentType) {
+        final Optional<URI> recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId,
+                contentType);
+        return recordURI.map(URI::toASCIIString).map(uri -> {
+            return new MetadataLinkInfo().metadataType("ISO19115:2003").type(contentType.toString()).content(uri)
+                    .about(null);
+        });
     }
 
 }
