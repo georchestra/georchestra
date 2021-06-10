@@ -87,4 +87,28 @@
           </plugin>
       </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>debianPackage</id>
+      <build>
+        <finalName>import</finalName>
+         <plugins>
+                <plugin>
+                    <groupId>net.sf.debian-maven</groupId>
+                    <artifactId>debian-maven-plugin</artifactId>
+                    <version>1.0.6</version>
+                    <configuration>
+                        <packageName>georchestra-datafeeder-ui</packageName>
+                        <packageDescription>geOrchestra Data Feeder (UI)</packageDescription>
+                        <packageVersion>${project.packageVersion}</packageVersion>
+                        <projectOrganization>geOrchestra</projectOrganization>
+                        <maintainerName>PSC</maintainerName>
+                        <maintainerEmail>psc@georchestra.org</maintainerEmail>
+                        <excludeAllDependencies>true</excludeAllDependencies>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+  </profiles>
 </project>
