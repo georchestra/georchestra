@@ -99,7 +99,7 @@ deb-build-geowebcache: war-build-geowebcache
 	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver deb-build-geowebcache
-	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl atlas,cas-server-webapp,datafeeder,datafeeder-ui,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:
