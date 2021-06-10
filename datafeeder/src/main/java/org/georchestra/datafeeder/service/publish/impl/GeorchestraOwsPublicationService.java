@@ -37,14 +37,19 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geoserver.openapi.model.catalog.AttributionInfo;
 import org.geoserver.openapi.model.catalog.DataStoreInfo;
 import org.geoserver.openapi.model.catalog.EnvelopeInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
 import org.geoserver.openapi.model.catalog.KeywordInfo;
+import org.geoserver.openapi.model.catalog.LayerInfo;
+import org.geoserver.openapi.model.catalog.MetadataEntry;
 import org.geoserver.openapi.model.catalog.MetadataLinkInfo;
+import org.geoserver.openapi.model.catalog.MetadataMap;
 import org.geoserver.openapi.model.catalog.NamespaceInfo;
 import org.geoserver.openapi.model.catalog.ProjectionPolicy;
 import org.geoserver.openapi.model.catalog.WorkspaceInfo;
@@ -83,8 +88,9 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     public @Override void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         requireNonNull(dataset.getJob());
-        requireNonNull(user.getOrganization(), "organization name not provided");
-        requireNonNull(user.getOrganization().getId(), "organization name not provided");
+        final Organization userOrganization = user.getOrganization();
+        requireNonNull(userOrganization, "organization name not provided");
+        requireNonNull(userOrganization.getId(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
@@ -103,15 +109,32 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, user));
         }
 
-        FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
-                dataset);
-
-        FeatureTypeInfo response = geoserver.create(requestBody);
+        FeatureTypeInfo createdFeatureType;
+        {
+            FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
+                    dataset);
+            createdFeatureType = geoserver.create(requestBody);
+        }
+        // feature type created, set attribution on the associated LayerInfo
+        try {
+            geoserver.findLayerByName(workspaceName, publishedLayerName).orElseThrow(IllegalStateException::new);
+            AttributionInfo attribution = new AttributionInfo().href(userOrganization.getLinkage())
+                    .title(userOrganization.getName());
+            LayerInfo layer = new LayerInfo();
+            layer.setName(publishedLayerName);
+            layer.setAttribution(attribution);
+            geoserver.update(workspaceName, layer);
+        } catch (RuntimeException e) {
+            log.error("Error setting attribution for layer {}:{}, deleting the feature type", workspaceName,
+                    publishedLayerName);
+            geoserver.delete(workspaceName, publishedLayerName);
+            throw e;
+        }
 
         publishing.setPublishedWorkspace(workspaceName);
         publishing.setPublishedName(publishedLayerName);
 
-        EnvelopeInfo latLonBoundingBox = response.getLatLonBoundingBox();
+        EnvelopeInfo latLonBoundingBox = createdFeatureType.getLatLonBoundingBox();
         if (latLonBoundingBox != null) {
             Envelope geographicBoundingBox = new Envelope();
             geographicBoundingBox.setMinx(latLonBoundingBox.getMinx());
@@ -223,9 +246,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
         }
 
+        // make the layer cacheable
+        MetadataMap mdmap = new MetadataMap();
+        mdmap.addEntryItem(new MetadataEntry().atKey("cacheAgeMax").value("3600"));
+        mdmap.addEntryItem(new MetadataEntry().atKey("cachingEnabled").value("true"));
+        ft.setMetadata(mdmap);
+
         ft.setStore(new DataStoreInfo().name(dataStore));
-        publishing.getSrs();
-        publishing.getSrsReproject();
         return ft;
     }
 
@@ -266,7 +293,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     private MetadataLinkInfo buildMetadataLink(String metadataRecordId) {
         final URI recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId);
         MetadataLinkInfo info = new MetadataLinkInfo();
-        info.setId(metadataRecordId);
+        info.setType("application/xml");
         info.setContent(recordURI.toString());
         info.setMetadataType("ISO19115:2003");// TODO: revisit correct value
         info.setAbout("XML metadata record");

@@ -20,13 +20,16 @@ package org.georchestra.datafeeder.it;
 
 import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_WORKSPACE;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
@@ -35,8 +38,13 @@ import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraOwsPublicationService;
+import org.geoserver.openapi.model.catalog.AttributionInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
+import org.geoserver.openapi.model.catalog.MetadataEntry;
+import org.geoserver.openapi.model.catalog.MetadataMap;
+import org.geoserver.openapi.v1.model.Layer;
 import org.geoserver.openapi.v1.model.WorkspaceSummary;
 import org.geoserver.restconfig.client.DataStoresClient;
 import org.geoserver.restconfig.client.FeatureTypesClient;
@@ -74,6 +82,8 @@ public class GeorchestraOwsPublicationServiceIT {
     private @Autowired GeoServerClient client;
     private @Autowired GeorchestraOwsPublicationService service;
     private @Autowired DataFeederConfigurationProperties configProperties;
+
+    private final String hardCodedStoreName = "datafeeder";
 
     private DatasetUploadState shpDataset;
 
@@ -157,7 +167,6 @@ public class GeorchestraOwsPublicationServiceIT {
         DataStoresClient dataStores = client.dataStores();
         FeatureTypesClient featureTypes = client.featureTypes();
         LayersClient layers = client.layers();
-        final String hardCodedStoreName = "datafeeder";
 
         assertFalse(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
 
@@ -174,4 +183,36 @@ public class GeorchestraOwsPublicationServiceIT {
         assertEquals(IMPORTED_LAYERNAME, featureType.get().getNativeName());
     }
 
+    @Test
+    public void testPublish_sets_layer_attribution_to_orgname_and_url() {
+        final UserInfo user = support.user();
+        service.publish(shpDataset, user);
+
+        Layer layer = client.layers().getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME)
+                .orElseThrow(NoSuchElementException::new);
+        AttributionInfo attribution = layer.getAttribution();
+        assertNotNull(attribution);
+
+        assertEquals(user.getOrganization().getName(), attribution.getTitle());
+        assertEquals(user.getOrganization().getLinkage(), attribution.getHref());
+    }
+
+    @Test
+    public void testPublish_sets_cache_settings() {
+        final UserInfo user = support.user();
+        service.publish(shpDataset, user);
+
+        FeatureTypesClient featureTypes = client.featureTypes();
+        FeatureTypeInfo featureType = featureTypes
+                .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
+                .orElseThrow(NoSuchElementException::new);
+
+        MetadataMap metadataMap = featureType.getMetadata();
+        assertNotNull(metadataMap);
+        assertNotNull(metadataMap.getEntry());
+        Map<String, String> values = metadataMap.getEntry().stream()
+                .collect(Collectors.toMap(MetadataEntry::getAtKey, MetadataEntry::getValue));
+        assertEquals("3600", values.get("cacheAgeMax"));
+        assertEquals("true", values.get("cachingEnabled"));
+    }
 }
