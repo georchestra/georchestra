@@ -1,0 +1,13 @@
+[Unit]
+Description=geOrchestra datafeeder backend
+After=syslog.target
+
+[Service]
+User=www-data
+ExecStart=/usr/bin/java -Dserver.port=8480 -jar /usr/share/lib/georchestra-datafeeder/datafeeder-bin.jar
+SuccessExitStatus=143
+StandardOutput=append:/tmp/datafeeder.log
+StandardError=append:/tmp/datafeeder.log
+
+[Install]
+WantedBy=multi-user.target
