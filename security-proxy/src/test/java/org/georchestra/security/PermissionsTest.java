@@ -6,10 +6,20 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.google.common.collect.Sets;
 import org.georchestra.security.permissions.Permissions;
+import org.georchestra.security.permissions.ResolverDelegate;
+import org.georchestra.security.permissions.UriMatcher;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 public class PermissionsTest {
@@ -86,9 +96,30 @@ public class PermissionsTest {
 
     }
 
+    /**
+     * The purpose of this test is to check that a URIMatcher of type host matches
+     * several domain names behind the same IP address.
+     *
+     * @throws IOException
+     */
+
     @Test
     public void testHost() throws IOException {
-        Permissions perm = this.load("test-permissions-uriMatcher.xml");
+        Permissions perm = new Permissions();
+        UriMatcher deniedUm = new UriMatcher();
+        deniedUm.setResolverDelegate(new ResolverDelegate() {
+            @Override
+            public InetAddress[] resolve(String host) throws UnknownHostException {
+                if (host.equals("sdi-stable.georchestra.org") || host.equals("georchestra.org")) {
+                    return new InetAddress[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }) };
+                } else {
+                    throw new UnknownHostException();
+                }
+            }
+        });
+        deniedUm.setHostNames(
+                Stream.of(InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 })).collect(Collectors.toSet()));
+        perm.setDenied(Arrays.asList(deniedUm));
 
         // sdi-stable.georchestra.org has same IP address as sdi.georchestra.org
         assertTrue(perm.isDenied(new URL("http://sdi-stable.georchestra.org/test.html")));
