@@ -95,6 +95,11 @@ public @Data class DataFeederConfigurationProperties {
     @EqualsAndHashCode(callSuper = true)
     public static class GeoServerPublishingConfiguration extends ExternalApiConfiguration {
         private String baseNamespaceURI;
+        /**
+         * If set, the number of seconds to set on published layers as their HTTP cache
+         * timeout
+         */
+        private Integer layerClientCacheSeconds;
     }
 
     public static @Data class ExternalApiConfiguration {

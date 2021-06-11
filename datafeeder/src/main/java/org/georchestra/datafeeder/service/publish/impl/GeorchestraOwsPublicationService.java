@@ -258,11 +258,18 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         }
 
         // make the layer cacheable
-        MetadataMap mdmap = new MetadataMap();
-        mdmap.addEntryItem(new MetadataEntry().atKey("cacheAgeMax").value("3600"));
-        mdmap.addEntryItem(new MetadataEntry().atKey("cachingEnabled").value("true"));
-        ft.setMetadata(mdmap);
-
+        final Integer cacheSeconds = this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds();
+        if (cacheSeconds == null || cacheSeconds.intValue() < 0) {
+            log.info(
+                    "Not setting GeoServer layer cache timeout, datafeeder.publishing.geoserver.layer-client-cache-seconds is {}",
+                    cacheSeconds);
+        } else {
+            log.debug("Setting layer cache timeout to {}", cacheSeconds);
+            MetadataMap mdmap = new MetadataMap();
+            mdmap.addEntryItem(new MetadataEntry().atKey("cacheAgeMax").value(cacheSeconds.toString()));
+            mdmap.addEntryItem(new MetadataEntry().atKey("cachingEnabled").value("true"));
+            ft.setMetadata(mdmap);
+        }
         ft.setStore(new DataStoreInfo().name(dataStore));
         return ft;
     }

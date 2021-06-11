@@ -208,6 +208,10 @@ public class GeorchestraOwsPublicationServiceIT {
         final UserInfo user = support.user();
         service.publish(shpDataset, user);
 
+        assertNotNull("check datafeeder.properties in src/test/resources/...",
+                this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds());
+        this.configProperties.getPublishing().getGeoserver().setLayerClientCacheSeconds(3600);
+
         FeatureTypesClient featureTypes = geoServerClient.featureTypes();
         FeatureTypeInfo featureType = featureTypes
                 .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
