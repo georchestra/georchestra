@@ -259,7 +259,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
         // make the layer cacheable
         final Integer cacheSeconds = this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds();
-        if (cacheSeconds == null || cacheSeconds.intValue() < 0) {
+        if (cacheSeconds == null || cacheSeconds.intValue() <= 0) {
             log.info(
                     "Not setting GeoServer layer cache timeout, datafeeder.publishing.geoserver.layer-client-cache-seconds is {}",
                     cacheSeconds);
