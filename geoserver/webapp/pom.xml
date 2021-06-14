@@ -172,7 +172,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlets</artifactId>
-      <version>9.4.18.v20190429</version>
+      <version>9.4.41.v20210516</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
