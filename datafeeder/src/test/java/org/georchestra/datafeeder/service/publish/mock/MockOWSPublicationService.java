@@ -20,6 +20,7 @@ package org.georchestra.datafeeder.service.publish.mock;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
@@ -27,6 +28,7 @@ import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -50,12 +52,13 @@ public class MockOWSPublicationService implements OWSPublicationService {
     }
 
     @Override
-    public void addMetadataLink(@NonNull DatasetUploadState dataset) {
+    public void addMetadataLinks(@NonNull DatasetUploadState dataset) {
         log.info("MOCK publishing of OWS metadata links for " + dataset.getJob().getJobId() + "/" + dataset.getName());
         PublishSettings publishing = dataset.getPublishing();
         Objects.requireNonNull(publishing);
         Objects.requireNonNull(publishing.getMetadataRecordId());
-        URI metadataLink = metadataService.buildMetadataRecordURL(publishing.getMetadataRecordId());
+        Optional<URI> metadataLink = metadataService.buildMetadataRecordURL(publishing.getMetadataRecordId(),
+                MediaType.TEXT_XML);
         // non-mock service should update the geoserver feature type adding the md link
         // here
         log.info("MOCK added metadata link " + metadataLink);

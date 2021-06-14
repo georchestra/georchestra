@@ -484,6 +484,8 @@ public class DatasetsService {
             log.error("Error importing data to {}", typeName, e);
             gtTx.rollback();
             throw e;
+        } finally {
+            gtTx.close();
         }
     }
 

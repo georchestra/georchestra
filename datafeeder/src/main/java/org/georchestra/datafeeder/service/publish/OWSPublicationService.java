@@ -45,6 +45,6 @@ public interface OWSPublicationService {
      * pointing to the metadata {@link PublishSettings#getMetadataRecordId() record
      * id}.
      */
-    void addMetadataLink(DatasetUploadState dataset);
+    void addMetadataLinks(DatasetUploadState dataset);
 
 }

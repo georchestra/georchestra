@@ -162,4 +162,13 @@ public class GeoNetworkRemoteService {
         URI uri = URI.create(xmlMdRecord).normalize();
         return uri;
     }
+
+    // e.g.
+    // https://localhost:28080/geonetwork/srv/fre/catalog.search#/metadata/FR-200052264-GGE_ERP_SCOLAIRES
+    public URI buildMetadataRecordHtmlURI(@NonNull String recordId) {
+        URL publicURL = this.config.getPublicUrl();
+        String htmlURI = String.format("%s/srv/eng/catalog.search#/metadata/%s", publicURL, recordId);
+        URI uri = URI.create(htmlURI).normalize();
+        return uri;
+    }
 }

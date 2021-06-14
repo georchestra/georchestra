@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.geoserver.openapi.model.catalog.DataStoreInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
+import org.geoserver.openapi.model.catalog.LayerInfo;
 import org.geoserver.openapi.model.catalog.NamespaceInfo;
 import org.geoserver.openapi.model.catalog.WorkspaceInfo;
 import org.geoserver.openapi.v1.model.DataStoreResponse;
@@ -179,6 +180,26 @@ public class GeoServerRemoteService {
             String name = fti.getName();
             FeatureTypeInfo updated = client.update(workspaceName, name, fti);
             return updated;
+        } finally {
+            LOCKS.writeLock(workspaceName).unlock();
+        }
+    }
+
+    public void update(@NonNull String workspaceName, @NonNull LayerInfo layer) {
+        LOCKS.writeLock(workspaceName).lock();
+        try {
+            LayersClient client = client().layers();
+            String name = layer.getName();
+            client.updateLayer(workspaceName, name, layer);
+        } finally {
+            LOCKS.writeLock(workspaceName).unlock();
+        }
+    }
+
+    public void delete(@NonNull String workspaceName, @NonNull String typeName) {
+        LOCKS.writeLock(workspaceName).lock();
+        try {
+            client().featureTypes().deleteRecursively(workspaceName, typeName);
         } finally {
             LOCKS.writeLock(workspaceName).unlock();
         }

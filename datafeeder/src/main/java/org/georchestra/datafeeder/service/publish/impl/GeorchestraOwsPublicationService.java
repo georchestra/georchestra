@@ -37,20 +37,27 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geoserver.openapi.model.catalog.AttributionInfo;
 import org.geoserver.openapi.model.catalog.DataStoreInfo;
 import org.geoserver.openapi.model.catalog.EnvelopeInfo;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
 import org.geoserver.openapi.model.catalog.KeywordInfo;
+import org.geoserver.openapi.model.catalog.LayerInfo;
+import org.geoserver.openapi.model.catalog.MetadataEntry;
 import org.geoserver.openapi.model.catalog.MetadataLinkInfo;
+import org.geoserver.openapi.model.catalog.MetadataLinks;
+import org.geoserver.openapi.model.catalog.MetadataMap;
 import org.geoserver.openapi.model.catalog.NamespaceInfo;
 import org.geoserver.openapi.model.catalog.ProjectionPolicy;
 import org.geoserver.openapi.model.catalog.WorkspaceInfo;
 import org.geoserver.openapi.v1.model.DataStoreResponse;
 import org.geoserver.openapi.v1.model.Layer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -83,8 +90,9 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
 
     public @Override void publish(@NonNull DatasetUploadState dataset, @NonNull UserInfo user) {
         requireNonNull(dataset.getJob());
-        requireNonNull(user.getOrganization(), "organization name not provided");
-        requireNonNull(user.getOrganization().getId(), "organization name not provided");
+        final Organization userOrganization = user.getOrganization();
+        requireNonNull(userOrganization, "organization name not provided");
+        requireNonNull(userOrganization.getId(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
@@ -103,15 +111,32 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             geoserver.create(buildDataStoreInfo(workspaceName, dataStoreName, user));
         }
 
-        FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
-                dataset);
-
-        FeatureTypeInfo response = geoserver.create(requestBody);
+        FeatureTypeInfo createdFeatureType;
+        {
+            FeatureTypeInfo requestBody = buildPublishingFeatureType(workspaceName, dataStoreName, publishedLayerName,
+                    dataset);
+            createdFeatureType = geoserver.create(requestBody);
+        }
+        // feature type created, set attribution on the associated LayerInfo
+        try {
+            geoserver.findLayerByName(workspaceName, publishedLayerName).orElseThrow(IllegalStateException::new);
+            AttributionInfo attribution = new AttributionInfo().href(userOrganization.getLinkage())
+                    .title(userOrganization.getName());
+            LayerInfo layer = new LayerInfo();
+            layer.setName(publishedLayerName);
+            layer.setAttribution(attribution);
+            geoserver.update(workspaceName, layer);
+        } catch (RuntimeException e) {
+            log.error("Error setting attribution for layer {}:{}, deleting the feature type", workspaceName,
+                    publishedLayerName);
+            geoserver.delete(workspaceName, publishedLayerName);
+            throw e;
+        }
 
         publishing.setPublishedWorkspace(workspaceName);
         publishing.setPublishedName(publishedLayerName);
 
-        EnvelopeInfo latLonBoundingBox = response.getLatLonBoundingBox();
+        EnvelopeInfo latLonBoundingBox = createdFeatureType.getLatLonBoundingBox();
         if (latLonBoundingBox != null) {
             Envelope geographicBoundingBox = new Envelope();
             geographicBoundingBox.setMinx(latLonBoundingBox.getMinx());
@@ -122,24 +147,30 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         }
     }
 
-    public @Override void addMetadataLink(@NonNull DatasetUploadState dataset) {
-        PublishSettings publishing = dataset.getPublishing();
-
+    public @Override void addMetadataLinks(@NonNull DatasetUploadState dataset) {
+        final PublishSettings publishing = dataset.getPublishing();
         requireNonNull(publishing);
-        requireNonNull(publishing.getPublishedWorkspace());
-        requireNonNull(publishing.getPublishedName());
-        requireNonNull(publishing.getMetadataRecordId());
 
         final String workspace = publishing.getPublishedWorkspace();
         final String dataStore = resolveDataStoreName(dataset);
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
+        log.debug("Adding metadata links to {}:{}", workspace, layerName);
+        requireNonNull(workspace);
+        requireNonNull(layerName);
+        requireNonNull(metadataRecordId);
+
         FeatureTypeInfo fti = geoserver.findFeatureTypeInfo(workspace, dataStore, layerName)
                 .orElseThrow(() -> new IllegalArgumentException("FeatureType not found"));
 
-        MetadataLinkInfo metadatalink = buildMetadataLink(metadataRecordId);
+        Optional<MetadataLinkInfo> xmlLink = buildMetadataLink(metadataRecordId, MediaType.TEXT_XML);
+        Optional<MetadataLinkInfo> htmlLink = buildMetadataLink(metadataRecordId, MediaType.TEXT_HTML);
 
+        if (!(xmlLink.isPresent() || htmlLink.isPresent())) {
+            log.info("MetadataPublicationService does not support creating XML or HTML links");
+            return;
+        }
         FeatureTypeInfo toUpdate = new FeatureTypeInfo();
         toUpdate.setNativeName(fti.getNativeName());
         toUpdate.setName(fti.getName());
@@ -148,14 +179,17 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         toUpdate.getStore().setName(fti.getStore().getName());
         toUpdate.getStore().setWorkspace(new WorkspaceInfo());
         toUpdate.getStore().getWorkspace().setName(fti.getStore().getWorkspace().getName());
-        // toUpdate.addMetadatalinksItem(metadatalink);
 
-        // TODO: revisit, giving an error.
+        MetadataLinks metadataLinks = new MetadataLinks();
+        xmlLink.ifPresent(metadataLinks::addMetadataLinkItem);
+        htmlLink.ifPresent(metadataLinks::addMetadataLinkItem);
+        toUpdate.setMetadataLinks(metadataLinks);
         try {
             log.warn("Unable to add metadatalinks to geoserver feature type, its REST API doesn't yet work with JSON");
-            // geoserver.update(toUpdate);
-        } catch (Exception e) {
-            e.printStackTrace();
+            geoserver.update(toUpdate);
+        } catch (RuntimeException e) {
+            log.error("Error adding metadata links to {}:{} ({})", workspace, layerName, metadataLinks, e);
+            throw e;
         }
     }
 
@@ -223,9 +257,20 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
         }
 
+        // make the layer cacheable
+        final Integer cacheSeconds = this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds();
+        if (cacheSeconds == null || cacheSeconds.intValue() <= 0) {
+            log.info(
+                    "Not setting GeoServer layer cache timeout, datafeeder.publishing.geoserver.layer-client-cache-seconds is {}",
+                    cacheSeconds);
+        } else {
+            log.debug("Setting layer cache timeout to {}", cacheSeconds);
+            MetadataMap mdmap = new MetadataMap();
+            mdmap.addEntryItem(new MetadataEntry().atKey("cacheAgeMax").value(cacheSeconds.toString()));
+            mdmap.addEntryItem(new MetadataEntry().atKey("cachingEnabled").value("true"));
+            ft.setMetadata(mdmap);
+        }
         ft.setStore(new DataStoreInfo().name(dataStore));
-        publishing.getSrs();
-        publishing.getSrsReproject();
         return ft;
     }
 
@@ -263,14 +308,13 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return ws.getName();
     }
 
-    private MetadataLinkInfo buildMetadataLink(String metadataRecordId) {
-        final URI recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId);
-        MetadataLinkInfo info = new MetadataLinkInfo();
-        info.setId(metadataRecordId);
-        info.setContent(recordURI.toString());
-        info.setMetadataType("ISO19115:2003");// TODO: revisit correct value
-        info.setAbout("XML metadata record");
-        return info;
+    private Optional<MetadataLinkInfo> buildMetadataLink(String metadataRecordId, final MediaType contentType) {
+        final Optional<URI> recordURI = metadataPublicationService.buildMetadataRecordURL(metadataRecordId,
+                contentType);
+        return recordURI.map(URI::toASCIIString).map(uri -> {
+            return new MetadataLinkInfo().metadataType("ISO19115:2003").type(contentType.toString()).content(uri)
+                    .about(null);
+        });
     }
 
 }
