@@ -195,12 +195,12 @@
           <plugin>
             <groupId>org.jsondoc</groupId>
             <artifactId>jsondoc-maven-plugin</artifactId>
-            <version>1.2.22</version>
+            <version>1.2.23</version>
             <dependencies>
               <dependency>
                 <groupId>org.jsondoc</groupId>
                 <artifactId>jsondoc-springmvc</artifactId>
-                <version>1.2.22</version>
+                <version>1.2.23</version>
               </dependency>
               <dependency>
                 <groupId>javax.servlet</groupId>
