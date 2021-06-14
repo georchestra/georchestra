@@ -1,0 +1,25 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+
+    <context:component-scan base-package="org.georchestra.datafeeder.ui" />
+    <mvc:annotation-driven />
+    <mvc:resources mapping="/*.svg" location="/" />
+    <mvc:resources mapping="/*.ttf" location="/" />
+    <mvc:resources mapping="/*.woff" location="/" />
+    <mvc:resources mapping="/*.ico" location="/" />
+    <mvc:resources mapping="/*.html" location="/" />
+    <mvc:resources mapping="/*.js" location="/" />
+    <mvc:resources mapping="/*.map" location="/" />
+    <mvc:resources mapping="/assets/**" location="/assets/" />
+
+</beans>
