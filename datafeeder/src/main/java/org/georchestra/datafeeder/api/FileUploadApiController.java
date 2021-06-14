@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 
 import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -51,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 
 @Controller
 @Api(tags = { "File Upload" }) // hides the empty file-upload-api-controller entry in swagger-ui.html
@@ -102,7 +104,7 @@ public class FileUploadApiController implements FileUploadApi {
             @RequestParam(value = "featureIndex", required = false) Integer featureIndex,
             @RequestParam(value = "encoding", required = false) String encoding,
             @RequestParam(value = "srs", required = false) String srs,
-            @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
+            @RequestParam(value = "srsOverride", required = false) String srsOverride) {
 
         validityService.checkAccessRights(jobId);
 
@@ -110,14 +112,14 @@ public class FileUploadApiController implements FileUploadApi {
 
         if (featureIndex == null)
             featureIndex = 0;
-        if (srsReproject == null)
-            srsReproject = false;
 
         SimpleFeature feature;
         try {
-            feature = uploadService.sampleFeature(jobId, typeName, featureIndex, charset, srs, srsReproject);
+            feature = uploadService.sampleFeature(jobId, typeName, featureIndex, charset, srs, srsOverride);
         } catch (IllegalArgumentException e) {
             throw ApiException.badRequest(e.getMessage());
+        } catch (IOException e) {
+            throw ApiException.internalServerError(e, e.getMessage());
         }
         FeatureJSON encoder = new FeatureJSON();
         encoder.setEncodeFeatureBounds(true);
@@ -136,12 +138,18 @@ public class FileUploadApiController implements FileUploadApi {
     @Override
     public ResponseEntity<BoundingBox> getBounds(@PathVariable("jobId") UUID jobId,
             @PathVariable("typeName") String typeName, @RequestParam(value = "srs", required = false) String srs,
-            @RequestParam(value = "srs_reproject", required = false, defaultValue = "false") Boolean srsReproject) {
+            @RequestParam(value = "srsOverride", required = false) String srsOverride) {
 
         validityService.checkAccessRights(jobId);
 
-        boolean reproject = srsReproject == null ? false : srsReproject.booleanValue();
-        BoundingBoxMetadata bounds = this.uploadService.computeBounds(jobId, typeName, srs, reproject);
+        BoundingBoxMetadata bounds;
+        try {
+            bounds = this.uploadService.computeBounds(jobId, typeName, srs, srsOverride);
+        } catch (IllegalArgumentException e) {
+            throw ApiException.badRequest(e.getMessage());
+        } catch (IOException e) {
+            throw ApiException.internalServerError(e, e.getMessage());
+        }
         BoundingBox bbox = mapper.toApi(bounds);
         return ResponseEntity.ok(bbox);
     }

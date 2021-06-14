@@ -21,12 +21,18 @@ package org.georchestra.datafeeder.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.service.DataSourceMetadata.DataSourceType;
+import org.georchestra.datafeeder.service.DatasetsService.FeatureResult;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.georchestra.datafeeder.test.TestData;
 import org.geotools.data.DataStore;
@@ -85,6 +91,253 @@ public class DatasetsServiceTest {
         assertNotNull(md.getNativeBounds().getCrs());
         assertNotNull(md.getNativeBounds().getCrs().getWKT());
         assertNotNull(md.getSampleGeometry());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_missing_and_not_overridden_results_in_null_bounds_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = null;
+        String nativeSrsOverride = null;
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertNull(bounds.getNativeCrs());
+        assertNull(bounds.getCrs());
+        assertFalse(bounds.isReprojected());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_missing_and_overridden_by_parameter() throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = null;
+        String nativeSrsOverride = "EPSG:4326";
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertFalse(bounds.isReprojected());
+        assertEquals(nativeSrsOverride, bounds.getNativeCrs().getSrs());
+        assertEquals(nativeSrsOverride, bounds.getCrs().getSrs());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_missing_and_overridden_by_parameter_reprojects_ok_to_target_crs()
+            throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String nativeSrsOverride = "EPSG:4326";
+        String targetSrs = "EPSG:3857";
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertEquals(targetSrs, bounds.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, bounds.getNativeCrs().getSrs());
+        assertTrue(bounds.isReprojected());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_missing_and_not_overriden_cant_be_reprojected_to_target_crs()
+            throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = null;
+
+        try {
+            service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+            fail("Expected IAE trying to reproject with missing native CRS and no source SRS override");
+        } catch (IllegalArgumentException expected) {
+            assertEquals(
+                    "Unable to reproject, dataset statepop doesn't declare a native CRS and no native SRS override was provided",
+                    expected.getMessage());
+        }
+    }
+
+    @Test
+    public void getBounds_native_crs_is_present_and_no_override_nor_reproject_requested() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = null;
+        String nativeSrsOverride = null;
+        String nativeSrs = "EPSG:4269"; // native crs from .prj
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertFalse(bounds.isReprojected());
+        assertEquals(nativeSrs, bounds.getCrs().getSrs());
+        assertEquals(nativeSrs, bounds.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_present_and_reprojected_to_target_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String nativeSrs = "EPSG:4269"; // native crs from .prj
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = null;
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertTrue(bounds.isReprojected());
+        assertEquals(targetSrs, bounds.getCrs().getSrs());
+        assertEquals(nativeSrs, bounds.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_present_and_overridden_no_reprojection_requested() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = null;
+        String nativeSrsOverride = "EPSG:4326";
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertFalse(bounds.isReprojected());
+        assertEquals(nativeSrsOverride, bounds.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, bounds.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getBounds_native_crs_is_present_and_overridden_and_reprojected_to_target_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = "EPSG:4326";
+
+        BoundingBoxMetadata bounds = service.getBounds(path, "statepop", targetSrs, nativeSrsOverride);
+        assertTrue(bounds.isReprojected());
+        assertEquals(targetSrs, bounds.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, bounds.getNativeCrs().getSrs());
+    }
+
+    ///////////////////
+
+    @Test
+    public void getFeature_native_crs_is_missing_and_not_overridden_results_in_null_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = null;
+        String nativeSrsOverride = null;
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertNull(result.getNativeCrs());
+        assertNull(result.getCrs());
+        assertFalse(result.isReprojected());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_missing_and_overridden_by_parameter() throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = null;
+        String nativeSrsOverride = "EPSG:4326";
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertFalse(result.isReprojected());
+        assertEquals(nativeSrsOverride, result.getNativeCrs().getSrs());
+        assertEquals(nativeSrsOverride, result.getCrs().getSrs());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_missing_and_overridden_by_parameter_reprojects_ok_to_target_crs()
+            throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String nativeSrsOverride = "EPSG:4326";
+        String targetSrs = "EPSG:3857";
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertEquals(targetSrs, result.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, result.getNativeCrs().getSrs());
+        assertTrue(result.isReprojected());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_missing_and_not_overriden_cant_be_reprojected_to_target_crs()
+            throws IOException {
+        Path path = testData.statePopShapefile();
+        Path prj = path.getParent().resolve("statepop.prj");
+        assertTrue(prj.toFile().delete());
+
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = null;
+
+        try {
+            service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+            fail("Expected IAE trying to reproject with missing native CRS and no source SRS override");
+        } catch (IllegalArgumentException expected) {
+            assertEquals(
+                    "Unable to reproject, dataset statepop doesn't declare a native CRS and no native SRS override was provided",
+                    expected.getMessage());
+        }
+    }
+
+    @Test
+    public void getFeature_native_crs_is_present_and_no_override_nor_reproject_requested() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = null;
+        String nativeSrsOverride = null;
+        String nativeSrs = "EPSG:4269"; // native crs from .prj
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertFalse(result.isReprojected());
+        assertEquals(nativeSrs, result.getCrs().getSrs());
+        assertEquals(nativeSrs, result.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_present_and_reprojected_to_target_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String nativeSrs = "EPSG:4269"; // native crs from .prj
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = null;
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertTrue(result.isReprojected());
+        assertEquals(targetSrs, result.getCrs().getSrs());
+        assertEquals(nativeSrs, result.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_present_and_overridden_no_reprojection_requested() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = null;
+        String nativeSrsOverride = "EPSG:4326";
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertFalse(result.isReprojected());
+        assertEquals(nativeSrsOverride, result.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, result.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void getFeature_native_crs_is_present_and_overridden_and_reprojected_to_target_crs() throws IOException {
+        Path path = testData.statePopShapefile();
+
+        String targetSrs = "EPSG:3857";
+        String nativeSrsOverride = "EPSG:4326";
+
+        FeatureResult result = service.getFeature(path, "statepop", (Charset) null, 0, targetSrs, nativeSrsOverride);
+        assertNotNull(result.getFeature());
+        assertTrue(result.isReprojected());
+        assertEquals(targetSrs, result.getCrs().getSrs());
+        assertEquals(nativeSrsOverride, result.getNativeCrs().getSrs());
     }
 
 }

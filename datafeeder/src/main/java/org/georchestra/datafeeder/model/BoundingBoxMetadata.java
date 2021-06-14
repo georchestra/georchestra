@@ -20,12 +20,17 @@ package org.georchestra.datafeeder.model;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.Transient;
 
 import lombok.Data;
 
 @Data
 @Embeddable
 public class BoundingBoxMetadata {
+
+    private @Transient CoordinateReferenceSystemMetadata nativeCrs;
+    private @Transient boolean reprojected;
+
     @Embedded
     private CoordinateReferenceSystemMetadata crs;
 

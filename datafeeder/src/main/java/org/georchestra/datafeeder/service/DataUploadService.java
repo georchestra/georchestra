@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.service;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +36,7 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
+import org.georchestra.datafeeder.service.DatasetsService.FeatureResult;
 import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -102,19 +104,20 @@ public class DataUploadService {
     }
 
     public SimpleFeature sampleFeature(@NonNull UUID jobId, @NonNull String typeName, int featureN, Charset encoding,
-            String srs, boolean srsReproject) {
+            String srs, String nativeSrsOverride) throws IOException {
 
         DatasetUploadState dataset = getDataset(jobId, typeName);
         Path path = Paths.get(dataset.getAbsolutePath());
-        return datasetsService.getFeature(path, typeName, encoding, featureN, srs, srsReproject);
+        FeatureResult result = datasetsService.getFeature(path, typeName, encoding, featureN, srs, nativeSrsOverride);
+        return result.getFeature();
     }
 
-    public BoundingBoxMetadata computeBounds(@NonNull UUID jobId, @NonNull String typeName, String srs,
-            boolean reproject) {
+    public BoundingBoxMetadata computeBounds(@NonNull UUID jobId, @NonNull String typeName, String targetSrs,
+            String nativeSrsOverride) throws IOException {
 
         DatasetUploadState dataset = getDataset(jobId, typeName);
         Path path = Paths.get(dataset.getAbsolutePath());
-        return datasetsService.getBounds(path, typeName, srs, reproject);
+        return datasetsService.getBounds(path, typeName, targetSrs, nativeSrsOverride);
     }
 
     private DatasetUploadState getDataset(UUID jobId, String typeName) {
