@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,6 +31,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.security.Proxy;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import com.google.common.collect.Sets;
@@ -43,25 +48,50 @@ public class UriMatcher {
     private int port = -1;
     private String path;
     private Pattern pathPattern;
-    private HashSet<InetAddress> hostNames;
+    private Set<InetAddress> hostNames;
     private String host;
     private String network;
     private IpAddressMatcher ipMatcher;
     private String domain;
     private Pattern domainPattern;
 
+    protected static final Log logger = LogFactory.getLog(UriMatcher.class.getPackage().getName());
+
     public UriMatcher() {
 
+    }
+
+    private ResolverDelegate resolverDelegate = new DefaultResolverDelegate();
+
+    public void setResolverDelegate(ResolverDelegate resolverDelegate) {
+        this.resolverDelegate = resolverDelegate;
+    }
+
+    private static class DefaultResolverDelegate implements ResolverDelegate {
+        public InetAddress[] resolve(String host) throws UnknownHostException {
+            return InetAddress.getAllByName(host);
+        }
     }
 
     public UriMatcher(String domain) {
         this.domain = domain;
     }
 
+    @VisibleForTesting
+    public void setHostNames(Set<InetAddress> hostnames) {
+        this.hostNames = hostnames;
+    }
+
     public synchronized void init() throws UnknownHostException {
         this.hostNames = null;
         if (this.host != null) {
-            this.hostNames = Sets.newHashSet(InetAddress.getAllByName(this.host));
+            try {
+                this.hostNames = Sets.newHashSet(resolverDelegate.resolve(this.host));
+            } catch (UnknownHostException e) {
+                logger.error(
+                        String.format("Unable to resolve host: '%s'. This rule won't have any effect.", this.host));
+                this.hostNames = Sets.newHashSet();
+            }
         }
         this.pathPattern = null;
         if (this.path != null) {
@@ -105,7 +135,7 @@ public class UriMatcher {
     private boolean matchesHost(URL url) {
         final InetAddress[] allByName;
         try {
-            allByName = InetAddress.getAllByName(url.getHost());
+            allByName = resolverDelegate.resolve(url.getHost());
         } catch (UnknownHostException e) {
             return false;
         }
@@ -121,7 +151,7 @@ public class UriMatcher {
     private boolean matchesNetwork(URL url) {
         final InetAddress[] allByName;
         try {
-            allByName = InetAddress.getAllByName(url.getHost());
+            allByName = resolverDelegate.resolve(url.getHost());
         } catch (UnknownHostException e) {
             return false;
         }
