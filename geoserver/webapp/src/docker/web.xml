@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-	      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	      version="3.0">
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
     <display-name>GeoServer</display-name>
   
       <context-param>
@@ -192,7 +189,7 @@
        </init-param>
     </filter>
 
-    <!--
+    <!-- 
       THIS FILTER MUST BE THE FIRST ONE, otherwise we end up with ruined chars in the input from the GUI
       See the "Note" in the Tomcat character encoding guide:
       http://wiki.apache.org/tomcat/FAQ/CharacterEncoding
@@ -294,10 +291,6 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     
-    <session-config>
-      <tracking-mode>COOKIE</tracking-mode>
-    </session-config>
-
     <mime-mapping>
       <extension>xsl</extension>
       <mime-type>text/xml</mime-type>
