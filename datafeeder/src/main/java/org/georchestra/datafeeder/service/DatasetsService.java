@@ -37,6 +37,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
+
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -67,13 +69,13 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
-import org.springframework.lang.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -122,61 +124,130 @@ public class DatasetsService {
         }
     }
 
-    public BoundingBoxMetadata getBounds(Path path, @NonNull String typeName, String srs, boolean reproject) {
-        DataStore ds = null;
+    /**
+     * 
+     * @param path              location of file to get dataset bounds from
+     * @param typeName          name of the dataset to get bounds from, that belongs
+     *                          to the file
+     * @param targetSrs         target CRS code (e.g. 'EPSG:900903') to return the
+     *                          bounds reprojected to, from the native, or
+     *                          {@code nativeSrsOverride} CRS if provided.
+     * @param nativeSrsOverride allows to override the native CRS, most useful when
+     *                          the dataset provides no native CRS information.
+     * @return
+     * @throws IOException
+     */
+    public BoundingBoxMetadata getBounds(Path path, @NonNull String typeName, String targetSrs,
+            String nativeSrsOverride) throws IOException {
+        DataStore ds = loadDataStore(path);
         try {
-            ds = loadDataStore(path);
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
-            Query query = new Query();
-            if (srs != null) {
-                CoordinateReferenceSystem crs = CRS.decode(srs);
-                if (reproject && fs.getSchema().getCoordinateReferenceSystem() != null) {
-                    query.setCoordinateSystemReproject(crs);
-                } else {
-                    query.setCoordinateSystem(crs);
-                }
-            }
+            Query query = buildQuery(fs, nativeSrsOverride, targetSrs);
+
             ReferencedEnvelope bounds = fs.getBounds(query);
-            return toBoundingBoxMetadata(bounds);
-        } catch (FactoryException | IOException e) {
+            BoundingBoxMetadata bbm = toBoundingBoxMetadata(bounds);
+
+            boolean reprojected = query.getCoordinateSystemReproject() != null;
+            CoordinateReferenceSystem sourceCrs = query.getCoordinateSystem();
+
+            bbm.setReprojected(reprojected);
+            bbm.setNativeCrs(crs(sourceCrs));
+            return bbm;
+        } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         } finally {
-            if (ds != null)
-                ds.dispose();
+            ds.dispose();
         }
     }
 
-    public SimpleFeature getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
-            String srs, boolean srsReproject) {
+    private Query buildQuery(@NonNull SimpleFeatureSource fs, final String nativeSrsOverride, final String targetSrs) {
+        final @Nullable CoordinateReferenceSystem nativeCrs = fs.getSchema().getCoordinateReferenceSystem();
+        final @Nullable CoordinateReferenceSystem sourceCrs = resolveCrs(nativeCrs, nativeSrsOverride);
+        final @Nullable CoordinateReferenceSystem targetCrs = resolveCrs(sourceCrs, targetSrs);
 
-        DataStore ds = null;
+        if (targetSrs != null && sourceCrs == null) {
+            throw new IllegalArgumentException(String.format(
+                    "Unable to reproject, dataset %s doesn't declare a native CRS and no native SRS override was provided",
+                    fs.getSchema().getName()));
+        }
+
+        final boolean reproject = targetCrs != null && !CRS.equalsIgnoreMetadata(sourceCrs, targetCrs);
+
+        Query query = new Query();
+        // overrides the source CRS, may be equal to the native CRS, or even null
+        query.setCoordinateSystem(sourceCrs);
+        if (reproject) {
+            // and reproject to the target CRS
+            query.setCoordinateSystemReproject(targetCrs);
+        }
+        return query;
+    }
+
+    private CoordinateReferenceSystem resolveCrs(CoordinateReferenceSystem crs, String srs) {
+        if (srs == null)
+            return crs;
+        CoordinateReferenceSystem overriding;
         try {
-            ds = loadDataStore(path, encoding);
+            overriding = CRS.decode(srs);
+        } catch (FactoryException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        return overriding;
+    }
+
+    /**
+     * 
+     * @param path              location of file to get the sample dataset feature
+     *                          from
+     * @param typeName          name of the dataset to get the sample feature from,
+     *                          that belongs to the file
+     * @param encoding          allows to declare the source data character encoding
+     *                          when reading the dataset
+     * @param featureIndex      which feature to return, starting from zero
+     * @param targetSrs         target CRS code (e.g. 'EPSG:900903') to return the
+     *                          feature geometry reprojected to.
+     * @param nativeSrsOverride allows to override the native CRS, most useful when
+     *                          the dataset provides no native CRS information.
+     * @return
+     * @throws IOException
+     */
+    public FeatureResult getFeature(@NonNull Path path, @NonNull String typeName, Charset encoding, int featureIndex,
+            String targetSrs, String nativeSrsOverride) throws IOException {
+
+        DataStore ds = loadDataStore(path, encoding);
+        try {
             SimpleFeatureSource fs = ds.getFeatureSource(typeName);
-            Query query = new Query();
+            Query query = buildQuery(fs, nativeSrsOverride, targetSrs);
             query.setStartIndex(featureIndex);
             query.setMaxFeatures(1);
-            if (srs != null) {
-                CoordinateReferenceSystem crs = CRS.decode(srs);
-                if (srsReproject && fs.getSchema().getCoordinateReferenceSystem() != null) {
-                    query.setCoordinateSystemReproject(crs);
-                } else {
-                    query.setCoordinateSystem(crs);
-                }
-            }
             SimpleFeatureCollection collection = fs.getFeatures(query);
-            try (SimpleFeatureIterator it = collection.features()) {
-                if (it.hasNext()) {
-                    return it.next();
-                }
-            }
-            throw new IllegalArgumentException("Requested feature index is outside feature count");
-        } catch (FactoryException | IOException e) {
+
+            SimpleFeature feature = getFirst(collection);
+            boolean reprojected = query.getCoordinateSystemReproject() != null;
+            CoordinateReferenceSystem sourceCrs = query.getCoordinateSystem();
+            CoordinateReferenceSystem targetCrs = feature.getFeatureType().getCoordinateReferenceSystem();
+            return new FeatureResult(feature, reprojected, crs(sourceCrs), crs(targetCrs));
+        } catch (IOException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         } finally {
-            if (ds != null)
-                ds.dispose();
+            ds.dispose();
         }
+    }
+
+    private SimpleFeature getFirst(SimpleFeatureCollection collection) {
+        try (SimpleFeatureIterator it = collection.features()) {
+            if (it.hasNext()) {
+                return it.next();
+            }
+        }
+        throw new IllegalArgumentException("Requested feature index is outside feature count");
+    }
+
+    public static @Value class FeatureResult {
+        SimpleFeature feature;
+        boolean reprojected;
+        CoordinateReferenceSystemMetadata nativeCrs;
+        CoordinateReferenceSystemMetadata crs;
     }
 
     private DatasetMetadata describe(SimpleFeatureSource fs) throws IOException {

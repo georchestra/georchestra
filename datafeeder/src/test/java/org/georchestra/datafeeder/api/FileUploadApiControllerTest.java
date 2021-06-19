@@ -410,8 +410,10 @@ public class FileUploadApiControllerTest {
                 dataset.getEncoding());
         // correct chinese_poly's dbf charset: GB18030, NAME: 黑龙江省
         final String encoding = "GB18030";
+        final String targetSrs = null;
+        final String sourceSrs = null;
         ResponseEntity<Object> response = controller.getSampleFeature(upload.getJobId(), "chinese_poly", 0, encoding,
-                null, false);
+                targetSrs, sourceSrs);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         String geoJsonFeature = response.getBody().toString();
@@ -439,8 +441,10 @@ public class FileUploadApiControllerTest {
         assertEquals("encoding from .cpg file not detected", "GB18030", dataset.getEncoding());
 
         final String encodingParam = null;
+        final String targetSrs = null;
+        final String sourceSrs = null;
         ResponseEntity<Object> response = controller.getSampleFeature(upload.getJobId(), "chinese_poly", 0,
-                encodingParam, null, false);
+                encodingParam, targetSrs, sourceSrs);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
         String geoJsonFeature = response.getBody().toString();

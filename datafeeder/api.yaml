@@ -129,6 +129,11 @@ paths:
       operationId: getSampleFeature
       description: Obtain a sample dataset feature in GeoJSON format, optionally specifying a feature index, crs, and/or dataset's character encoding.
                    The response encoding is always UTF-8. The 'encoding' parameter can be used to force reading the native data in a different charset.
+                   The returned geometry CRS is controlled by the "srs", and "srsOverride" query parameters.
+                   If none is provided, the geometry is returned as-is, in the dataset's native CRS (possibly null).
+                   The "srsOverride" parameter allows to override the dataset's native CRS, which also means assuming a native CRS when the
+                   dataset didn't provide a native CRS (e.g. a shapefile uploaded without .prj side-car file).
+                   The "srs" parameter specifies the output geometry CRS. The geometry will be reprojected from the source CRS to the output CRS.
       parameters:
       - $ref: '#/components/parameters/jobId'
       - $ref: '#/components/parameters/typeName'
@@ -152,13 +157,15 @@ paths:
         required: false
         schema:
           type: string
-      - name: srs_reproject
+      - name: srsOverride
         in: query
-        description: Optional, whether to reproject from the native CRS to the one provided in the srs parameter. If false or not provided, the srs parameter overrides the native CRS
+        description: Optional, EPSG SRS used to override the native CRS, or assume a native SRS when the native CRS is unknown (for example, a shapefile uploaded without .prj side-car file).
+                     This allows to request a feature using a source CRS for datasets that do not specify a native CRS, and still get a reprojected response to
+                     another CRS in combination with the "srs" parameter.
         required: false
         schema:
-          type: boolean
-          default: false
+          type: string
+        example: EPSG:4326
       responses:
         202:
           $ref: '#/components/responses/SampleFeatureResponse'
@@ -175,22 +182,29 @@ paths:
         - File Upload
       operationId: getBounds
       description: Get the bounding box of the dataset, optionally indicating the CRS and whether to reproject from the native CRS to the new one
+                   The returned geometry CRS is controlled by the "srs", and "srsOverride" query parameters.
+                   If none is provided, the geometry is returned as-is, in the dataset's native CRS (possibly null).
+                   The "srsOverride" parameter allows to override the dataset's native CRS, which also means assuming a native CRS when the
+                   dataset didn't provide a native CRS (e.g. a shapefile uploaded without .prj side-car file).
+                   The "srs" parameter specifies the output geometry CRS. The geometry will be reprojected from the source CRS to the output CRS.
       parameters:
       - $ref: '#/components/parameters/jobId'
       - $ref: '#/components/parameters/typeName'
       - name: srs
         in: query
-        description: Optional, coordinate reference system (e.g. 'EPSG:3857')
+        description: Optional, output coordinate reference system (e.g. 'EPSG:3857')
         required: false
         schema:
           type: string
-      - name: srs_reproject
+      - name: srsOverride
         in: query
-        description: Optional, whether to reproject from the native CRS to the one provided in the srs parameter. If false or not provided, the srs parameter overrides the native CRS
+        description: Optional, EPSG SRS used to override the native CRS, or assume a native SRS when the native CRS is unknown (for example, a shapefile uploaded without .prj side-car file).
+                     This allows to request the dataset bounds using a user defined native CRS for datasets that do not specify a native CRS, 
+                     and still get a reprojected response to another CRS in combination with the "srs" parameter.
         required: false
         schema:
-          type: boolean
-          default: false
+          type: string
+        example: EPSG:4326
       responses:
         202:
           $ref: '#/components/responses/BoundingBoxResponse'
