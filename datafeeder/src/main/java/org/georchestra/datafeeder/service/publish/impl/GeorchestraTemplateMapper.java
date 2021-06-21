@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@link TemplateMapper} specific to geOrchestra, uses properties in
  * geOrchestra data directory's {@code datafeeder/datafeeder.properties} to
  * provide the location of the {@link #loadTemplateRecord() template record} and
- * {@link #loadTransform() XSL transform}.
+ * {@link #resolveTransformURI() XSL transform}.
  */
 @Slf4j
 public class GeorchestraTemplateMapper extends TemplateMapper {
@@ -46,18 +46,18 @@ public class GeorchestraTemplateMapper extends TemplateMapper {
      * Overrides to load the template transformation XSL file from the URI provided
      * in {@code datafeeder/datafeeder.properties} geOrchestra datadir file, under
      * the {@code datafeeder.publishing.geonetwork.template-transform} key. Defers
-     * to the default template at {@link TemplateMapper#loadTransform()} if no URI
-     * is configured.
+     * to the default template at {@link TemplateMapper#resolveTransformURI()} if no
+     * URI is configured.
      */
     @Override
-    protected String loadTransform() {
+    protected URI resolveTransformURI() {
         GeonetworkPublishingConfiguration gn = config.getPublishing().getGeonetwork();
         URI transformURI = gn.getTemplateTransform();
         if (transformURI != null) {
-            return config.loadResourceAsString(transformURI, "datafeeder.publishing.geonetwork.template-transform");
+            return transformURI;
         }
         log.info("No metadata template provided in georchstra datadir, using default XSL transform");
-        return super.loadTransform();
+        return super.resolveTransformURI();
     }
 
     /**
