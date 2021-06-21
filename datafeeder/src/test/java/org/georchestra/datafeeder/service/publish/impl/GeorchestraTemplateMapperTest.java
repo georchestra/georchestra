@@ -61,9 +61,8 @@ public class GeorchestraTemplateMapperTest {
     @Test
     public void loadTransform_URI_not_provided_returns_default() {
         config.setTemplateTransform(null);
-        URI xslContents = mapper.resolveTransformURI();
-        URI expected = mapper.getDefaultTransformURI();
-
+        String xslContents = mapper.loadTransform();
+        String expected = mapper.loadDefaultTransform();
         assertEquals(expected, xslContents);
     }
 
@@ -72,8 +71,8 @@ public class GeorchestraTemplateMapperTest {
         URI uri = getClass().getResource("just_id_transform.xsl").toURI();
         config.setTemplateTransform(uri);
 
-        URI defaultXSL = mapper.getDefaultTransformURI();
-        URI actualXSL = mapper.resolveTransformURI();
+        String defaultXSL = mapper.loadDefaultTransform();
+        String actualXSL = mapper.loadTransform();
         assertNotNull(actualXSL);
         assertNotEquals(defaultXSL, actualXSL);
     }
