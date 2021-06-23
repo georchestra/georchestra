@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <!--
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
     <version>20.1-SNAPSHOT</version>
-  </parent>
+      </parent>
+  -->
+  <groupId>org.georchestra</groupId>
   <artifactId>geoserver-root</artifactId>
+  <version>20.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
     <gs.version>2.18.3</gs.version>
     <gt.version>24.3</gt.version>
-    <geofence.version>3.4.6.1</geofence.version>
+    <geofence.version>3.5.0</geofence.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
     <jackson.version>2.10.5</jackson.version>
-    <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
-    <spring.version>5.1.16.RELEASE</spring.version>
-    <spring-security.version>5.1.11.RELEASE</spring-security.version>
+    <spring.version>5.1.20.RELEASE</spring.version>
+    <spring-security.version>5.1.13.RELEASE</spring-security.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
-<!--
-    <commons-beanutils.version>1.8.0</commons-beanutils.version>
-    <commons-digester.version>1.7</commons-digester.version>
--->
   </properties>
   <modules>
     <module>geoserver-submodule/src/main</module>
