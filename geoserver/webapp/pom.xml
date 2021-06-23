@@ -12,6 +12,7 @@
   <properties>
     <packageName>georchestra-geoserver</packageName>
     <context.name>geoserver</context.name>
+    <server>generic</server> <!-- from georchestra root pom -->
   </properties>
   <dependencies>
     <dependency>
