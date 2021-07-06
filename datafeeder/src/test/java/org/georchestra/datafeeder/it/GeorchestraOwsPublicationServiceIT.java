@@ -18,7 +18,6 @@
  */
 package org.georchestra.datafeeder.it;
 
-import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_WORKSPACE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -35,7 +34,9 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.GeonetworkPublishingConfiguration;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -84,12 +85,12 @@ import lombok.extern.slf4j.Slf4j;
 public class GeorchestraOwsPublicationServiceIT {
 
     public @Autowired @Rule IntegrationTestSupport support;
+    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
+    private @Autowired GeorchestraNameNormalizer nameResolver;
 
     private @Autowired GeoServerClient geoServerClient;
     private @Autowired GeorchestraOwsPublicationService service;
     private @Autowired DataFeederConfigurationProperties configProperties;
-
-    private final String hardCodedStoreName = "datafeeder";
 
     private DatasetUploadState shpDataset;
 
@@ -108,9 +109,17 @@ public class GeorchestraOwsPublicationServiceIT {
      */
     private static final String PULISHED_LAYERNAME = "PublicLayer";
 
+    private UserInfo user;
+    private String expectedWorksapce;
+    String expectedDataStore;
+
     public @Before void setup() {
+        user = authSupport.buildUser();
+        expectedWorksapce = nameResolver.resolveWorkspaceName(user.getOrganization().getId());
+        expectedDataStore = nameResolver.resolveDataStoreName(expectedWorksapce);
         geoServerClient.setDebugRequests(true);
-        deleteWorkspace(EXPECTED_WORKSPACE);
+
+        deleteWorkspace(expectedWorksapce);
         shpDataset = buildShapefileDatasetFromDefaultGeorchestraDataDirectory();
 
         // replace the configured geoserver datastore connection parameters by a
@@ -174,27 +183,26 @@ public class GeorchestraOwsPublicationServiceIT {
         FeatureTypesClient featureTypes = geoServerClient.featureTypes();
         LayersClient layers = geoServerClient.layers();
 
-        assertFalse(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
+        assertFalse(workspaces.findByName(expectedWorksapce).isPresent());
 
         assertNull(shpDataset.getPublishing().getPublishedWorkspace());
-        service.publish(shpDataset, support.user());
-        assertEquals(EXPECTED_WORKSPACE, shpDataset.getPublishing().getPublishedWorkspace());
+        service.publish(shpDataset, user);
+        assertEquals(expectedWorksapce, shpDataset.getPublishing().getPublishedWorkspace());
 
-        assertTrue(workspaces.findByName(EXPECTED_WORKSPACE).isPresent());
-        assertTrue(dataStores.findByWorkspaceAndName(EXPECTED_WORKSPACE, hardCodedStoreName).isPresent());
-        Optional<FeatureTypeInfo> featureType = featureTypes.getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName,
+        assertTrue(workspaces.findByName(expectedWorksapce).isPresent());
+        assertTrue(dataStores.findByWorkspaceAndName(expectedWorksapce, expectedDataStore).isPresent());
+        Optional<FeatureTypeInfo> featureType = featureTypes.getFeatureType(expectedWorksapce, expectedDataStore,
                 PULISHED_LAYERNAME);
         assertTrue(featureType.isPresent());
-        assertTrue(layers.getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME).isPresent());
+        assertTrue(layers.getLayer(expectedWorksapce, PULISHED_LAYERNAME).isPresent());
         assertEquals(IMPORTED_LAYERNAME, featureType.get().getNativeName());
     }
 
     @Test
     public void testPublish_sets_layer_attribution_to_orgname_and_url() {
-        final UserInfo user = support.user();
         service.publish(shpDataset, user);
 
-        Layer layer = geoServerClient.layers().getLayer(EXPECTED_WORKSPACE, PULISHED_LAYERNAME)
+        Layer layer = geoServerClient.layers().getLayer(expectedWorksapce, PULISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
         AttributionInfo attribution = layer.getAttribution();
         assertNotNull(attribution);
@@ -205,7 +213,6 @@ public class GeorchestraOwsPublicationServiceIT {
 
     @Test
     public void testPublish_sets_cache_settings() {
-        final UserInfo user = support.user();
         service.publish(shpDataset, user);
 
         assertNotNull("check datafeeder.properties in src/test/resources/...",
@@ -214,7 +221,7 @@ public class GeorchestraOwsPublicationServiceIT {
 
         FeatureTypesClient featureTypes = geoServerClient.featureTypes();
         FeatureTypeInfo featureType = featureTypes
-                .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
+                .getFeatureType(expectedWorksapce, expectedDataStore, PULISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
 
         MetadataMap metadataMap = featureType.getMetadata();
@@ -229,7 +236,6 @@ public class GeorchestraOwsPublicationServiceIT {
     @Test
     public void addMetadataLinks() {
         DatasetUploadState dataset = shpDataset;
-        final UserInfo user = support.user();
         service.publish(dataset, user);
 
         // fake publishing of metadata record...
@@ -247,7 +253,7 @@ public class GeorchestraOwsPublicationServiceIT {
                 metadataRecordId);
 
         FeatureTypeInfo featureType = geoServerClient.featureTypes()
-                .getFeatureType(EXPECTED_WORKSPACE, hardCodedStoreName, PULISHED_LAYERNAME)
+                .getFeatureType(expectedWorksapce, expectedDataStore, PULISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
 
         assertNotNull(featureType.getMetadataLinks());

@@ -18,7 +18,6 @@
  */
 package org.georchestra.datafeeder.it;
 
-import static org.georchestra.datafeeder.it.IntegrationTestSupport.EXPECTED_SCHEMA_NAME;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertFalse;
@@ -35,11 +34,14 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
+import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraDataBackendService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
@@ -75,6 +77,8 @@ public class GeorchestraDataBackendServiceIT {
     static final String WKT_2154_ESRI = "PROJCS[\"RGF_1993_Lambert_93\",GEOGCS[\"GCS_RGF_1993\",DATUM[\"D_RGF_1993\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Lambert_Conformal_Conic\"],PARAMETER[\"False_Easting\",700000.0],PARAMETER[\"False_Northing\",6600000.0],PARAMETER[\"Central_Meridian\",3.0],PARAMETER[\"Standard_Parallel_1\",49.0],PARAMETER[\"Standard_Parallel_2\",44.0],PARAMETER[\"Latitude_Of_Origin\",46.5],UNIT[\"Meter\",1.0]]";
     static final String WKT_2154_OGC = "PROJCS[\"RGF93 / Lambert-93\",GEOGCS[\"RGF93\",DATUM[\"Reseau_Geodesique_Francais_1993\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6171\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4171\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"standard_parallel_1\",49],PARAMETER[\"standard_parallel_2\",44],PARAMETER[\"latitude_of_origin\",46.5],PARAMETER[\"central_meridian\",3],PARAMETER[\"false_easting\",700000],PARAMETER[\"false_northing\",6600000],AUTHORITY[\"EPSG\",\"2154\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
 
+    private @Autowired GeorchestraNameNormalizer nameResolver;
+    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
     public @Autowired @Rule IntegrationTestSupport support;
     public @Rule TestData testData = new TestData();
 
@@ -89,9 +93,14 @@ public class GeorchestraDataBackendServiceIT {
 
     private ProgressListener importProgressListener = new NullProgressListener();
 
+    String expectedSchemaName;
+    UserInfo user;
+
     public @Before void before() throws SQLException {
         testConnection = support.createLocalPostgisConnection();
-        support.deleteLocalDatabaseSchema(EXPECTED_SCHEMA_NAME);
+        user = authSupport.buildUser();
+        expectedSchemaName = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getId());
+        support.deleteLocalDatabaseSchema(expectedSchemaName);
 
         job = new DataUploadJob();
         dataset = new DatasetUploadState();
@@ -106,31 +115,30 @@ public class GeorchestraDataBackendServiceIT {
     }
 
     public @Test void prepareBackend_Null_Org_Name() {
-        support.user().setOrganization(null);
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> service.prepareBackend(job, support.user()));
+        user.setOrganization(null);
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> service.prepareBackend(job, user));
         assertThat(ex.getMessage(), containsString("Georchestra organization name not provided"));
     }
 
     public @Test void prepareBackend_Creates_Database_Schema() throws SQLException {
         List<String> pre = support.getDatabaseSchemas();
-        assertFalse(pre.toString(), pre.contains(EXPECTED_SCHEMA_NAME));
+        assertFalse(pre.toString(), pre.contains(expectedSchemaName));
 
-        service.prepareBackend(job, support.user());
+        service.prepareBackend(job, user);
 
         List<String> post = support.getDatabaseSchemas();
-        assertTrue(post.toString(), post.contains(EXPECTED_SCHEMA_NAME));
+        assertTrue(post.toString(), post.contains(expectedSchemaName));
 
-        service.prepareBackend(job, support.user());
+        service.prepareBackend(job, user);
         post = support.getDatabaseSchemas();
-        assertTrue(post.toString(), post.contains(EXPECTED_SCHEMA_NAME));
+        assertTrue(post.toString(), post.contains(expectedSchemaName));
     }
 
     public @Test void importDataset_Null_PublishingSettings() {
         dataset.setName("somename");
         dataset.setPublishing(null);
         NullPointerException ex = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(ex.getMessage(), containsString("Dataset 'publishing' settings is null"));
     }
 
@@ -140,12 +148,12 @@ public class GeorchestraDataBackendServiceIT {
         dataset.getPublishing().setSrs("EPSG:4326");
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(npe.getMessage(), containsString("absolutePath not provided"));
 
         dataset.setAbsolutePath("/tmp/nonexistent/" + UUID.randomUUID());
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset absolutePath is not a file"));
     }
 
@@ -154,7 +162,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName(null);
 
         NullPointerException npe = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(npe.getMessage(), containsString("Dataset name is null"));
     }
 
@@ -163,7 +171,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("invalidName");
         dataset.getPublishing().setSrs("EPSG:4326");
         IllegalArgumentException iae = assertThrows(IllegalArgumentException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset name 'invalidName' does not exist"));
     }
 
@@ -172,7 +180,7 @@ public class GeorchestraDataBackendServiceIT {
         dataset.setName("archsites");
 
         NullPointerException iae = assertThrows(NullPointerException.class,
-                () -> service.importDataset(dataset, support.user(), importProgressListener));
+                () -> service.importDataset(dataset, user, importProgressListener));
         assertThat(iae.getMessage(), containsString("Dataset publish settings must provide the dataset's SRS"));
     }
 
@@ -196,11 +204,11 @@ public class GeorchestraDataBackendServiceIT {
         dataset.getPublishing().setSrs("EPSG:26713");
         dataset.getPublishing().setSrsReproject(false);
 
-        service.prepareBackend(job, support.user());
-        service.importDataset(dataset, support.user(), importProgressListener);
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
-        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
         String origTypeName = dataset.getName();
         String importedName = dataset.getPublishing().getImportedName();
         try {
@@ -231,11 +239,11 @@ public class GeorchestraDataBackendServiceIT {
         dataset.getPublishing().setSrs("EPSG:2154");
         dataset.getPublishing().setSrsReproject(false);
 
-        service.prepareBackend(job, support.user());
-        service.importDataset(dataset, support.user(), importProgressListener);
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
-        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
         String origTypeName = dataset.getName();
         String importedName = dataset.getPublishing().getImportedName();
         try {
@@ -267,11 +275,11 @@ public class GeorchestraDataBackendServiceIT {
         dataset.getPublishing().setSrs("EPSG:4327");
         dataset.getPublishing().setSrsReproject(false);
 
-        service.prepareBackend(job, support.user());
-        service.importDataset(dataset, support.user(), importProgressListener);
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
-        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
         String typeName = dataset.getName();
         try {
             SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);
@@ -303,11 +311,11 @@ public class GeorchestraDataBackendServiceIT {
 
         dataset.getPublishing().setSrs("EPSG:4326");
 
-        service.prepareBackend(job, support.user());
-        service.importDataset(dataset, support.user(), importProgressListener);
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
 
         DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
-        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(support.user()));
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
         String typeName = dataset.getName();
         try {
             SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);

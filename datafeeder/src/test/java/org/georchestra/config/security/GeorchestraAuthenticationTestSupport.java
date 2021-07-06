@@ -38,36 +38,67 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.georchestra.commons.security.SecurityHeaders;
+import org.georchestra.datafeeder.api.AuthorizationService;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.springframework.http.HttpHeaders;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true, fluent = true)
 public class GeorchestraAuthenticationTestSupport implements TestRule {
 
-    private String secProxy = "true";
-    private String secUsername = "testUser";
-    private String secFirstname = "Gábriel";
-    private String secLastname = "Roldán";
-    private String secOrg = "test'org";
-    private String secOrgname = "ジョルケストラコミュニティ";
-    private String secRoles = "ROLE_USER";
-    private String secEmail = "test@email.com";
-    private String secTel = "123456";
-    private String secAddress = "Test Postal Address";
-    private String secTitle = "Test Title";
-    private String secNotes = "Test User notes";
-    private String secOrgLinkage = "http://test.com";
-    private String secOrgAddress = "Test organization address";
-    private String secOrgCategory = "Testcategory";
-    private String secOrgDescription = "Test org description";
+    private String secProxy;
+    private String secUsername;
+    private String secFirstname;
+    private String secLastname;
+    private String secOrg;
+    private String secOrgname;
+    private String secRoles;
+    private String secEmail;
+    private String secTel;
+    private String secAddress;
+    private String secTitle;
+    private String secNotes;
+    private String secOrgLinkage;
+    private String secOrgAddress;
+    private String secOrgCategory;
+    private String secOrgDescription;
 
     @Override
     public Statement apply(Statement base, Description description) {
+        secProxy = "true";
+        secUsername = "testUser";
+        secFirstname = "Gábriel";
+        secLastname = "Roldán";
+        secOrg = "DF TEST ORG";
+        secOrgname = "ジョルケストラコミュニティ";
+        secRoles = "ROLE_USER";
+        secEmail = "test@email.com";
+        secTel = "123456";
+        secAddress = "Test Postal Address";
+        secTitle = "Test Title";
+        secNotes = "Test User notes";
+        secOrgLinkage = "http://test.com";
+        secOrgAddress = "Test organization address";
+        secOrgCategory = "Testcategory";
+        secOrgDescription = "Test org description";
         return base;
+    }
+
+    public GeorchestraUserDetails buildUserDetails() {
+        Map<String, String> headers = buildHeaders();
+        GeorchestraUserDetails userDetails = GeorchestraUserDetails.fromHeaders(headers);
+        return userDetails;
+    }
+
+    public UserInfo buildUser() {
+        GeorchestraUserDetails principal = buildUserDetails();
+        return AuthorizationService.userInfoMapper.map(principal);
     }
 
     public HttpHeaders buildHttpHeaders() {

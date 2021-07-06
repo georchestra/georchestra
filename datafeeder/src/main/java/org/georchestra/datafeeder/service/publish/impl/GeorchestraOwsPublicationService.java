@@ -103,7 +103,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
                 "importedName is required to resolve the native feature type name");
 
         final String workspaceName = resolveWorkspace(user);
-        final String dataStoreName = resolveDataStoreName(dataset);
+        final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName);
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
 
         Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
@@ -152,7 +152,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(publishing);
 
         final String workspace = publishing.getPublishedWorkspace();
-        final String dataStore = resolveDataStoreName(dataset);
+        final String dataStore = nameResolver.resolveDataStoreName(workspace);
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
@@ -217,10 +217,6 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
             }
         }
         return new HashMap<>(connectionParams);
-    }
-
-    public String resolveDataStoreName(@NonNull DatasetUploadState dataset) {
-        return "datafeeder";
     }
 
     private FeatureTypeInfo buildPublishingFeatureType(String workspace, String dataStore, String layerName,

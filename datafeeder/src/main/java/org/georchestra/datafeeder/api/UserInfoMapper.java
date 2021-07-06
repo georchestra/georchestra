@@ -4,7 +4,7 @@ import org.georchestra.config.security.GeorchestraUserDetails;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface UserInfoMapper {
 
     UserInfo map(GeorchestraUserDetails principal);

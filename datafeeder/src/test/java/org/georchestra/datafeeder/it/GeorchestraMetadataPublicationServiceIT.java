@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -70,6 +71,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GeorchestraMetadataPublicationServiceIT {
 
+    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
     public @Autowired @Rule IntegrationTestSupport support;
 
     private @Autowired GeorchestraMetadataPublicationService service;
@@ -140,7 +142,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         publishing.setPublishedName(PULISHED_LAYERNAME);
         publishing.setSrs("EPSG:4326");
 
-        service.publish(shpDataset, support.user());
+        service.publish(shpDataset, authSupport.buildUser());
 
         final String createdMdId = publishing.getMetadataRecordId();
         assertNotNull(createdMdId);
@@ -277,7 +279,7 @@ public class GeorchestraMetadataPublicationServiceIT {
     // https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml
     private void assertResponsibleParty(Document dom) {
         final String rp = "MD_Metadata/identificationInfo/MD_DataIdentification/pointOfContact/CI_ResponsibleParty";
-        UserInfo user = support.user();
+        UserInfo user = authSupport.buildUser();
         String individualName = user.getFirstName() + " " + user.getLastName();
         String organizationName = user.getOrganization().getName();
         String email = user.getEmail();
@@ -293,7 +295,7 @@ public class GeorchestraMetadataPublicationServiceIT {
     // email = sec-email
     private void assertPointOfContact(Document dom) {
         final String poc = "MD_Metadata/contact/CI_ResponsibleParty";
-        UserInfo user = support.user();
+        UserInfo user = authSupport.buildUser();
         String individualName = user.getFirstName() + " " + user.getLastName();
         String organizationName = user.getOrganization().getName();
         String email = user.getEmail();

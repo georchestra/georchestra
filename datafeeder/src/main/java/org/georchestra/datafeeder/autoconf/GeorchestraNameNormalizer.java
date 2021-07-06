@@ -51,6 +51,19 @@ public class GeorchestraNameNormalizer {
     }
 
     /**
+     * The datastore name is composed of {@code <workspaceName>_datafeeder} to make
+     * it unique across workspaces (with {@code workspaceName} as resolved by
+     * {@link #resolveWorkspaceName}) since workspace is tied to the organization
+     * name. Can't use a fixed datastore name despite being on different workspaces
+     * because GeoServer's REST api implementation is dumb and will try to use the
+     * first data store with a given name even if it's not the one that belongs to
+     * the requested workspace.
+     */
+    public String resolveDataStoreName(String workspaceName) {
+        return String.format("datafeeder_%s", workspaceName);
+    }
+
+    /**
      * @return {@link #normalizeName normalized} {@code proposedName}
      */
     public String resolveLayerName(@NonNull String proposedName) {
