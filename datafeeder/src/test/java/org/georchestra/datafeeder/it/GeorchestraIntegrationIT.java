@@ -19,6 +19,7 @@
 package org.georchestra.datafeeder.it;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -45,10 +46,10 @@ import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
-import org.georchestra.datafeeder.service.publish.impl.GeorchestraOwsPublicationService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.geoserver.openapi.model.catalog.FeatureTypeInfo;
 import org.geoserver.openapi.model.catalog.ProjectionPolicy;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +67,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
@@ -94,14 +94,51 @@ public class GeorchestraIntegrationIT {
     private @Autowired PublishingBatchService publishingInternalService;
     private @Autowired GeoServerRemoteService geoserver;
 
-    /**
-     * hardcoded datastore name as defined in
-     * {@link GeorchestraOwsPublicationService#resolveDataStoreName}
-     */
-    private final String hardCodedStoreName = "datafeeder";
-
     @LocalServerPort
     private int port;
+
+    public @Before void before() {
+        authSupport.secOrg("DF IT 1");
+    }
+
+    public @Test void testPublishDifferentUserOrganizations() throws Exception {
+        final List<MockMultipartFile> files = multipartSupport.loadDatafeederTestShapefile("states_4326");
+
+        // upload and publish as user1 of test_org_1
+        authSupport.secOrg("DF IT 1").secOrgname("Test Org 1").secUsername("user1");
+        final PublishJobStatus publish1 = uploadAndPublish(files);
+
+        // upload and publish as user2 of test_org_2
+        authSupport.secOrg("DF IT 2").secOrgname("Test Org 2").secUsername("user2");
+        final PublishJobStatus publish2 = uploadAndPublish(files);
+
+        final DatasetPublishingStatus dataset1 = publish1.getDatasets().get(0);
+        final DatasetPublishingStatus dataset2 = publish2.getDatasets().get(0);
+        assertEquals("df_it_1", dataset1.getPublishedWorkspace());
+        assertEquals("df_it_2", dataset2.getPublishedWorkspace());
+
+        // upload and publish both a second time
+        authSupport.secOrg("DF IT 1").secOrgname("Test Org 1").secUsername("user1");
+        final PublishJobStatus publish1_1 = uploadAndPublish(files);
+        authSupport.secOrg("DF IT 2").secOrgname("Test Org 2").secUsername("user2");
+        final PublishJobStatus publish2_1 = uploadAndPublish(files);
+
+        final DatasetPublishingStatus dataset1_1 = publish1_1.getDatasets().get(0);
+        final DatasetPublishingStatus dataset2_1 = publish2_1.getDatasets().get(0);
+
+        assertEquals("df_it_1", dataset1_1.getPublishedWorkspace());
+        assertEquals("df_it_2", dataset2_1.getPublishedWorkspace());
+        assertNotEquals(dataset1.getPublishedName(), dataset1_1.getPublishedName());
+    }
+
+    private PublishJobStatus uploadAndPublish(final List<MockMultipartFile> files) {
+        UploadJobStatus upload = uploadAndWaitForSuccess(files);
+        UUID jobId = upload.getJobId();
+        DatasetUploadStatus dataset = upload.getDatasets().get(0);
+        PublishRequest publishRequest = publishRequest(dataset);
+        final PublishJobStatus publishResponse = publishAndWaitForSuccess(jobId, publishRequest);
+        return publishResponse;
+    }
 
     /**
      * CRS use case:
@@ -225,7 +262,8 @@ public class GeorchestraIntegrationIT {
     private FeatureTypeInfo loadGeoServerFeatureType(DatasetUploadState dset) {
         String workspace = dset.getPublishing().getPublishedWorkspace();
         String typeName = dset.getPublishing().getPublishedName();
-        FeatureTypeInfo featureType = geoserver.findFeatureTypeInfo(workspace, hardCodedStoreName, typeName)
+        String expectedStoreName = String.format("datafeeder_%s", workspace);
+        FeatureTypeInfo featureType = geoserver.findFeatureTypeInfo(workspace, expectedStoreName, typeName)
                 .orElseThrow(IllegalStateException::new);
         return featureType;
     }

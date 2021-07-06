@@ -29,7 +29,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
-import javax.validation.Valid;
 
 import org.georchestra.datafeeder.api.mapper.FileUploadResponseMapper;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -52,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
 
 @Controller
 @Api(tags = { "File Upload" }) // hides the empty file-upload-api-controller entry in swagger-ui.html

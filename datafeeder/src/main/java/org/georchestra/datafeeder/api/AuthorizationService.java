@@ -24,6 +24,7 @@ import org.georchestra.config.security.GeorchestraUserDetails;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
@@ -43,7 +44,7 @@ import lombok.NonNull;
 public class AuthorizationService {
 
     private @Autowired DataUploadService uploadService;
-    private @Autowired UserInfoMapper userInfoMapper;
+    public static final UserInfoMapper userInfoMapper = Mappers.getMapper(UserInfoMapper.class);
 
     public @NonNull String getUserName() {
         SecurityContext context = SecurityContextHolder.getContext();

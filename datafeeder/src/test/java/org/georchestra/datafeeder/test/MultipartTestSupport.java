@@ -69,6 +69,10 @@ public class MultipartTestSupport extends ExternalResource {
                 "shapes/chinese_poly.shx");
     }
 
+    public List<MockMultipartFile> loadDatafeederTestShapefile(String typeName) {
+        return loadDatafeederTestShapefile(typeName, true);
+    }
+
     public List<MockMultipartFile> loadDatafeederTestShapefile(String typeName, boolean loadPrj) {
         String[] names = Stream.of(".shp", ".dbf", ".shx", ".prj").filter(ext -> loadPrj ? true : !".prj".equals(ext))
                 .map(ext -> typeName + ext).toArray(String[]::new);
