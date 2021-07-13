@@ -26,13 +26,13 @@ import static org.junit.Assert.assertNotNull;
 import java.io.StringReader;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.Address;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.OnlineResource;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -58,16 +58,7 @@ public class TemplateMapperTest {
         String record = recordSupplier.get();
         assertNotNull(record);
         log.info(record);
-        assertNotNull(record);
-        Document dom;
-        try {
-            dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                    .parse(new InputSource(new StringReader(record)));
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail("Published record not returned as valid XML");
-            return;
-        }
+        Document dom = parse(record);
 
         // metadata uuid, computed
         assertXpath(dom, "MD_Metadata/fileIdentifier/CharacterString[text() = '%s']", mdprops.getMetadataId());
@@ -110,8 +101,20 @@ public class TemplateMapperTest {
         assertXpath(dom, "MD_Metadata/dateStamp/DateTime[starts-with(text(), '%s')]", mdprops.getMetadataTimestamp());
 
         // metadata language, provided by metadata template, typically "eng" or "fre"
-        assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='eng']");
+        String lang = mdprops.getMetadataLanguage();
+        assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='%s']", lang);
 
+    }
+
+    private Document parse(String record) {
+        Document dom;
+        try {
+            dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(record)));
+        } catch (Exception e) {
+            throw new IllegalStateException("Published record not returned as valid XML", e);
+        }
+        return dom;
     }
 
     private void assertDataIdentification(Document dom, MetadataRecordProperties mdprops) {
@@ -157,8 +160,7 @@ public class TemplateMapperTest {
         // TODO:
         // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString
 
-        // topic category, ? to be decided
-        // /gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory/gmd:MD_TopicCategoryCode
+        // topic category: see testInspireTopicCategoriesAddedFromKeywords()
 
         // data extent, computed
         String bbox = "MD_Metadata/identificationInfo/MD_DataIdentification/extent/EX_Extent/geographicElement/EX_GeographicBoundingBox/%s/Decimal[text()='%s']";
@@ -255,4 +257,22 @@ public class TemplateMapperTest {
         assertThat(dom, hasXPath(finalXpath));
     }
 
+    @Test
+    public void testInspireTopicCategoriesAddedFromKeywords() {
+        final MetadataRecordProperties mdprops = new MetadataPropertiesTestSupport().createTestProps();
+        // For topic category mapping, "Land use" should result in a "planningCadastre"
+        // topic category code, and "Geographical names" in a "location" topic category
+        mdprops.setKeywords(
+                Arrays.asList("Land use", "Geographical names", "Keyword with no matching topic category code"));
+
+        String record = mapper.apply(mdprops).get();
+        log.info(record);
+        Document dom = parse(record);
+
+        final String xpath = "MD_Metadata/identificationInfo/MD_DataIdentification/topicCategory/"
+                + "MD_TopicCategoryCode[text() = '%s']";
+
+        assertXpath(dom, xpath, "planningCadastre");
+        assertXpath(dom, xpath, "location");
+    }
 }
