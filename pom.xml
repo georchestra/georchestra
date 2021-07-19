@@ -549,6 +549,10 @@
           <failOnNoGitDirectory>false</failOnNoGitDirectory>
           <skipPoms>false</skipPoms>
           <verbose>false</verbose>
+          <gitDescribe>
+            <tags>true</tags>
+          </gitDescribe>
+          <injectIntoSysProperties>true</injectIntoSysProperties>
         </configuration>
       </plugin>
       <plugin>
@@ -627,7 +631,7 @@
               <exportAntProperties>true</exportAntProperties>
               <target>
                 <condition property="project.packageVersion"
-                  value="99.master.${maven.build.timestamp}~${build.commit.id.abbrev}"
+                    value="${build.closest.tag.name}.${maven.build.timestamp}~${build.commit.id.abbrev}"
                   else="${project.version}.${maven.build.timestamp}~${build.commit.id.abbrev}">
                   <matches string="${project.version}" pattern="SNAPSHOT$" />
                 </condition>
@@ -643,7 +647,7 @@
           <groupId>net.revelc.code.formatter</groupId>
           <artifactId>formatter-maven-plugin</artifactId>
           <version>${formatter-maven-plugin.version}</version>
-	  <inherited>true</inherited>
+          <inherited>true</inherited>
           <executions>
             <execution>
               <goals>
@@ -671,7 +675,7 @@
         <plugin>
           <groupId>pl.project13.maven</groupId>
           <artifactId>git-commit-id-plugin</artifactId>
-	  <version>4.0.0</version>
+          <version>4.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
