@@ -190,11 +190,8 @@
       <gmd:language>
         <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/" codeListValue="eng" />
       </gmd:language>
-      <!-- 
       <gmd:topicCategory>
-        <gmd:MD_TopicCategoryCode>environment</gmd:MD_TopicCategoryCode>
       </gmd:topicCategory>
-       -->
       <gmd:extent>
         <gmd:EX_Extent>
           <gmd:geographicElement>

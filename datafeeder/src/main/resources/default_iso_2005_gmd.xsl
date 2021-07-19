@@ -18,8 +18,6 @@
 Default template to apply MetadataRecordProperties.java properties to a record template adhering to http://schemas.opengis.net/csw/2.0.2/profiles/apiso/1.0.0/apiso.xsd
  -->
 
-  <xsl:import href="inspire-themes-and-topiccategory.xsl"/>
-
   <xsl:strip-space elements="*" xmlns="http://www.isotc211.org/2005/gmd" />
   <xsl:output indent="yes" standalone="yes" />
 
@@ -38,7 +36,7 @@ Default template to apply MetadataRecordProperties.java properties to a record t
     </gco:CharacterString>
   </xsl:template>
 
-  <xsl:template match="gmd:language/gmd:LanguageCode/@codeListValue">
+  <xsl:template match="gmd:MD_Metadata/gmd:language/gmd:LanguageCode/@codeListValue">
     <xsl:attribute name="codeListValue">
       <xsl:value-of select="$props//metadataLanguage" />
     </xsl:attribute>
@@ -347,4 +345,20 @@ Default template to apply MetadataRecordProperties.java properties to a record t
       </gmd:description>
     </gmd:CI_OnlineResource>
   </xsl:template>
+
+  <xsl:template match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gmd:LanguageCode/@codeListValue">
+    <xsl:attribute name="codeListValue">
+      <xsl:value-of select="$props//datasetLanguage" />
+    </xsl:attribute>
+  </xsl:template>
+
+  <!-- 
+    Generate one gmd:topicCategory/gmd:MD_TopicCategoryCode for each gmd:keyword/gco:CharacterString
+    that matches an entry in rdf:Description rdf:about="<id>"/skos:prefLabel[text()] in inspire/themes.rdf
+  -->
+  <xsl:import href="inspire/topic_category.xsl"/>
+  <xsl:template match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory">
+    <xsl:call-template name="inspire_topic_category"/>
+  </xsl:template>
+  
 </xsl:stylesheet>

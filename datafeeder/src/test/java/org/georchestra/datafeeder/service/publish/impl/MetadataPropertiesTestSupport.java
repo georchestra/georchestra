@@ -49,7 +49,7 @@ public class MetadataPropertiesTestSupport {
         p.setCoordinateReferenceSystem("EPSG:4326");
         p.setCreationDate(LocalDate.now());
         p.setDataIdentifier(URI.create("http://test.com"));
-        p.setDatasetLanguage("esp");
+        p.setDatasetLanguage("spa");
         p.setDatasetResponsibleParty(contactInfo());
         p.setDistributionFormat("GeoPackage");
         p.setDistributionFormatVersion("1.0");
@@ -58,9 +58,9 @@ public class MetadataPropertiesTestSupport {
         p.setSouthBoundLatitude(-90);
         p.setNorthBoundLatitude(90);
         p.setGraphicOverview(URI.create("http://test.com/overview"));
-        p.setKeywords(Arrays.asList("k1", "k2", "k 3"));
+        p.setKeywords(Arrays.asList("Land use", "Geographical names"));
         p.setLineage("test lineage");
-        p.setMetadataLanguage("eng");
+        p.setMetadataLanguage("fra");
         p.setMetadataPublicationDate(LocalDate.now());
         p.setMetadataResponsibleParty(contactInfo());
         p.setMetadataTimestamp(LocalDateTime.now());
