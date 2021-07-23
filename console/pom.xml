@@ -817,6 +817,21 @@
         </plugins>
       </build>
     </profile>
+      <id>jdk11+</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <java.version>11</java.version>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
   </profiles>
   <reporting>
     <plugins>
