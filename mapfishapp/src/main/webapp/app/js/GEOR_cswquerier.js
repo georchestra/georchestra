@@ -1001,7 +1001,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         this.store.load({
             params: {
                 xmlData: new OpenLayers.Format.CSWGetRecords().write({
-                    resultType: "results_with_summary",
+                    resultType: "results",
                     Query: {
                         ElementSetName: {
                             value: "full"
