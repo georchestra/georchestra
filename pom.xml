@@ -91,6 +91,7 @@
   <modules>
     <module>ogc-server-statistics</module>
     <module>commons</module>
+    <module>security-proxy-spring-integration</module>
   </modules>
   <dependencyManagement>
     <dependencies>

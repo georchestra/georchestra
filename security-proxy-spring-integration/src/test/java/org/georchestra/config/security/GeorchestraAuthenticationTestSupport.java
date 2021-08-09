@@ -38,8 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.georchestra.commons.security.SecurityHeaders;
-import org.georchestra.datafeeder.api.AuthorizationService;
-import org.georchestra.datafeeder.model.UserInfo;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -94,11 +92,6 @@ public class GeorchestraAuthenticationTestSupport implements TestRule {
         Map<String, String> headers = buildHeaders();
         GeorchestraUserDetails userDetails = GeorchestraUserDetails.fromHeaders(headers);
         return userDetails;
-    }
-
-    public UserInfo buildUser() {
-        GeorchestraUserDetails principal = buildUserDetails();
-        return AuthorizationService.userInfoMapper.map(principal);
     }
 
     public HttpHeaders buildHttpHeaders() {

@@ -31,7 +31,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Splitter;
 
 import lombok.Data;
@@ -104,7 +103,6 @@ public class GeorchestraUserDetails implements UserDetails {
      * @return role names as given by request header {@code sec-roles} wrapped in
      *         {@link SimpleGrantedAuthority} instances
      */
-    @JsonIgnore
     public @Override Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
