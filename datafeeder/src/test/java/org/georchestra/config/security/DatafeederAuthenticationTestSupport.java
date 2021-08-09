@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 by the geOrchestra PSC
+ * Copyright (C) 2021 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -18,8 +18,13 @@
  */
 package org.georchestra.config.security;
 
-import org.springframework.context.annotation.Configuration;
+import org.georchestra.datafeeder.api.AuthorizationService;
+import org.georchestra.datafeeder.model.UserInfo;
 
-public @Configuration class GeorchestraSecurityTestConfiguration {
+public class DatafeederAuthenticationTestSupport extends GeorchestraAuthenticationTestSupport {
 
+    public UserInfo buildUser() {
+        GeorchestraUserDetails principal = buildUserDetails();
+        return AuthorizationService.userInfoMapper.map(principal);
+    }
 }

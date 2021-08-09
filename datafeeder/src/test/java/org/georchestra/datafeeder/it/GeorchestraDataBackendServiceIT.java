@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
-import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
+import org.georchestra.config.security.DatafeederAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.model.CoordinateReferenceSystemMetadata;
@@ -78,7 +78,7 @@ public class GeorchestraDataBackendServiceIT {
     static final String WKT_2154_OGC = "PROJCS[\"RGF93 / Lambert-93\",GEOGCS[\"RGF93\",DATUM[\"Reseau_Geodesique_Francais_1993\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6171\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4171\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"standard_parallel_1\",49],PARAMETER[\"standard_parallel_2\",44],PARAMETER[\"latitude_of_origin\",46.5],PARAMETER[\"central_meridian\",3],PARAMETER[\"false_easting\",700000],PARAMETER[\"false_northing\",6600000],AUTHORITY[\"EPSG\",\"2154\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
 
     private @Autowired GeorchestraNameNormalizer nameResolver;
-    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
+    public @Rule DatafeederAuthenticationTestSupport authSupport = new DatafeederAuthenticationTestSupport();
     public @Autowired @Rule IntegrationTestSupport support;
     public @Rule TestData testData = new TestData();
 

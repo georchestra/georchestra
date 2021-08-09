@@ -22,6 +22,7 @@ import javax.annotation.security.RolesAllowed;
 
 import org.georchestra.config.security.GeorchestraSecurityProxyAuthenticationConfigurationTest;
 import org.georchestra.config.security.GeorchestraUserDetails;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,27 +42,28 @@ public @Controller class GeorchestraSecurityTestController {
 
     @GetMapping("/anonymous")
     @RolesAllowed({ "ROLE_ANONYMOUS", "ROLE_ADMINISTRATOR", "ROLE_USER" })
-    public ResponseEntity<GeorchestraUserDetails> testAnonymous() {
-        GeorchestraUserDetails user = getPrincipal();
+    public ResponseEntity<UserInfo> testAnonymous() {
+        UserInfo user = getPrincipal();
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/admin")
     @RolesAllowed("ROLE_ADMINISTRATOR")
-    public ResponseEntity<GeorchestraUserDetails> testAdmin() {
-        GeorchestraUserDetails user = (GeorchestraUserDetails) getPrincipal();
+    public ResponseEntity<UserInfo> testAdmin() {
+        UserInfo user = getPrincipal();
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/user")
     @RolesAllowed({ "ROLE_USER", "ROLE_ADMINISTRATOR" })
-    public ResponseEntity<GeorchestraUserDetails> testUser() {
-        GeorchestraUserDetails user = (GeorchestraUserDetails) getPrincipal();
+    public ResponseEntity<UserInfo> testUser() {
+        UserInfo user = getPrincipal();
         return ResponseEntity.ok(user);
     }
 
-    private GeorchestraUserDetails getPrincipal() {
+    private UserInfo getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (GeorchestraUserDetails) authentication.getPrincipal();
+        GeorchestraUserDetails principal = (GeorchestraUserDetails) authentication.getPrincipal();
+        return AuthorizationService.userInfoMapper.map(principal);
     }
 }

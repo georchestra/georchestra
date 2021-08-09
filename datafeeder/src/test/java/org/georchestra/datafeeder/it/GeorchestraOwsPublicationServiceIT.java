@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
+import org.georchestra.config.security.DatafeederAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
@@ -85,7 +85,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GeorchestraOwsPublicationServiceIT {
 
     public @Autowired @Rule IntegrationTestSupport support;
-    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
+    public @Rule DatafeederAuthenticationTestSupport authSupport = new DatafeederAuthenticationTestSupport();
     private @Autowired GeorchestraNameNormalizer nameResolver;
 
     private @Autowired GeoServerClient geoServerClient;
