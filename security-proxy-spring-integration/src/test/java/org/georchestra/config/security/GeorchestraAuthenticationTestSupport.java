@@ -32,10 +32,12 @@ import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_LIN
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ROLES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TEL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TITLE;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERID;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERNAME;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.junit.rules.TestRule;
@@ -51,6 +53,7 @@ import lombok.experimental.Accessors;
 public class GeorchestraAuthenticationTestSupport implements TestRule {
 
     private String secProxy;
+    private String secUserId;
     private String secUsername;
     private String secFirstname;
     private String secLastname;
@@ -70,6 +73,7 @@ public class GeorchestraAuthenticationTestSupport implements TestRule {
     @Override
     public Statement apply(Statement base, Description description) {
         secProxy = "true";
+        secUserId = UUID.randomUUID().toString();
         secUsername = "testUser";
         secFirstname = "Gábriel";
         secLastname = "Roldán";
@@ -104,6 +108,7 @@ public class GeorchestraAuthenticationTestSupport implements TestRule {
     public Map<String, String> buildHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put(SecurityHeaders.SEC_PROXY, encode(secProxy));
+        headers.put(SEC_USERID, encode(secUserId));
         headers.put(SEC_USERNAME, encode(secUsername));
         headers.put(SEC_FIRSTNAME, encode(secFirstname));
         headers.put(SEC_LASTNAME, encode(secLastname));

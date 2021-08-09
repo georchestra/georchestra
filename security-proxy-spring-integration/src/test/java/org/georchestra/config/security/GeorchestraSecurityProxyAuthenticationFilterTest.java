@@ -32,6 +32,7 @@ import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_LIN
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ROLES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TEL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TITLE;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERID;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.junit.Before;
@@ -78,6 +80,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
         Map<String, String> headers = new HashMap<>();
 
+        headers.put(SEC_USERID, UUID.randomUUID().toString());
         headers.put(SEC_USERNAME, "test?user");
         headers.put(SEC_FIRSTNAME, "Gábriel");
         headers.put(SEC_LASTNAME, "Roldán");
@@ -100,6 +103,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         assertNotNull(auth);
         assertFalse(auth.isAnonymous());
 
+        assertEquals(headers.get(SEC_USERID), auth.getUserId());
         assertEquals(headers.get(SEC_USERNAME), auth.getUsername());
         assertEquals(headers.get(SEC_FIRSTNAME), auth.getFirstName());
         assertEquals(headers.get(SEC_LASTNAME), auth.getLastName());

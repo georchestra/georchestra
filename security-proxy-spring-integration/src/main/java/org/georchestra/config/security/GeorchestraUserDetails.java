@@ -44,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GeorchestraUserDetails implements UserDetails {
     private static final long serialVersionUID = -8672954222635750682L;
 
+    static final String SEC_USERID = org.georchestra.commons.security.SecurityHeaders.SEC_USERID;
     static final String SEC_USERNAME = org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
     static final String SEC_FIRSTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
     static final String SEC_LASTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
@@ -59,6 +60,9 @@ public class GeorchestraUserDetails implements UserDetails {
     static final String SEC_ORG_ADDRESS = "sec-org-address";
     static final String SEC_ORG_CATEGORY = "sec-org-category";
     static final String SEC_ORG_DESCRIPTION = "sec-org-description";
+
+    /** Provided by request header {@code sec-userid} */
+    private String userId;
 
     /** Provided by request header {@code sec-username} */
     private @NonNull String username;
@@ -166,10 +170,12 @@ public class GeorchestraUserDetails implements UserDetails {
     }
 
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
+        String userId = getHeader(headers, SEC_USERID);
         String username = getHeader(headers, SEC_USERNAME);
         final boolean anonymous = username == null;
         if (anonymous) {
             username = "anonymousUser";
+            userId = null;
         }
 
         List<String> roles = extractRoles(headers);
@@ -183,6 +189,7 @@ public class GeorchestraUserDetails implements UserDetails {
         String notes = getHeader(headers, SEC_NOTES);
 
         GeorchestraUserDetails user = new GeorchestraUserDetails();
+        user.setUserId(userId);
         user.setUsername(username);
         user.setAnonymous(anonymous);
         user.setRoles(roles);

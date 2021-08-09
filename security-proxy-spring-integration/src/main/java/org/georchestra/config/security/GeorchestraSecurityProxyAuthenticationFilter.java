@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     @Override
-    protected GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
+    public GeorchestraUserDetails getPreAuthenticatedPrincipal(HttpServletRequest request) {
         final boolean preAuthenticated = getPreAuthenticatedCredentials(request);
         if (preAuthenticated) {
             Map<String, String> headers = extractSecHeaders(request);
