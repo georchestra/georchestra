@@ -331,7 +331,7 @@ GEOR.config = (function() {
          * Defaults to "subject"
          */
         CSW_GETDOMAIN_PROPERTY: getCustomParameter("CSW_GETDOMAIN_PROPERTY",
-            "subject"),
+            "tag.default"),
 
 
         /**
