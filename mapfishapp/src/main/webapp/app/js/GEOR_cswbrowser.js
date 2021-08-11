@@ -198,7 +198,7 @@ GEOR.cswbrowser = (function() {
                                 version: "1.1.0",
                                 Filter: new OpenLayers.Filter.Comparison({
                                     type: OpenLayers.Filter.Comparison.EQUAL_TO,
-                                    property: GEOR.config.CSW_GETDOMAIN_PROPERTY,
+                                    property: GEOR.config.GN4_INDEX_KEYWORD_FIELD,
                                     value: treeNode.text
                                 })
                             },
@@ -288,11 +288,11 @@ GEOR.cswbrowser = (function() {
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
             url: GEONETWORK_URL + "/../api/search/records/_search?bucket=bucket",
-            data: JSON.stringify({
+            data: Ext.encode({
                 "aggregations": {
                     "keywords": {
                         "terms": {
-                            "field": GEOR.config.CSW_GETDOMAIN_PROPERTY,
+                            "field": GEOR.config.GN4_INDEX_KEYWORD_FIELD,
                             "include": ".*",
                             "size": 10000
                         },

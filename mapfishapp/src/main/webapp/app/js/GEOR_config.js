@@ -326,11 +326,11 @@ GEOR.config = (function() {
         NS_LOC: getCustomParameter("NS_LOC", "geor_loc"),
 
         /**
-         * Constant: CSW_GETDOMAIN_PROPERTY
-         * {String} the property used to query the CSW for keywords.
-         * Defaults to "subject"
+         * Constant: GN4_INDEX_KEYWORD_FIELD
+         * {String} the field in Gn4 index which stores the keywords.
+         * Defaults to "tag.default"
          */
-        CSW_GETDOMAIN_PROPERTY: getCustomParameter("CSW_GETDOMAIN_PROPERTY",
+        GN4_INDEX_KEYWORD_FIELD: getCustomParameter("GN4_INDEX_KEYWORD_FIELD",
             "tag.default"),
 
 
