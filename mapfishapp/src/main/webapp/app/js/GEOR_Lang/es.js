@@ -103,7 +103,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     /* GEOR_cswbrowser.js strings */
     "NAME layer": "Capa ${NAME}",
     "Metadata without a name": "Metadata sin nombre",
-    "The getDomain CSW query failed": "La consulta CSW getDomain falló",
+    "The request to GeoNetwork 4 aggregations failed": "La consulta Geonetwork 4 aggregations falló",
     "Error for the thesaurus": "Error para el tesauro",
     "Missing key to access the thesaurus":
         "No se encuentra la clave para acceder a este tesauro",

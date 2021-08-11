@@ -102,7 +102,7 @@ OpenLayers.Lang.nl = OpenLayers.Util.extend(OpenLayers.Lang.nl, {
     /* GEOR_cswbrowser.js strings */
     "NAME layer": "Laag ${NAME}",
     "Metadata without a name": "Metadata zonder een naam",
-    "The getDomain CSW query failed": "De getDomain CSW-zoekopdracht is mislukt",
+    "The request to GeoNetwork 4 aggregations failed": "De Geonetwork 4 aggregations-zoekopdracht is mislukt",
     "Error for the thesaurus": "Fout voor de thesaurus",
     "Missing key to access the thesaurus":
         "Geen sleutel voor toegang tot deze thesaurus",

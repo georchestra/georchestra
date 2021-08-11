@@ -100,7 +100,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     /* GEOR_cswbrowser.js strings */
     "NAME layer": "Layer ${NAME}",
     "Metadata without a name": "Namenlose Metadaten",
-    "The getDomain CSW query failed": "Die CSW getDomain Anfrage ist gescheitert",
+    "The request to GeoNetwork 4 aggregations failed": "Die Geonetwork 4 aggregations Anfrage ist gescheitert",
     "Error for the thesaurus": "Fehler auf Thesaurus",
     "Missing key to access the thesaurus":
         "Schlüssel fehlt um Thesaurus zu öffnen",
