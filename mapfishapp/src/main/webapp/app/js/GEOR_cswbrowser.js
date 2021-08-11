@@ -289,7 +289,7 @@ GEOR.cswbrowser = (function() {
         OpenLayers.Request.POST({
             url: GEONETWORK_URL + "/../api/search/records/_search?bucket=bucket",
             data: JSON.stringify({
-                aggregations: {
+                "aggregations": {
                     "keywords": {
                         "terms": {
                             "field": GEOR.config.CSW_GETDOMAIN_PROPERTY,
@@ -299,6 +299,24 @@ GEOR.cswbrowser = (function() {
                         "meta": {
                             "caseInsensitiveInclude": true
                         }
+                    }
+                },
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "query_string": {
+                                    "query": "(+linkProtocol:/OGC:WMS.*/)"
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "isTemplate": [
+                                        "n"
+                                    ]
+                                }
+                            }
+                        ]
                     }
                 },
                 from: 0,
