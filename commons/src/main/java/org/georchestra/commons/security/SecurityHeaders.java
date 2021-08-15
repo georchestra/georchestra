@@ -37,6 +37,7 @@ public class SecurityHeaders {
     // well-known header names
     public static final String SEC_PROXY = "sec-proxy";
     public static final String SEC_USERID = "sec-userid";
+    public static final String SEC_LASTUPDATED = "sec-lastupdated";
     public static final String SEC_USERNAME = "sec-username";
     public static final String SEC_ORG = "sec-org";
     public static final String SEC_ORGNAME = "sec-orgname";

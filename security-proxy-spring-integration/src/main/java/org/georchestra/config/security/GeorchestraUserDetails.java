@@ -45,6 +45,7 @@ public class GeorchestraUserDetails implements UserDetails {
     private static final long serialVersionUID = -8672954222635750682L;
 
     static final String SEC_USERID = org.georchestra.commons.security.SecurityHeaders.SEC_USERID;
+    static final String SEC_LASTUPDATED = org.georchestra.commons.security.SecurityHeaders.SEC_LASTUPDATED;
     static final String SEC_USERNAME = org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
     static final String SEC_FIRSTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
     static final String SEC_LASTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
@@ -61,22 +62,29 @@ public class GeorchestraUserDetails implements UserDetails {
     static final String SEC_ORG_CATEGORY = "sec-org-category";
     static final String SEC_ORG_DESCRIPTION = "sec-org-description";
 
-    /** Provided by request header {@code sec-userid} */
-    private String userId;
-
+    // Default mandatory fields:
     /** Provided by request header {@code sec-username} */
     private @NonNull String username;
 
     /** Provided by request header {@code sec-roles} */
     private @NonNull List<String> roles;
 
+    private @NonNull Organization organization;
+
+    /** Provided by request header {@code sec-userid} */
+    private String userId;
+
+    /**
+     * String that somehow represents the current version, may be a timestamp, a
+     * hash, etc. Provided by request header {@code sec-lastupdated}
+     */
+    private String lastUpdated;
+
     /** Provided by request header {@code sec-firstname} */
     private String firstName;
 
     /** Provided by request header {@code sec-lastname} */
     private String lastName;
-
-    private @NonNull Organization organization;
 
     /** Provided by request header {@code sec-email} */
     private String email;
@@ -178,6 +186,7 @@ public class GeorchestraUserDetails implements UserDetails {
             userId = null;
         }
 
+        String lastUpdated = getHeader(headers, SEC_LASTUPDATED);
         List<String> roles = extractRoles(headers);
         String firstName = getHeader(headers, SEC_FIRSTNAME);
         String lastName = getHeader(headers, SEC_LASTNAME);
@@ -190,6 +199,7 @@ public class GeorchestraUserDetails implements UserDetails {
 
         GeorchestraUserDetails user = new GeorchestraUserDetails();
         user.setUserId(userId);
+        user.setLastUpdated(lastUpdated);
         user.setUsername(username);
         user.setAnonymous(anonymous);
         user.setRoles(roles);

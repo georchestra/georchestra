@@ -18,7 +18,7 @@
  */
 package org.georchestra.config.security;
 
-import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ADDRESS;
+import static org.georchestra.config.security.GeorchestraUserDetails.*;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_EMAIL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_FIRSTNAME;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_LASTNAME;
@@ -81,6 +81,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         Map<String, String> headers = new HashMap<>();
 
         headers.put(SEC_USERID, UUID.randomUUID().toString());
+        headers.put(SEC_LASTUPDATED, "abc123");
         headers.put(SEC_USERNAME, "test?user");
         headers.put(SEC_FIRSTNAME, "Gábriel");
         headers.put(SEC_LASTNAME, "Roldán");
@@ -104,6 +105,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         assertFalse(auth.isAnonymous());
 
         assertEquals(headers.get(SEC_USERID), auth.getUserId());
+        assertEquals(headers.get(SEC_LASTUPDATED), auth.getLastUpdated());
         assertEquals(headers.get(SEC_USERNAME), auth.getUsername());
         assertEquals(headers.get(SEC_FIRSTNAME), auth.getFirstName());
         assertEquals(headers.get(SEC_LASTNAME), auth.getLastName());
