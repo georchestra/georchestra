@@ -1281,7 +1281,7 @@
         <dependency>
           <groupId>org.geoserver.extension</groupId>
           <artifactId>gs-geofence</artifactId>
-          <version>${gs.version}</version>
+          <version>${gs.version}-georchestra</version>
           <exclusions>
             <exclusion>
               <groupId>org.geoserver.geofence</groupId>
@@ -1296,7 +1296,7 @@
         <dependency>
           <groupId>org.geoserver.extension</groupId>
           <artifactId>gs-geofence-server</artifactId>
-          <version>${gs.version}</version>
+          <version>${gs.version}-georchestra</version>
           <exclusions>
             <exclusion>
               <groupId>cglib</groupId>
