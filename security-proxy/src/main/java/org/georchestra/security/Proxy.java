@@ -977,6 +977,9 @@ public class Proxy {
             }
 
             HttpMethod meth = HttpMethod.resolve(method);
+            if (meth == null) {
+                throw new IllegalArgumentException(method + " is not supported.");
+            }
 
             switch (meth) {
             case GET: {

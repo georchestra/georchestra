@@ -292,4 +292,14 @@ public class ProxyTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonExistingVerb() {
+        request = new MockHttpServletRequest("NONSTANDARDVERB", "/nextcloud/plop");
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), "NONSTANDARDVERB worked");
+        response.setHeader("X-Test-Header", "NONSTANDARDVERB worked");
+        httpResponse = new MockHttpServletResponse();
+
+        proxy.handleRequest(request, httpResponse);
+
+    }
 }
