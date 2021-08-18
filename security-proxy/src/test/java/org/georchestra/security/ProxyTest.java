@@ -17,20 +17,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -293,4 +288,14 @@ public class ProxyTest {
         }
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonExistingVerb() {
+        request = new MockHttpServletRequest("NONSTANDARDVERB", "/nextcloud/plop");
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), "NONSTANDARDVERB worked");
+        response.setHeader("X-Test-Header", "NONSTANDARDVERB worked");
+        httpResponse = new MockHttpServletResponse();
+
+        proxy.handleRequest(request, httpResponse);
+
+    }
 }
