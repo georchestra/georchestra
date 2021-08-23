@@ -44,7 +44,7 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
-      run: ./mvnw --no-transfer-progress -B -P-all,geoserver -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw --no-transfer-progress -B -P-all,geoserver,geofence -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
       working-directory: geoserver/
