@@ -82,7 +82,7 @@ war-build-gn3:
 	mvn clean install -f geonetwork/pom.xml -DskipTests
 
 war-build-georchestra: war-build-gn3 war-build-geoserver
-	mvn -Dmaven.test.skip=true clean install
+	mvn -Dmaven.test.skip=true -DskipTests clean install
 
 
 # DEB related targets
