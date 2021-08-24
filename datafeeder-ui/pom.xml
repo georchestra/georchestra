@@ -112,7 +112,7 @@
               <configuration>
                   <webResources>
                       <resource>
-                          <directory>${project.build.directory}/datafeeder-ui/dist/datafeeder</directory>
+                          <directory>${project.build.directory}/datafeeder-ui/dist/apps/datafeeder</directory>
                       </resource>
                   </webResources>
               </configuration>
