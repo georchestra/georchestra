@@ -19,6 +19,7 @@
     <mvc:resources mapping="/*.ico" location="/" />
     <mvc:resources mapping="/*.html" location="/" />
     <mvc:resources mapping="/*.js" location="/" />
+    <mvc:resources mapping="/*.css" location="/" />
     <mvc:resources mapping="/*.map" location="/" />
     <mvc:resources mapping="/assets/**" location="/assets/" />
 
