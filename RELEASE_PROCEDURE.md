@@ -103,6 +103,7 @@ Other tasks:
  * Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```)
  * Update the branch name for the Travis status logo
  * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `20.1`
+ * Replace `99.master` by `${build.closest.tag.name}` in the root `pom.xml` so that debian packages have the right version
  * Change the `BTAG` variable in the Makefile to `20.1.x`
  * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
  * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
