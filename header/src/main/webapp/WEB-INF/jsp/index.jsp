@@ -285,12 +285,16 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("datafeeder") %>'>
-            <li class="active"><a><fmt:message key="datafeeder"/></a></li>
+            <c:when test='<%= anonymous == false %>'>
+                <c:choose>
+                    <c:when test='<%= active.equals("datafeeder") %>'>
+                    <li class="active"><a><fmt:message key="datafeeder"/></a></li>
+                    </c:when>
+                    <c:otherwise>
+                    <li><a href="/import/"><fmt:message key="datafeeder"/></a></li>
+                    </c:otherwise>
+                </c:choose>
             </c:when>
-            <c:otherwise>
-            <li><a href="/import/"><fmt:message key="datafeeder"/></a></li>
-            </c:otherwise>
         </c:choose>
 
         <c:choose>
