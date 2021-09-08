@@ -27,6 +27,7 @@ description: USER
 userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
 knowledgeInformation: Internal CRM notes on testuser
 cn: testuser
+georchestraObjectIdentifier: 048b2f38-6ee7-4eec-9bed-349cc6eb13c3
 
 # testreviewer, users, georchestra.org
 dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
@@ -43,6 +44,7 @@ description: Reviewer
 userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
 mail: psc+testreviewer@georchestra.org
 cn: testreviewer
+georchestraObjectIdentifier: 5f6ce744-4f36-4432-9543-7f6025fab02c
 
 # testeditor, users, georchestra.org
 dn: uid=testeditor,ou=users,dc=georchestra,dc=org
@@ -59,6 +61,7 @@ description: editor
 userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
 mail: psc+testeditor@georchestra.org
 cn: testeditor
+georchestraObjectIdentifier: e75b336d-a9fc-4671-8002-e1a49c2acf2c
 
 # testadmin, users, georchestra.org
 dn: uid=testadmin,ou=users,dc=georchestra,dc=org
@@ -80,6 +83,7 @@ userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
 mail: psc+testadmin@georchestra.org
 knowledgeInformation: Internal CRM notes on testadmin
 cn: testadmin
+georchestraObjectIdentifier: 0c6bb556-4ee8-46f2-892d-6116e262b489
 
 # geoserver_privileged_user, users, georchestra.org
 dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
@@ -95,6 +99,7 @@ uid: geoserver_privileged_user
 cn: geoserver_privileged_user
 description: Do not modify.  This is a required user for extractorapp, mapfishapp...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
+georchestraObjectIdentifier: 82dc7198-6fea-4e9a-b30d-d1e414c30f30
 
 # testpendinguser, pendingusers, georchestra.org
 dn: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
@@ -111,6 +116,7 @@ description: User pending admin validation
 userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
 mail: psc+testpendinguser@georchestra.org
 cn: testpendinguser
+georchestraObjectIdentifier: 8856b18c-1524-4706-a82e-c82343211313
 
 # testdelegatedadmin, users, georchestra.org
 dn: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
@@ -127,6 +133,7 @@ description: User with admin delegation
 userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
 mail: psc+testdelegatedadmin@georchestra.org
 cn: testdelegatedadmin
+georchestraObjectIdentifier: 003860e1-19d9-4fda-a3e8-3eda577b4918
 
 # roles, georchestra.org
 dn: ou=roles,dc=georchestra,dc=org
@@ -327,6 +334,7 @@ jpegphoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
  FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k=
 labeledURI: https://www.georchestra.org/
 knowledgeInformation: Internal CRM notes on PSC
+georchestraObjectIdentifier: bddf474d-125d-4b18-92bd-bd8ebb6699a9
 
 dn: cn=PSC,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -350,6 +358,7 @@ postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 labeledURI: https://www.camptocamp.com/
 description: Camptocamp SAS France
 knowledgeInformation: Internal CRM notes on Camptocamp
+georchestraObjectIdentifier: 8c1ef87a-73fc-4d79-80cb-ba4ff7102cca
 
 dn: cn=C2C,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -370,6 +379,7 @@ businessCategory: Company
 postalAddress: Null island
 labeledURI: https://www.fictive.pending.org/
 description: Organisation pending validation
+georchestraObjectIdentifier: 6aca454f-74e6-45e0-907d-381b42e1e286
 
 dn: cn=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
