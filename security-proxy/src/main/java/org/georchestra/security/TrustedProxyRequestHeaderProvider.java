@@ -7,7 +7,6 @@ import java.util.Enumeration;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -24,8 +23,7 @@ public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
         if (!isPreAuthorized(originalRequest)) {
             return Collections.emptyList();
         }

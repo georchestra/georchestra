@@ -31,7 +31,6 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -53,8 +52,7 @@ public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
         if (originalRequest.getHeader(IMP_USERNAME) != null) {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,8 +55,7 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();

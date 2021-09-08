@@ -32,11 +32,11 @@ public class ImpersonateUserRequestHeaderProviderTest {
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("randomUser", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
     }
 
     @Test
@@ -49,11 +49,11 @@ public class ImpersonateUserRequestHeaderProviderTest {
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("jeichar", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        final Collection<Header> customRequestHeaders = provider.getCustomRequestHeaders(null, request, null);
+        final Collection<Header> customRequestHeaders = provider.getCustomRequestHeaders(request, null);
         assertEquals(2, customRequestHeaders.size());
         assertContains(customRequestHeaders, SEC_USERNAME, "imp-user");
         assertContains(customRequestHeaders, SEC_ROLES, "ROLE_IMP");

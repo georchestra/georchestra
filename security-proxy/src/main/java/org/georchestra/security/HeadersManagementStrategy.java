@@ -115,7 +115,6 @@ public class HeadersManagementStrategy {
             StringBuilder headersLog, String targetServiceName) {
 
         final boolean preAuthorized = HeaderProvider.isPreAuthorized(originalRequest);
-        final HttpSession session = originalRequest.getSession();
         for (HeaderProvider provider : headerProviders) {
 
             // Don't include headers from security framework for request coming from trusted
@@ -125,8 +124,7 @@ public class HeadersManagementStrategy {
                 continue;
             }
 
-            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(session, originalRequest,
-                    targetServiceName);
+            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(originalRequest, targetServiceName);
             for (Header header : providerHeaders) {
 
                 final String providerHeaderName = header.getName();

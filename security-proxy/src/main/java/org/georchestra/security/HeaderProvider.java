@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,13 +39,11 @@ public abstract class HeaderProvider {
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
      * to allow extra headers to be added to the copied headers.
      * 
-     * @param session           current session
      * @param originalRequest   request being proxified
      * @param targetServiceName service name as defined in
      *                          {@code targets-mappings.properties}
      */
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
         return Collections.emptyList();
     }
 

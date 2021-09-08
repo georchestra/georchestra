@@ -40,16 +40,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,16 +57,13 @@ public class LdapUserDetailsRequestHeaderProviderTest {
     private LdapHeaderMappingsTestSupport support;
     private LdapUserDetailsRequestHeaderProvider ldapProvider;
 
-    private HttpSession session;
-    private final HttpServletRequest request = new MockHttpServletRequest();
+    private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     public @Before void before() {
         support = new LdapHeaderMappingsTestSupport();
         support.initMockLdapContext();
         ldapProvider = new LdapUserDetailsRequestHeaderProvider(() -> support.userSearch, support.orgSearchBaseDN);
         ldapProvider.ldapTemplate = support.ldapTemplate;
-
-        session = new MockHttpSession();
 
         Authentication auth = new TestingAuthenticationToken(support.username, null);
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -79,11 +72,11 @@ public class LdapUserDetailsRequestHeaderProviderTest {
     @Test
     public void testCachedHeaders_NoServiceName() {
         String service = null;
-        Optional<Collection<Header>> cached = this.ldapProvider.getCachedHeaders(session, service);
+        Optional<List<Header>> cached = this.ldapProvider.getCachedHeaders(service);
         assertFalse(cached.isPresent());
         Collection<Header> headers = Collections.singletonList(new BasicHeader("test", "value"));
-        this.ldapProvider.setCachedHeaders(session, headers, service);
-        cached = this.ldapProvider.getCachedHeaders(session, service);
+        this.ldapProvider.setCachedHeaders(headers, service);
+        cached = this.ldapProvider.getCachedHeaders(service);
         assertTrue(cached.isPresent());
         assertNotSame(headers, cached.get());
         assertEquals(headers, cached.get());
@@ -97,17 +90,17 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         Collection<Header> headers1 = Collections.singletonList(new BasicHeader("test", "analytics-value"));
         Collection<Header> headers2 = Collections.singletonList(new BasicHeader("test", "console-value"));
 
-        Optional<Collection<Header>> cached1 = this.ldapProvider.getCachedHeaders(session, service1);
-        Optional<Collection<Header>> cached2 = this.ldapProvider.getCachedHeaders(session, service2);
+        Optional<List<Header>> cached1 = this.ldapProvider.getCachedHeaders(service1);
+        Optional<List<Header>> cached2 = this.ldapProvider.getCachedHeaders(service2);
 
         assertFalse(cached1.isPresent());
         assertFalse(cached2.isPresent());
 
-        this.ldapProvider.setCachedHeaders(session, headers1, service1);
-        this.ldapProvider.setCachedHeaders(session, headers2, service2);
+        this.ldapProvider.setCachedHeaders(headers1, service1);
+        this.ldapProvider.setCachedHeaders(headers2, service2);
 
-        cached1 = this.ldapProvider.getCachedHeaders(session, service1);
-        cached2 = this.ldapProvider.getCachedHeaders(session, service2);
+        cached1 = this.ldapProvider.getCachedHeaders(service1);
+        cached2 = this.ldapProvider.getCachedHeaders(service2);
 
         assertTrue(cached1.isPresent());
         assertTrue(cached2.isPresent());
@@ -122,7 +115,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
     @Test
     public void testGetCustomRequestHeaders_SetsOrgAndOrgNameStandardHeaders() throws Exception {
         String targetServiceName = null;
-        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, targetServiceName);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(request, targetServiceName);
         headers.forEach(
                 h -> assertEquals("header has more than one value: " + h.toString(), 1, h.getElements().length));
 
@@ -145,7 +138,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         this.ldapProvider.loadConfig(props);
 
         String targetServiceName = null;
-        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, targetServiceName);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(request, targetServiceName);
         headers.forEach(
                 h -> assertEquals("header shall have just one value: " + h.toString(), 1, h.getElements().length));
 
@@ -171,7 +164,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         this.ldapProvider.loadConfig(props);
 
         String targetServiceName = "analytics";
-        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, targetServiceName);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(request, targetServiceName);
         headers.forEach(
                 h -> assertEquals("header shall have just one value: " + h.toString(), 1, h.getElements().length));
 
@@ -221,7 +214,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         this.ldapProvider.loadConfig(props);
 
         String targetServiceName = "analytics";
-        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, targetServiceName);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(request, targetServiceName);
         headers.forEach(
                 h -> assertEquals("header shall have just one value: " + h.toString(), 1, h.getElements().length));
 
@@ -257,7 +250,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
     private void testConfig(Map<String, String> config) {
         ldapProvider.loadConfig(config);
-        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(session, request, null);
+        Collection<Header> headers = ldapProvider.getCustomRequestHeaders(request, null);
 
         Map<String, String> actual = headers.stream().collect(Collectors.toMap(Header::getName, Header::getValue));
         Map<String, String> expected = new HashMap<>();
