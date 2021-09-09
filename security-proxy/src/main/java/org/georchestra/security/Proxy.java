@@ -21,14 +21,9 @@ package org.georchestra.security;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
-import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,6 +77,7 @@ import org.apache.http.ProtocolException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
@@ -110,8 +106,6 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
-import org.georchestra.security.webdav.PropFindMethod;
-import org.georchestra.security.webdav.SearchMethod;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -959,22 +953,41 @@ public class Proxy {
             URL url = new URL(sURL);
             URI uri = buildUri(url);
             String method = request.getMethod();
+
             // handles webdav specific verbs
-            if (PropFindMethod.METHOD_NAME.equalsIgnoreCase(method)) {
-                PropFindMethod pfm = new PropFindMethod(uri);
+            String[] webdavVerb = { "COPY", "LOCK", "UNLOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK",
+                    "REPORT" };
+            boolean isWebdav = Arrays.stream(webdavVerb).anyMatch(x -> x.equalsIgnoreCase(method));
+            if (isWebdav) {
+                HttpEntityEnclosingRequestBase heerb = new HttpEntityEnclosingRequestBase() {
+                    @Override
+                    public String getMethod() {
+                        return method.toUpperCase();
+                    }
+                };
+                heerb.setURI(uri);
                 int contentLength = request.getContentLength();
                 ServletInputStream inputStream = request.getInputStream();
                 HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-                pfm.setEntity(entity);
-                return pfm;
-            } else if (SearchMethod.METHOD_NAME.equalsIgnoreCase(method)) {
-                SearchMethod sm = new SearchMethod(uri);
-                int contentLength = request.getContentLength();
-                ServletInputStream inputStream = request.getInputStream();
-                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-                sm.setEntity(entity);
-                return sm;
+                heerb.setEntity(entity);
+                return heerb;
             }
+
+//            if (PropFindMethod.METHOD_NAME.equalsIgnoreCase(method)) {
+//                PropFindMethod pfm = new PropFindMethod(uri);
+//                int contentLength = request.getContentLength();
+//                ServletInputStream inputStream = request.getInputStream();
+//                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+//                pfm.setEntity(entity);
+//                return pfm;
+//            } else if (SearchMethod.METHOD_NAME.equalsIgnoreCase(method)) {
+//                SearchMethod sm = new SearchMethod(uri);
+//                int contentLength = request.getContentLength();
+//                ServletInputStream inputStream = request.getInputStream();
+//                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+//                sm.setEntity(entity);
+//                return sm;
+//            }
 
             HttpMethod meth = HttpMethod.resolve(method);
             if (meth == null) {
