@@ -19,10 +19,31 @@
 
 package org.georchestra.console.ds;
 
+import static java.util.stream.Collectors.joining;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
@@ -38,25 +59,6 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.util.StringUtils;
-
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * This class manage organization membership
@@ -311,6 +313,17 @@ public class OrgsDao {
         List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
                 getExtension(org).getAttributeMapper(true));
         return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+    }
+
+    public Stream<Org> findAllWithExt() {
+        final Map<String, OrgExt> exts = this.findAllExt().stream()
+                .collect(Collectors.toMap(OrgExt::getId, Function.identity()));
+        List<Org> orgs = this.findAll();
+        return orgs.stream().map(o -> {
+            OrgExt orgExt = exts.get(o.getId());
+            o.setOrgExt(orgExt);
+            return o;
+        });
     }
 
     /**
