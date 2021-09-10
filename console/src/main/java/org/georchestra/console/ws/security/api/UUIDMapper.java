@@ -18,20 +18,14 @@
  */
 package org.georchestra.console.ws.security.api;
 
-import static org.mapstruct.ReportingPolicy.ERROR;
+import java.util.UUID;
 
-import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.security.model.Organization;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = UUIDMapper.class, unmappedTargetPolicy = ERROR)
-interface OrganizationMapper {
+@Mapper(componentModel = "spring")
+interface UUIDMapper {
 
-    @Mapping(target = "id", source = "uniqueIdentifier")
-    @Mapping(target = "notes", source = "note")
-    @Mapping(target = "linkage", source = "url")
-    @Mapping(target = "postalAddress", source = "orgAddress")
-    @Mapping(target = "category", source = "orgType")
-    Organization map(Org org);
+    default String map(UUID value) {
+        return value == null ? null : value.toString();
+    }
 }

@@ -19,13 +19,19 @@
 
 package org.georchestra.console.dto.orgs;
 
+import java.util.UUID;
+
 import org.georchestra.console.ds.OrgsDao;
+
+import lombok.Getter;
+import lombok.Setter;
 
 public class OrgExt extends AbstractOrg implements Cloneable {
 
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ORG_TYPE = "orgType";
 
+    private @Getter @Setter UUID uniqueIdentifier;
     private String id;
     private String orgType;
     private String address;

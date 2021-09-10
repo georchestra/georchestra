@@ -28,6 +28,7 @@ package org.georchestra.console.dto;
  */
 public interface UserSchema {
 
+    public static final String UUID_KEY = "georchestraObjectIdentifier";
     public static final String UID_KEY = "uid";
     public static final String COMMON_NAME_KEY = "cn"; // full name (givenName) + Surname
     public static final String SURNAME_KEY = "sn";
@@ -64,10 +65,10 @@ public interface UserSchema {
     public static final String ORG_KEY = "org";
     public static final String ORG_ID_KEY = "orgId";
 
-    public static final String[] ATTR_TO_RETRIEVE = { UID_KEY, COMMON_NAME_KEY, SURNAME_KEY, GIVEN_NAME_KEY, STREET_KEY,
-            HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY, POSTAL_ADDRESS_KEY,
-            POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY, MOBILE_KEY,
-            ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
+    public static final String[] ATTR_TO_RETRIEVE = { UUID_KEY, UID_KEY, COMMON_NAME_KEY, SURNAME_KEY, GIVEN_NAME_KEY,
+            STREET_KEY, HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY,
+            POSTAL_ADDRESS_KEY, POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY,
+            MOBILE_KEY, ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
             REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, PRIVACY_POLICY_AGREEMENT_DATE_KEY, MANAGER_KEY, CONTEXT_KEY,
             MEMBER_OF, SSH_KEY, NOTE_KEY, PENDING };
 

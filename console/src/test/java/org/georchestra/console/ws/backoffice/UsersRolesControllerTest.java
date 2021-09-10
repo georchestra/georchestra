@@ -98,22 +98,22 @@ public class UsersRolesControllerTest {
 
         // fake account list
         List<Account> fakeAccountList = new ArrayList<Account>();
-        fakeAccountList.add(AccountFactory.createFull("testadmin", "testadmin", "testadmin", "administrator",
+        fakeAccountList.add(AccountFactory.createFull(null, "testadmin", "testadmin", "testadmin", "administrator",
                 "psc@georchestra.org", "administrator", "+331234567890", "admin", "48 avenue du lac du Bourget",
                 "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget",
                 "Savoie-Technolac", "+331234567899", "geodata administration", "Undisclosed", "+336123457890", "42",
                 "Rhone-Alpes", null, "testnote", null, new String[0], null));
 
-        fakeAccountList.add(AccountFactory.createFull("testuser", "testuser", "testuser", "regular user",
+        fakeAccountList.add(AccountFactory.createFull(null, "testuser", "testuser", "testuser", "regular user",
                 "psc@georchestra.org", "user", "+331234567890", "user", "48 avenue du lac du Bourget", "73000",
                 "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget", "Savoie-Technolac",
                 "+331234567899", "Peon", "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, "testnote", null,
                 new String[0], null));
-        Account tempAccount = AccountFactory.createFull("testadminTmp", "testadminTmp", "testadminTmp", "administrator",
-                "psc@georchestra.org", "administrator", "+331234567890", "admin", "48 avenue du lac du Bourget",
-                "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget",
-                "Savoie-Technolac", "+331234567899", "geodata administration", "Undisclosed", "+336123457890", "42",
-                "Rhone-Alpes", null, "testnote", null, new String[0], null);
+        Account tempAccount = AccountFactory.createFull(null, "testadminTmp", "testadminTmp", "testadminTmp",
+                "administrator", "psc@georchestra.org", "administrator", "+331234567890", "admin",
+                "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
+                "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
+                "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, "testnote", null, new String[0], null);
         fakeAccountList.add(tempAccount);
 
         // fake role List

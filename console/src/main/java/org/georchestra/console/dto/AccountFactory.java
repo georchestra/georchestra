@@ -19,6 +19,8 @@
 
 package org.georchestra.console.dto;
 
+import java.util.UUID;
+
 /**
  * Account factory.
  * 
@@ -71,7 +73,8 @@ public class AccountFactory {
     /**
      * Creates an account object with all data.
      * 
-     * @param uid
+     * @param uuid                       optional {@link UUID}
+     * @param userid
      * @param cn                         full name
      * @param surname                    surname
      * @param givenName                  first name
@@ -100,16 +103,16 @@ public class AccountFactory {
      *
      * @return {@link Account}
      */
-    public static Account createFull(String uid, String cn, String surname, String givenName, String email,
-            String title, String phone, String description, String postalAddress, String postalCode,
+    public static Account createFull(UUID uuid, String userid, String cn, String surname, String givenName,
+            String email, String title, String phone, String description, String postalAddress, String postalCode,
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
             String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys,
             String saslUser) {
 
         Account a = new AccountImpl();
-
-        a.setUid(uid);
+        a.setUniqueIdentifier(uuid);
+        a.setUid(userid);
         a.setCommonName(cn);
         a.setGivenName(givenName);
         a.setSurname(surname);
@@ -146,6 +149,7 @@ public class AccountFactory {
      */
     public static Account create(Account o) {
         Account a = new AccountImpl();
+        a.setUniqueIdentifier(o.getUniqueIdentifier());
         a.setUid(o.getUid());
         a.setCommonName(o.getCommonName());
         a.setSurname(o.getSurname());

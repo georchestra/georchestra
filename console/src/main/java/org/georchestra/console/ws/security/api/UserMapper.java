@@ -18,6 +18,8 @@
  */
 package org.georchestra.console.ws.security.api;
 
+import static org.mapstruct.ReportingPolicy.ERROR;
+
 import java.util.List;
 
 import org.georchestra.console.ds.OrgsDao;
@@ -31,14 +33,13 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
 abstract class UserMapper {
 
     private @Autowired OrganizationMapper orgMapper;
@@ -52,7 +53,7 @@ abstract class UserMapper {
         return map(account, context);
     }
 
-    @Mapping(target = "id", source = "uid")
+    @Mapping(target = "id", source = "uniqueIdentifier")
     @Mapping(target = "username", source = "uid")
     @Mapping(target = "firstName", source = "givenName")
     @Mapping(target = "lastName", source = "surname")

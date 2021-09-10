@@ -779,9 +779,15 @@ public class UsersController {
 
         String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-        Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
-                postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
-                note, context, org, sshKeysA, saslUser);
+        UUID uuid = null;
+        String suuid = RequestUtil.getFieldValue(json, UserSchema.UUID_KEY);
+        if (StringUtils.hasLength(suuid)) {
+            uuid = UUID.fromString(suuid);
+        }
+
+        Account a = AccountFactory.createFull(uuid, uid, commonName, surname, givenName, email, title, phone,
+                description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "",
+                "", manager, note, context, org, sshKeysA, saslUser);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {

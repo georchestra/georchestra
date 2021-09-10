@@ -23,6 +23,7 @@ import org.georchestra.console.ds.PasswordType;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Account data transfer object.
@@ -31,6 +32,10 @@ import java.util.Date;
  *
  */
 public interface Account extends Comparable<Account> {
+
+    void setUniqueIdentifier(UUID uniqueId);
+
+    UUID getUniqueIdentifier();
 
     void setUid(String uid);
 

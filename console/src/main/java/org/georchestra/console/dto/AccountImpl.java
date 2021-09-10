@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
@@ -38,6 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Account this is a Data transfer Object.
  *
@@ -48,6 +52,8 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 public class AccountImpl implements Serializable, Account {
 
     private static final long serialVersionUID = -8022496448991887664L;
+
+    private @Getter @Setter UUID uniqueIdentifier;
 
     // main data
     @JsonProperty(UserSchema.UID_KEY)
@@ -476,11 +482,11 @@ public class AccountImpl implements Serializable, Account {
         if (o == null || getClass() != o.getClass())
             return false;
         AccountImpl account = (AccountImpl) o;
-        return Objects.equals(uid, account.uid) && Objects.equals(commonName, account.commonName)
-                && Objects.equals(surname, account.surname) && Objects.equals(email, account.email)
-                && Objects.equals(phone, account.phone) && Objects.equals(description, account.description)
-                && Objects.equals(givenName, account.givenName) && Objects.equals(title, account.title)
-                && Objects.equals(postalAddress, account.postalAddress)
+        return Objects.equals(uniqueIdentifier, account.uniqueIdentifier) && Objects.equals(uid, account.uid)
+                && Objects.equals(commonName, account.commonName) && Objects.equals(surname, account.surname)
+                && Objects.equals(email, account.email) && Objects.equals(phone, account.phone)
+                && Objects.equals(description, account.description) && Objects.equals(givenName, account.givenName)
+                && Objects.equals(title, account.title) && Objects.equals(postalAddress, account.postalAddress)
                 && Objects.equals(postalCode, account.postalCode)
                 && Objects.equals(registeredAddress, account.registeredAddress)
                 && Objects.equals(postOfficeBox, account.postOfficeBox)

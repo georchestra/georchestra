@@ -52,8 +52,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -201,6 +203,9 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public synchronized void update(Account account, Account modified, String originLogin)
             throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
+        if (!Objects.equals(account.getUniqueIdentifier(), modified.getUniqueIdentifier())) {
+            modified.setUniqueIdentifier(account.getUniqueIdentifier());
+        }
         if (hasUserDnChanged(account, modified)) {
             ldapTemplate.rename(buildUserDn(account), buildUserDn(modified));
         }
@@ -450,6 +455,12 @@ public final class AccountDaoImpl implements AccountDao {
         else
             setAccountField(context, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY, null);
 
+        if (null == account.getUniqueIdentifier()) {
+            account.setUniqueIdentifier(UUID.randomUUID());
+        }
+        String suuid = account.getUniqueIdentifier().toString();
+        setAccountField(context, UserSchema.UUID_KEY, suuid);
+
         setAccountField(context, UserSchema.NOTE_KEY, account.getNote());
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
@@ -496,7 +507,10 @@ public final class AccountDaoImpl implements AccountDao {
             DirContextAdapter context = (DirContextAdapter) ctx;
             Set<String> sshKeys = context.getAttributeSortedStringSet(UserSchema.SSH_KEY);
 
-            Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UID_KEY),
+            String suuid = context.getStringAttribute(UserSchema.UUID_KEY);
+            UUID uuid = null == suuid ? null : UUID.fromString(suuid);
+
+            Account account = AccountFactory.createFull(uuid, context.getStringAttribute(UserSchema.UID_KEY),
                     context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
                     context.getStringAttribute(UserSchema.SURNAME_KEY),
                     context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),

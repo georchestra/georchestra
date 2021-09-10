@@ -27,10 +27,12 @@ import org.georchestra.console.ds.OrgsDao;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
 
+    public static final String JSON_UUID = "uuid";
     public static final String JSON_ID = "id";
     public static final String JSON_NAME = "name";
     public static final String JSON_SHORT_NAME = "shortName";
@@ -164,6 +166,11 @@ public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
             return null;
         else
             return orgExt.getLogo();
+    }
+
+    @JsonProperty(JSON_UUID)
+    public UUID getUniqueIdentifier() {
+        return this.orgExt == null ? null : orgExt.getUniqueIdentifier();
     }
 
     @Override

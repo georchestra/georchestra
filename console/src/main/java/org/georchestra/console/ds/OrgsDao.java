@@ -22,6 +22,7 @@ package org.georchestra.console.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
@@ -36,6 +37,7 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
+import org.springframework.util.StringUtils;
 
 import javax.naming.Name;
 import javax.naming.NamingException;
@@ -49,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -217,6 +220,10 @@ public class OrgsDao {
                 context.setAttributeValue("businessCategory", org.getOrgType());
             if (org.getAddress() != null)
                 context.setAttributeValue("postalAddress", org.getAddress());
+            if (org.getUniqueIdentifier() == null) {
+                org.setUniqueIdentifier(UUID.randomUUID());
+            }
+            setOrDeleteField(context, "georchestraObjectIdentifier", org.getUniqueIdentifier().toString());
             setOrDeleteField(context, "knowledgeInformation", org.getNote());
             setOrDeleteField(context, "description", org.getDescription());
             setOrDeleteField(context, "labeledURI", org.getUrl());
@@ -238,6 +245,8 @@ public class OrgsDao {
             return new AttributesMapper() {
                 public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
                     OrgExt orgExt = new OrgExt();
+                    // georchestraObjectIdentifier
+                    orgExt.setUniqueIdentifier(asUuid(attrs.get("georchestraObjectIdentifier")));
                     orgExt.setId(asString(attrs.get("o")));
                     orgExt.setOrgType(asString(attrs.get("businessCategory")));
                     orgExt.setAddress(asString(attrs.get("postalAddress")));
@@ -481,6 +490,14 @@ public class OrgsDao {
             return "";
         else
             return (String) att.get();
+    }
+
+    public UUID asUuid(Attribute att) throws NamingException {
+        String asString = asString(att);
+        if (StringUtils.hasLength(asString)) {
+            return UUID.fromString(asString);
+        }
+        return null;
     }
 
     public String asPhoto(Attribute att) throws NamingException {
