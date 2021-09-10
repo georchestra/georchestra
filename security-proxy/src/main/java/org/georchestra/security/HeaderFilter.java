@@ -19,9 +19,9 @@
 
 package org.georchestra.security;
 
-import org.apache.http.client.methods.HttpRequestBase;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * Filters headers from being copied to the request

@@ -243,6 +243,8 @@ class LdapHeaderMappingsTestSupport {
             contextMap = (ListMultimap<String, Object>) managerContextMap;
         } else if (propertyName.indexOf('.') == -1) {
             contextMap = (ListMultimap<String, Object>) userContextMap;
+        } else if (propertyName.indexOf('.') == -1) {
+            contextMap = (ListMultimap<String, Object>) userContextMap;
         } else {
             throw new IllegalArgumentException(propertyName);
         }

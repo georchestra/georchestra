@@ -21,17 +21,27 @@ package org.georchestra.console.ws.security.api;
 import static org.mapstruct.ReportingPolicy.ERROR;
 
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.security.model.GeorchestraUserHasher;
 import org.georchestra.security.model.Organization;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = UUIDMapper.class, unmappedTargetPolicy = ERROR)
 interface OrganizationMapper {
 
-    @Mapping(target = "id", source = "uniqueIdentifier")
+    @Mapping(target = "uniqueId", source = "uniqueIdentifier")
     @Mapping(target = "notes", source = "note")
     @Mapping(target = "linkage", source = "url")
     @Mapping(target = "postalAddress", source = "orgAddress")
     @Mapping(target = "category", source = "orgType")
+    @Mapping(target = "lastUpdated", ignore = true)
     Organization map(Org org);
+
+    @AfterMapping
+    default void addLastUpdated(Org source, @MappingTarget Organization target) {
+        String hash = GeorchestraUserHasher.createLastUpdatedOrgHash(target);
+        target.setLastUpdated(hash);
+    }
 }

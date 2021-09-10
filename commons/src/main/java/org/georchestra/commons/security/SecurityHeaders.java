@@ -36,16 +36,20 @@ import java.util.stream.Stream;
 public class SecurityHeaders {
     // well-known header names
     public static final String SEC_PROXY = "sec-proxy";
+
     public static final String SEC_USERID = "sec-userid";
     public static final String SEC_LASTUPDATED = "sec-lastupdated";
     public static final String SEC_USERNAME = "sec-username";
-    public static final String SEC_ORG = "sec-org";
-    public static final String SEC_ORGNAME = "sec-orgname";
     public static final String SEC_ROLES = "sec-roles";
     public static final String SEC_FIRSTNAME = "sec-firstname";
     public static final String SEC_LASTNAME = "sec-lastname";
     public static final String SEC_EMAIL = "sec-email";
     public static final String SEC_TEL = "sec-tel";
+
+    public static final String SEC_ORG = "sec-org";
+    public static final String SEC_ORGID = "sec-orgid";
+    public static final String SEC_ORGNAME = "sec-orgname";
+    public static final String SEC_ORG_LASTUPDATED = "sec-org-lastupdated";
     public static final String IMP_ROLES = "imp-roles";
     public static final String IMP_USERNAME = "imp-username";
 

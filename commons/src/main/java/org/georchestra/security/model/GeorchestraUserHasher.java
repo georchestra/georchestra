@@ -54,6 +54,17 @@ public class GeorchestraUserHasher {
         return hexHash;
     }
 
+    public static String createLastUpdatedOrgHash(Organization organization) {
+        Hasher hasher = Hashing.sha256().newHasher();
+        if (null != organization) {
+            hasher.putUnencodedChars(nonNull(organization.getId()));
+            hasher.putUnencodedChars(nonNull(organization.getName()));
+        }
+
+        String hexHash = hasher.hash().toString();
+        return hexHash;
+    }
+
     private static CharSequence nonNull(String s) {
         return s == null ? "" : s;
     }

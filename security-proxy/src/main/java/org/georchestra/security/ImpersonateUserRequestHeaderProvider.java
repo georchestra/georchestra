@@ -25,17 +25,17 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Allows certain white-listed users to impersonate other users.
@@ -52,21 +52,18 @@ public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
+    public Map<String, String> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
         if (originalRequest.getHeader(IMP_USERNAME) != null) {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication != null && trustedUsers != null && trustedUsers.contains(authentication.getName())) {
-                List<Header> headers = new ArrayList<Header>(2);
-
-                headers.add(new BasicHeader(SEC_USERNAME, originalRequest.getHeader(IMP_USERNAME)));
-                headers.add(new BasicHeader(SEC_ROLES, originalRequest.getHeader(IMP_ROLES)));
-
-                return headers;
+                return ImmutableMap.of(//
+                        SEC_USERNAME, originalRequest.getHeader(IMP_USERNAME), //
+                        SEC_ROLES, originalRequest.getHeader(IMP_ROLES));
             }
         }
-        return Collections.emptyList();
+        return Collections.emptyMap();
 
     }
 

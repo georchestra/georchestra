@@ -50,18 +50,21 @@ public class GeorchestraUserDetails implements UserDetails {
     static final String SEC_USERNAME = org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
     static final String SEC_FIRSTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
     static final String SEC_LASTNAME = org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
-    static final String SEC_ORG = org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
-    static final String SEC_ORGNAME = org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
     static final String SEC_ROLES = org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
     static final String SEC_EMAIL = org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
     static final String SEC_TEL = org.georchestra.commons.security.SecurityHeaders.SEC_TEL;
     static final String SEC_ADDRESS = "sec-address";
     static final String SEC_TITLE = "sec-title";
     static final String SEC_NOTES = "sec-notes";
+
+    static final String SEC_ORG = org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
+    static final String SEC_ORGID = org.georchestra.commons.security.SecurityHeaders.SEC_ORGID;
+    static final String SEC_ORGNAME = org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
     static final String SEC_ORG_LINKAGE = "sec-org-linkage";
     static final String SEC_ORG_ADDRESS = "sec-org-address";
     static final String SEC_ORG_CATEGORY = "sec-org-category";
     static final String SEC_ORG_DESCRIPTION = "sec-org-description";
+    static final String SEC_ORG_LASTUPDATED = org.georchestra.commons.security.SecurityHeaders.SEC_ORG_LASTUPDATED;
 
     private @NonNull GeorchestraUser user;
 
@@ -99,19 +102,25 @@ public class GeorchestraUserDetails implements UserDetails {
     }
 
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
+        final boolean anonymous = !headers.containsKey(SEC_USERNAME);
+        final GeorchestraUser user;
+        if (anonymous) {
+            user = buildUserFromHeaders(Collections.singletonMap(SEC_USERNAME, "anonymousUser"));
+        } else {
+            user = buildUserFromHeaders(headers);
+        }
+        return new GeorchestraUserDetails(user, anonymous);
+    }
+
+    public static GeorchestraUser buildUserFromHeaders(Map<String, String> headers) {
+        Organization organization = buildOrganization(headers);
+
         String userId = getHeader(headers, SEC_USERID);
         String username = getHeader(headers, SEC_USERNAME);
-        final boolean anonymous = username == null;
-        if (anonymous) {
-            username = "anonymousUser";
-            userId = null;
-        }
-
         String lastUpdated = getHeader(headers, SEC_LASTUPDATED);
         List<String> roles = extractRoles(headers);
         String firstName = getHeader(headers, SEC_FIRSTNAME);
         String lastName = getHeader(headers, SEC_LASTNAME);
-        Organization organization = buildOrganization(headers);
         String email = getHeader(headers, SEC_EMAIL);
         String address = getHeader(headers, SEC_ADDRESS);
         String telephoneNumber = getHeader(headers, SEC_TEL);
@@ -131,25 +140,28 @@ public class GeorchestraUserDetails implements UserDetails {
         user.setTelephoneNumber(telephoneNumber);
         user.setTitle(title);
         user.setNotes(notes);
-
-        return new GeorchestraUserDetails(user, anonymous);
+        return user;
     }
 
-    private static @NonNull Organization buildOrganization(Map<String, String> headers) {
+    public static @NonNull Organization buildOrganization(Map<String, String> headers) {
+        String uniqueId = getHeader(headers, SEC_ORGID);
         String organization = getHeader(headers, SEC_ORG);
         String organizationName = getHeader(headers, SEC_ORGNAME);
         String linkage = getHeader(headers, SEC_ORG_LINKAGE);
         String postalAddress = getHeader(headers, SEC_ORG_ADDRESS);
         String category = getHeader(headers, SEC_ORG_CATEGORY);
         String description = getHeader(headers, SEC_ORG_DESCRIPTION);
+        String lastUpdated = getHeader(headers, SEC_ORG_LASTUPDATED);
 
         Organization org = new Organization();
+        org.setUniqueId(uniqueId);
         org.setId(organization);
         org.setName(organizationName);
         org.setLinkage(linkage);
         org.setPostalAddress(postalAddress);
         org.setCategory(category);
         org.setDescription(description);
+        org.setLastUpdated(lastUpdated);
         return org;
     }
 

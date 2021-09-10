@@ -1,13 +1,15 @@
 package org.georchestra.security;
 
-import com.google.common.collect.Lists;
-import junit.framework.TestCase;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.junit.Test;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import com.google.common.collect.Lists;
+
+import junit.framework.TestCase;
 
 public class RemoveXForwardedHeadersTest extends TestCase {
 

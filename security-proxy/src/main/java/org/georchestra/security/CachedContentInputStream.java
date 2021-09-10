@@ -1,10 +1,11 @@
 package org.georchestra.security;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 
 public class CachedContentInputStream extends ServletInputStream {
 

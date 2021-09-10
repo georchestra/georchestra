@@ -19,21 +19,26 @@
 package org.georchestra.security.model;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
 import lombok.Data;
 
 public @Data class Organization implements Serializable {
     private static final long serialVersionUID = -1;
 
-    /** Provided by request header {@code sec-org} */
+    /**
+     * Provided by request header {@code sec-org}, legacy way of identifying by
+     * LDAP's {@code org.cn} attribute, which may change over time
+     */
     private String id;
 
-    /** Provided by request header {@code sec-orgname} */
-    private String name;
+    /** Provided by request header {@code sec-orgid}, usually stable UUID */
+    private String uniqueId;
 
-    private String shortName;
+    /**
+     * Provided by request header {@code sec-orgname}, due to legacy LDAP mapping
+     * {@code sec-orgname=org.o}
+     */
+    private String name;
 
     /** Provided by request header {@code sec-org-linkage} */
     private String linkage;
@@ -50,6 +55,9 @@ public @Data class Organization implements Serializable {
     /** Provided by request header {@code sec-org-notes} */
     private String notes;
 
-    private List<String> cities = new LinkedList<>();
-    private List<String> members = new LinkedList<>();
+    /**
+     * String that somehow represents the current version, may be a timestamp, a
+     * hash, etc. Provided by request header {@code sec-lastupdated}
+     */
+    private String lastUpdated;
 }

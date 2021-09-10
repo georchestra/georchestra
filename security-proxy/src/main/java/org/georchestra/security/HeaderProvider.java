@@ -23,6 +23,7 @@ import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,8 +44,8 @@ public abstract class HeaderProvider {
      * @param targetServiceName service name as defined in
      *                          {@code targets-mappings.properties}
      */
-    public Collection<Header> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
-        return Collections.emptyList();
+    public Map<String, String> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
+        return Collections.emptyMap();
     }
 
     /**

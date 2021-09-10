@@ -235,6 +235,7 @@ public class LdapHeaderMappings {
      *                                  field)
      */
     public void loadFrom(Map<String, String> rawMappings) {
+
         final Map<String, String> defaultRawMappings;
         final Map<String, Map<String, String>> perServiceRawMappings;
 

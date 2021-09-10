@@ -24,10 +24,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,7 +119,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
      * requests, but short enough to allow propagating changes down to proxied
      * services asap.
      */
-    private final Cache<String, List<Header>> cache;
+    private final Cache<String, Map<String, String>> cache;
 
     /**
      * Cache time-to-live in milliseconds, can be given through an external
@@ -157,7 +156,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         this.cache = createCache();
     }
 
-    private Cache<String, List<Header>> createCache() {
+    private Cache<String, Map<String, String>> createCache() {
         long ttl = DEFAULT_CACHE_TTL;
         if (this.env != null) {
             ttl = this.env.getProperty("security-proxy.ldap.cache.ttl", Long.class, DEFAULT_CACHE_TTL);
@@ -187,12 +186,12 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(final HttpServletRequest originalRequest,
+    public Map<String, String> getCustomRequestHeaders(final HttpServletRequest originalRequest,
             final String targetServiceName) {
 
         // Don't use this provider for trusted request
         if (isPreAuthorized(originalRequest) || isAnnonymous()) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
         final String key = serviceCacheKey(targetServiceName);
@@ -206,14 +205,14 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     /**
      * Actually performs the building of the request headers list
      */
-    private List<Header> collectHeaders(@Nullable String serviceName) {
+    private Map<String, String> collectHeaders(@Nullable String serviceName) {
         final String username = getCurrentUserName();
 
         final HeaderMappings mappings = serviceName == null ? mappingsSupport.getDefaultMappings()
                 : mappingsSupport.getMappings(serviceName);
         logger.debug("Collecting headers, service = " + serviceName + ", mappings:" + mappings.all());
 
-        List<Header> headers = new ArrayList<>();
+        Map<String, String> headers = new HashMap<>();
         try {
             final DirContextOperations userContext = loadUser(username, mappings.getUserHeaders());
             final Optional<String> orgCn = findOrgCn(userContext);
@@ -234,17 +233,12 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             // Collections.sort(headers, (h1, h2) -> h1.getName().compareTo(h2.getName()));
         } catch (Exception e) {
             logger.error("Unable to collect headers for user:" + username, e);
-            return Collections.emptyList();
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Final headers:");
-            headers.forEach(logger::debug);
+            return Collections.emptyMap();
         }
         return headers;
     }
 
-    private void addManagerHeaders(String uid, List<HeaderMapping> mappings, List<Header> target) {
+    private void addManagerHeaders(String uid, List<HeaderMapping> mappings, Map<String, String> target) {
         if (!mappings.isEmpty()) {
             DirContextOperations managerContext = userSearchFactory.get().searchForUser(uid);
             listcontext("* LDAP user's manager context", managerContext);
@@ -252,7 +246,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         }
     }
 
-    private void addOrgHeaders(String orgCn, HeaderMappings mappings, List<Header> target) {
+    private void addOrgHeaders(String orgCn, HeaderMappings mappings, Map<String, String> target) {
         final String groupDn = format("cn=%s,%s", orgCn, this.orgSearchBaseDN);
         DirContextOperations orgContext = this.ldapTemplate.lookupContext(groupDn);
         listcontext("* LDAP org context", orgContext);
@@ -263,7 +257,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         seeAlsoOrgName.ifPresent(cn -> addOrgExtHeaders(cn, mappings.getOrgExtensionHeaders(), target));
     }
 
-    private void addOrgExtHeaders(String cn, List<HeaderMapping> mappings, List<Header> target) {
+    private void addOrgExtHeaders(String cn, List<HeaderMapping> mappings, Map<String, String> target) {
         if (mappings.isEmpty()) {
             return;
         }
@@ -285,11 +279,11 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         return Optional.empty();
     }
 
-    private void addHeaders(DirContextOperations context, List<HeaderMapping> mappings, List<Header> target) {
+    private void addHeaders(DirContextOperations context, List<HeaderMapping> mappings, Map<String, String> target) {
         mappings.stream()//
                 .map(mapping -> buildHeader(context, mapping))//
                 .filter(Predicates.notNull())//
-                .forEach(target::add);
+                .forEach(h -> target.put(h.getName(), h.getValue()));
 
     }
 
@@ -372,17 +366,17 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     @VisibleForTesting
-    Optional<List<Header>> getCachedHeaders(String service) {
+    Map<String, String> getCachedHeaders(String service) {
         final String cacheKey = serviceCacheKey(service);
-        List<Header> headers = cache.getIfPresent(cacheKey);
-        return Optional.ofNullable(headers);
+        Map<String, String> headers = cache.getIfPresent(cacheKey);
+        return headers == null ? Collections.emptyMap() : headers;
     }
 
     @VisibleForTesting
-    void setCachedHeaders(@NonNull Collection<Header> headers, String service) {
+    void setCachedHeaders(@NonNull Map<String, String> headers, String service) {
         final String cacheKey = serviceCacheKey(service);
         logger.debug("Storing attributes into session for " + cacheKey);
-        cache.put(cacheKey, new ArrayList<>(headers));
+        cache.put(cacheKey, new HashMap<>(headers));
     }
 
     private String serviceCacheKey(String service) {
