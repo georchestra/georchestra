@@ -169,7 +169,8 @@ public class LdapHeaderMappings {
             "uid", //
             "givenName", //
             "sn", //
-            "knowledgeInformation"//
+            "knowledgeInformation", //
+            "georchestraObjectIdentifier"//
     ));
 
     private static final Set<String> MANAGER_ATTRIBUTES = ImmutableSet.copyOf(Arrays.asList(//
@@ -195,7 +196,8 @@ public class LdapHeaderMappings {
             "org.seeAlso.description", //
             "org.seeAlso.knowledgeInformation", //
             "org.seeAlso.objectClass", //
-            "org.seeAlso.o"//
+            "org.seeAlso.o", //
+            "org.seeAlso.georchestraObjectIdentifier"//
     ));
 
     static final Set<String> ALL_VALID_ATTRIBUTES = ImmutableSet.<String>builder()//

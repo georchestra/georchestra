@@ -18,6 +18,11 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-ldap-account-management</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
