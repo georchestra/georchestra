@@ -26,7 +26,15 @@ import org.georchestra.security.model.Organization;
 
 public interface UsersApi {
 
+    /**
+     * Find a user by {@link GeorchestraUser#getId() unique identifier}
+     */
     Optional<GeorchestraUser> findById(String id);
+
+    /**
+     * Find a user by {@link GeorchestraUser#getUsername() login name}
+     */
+    Optional<GeorchestraUser> findByUsername(String username);
 
     Stream<GeorchestraUser> findAll();
 
@@ -34,5 +42,11 @@ public interface UsersApi {
      * Find all users by {@link Organization#getId()
      * GeorchestraUser.organization.id}
      */
-    Stream<GeorchestraUser> findAllOrganizationId(String orgId);
+    Stream<GeorchestraUser> findAllByOrganizationId(String orgId);
+
+    /**
+     * Find all users by {@link Organization#getShortName()
+     * GeorchestraUser.organization.shortName}
+     */
+    Stream<GeorchestraUser> findAllByOrganizationShortName(String orgId);
 }

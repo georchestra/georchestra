@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 import lombok.NonNull;
 import lombok.Value;
@@ -238,6 +239,8 @@ public class LdapHeaderMappings {
      */
     public void loadFrom(Map<String, String> rawMappings) {
 
+        rawMappings = Maps.filterKeys(rawMappings, this::includeConfigProp);
+
         final Map<String, String> defaultRawMappings;
         final Map<String, Map<String, String>> perServiceRawMappings;
 
@@ -249,6 +252,10 @@ public class LdapHeaderMappings {
         perServiceRawMappings.forEach((service, raw) -> {
             serviceMappings.put(service, HeaderMappings.valueOf(raw));
         });
+    }
+
+    private boolean includeConfigProp(String property) {
+        return property != null && !property.contains(UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY);
     }
 
     public HeaderMappings getDefaultMappings() {

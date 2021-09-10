@@ -86,6 +86,7 @@
                     <constructor-arg index="2" value="${ldapUsersRdn}"/>
                     <constructor-arg index="3" value="${userSearchFilter:(uid={0})}"/>
                 </bean>
+                <bean class="org.georchestra.security.UserDetailsJSONRequestHeaderProvider"/>
             </list>
         </property>
         <property name="filters">

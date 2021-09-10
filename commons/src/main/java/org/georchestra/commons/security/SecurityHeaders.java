@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.georchestra.security.model.GeorchestraUser;
+
 /**
  * A collection of header names commonly used by the security-proxy gateway
  * application
@@ -36,6 +38,12 @@ import java.util.stream.Stream;
 public class SecurityHeaders {
     // well-known header names
     public static final String SEC_PROXY = "sec-proxy";
+
+    /**
+     * Used to send the full {@link GeorchestraUser user details} as a Base64
+     * encoded JSON string
+     */
+    public static final String SEC_USER = "sec-user";
 
     public static final String SEC_USERID = "sec-userid";
     public static final String SEC_LASTUPDATED = "sec-lastupdated";

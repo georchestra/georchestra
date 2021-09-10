@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/internal", produces = "application/json; charset=utf-8")
-public class UsersApiController {
+public class SecurityApiController {
 
     private @Autowired AccountsService service;
 

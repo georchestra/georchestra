@@ -25,6 +25,7 @@ import static org.georchestra.config.security.GeorchestraUserDetails.SEC_LASTNAM
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_LASTUPDATED;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_NOTES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORGID;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORGNAME;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_ADDRESS;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_CATEGORY;
@@ -41,15 +42,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GeorchestraSecurityProxyAuthenticationFilterTest {
 
@@ -78,7 +84,34 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
     }
 
     @Test
-    public void getPreAuthenticatedCredentials() {
+    public void getPreAuthenticatedCredentials_SingleHeader() throws JsonProcessingException {
+        GeorchestraUser user = new GeorchestraUser();
+        user.setId(UUID.randomUUID().toString());
+        user.setUsername("testadmin");
+        user.setEmail("testadmin@georchestra.org");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setRoles(Arrays.asList("ADMINISTRATOR", "GN_ADMIN"));
+        Organization org = new Organization();
+        org.setId(UUID.randomUUID().toString());
+        org.setShortName("PSC");
+        org.setName("Project Steering Committee");
+        user.setOrganization(org);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(user);
+
+        addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
+        addEncodedHeader(SecurityHeaders.SEC_USER, json);
+
+        GeorchestraUserDetails preauth = filter.getPreAuthenticatedPrincipal(request);
+        assertNotNull(preauth);
+        assertNotNull(preauth.getUser());
+        assertEquals(user, preauth.getUser());
+    }
+
+    @Test
+    public void getPreAuthenticatedCredentials_IndividualHeaders() {
         addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
         Map<String, String> headers = new HashMap<>();
 
@@ -87,6 +120,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         headers.put(SEC_USERNAME, "test?user");
         headers.put(SEC_FIRSTNAME, "Gábriel");
         headers.put(SEC_LASTNAME, "Roldán");
+        headers.put(SEC_ORGID, UUID.randomUUID().toString());
         headers.put(SEC_ORG, "test'org");
         headers.put(SEC_ORGNAME, "ジョルケストラコミュニティ");
         headers.put(SEC_ROLES, "ROLE_USER;ROLE_ADMINISTRATOR");
@@ -113,7 +147,8 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         assertEquals(headers.get(SEC_USERNAME), user.getUsername());
         assertEquals(headers.get(SEC_FIRSTNAME), user.getFirstName());
         assertEquals(headers.get(SEC_LASTNAME), user.getLastName());
-        assertEquals(headers.get(SEC_ORG), user.getOrganization().getId());
+        assertEquals(headers.get(SEC_ORGID), user.getOrganization().getId());
+        assertEquals(headers.get(SEC_ORG), user.getOrganization().getShortName());
         assertEquals(headers.get(SEC_ORGNAME), user.getOrganization().getName());
         assertEquals(headers.get(SEC_EMAIL), user.getEmail());
         assertEquals(headers.get(SEC_TEL), user.getTelephoneNumber());

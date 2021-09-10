@@ -18,6 +18,7 @@
  */
 package org.georchestra.config.security;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 
 import lombok.Getter;
@@ -43,8 +45,18 @@ import lombok.extern.slf4j.Slf4j;
 @Value
 @Slf4j(topic = "org.georchestra.config.security")
 public class GeorchestraUserDetails implements UserDetails {
+
     private static final long serialVersionUID = -8672954222635750682L;
 
+    /**
+     * Parser for SEC_USER, see {@link #decodeFromJSON}
+     */
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    // full user details as json.
+    static final String SEC_USER = org.georchestra.commons.security.SecurityHeaders.SEC_USER;
+
+    // user details as individual headers...
     static final String SEC_USERID = org.georchestra.commons.security.SecurityHeaders.SEC_USERID;
     static final String SEC_LASTUPDATED = org.georchestra.commons.security.SecurityHeaders.SEC_LASTUPDATED;
     static final String SEC_USERNAME = org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
@@ -102,7 +114,7 @@ public class GeorchestraUserDetails implements UserDetails {
     }
 
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
-        final boolean anonymous = !headers.containsKey(SEC_USERNAME);
+        final boolean anonymous = !headers.containsKey(SEC_USERNAME) && !headers.containsKey(SEC_USER);
         final GeorchestraUser user;
         if (anonymous) {
             user = buildUserFromHeaders(Collections.singletonMap(SEC_USERNAME, "anonymousUser"));
@@ -113,6 +125,12 @@ public class GeorchestraUserDetails implements UserDetails {
     }
 
     public static GeorchestraUser buildUserFromHeaders(Map<String, String> headers) {
+        final String fullJsonUser = getHeader(headers, "sec-user");
+        if (StringUtils.hasLength(fullJsonUser)) {
+            log.info("Decoding user from sec-user header");
+            return decodeFromJSON(fullJsonUser);
+        }
+
         Organization organization = buildOrganization(headers);
 
         String userId = getHeader(headers, SEC_USERID);
@@ -143,6 +161,14 @@ public class GeorchestraUserDetails implements UserDetails {
         return user;
     }
 
+    private static GeorchestraUser decodeFromJSON(String fullJsonUser) {
+        try {
+            return OBJECT_MAPPER.readValue(fullJsonUser, GeorchestraUser.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static @NonNull Organization buildOrganization(Map<String, String> headers) {
         String uniqueId = getHeader(headers, SEC_ORGID);
         String organization = getHeader(headers, SEC_ORG);
@@ -154,8 +180,8 @@ public class GeorchestraUserDetails implements UserDetails {
         String lastUpdated = getHeader(headers, SEC_ORG_LASTUPDATED);
 
         Organization org = new Organization();
-        org.setUniqueId(uniqueId);
-        org.setId(organization);
+        org.setId(uniqueId);
+        org.setShortName(organization);
         org.setName(organizationName);
         org.setLinkage(linkage);
         org.setPostalAddress(postalAddress);

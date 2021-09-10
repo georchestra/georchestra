@@ -18,6 +18,8 @@
  */
 package org.georchestra.security.model;
 
+import java.util.Objects;
+
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
@@ -42,27 +44,35 @@ public class GeorchestraUserHasher {
         hasher.putUnencodedChars(nonNull(user.getTelephoneNumber()));
         hasher.putUnencodedChars(nonNull(user.getTitle()));
 
-        user.getRoles().forEach(role -> hasher.putUnencodedChars(nonNull(role)));
-
-        Organization organization = user.getOrganization();
-        if (null != organization) {
-            hasher.putUnencodedChars(nonNull(organization.getId()));
-            hasher.putUnencodedChars(nonNull(organization.getName()));
+        if (null != user.getRoles()) {
+            user.getRoles().stream().filter(Objects::nonNull).sorted()
+                    .forEach(role -> hasher.putUnencodedChars(nonNull(role)));
         }
 
+        Organization organization = user.getOrganization();
+        hashOrg(organization, hasher);
         String hexHash = hasher.hash().toString();
         return hexHash;
     }
 
     public static String createLastUpdatedOrgHash(Organization organization) {
         Hasher hasher = Hashing.sha256().newHasher();
-        if (null != organization) {
-            hasher.putUnencodedChars(nonNull(organization.getId()));
-            hasher.putUnencodedChars(nonNull(organization.getName()));
-        }
-
+        hashOrg(organization, hasher);
         String hexHash = hasher.hash().toString();
         return hexHash;
+    }
+
+    private static void hashOrg(Organization org, Hasher hasher) {
+        if (null != org) {
+            hasher.putUnencodedChars(nonNull(org.getId()));
+            hasher.putUnencodedChars(nonNull(org.getShortName()));
+            hasher.putUnencodedChars(nonNull(org.getName()));
+            hasher.putUnencodedChars(nonNull(org.getLastUpdated()));
+            hasher.putUnencodedChars(nonNull(org.getCategory()));
+            hasher.putUnencodedChars(nonNull(org.getDescription()));
+            hasher.putUnencodedChars(nonNull(org.getLinkage()));
+            hasher.putUnencodedChars(nonNull(org.getNotes()));
+        }
     }
 
     private static CharSequence nonNull(String s) {

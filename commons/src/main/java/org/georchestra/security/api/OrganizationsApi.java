@@ -28,4 +28,6 @@ public interface OrganizationsApi {
     Stream<Organization> findAll();
 
     Optional<Organization> findById(String id);
+
+    Optional<Organization> findByShortName(String shortName);
 }

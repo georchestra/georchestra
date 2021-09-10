@@ -31,7 +31,8 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", uses = UUIDMapper.class, unmappedTargetPolicy = ERROR)
 public interface OrganizationMapper {
 
-    @Mapping(target = "uniqueId", source = "uniqueIdentifier")
+    @Mapping(target = "id", source = "uniqueIdentifier")
+    @Mapping(target = "shortName", source = "id")
     @Mapping(target = "notes", source = "note")
     @Mapping(target = "linkage", source = "url")
     @Mapping(target = "postalAddress", source = "orgAddress")

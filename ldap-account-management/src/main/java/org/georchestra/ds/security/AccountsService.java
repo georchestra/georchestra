@@ -19,6 +19,7 @@
 package org.georchestra.ds.security;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,6 +34,7 @@ import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -54,16 +56,25 @@ public class AccountsService {
         return accounts.map(mapper::map).collect(Collectors.toList());
     }
 
+    public Optional<GeorchestraUser> findUserByUsername(String userName) {
+        Account account;
+        try {
+            account = this.accountsDao.findByUID(userName);
+        } catch (NameNotFoundException e) {
+            return Optional.empty();
+        } catch (DataServiceException e) {
+            throw new RuntimeException(e);
+        }
+        final UserMapper mapper = newUserMapper();
+        return Optional.of(mapper.map(account));
+    }
+
     /**
      * Return a list of available users as a json array
      */
     public List<Organization> findAllOrganizations() {
-        Stream<Org> orgs = getOrgs().filter(o -> !o.isPending());
+        Stream<Org> orgs = orgsDao.findAllWithExt().filter(o -> !o.isPending());
         return orgs.map(orgMapper::map).collect(Collectors.toList());
-    }
-
-    private Stream<Org> getOrgs() {
-        return orgsDao.findAllWithExt();
     }
 
     private List<Account> getAccounts() {

@@ -25,14 +25,14 @@ import lombok.Data;
 public @Data class Organization implements Serializable {
     private static final long serialVersionUID = -1;
 
+    /** Provided by request header {@code sec-orgid}, usually stable UUID */
+    private String id;
+
     /**
      * Provided by request header {@code sec-org}, legacy way of identifying by
      * LDAP's {@code org.cn} attribute, which may change over time
      */
-    private String id;
-
-    /** Provided by request header {@code sec-orgid}, usually stable UUID */
-    private String uniqueId;
+    private String shortName;
 
     /**
      * Provided by request header {@code sec-orgname}, due to legacy LDAP mapping

@@ -25,6 +25,7 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -61,7 +62,8 @@ public class AuthorizationService {
         if (principal instanceof GeorchestraUserDetails) {
             GeorchestraUserDetails userDetails = (GeorchestraUserDetails) principal;
             GeorchestraUser user = userDetails.getUser();
-            return user.getOrganization().getId();
+            Organization org = user.getOrganization();
+            return org == null ? null : org.getShortName();
         }
         return null;
     }
