@@ -17,12 +17,12 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

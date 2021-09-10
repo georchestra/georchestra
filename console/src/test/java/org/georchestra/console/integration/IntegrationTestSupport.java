@@ -20,6 +20,9 @@ package org.georchestra.console.integration;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import org.apache.log4j.Logger;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -35,9 +38,6 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * A junit {@link Rule} that can be {@code @Autowired} into integration tests,

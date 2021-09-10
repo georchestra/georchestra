@@ -7,10 +7,10 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Account;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;

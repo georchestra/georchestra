@@ -11,9 +11,9 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

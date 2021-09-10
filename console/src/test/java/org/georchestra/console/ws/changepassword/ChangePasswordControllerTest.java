@@ -1,14 +1,28 @@
 package org.georchestra.console.ws.changepassword;
 
-import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.UserSchema;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.naming.Name;
+
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountImpl;
+import org.georchestra.ds.users.UserSchema;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -23,20 +37,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-
-import javax.naming.Name;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ChangePasswordControllerTest {
 

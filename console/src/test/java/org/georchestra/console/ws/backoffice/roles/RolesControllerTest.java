@@ -1,26 +1,43 @@
 package org.georchestra.console.ws.backoffice.roles;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.naming.Name;
+import javax.naming.ldap.LdapName;
+import javax.servlet.http.HttpServletResponse;
+
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.model.DelegationEntry;
-import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.roles.RoleFactory;
+import org.georchestra.ds.roles.RoleProtected;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
+import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountImpl;
+import org.georchestra.ds.users.UserRule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -38,22 +55,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-
-import javax.naming.Name;
-import javax.naming.ldap.LdapName;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
 
 public class RolesControllerTest {
 

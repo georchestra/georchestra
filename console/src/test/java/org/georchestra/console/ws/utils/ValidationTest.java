@@ -1,13 +1,13 @@
 package org.georchestra.console.ws.utils;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MapBindingResult;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ValidationTest {
 

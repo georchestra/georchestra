@@ -14,9 +14,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.dto.Account;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;

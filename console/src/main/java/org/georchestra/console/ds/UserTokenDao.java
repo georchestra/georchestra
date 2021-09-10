@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ds.DataServiceException;
 import org.georchestra.lib.sqlcommand.DataCommand;
 import org.georchestra.lib.sqlcommand.DataCommandException;
 import org.springframework.beans.factory.annotation.Autowired;

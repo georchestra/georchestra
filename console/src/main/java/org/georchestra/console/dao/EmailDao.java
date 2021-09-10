@@ -19,12 +19,12 @@
 
 package org.georchestra.console.dao;
 
+import java.util.List;
+
 import org.georchestra.console.model.EmailEntry;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Repository
 public interface EmailDao extends CrudRepository<EmailEntry, Long> {

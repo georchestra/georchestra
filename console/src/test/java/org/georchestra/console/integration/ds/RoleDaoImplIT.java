@@ -1,13 +1,24 @@
 package org.georchestra.console.integration.ds;
 
+import static org.junit.Assert.assertTrue;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.naming.Name;
+
 import org.apache.log4j.Logger;
-import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.integration.IntegrationTestSupport;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.roles.RoleFactory;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,16 +30,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import javax.naming.Name;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration

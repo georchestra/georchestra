@@ -33,9 +33,9 @@ import javax.annotation.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.users.Account;
 
 import lombok.Getter;
 import lombok.NonNull;

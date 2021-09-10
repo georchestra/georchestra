@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,16 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.console.ReCaptchaV2;
 import org.georchestra.console.bs.ReCaptchaParameters;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.mailservice.EmailFactory;
-import org.georchestra.console.ws.changepassword.ChangePasswordFormController;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.roles.RoleDao;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

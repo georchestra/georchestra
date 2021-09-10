@@ -1,9 +1,15 @@
 package org.georchestra.console.integration.ds;
 
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.console.dto.orgs.OrgExt;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.georchestra.console.integration.IntegrationTestSupport;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgExt;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,12 +21,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration

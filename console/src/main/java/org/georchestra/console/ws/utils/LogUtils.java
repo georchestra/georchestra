@@ -6,22 +6,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
-import org.georchestra.console.ws.backoffice.roles.RoleProtected;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgExt;
+import org.georchestra.ds.roles.RoleProtected;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.UserSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class LogUtils {
     @Autowired

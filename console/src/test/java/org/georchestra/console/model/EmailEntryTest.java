@@ -1,8 +1,6 @@
 package org.georchestra.console.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static org.junit.Assert.fail;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Test;
 
 public class EmailEntryTest {
 

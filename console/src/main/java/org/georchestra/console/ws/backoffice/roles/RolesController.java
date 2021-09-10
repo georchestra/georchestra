@@ -19,26 +19,41 @@
 
 package org.georchestra.console.ws.backoffice.roles;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedCommonNameException;
-import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.ds.RoleDao;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleFactory;
-import org.georchestra.console.dto.RoleSchema;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
-import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleDao;
+import org.georchestra.ds.roles.RoleFactory;
+import org.georchestra.ds.roles.RoleSchema;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
+import org.georchestra.ds.users.ProtectedUserFilter;
+import org.georchestra.ds.users.UserRule;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,20 +72,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Web Services to maintain the Roles information.

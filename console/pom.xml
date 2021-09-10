@@ -18,7 +18,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
     <context.name>${project.artifactId}</context.name>
-    <mapstruct.version>1.4.1.Final</mapstruct.version>
   </properties>
   <repositories>
     <repository>
@@ -60,6 +59,17 @@
     </pluginRepository>
   </pluginRepositories>
   <dependencies>
+    <!-- geOrchestra libraries -->
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-ldap-account-management</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <!--Dependency for swagger 2 -->
     <dependency>
       <groupId>io.springfox</groupId>
@@ -76,11 +86,6 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.mapstruct</groupId>
-      <artifactId>mapstruct</artifactId>
-      <version>${mapstruct.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -358,12 +363,6 @@
       <groupId>com.googlecode.ez-vcard</groupId>
       <artifactId>ez-vcard</artifactId>
     </dependency>
-    <!-- geOrchestra commons -->
-    <dependency>
-      <groupId>org.georchestra</groupId>
-      <artifactId>georchestra-commons</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
@@ -589,53 +588,6 @@
           <npmVersion>6.13.4</npmVersion>
           <installDirectory>${project.basedir}</installDirectory>
           <workingDirectory>${project.basedir}/src/main/webapp/manager</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/mapstruct</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-          <encoding>UTF-8</encoding>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>${lombok.version}</version>
-            </path>
-            <path>
-              <groupId>org.mapstruct</groupId>
-              <artifactId>mapstruct-processor</artifactId>
-              <version>${mapstruct.version}</version>
-            </path>
-          </annotationProcessorPaths>
-          <generatedSourcesDirectory>${project.build.directory}/generated-sources/mapstruct</generatedSourcesDirectory>
         </configuration>
       </plugin>
     </plugins>

@@ -37,7 +37,8 @@ import java.util.function.Function;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
-import org.georchestra.console.dto.Account;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.Account;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;

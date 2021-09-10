@@ -19,16 +19,17 @@
 
 package org.georchestra.console.mailservice;
 
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
+import static java.util.Collections.singletonList;
+
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
-import java.util.List;
 
-import static java.util.Collections.singletonList;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Manage e-mails required for this application
