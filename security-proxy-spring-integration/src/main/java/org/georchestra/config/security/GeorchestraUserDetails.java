@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.georchestra.commons.security.SecurityHeaders;
+import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,13 +35,12 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.base.Splitter;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
-@Data
-@NoArgsConstructor
+@Value
 @Slf4j(topic = "org.georchestra.config.security")
 public class GeorchestraUserDetails implements UserDetails {
     private static final long serialVersionUID = -8672954222635750682L;
@@ -62,53 +63,31 @@ public class GeorchestraUserDetails implements UserDetails {
     static final String SEC_ORG_CATEGORY = "sec-org-category";
     static final String SEC_ORG_DESCRIPTION = "sec-org-description";
 
-    // Default mandatory fields:
-    /** Provided by request header {@code sec-username} */
-    private @NonNull String username;
-
-    /** Provided by request header {@code sec-roles} */
-    private @NonNull List<String> roles;
-
-    private @NonNull Organization organization;
-
-    /** Provided by request header {@code sec-userid} */
-    private String userId;
-
-    /**
-     * String that somehow represents the current version, may be a timestamp, a
-     * hash, etc. Provided by request header {@code sec-lastupdated}
-     */
-    private String lastUpdated;
-
-    /** Provided by request header {@code sec-firstname} */
-    private String firstName;
-
-    /** Provided by request header {@code sec-lastname} */
-    private String lastName;
-
-    /** Provided by request header {@code sec-email} */
-    private String email;
-
-    /** Provided by request header {@code sec-address} */
-    private String postalAddress;
-
-    /** Provided by request header {@code sec-tel} */
-    private String telephoneNumber;
-
-    /** Provided by request header {@code sec-title} */
-    private String title;
-
-    /** Provided by request header {@code sec-notes} */
-    private String notes;
+    private @NonNull GeorchestraUser user;
 
     /** {@code true} if request header {@code sec-username} is {@code null} */
     private boolean anonymous;
+
+    @Getter(onMethod = @__({ @Override }))
+    private final String password = null;
+
+    @Getter(onMethod = @__({ @Override }))
+    private final boolean accountNonExpired = true;
+
+    @Getter(onMethod = @__({ @Override }))
+    private final boolean accountNonLocked = true;
+
+    @Getter(onMethod = @__({ @Override }))
+    private final boolean credentialsNonExpired = true;
+
+    @Getter(onMethod = @__({ @Override }))
+    private final boolean enabled = true;
 
     /**
      * @return user name as given by request header {@code sec-username}
      */
     public @Override String getUsername() {
-        return username;
+        return user.getUsername();
     }
 
     /**
@@ -116,65 +95,7 @@ public class GeorchestraUserDetails implements UserDetails {
      *         {@link SimpleGrantedAuthority} instances
      */
     public @Override Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-    }
-
-    /**
-     * @return {@code null}
-     */
-    public @Override String getPassword() {
-        return null;
-    }
-
-    /**
-     * @return {@code true}
-     */
-    public @Override boolean isAccountNonExpired() {
-        return true;
-    }
-
-    /**
-     * @return {@code true}
-     */
-    public @Override boolean isAccountNonLocked() {
-        return true;
-    }
-
-    /**
-     * @return {@code true}
-     */
-    public @Override boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    /**
-     * @return {@code true}
-     */
-    public @Override boolean isEnabled() {
-        return true;
-    }
-
-    public static @Data class Organization {
-        /** Provided by request header {@code sec-org} */
-        private String id;
-
-        /** Provided by request header {@code sec-orgname} */
-        private String name;
-
-        /** Provided by request header {@code sec-org-linkage} */
-        private String linkage;
-
-        /** Provided by request header {@code sec-org-address} */
-        private String postalAddress;
-
-        /** Provided by request header {@code sec-org-category} */
-        private String category;
-
-        /** Provided by request header {@code sec-org-description} */
-        private String description;
-
-        /** Provided by request header {@code sec-org-notes} */
-        private String notes;
+        return user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
@@ -197,11 +118,10 @@ public class GeorchestraUserDetails implements UserDetails {
         String title = getHeader(headers, SEC_TITLE);
         String notes = getHeader(headers, SEC_NOTES);
 
-        GeorchestraUserDetails user = new GeorchestraUserDetails();
-        user.setUserId(userId);
+        GeorchestraUser user = new GeorchestraUser();
+        user.setId(userId);
         user.setLastUpdated(lastUpdated);
         user.setUsername(username);
-        user.setAnonymous(anonymous);
         user.setRoles(roles);
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -211,7 +131,8 @@ public class GeorchestraUserDetails implements UserDetails {
         user.setTelephoneNumber(telephoneNumber);
         user.setTitle(title);
         user.setNotes(notes);
-        return user;
+
+        return new GeorchestraUserDetails(user, anonymous);
     }
 
     private static @NonNull Organization buildOrganization(Map<String, String> headers) {

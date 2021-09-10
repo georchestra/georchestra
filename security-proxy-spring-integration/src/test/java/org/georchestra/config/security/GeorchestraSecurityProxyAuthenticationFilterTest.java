@@ -18,10 +18,11 @@
  */
 package org.georchestra.config.security;
 
-import static org.georchestra.config.security.GeorchestraUserDetails.*;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ADDRESS;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_EMAIL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_FIRSTNAME;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_LASTNAME;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_LASTUPDATED;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_NOTES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORGNAME;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
+import org.georchestra.security.model.GeorchestraUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -100,26 +102,28 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
 
         headers.forEach(this::addEncodedHeader);
 
-        GeorchestraUserDetails auth = filter.getPreAuthenticatedPrincipal(request);
-        assertNotNull(auth);
-        assertFalse(auth.isAnonymous());
+        GeorchestraUserDetails userDetails = filter.getPreAuthenticatedPrincipal(request);
+        assertNotNull(userDetails);
+        assertFalse(userDetails.isAnonymous());
 
-        assertEquals(headers.get(SEC_USERID), auth.getUserId());
-        assertEquals(headers.get(SEC_LASTUPDATED), auth.getLastUpdated());
-        assertEquals(headers.get(SEC_USERNAME), auth.getUsername());
-        assertEquals(headers.get(SEC_FIRSTNAME), auth.getFirstName());
-        assertEquals(headers.get(SEC_LASTNAME), auth.getLastName());
-        assertEquals(headers.get(SEC_ORG), auth.getOrganization().getId());
-        assertEquals(headers.get(SEC_ORGNAME), auth.getOrganization().getName());
-        assertEquals(headers.get(SEC_EMAIL), auth.getEmail());
-        assertEquals(headers.get(SEC_TEL), auth.getTelephoneNumber());
-        assertEquals(headers.get(SEC_ADDRESS), auth.getPostalAddress());
-        assertEquals(headers.get(SEC_TITLE), auth.getTitle());
-        assertEquals(headers.get(SEC_NOTES), auth.getNotes());
-        assertEquals(headers.get(SEC_ORG_LINKAGE), auth.getOrganization().getLinkage());
-        assertEquals(headers.get(SEC_ORG_ADDRESS), auth.getOrganization().getPostalAddress());
-        assertEquals(headers.get(SEC_ORG_CATEGORY), auth.getOrganization().getCategory());
-        assertEquals(headers.get(SEC_ORG_DESCRIPTION), auth.getOrganization().getDescription());
+        GeorchestraUser user = userDetails.getUser();
+
+        assertEquals(headers.get(SEC_USERID), user.getId());
+        assertEquals(headers.get(SEC_LASTUPDATED), user.getLastUpdated());
+        assertEquals(headers.get(SEC_USERNAME), user.getUsername());
+        assertEquals(headers.get(SEC_FIRSTNAME), user.getFirstName());
+        assertEquals(headers.get(SEC_LASTNAME), user.getLastName());
+        assertEquals(headers.get(SEC_ORG), user.getOrganization().getId());
+        assertEquals(headers.get(SEC_ORGNAME), user.getOrganization().getName());
+        assertEquals(headers.get(SEC_EMAIL), user.getEmail());
+        assertEquals(headers.get(SEC_TEL), user.getTelephoneNumber());
+        assertEquals(headers.get(SEC_ADDRESS), user.getPostalAddress());
+        assertEquals(headers.get(SEC_TITLE), user.getTitle());
+        assertEquals(headers.get(SEC_NOTES), user.getNotes());
+        assertEquals(headers.get(SEC_ORG_LINKAGE), user.getOrganization().getLinkage());
+        assertEquals(headers.get(SEC_ORG_ADDRESS), user.getOrganization().getPostalAddress());
+        assertEquals(headers.get(SEC_ORG_CATEGORY), user.getOrganization().getCategory());
+        assertEquals(headers.get(SEC_ORG_DESCRIPTION), user.getOrganization().getDescription());
     }
 
     private void addEncodedHeader(String name, String value) {

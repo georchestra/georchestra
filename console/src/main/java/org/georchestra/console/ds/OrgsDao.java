@@ -349,7 +349,11 @@ public class OrgsDao {
     }
 
     public Org findByCommonNameWithExt(Account user) {
-        Org org = findByCommonName(user.getOrg());
+        return findByCommonNameWithExt(user.getOrg());
+    }
+
+    public Org findByCommonNameWithExt(String orgCn) {
+        Org org = findByCommonName(orgCn);
         if (org == null) {
             return null;
         }

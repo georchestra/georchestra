@@ -140,7 +140,7 @@ public class EditUserDetailsFormControllerTest {
         OrgExt orgExt = new OrgExt();
         orgExt.setDescription(incredibleDesc);
         org.setOrgExt(orgExt);
-        Mockito.when(this.orgsDao.findByCommonNameWithExt(Mockito.any())).thenReturn(org);
+        Mockito.when(this.orgsDao.findByCommonNameWithExt(Mockito.any(Account.class))).thenReturn(org);
 
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 
