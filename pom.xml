@@ -549,6 +549,10 @@
           <failOnNoGitDirectory>false</failOnNoGitDirectory>
           <skipPoms>false</skipPoms>
           <verbose>false</verbose>
+          <gitDescribe>
+            <tags>true</tags>
+          </gitDescribe>
+          <injectIntoSysProperties>true</injectIntoSysProperties>
         </configuration>
       </plugin>
       <plugin>
