@@ -285,9 +285,18 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
+            <c:when test='<%= active.equals("geoserver") %>'>
+            <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
+            </c:when>
+            <c:otherwise>
+            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
             <c:when test='<%= anonymous == false %>'>
                 <c:choose>
-                    <c:when test='<%= active.equals("datafeeder") %>'>
+                    <c:when test='<%= active.equals("import") %>'>
                     <li class="active"><a><fmt:message key="datafeeder"/></a></li>
                     </c:when>
                     <c:otherwise>
@@ -295,15 +304,6 @@ if(sec_roles != null) {
                     </c:otherwise>
                 </c:choose>
             </c:when>
-        </c:choose>
-
-        <c:choose>
-            <c:when test='<%= active.equals("geoserver") %>'>
-            <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
-            </c:when>
-            <c:otherwise>
-            <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
-            </c:otherwise>
         </c:choose>
 
         <c:choose>
