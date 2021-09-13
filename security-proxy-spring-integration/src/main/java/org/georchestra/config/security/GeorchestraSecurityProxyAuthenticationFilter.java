@@ -40,12 +40,6 @@ public class GeorchestraSecurityProxyAuthenticationFilter extends AbstractPreAut
         final boolean preAuthenticated = getPreAuthenticatedCredentials(request);
         if (preAuthenticated) {
             Map<String, String> headers = extractSecHeaders(request);
-            if (log.isDebugEnabled()) {
-                log.debug("security-proxy headers: {}",
-                        headers.entrySet().stream().map(n -> String.format("%s: '%s'", n.getKey(), n.getValue()))
-                                .collect(Collectors.joining(",")));
-            }
-
             GeorchestraUserDetails preAuthPrincipal = GeorchestraUserDetails.fromHeaders(headers);
             log.debug("principal: {}", preAuthPrincipal);
             return preAuthPrincipal;

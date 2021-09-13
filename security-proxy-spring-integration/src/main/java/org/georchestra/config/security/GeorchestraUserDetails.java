@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.GeorchestraUserHasher;
 import org.georchestra.security.model.Organization;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -120,6 +121,22 @@ public class GeorchestraUserDetails implements UserDetails {
             user = buildUserFromHeaders(Collections.singletonMap(SEC_USERNAME, "anonymousUser"));
         } else {
             user = buildUserFromHeaders(headers);
+            if (!StringUtils.hasLength(user.getId())) {
+                String username = user.getUsername();
+                log.info("No unique id provided for user. Using username as identifier: " + username);
+                user.setId(username);
+            }
+            if (!StringUtils.hasLength(user.getOrganization().getId())) {
+                String shortName = user.getOrganization().getShortName();
+                log.info("No unique id provided for user's organization. Using shortName as identifier: " + shortName);
+                user.getOrganization().setId(shortName);
+            }
+            if (null == user.getLastUpdated()) {
+                String hash = GeorchestraUserHasher.createLastUpdatedUserHash(user);
+                log.info("lastUpdated not provided for user {}, using a hash based on relevant fields: {}",
+                        user.getUsername(), hash);
+                user.setLastUpdated(hash);
+            }
         }
         return new GeorchestraUserDetails(user, anonymous);
     }

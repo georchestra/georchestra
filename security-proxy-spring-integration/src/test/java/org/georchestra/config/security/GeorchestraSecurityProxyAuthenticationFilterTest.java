@@ -92,10 +92,12 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setRoles(Arrays.asList("ADMINISTRATOR", "GN_ADMIN"));
+        user.setLastUpdated("anystringwoulddo");
         Organization org = new Organization();
         org.setId(UUID.randomUUID().toString());
         org.setShortName("PSC");
         org.setName("Project Steering Committee");
+        org.setLastUpdated("anystringwoulddo");
         user.setOrganization(org);
 
         ObjectMapper mapper = new ObjectMapper();
