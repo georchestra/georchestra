@@ -20,6 +20,8 @@
 package org.georchestra.ds.users;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 import org.georchestra.ds.DataServiceException;
 import org.springframework.ldap.NameNotFoundException;
@@ -82,6 +84,8 @@ public interface AccountDao {
      */
     List<Account> findFilterBy(final ProtectedUserFilter uidFilter) throws DataServiceException;
 
+    List<Account> findAll(Predicate<Account> filter) throws DataServiceException;
+
     /**
      * Creates a new account
      * 
@@ -140,6 +144,16 @@ public interface AccountDao {
      * @throws NameNotFoundException
      */
     Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
+
+    /**
+     * Find an {@link Account} by {@link Account#getUniqueIdentifier()
+     * uniqueIdentifier}
+     * 
+     * @return the Account with {@link Account#getUniqueIdentifier()
+     *         uniqueIdentifier == id}
+     * @throws NameNotFoundException if no such account is found
+     */
+    Account findById(final UUID id) throws NameNotFoundException;
 
     /**
      * Generates a new Id based on the uid provided as parameter.

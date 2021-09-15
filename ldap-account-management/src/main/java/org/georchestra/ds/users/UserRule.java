@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,6 +77,10 @@ public class UserRule {
         }
 
         return this.listOfprotectedUsers.contains(uid);
+    }
+
+    public Predicate<Account> isProtected() {
+        return a -> this.isProtected(a.getUid());
     }
 
     public List<String> getListUidProtected() {

@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
-import org.georchestra.ds.security.AccountsService;
+import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.junit.Before;
@@ -57,7 +57,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UserDetailsJSONRequestHeaderProviderTest {
 
-    private AccountsService lookupService;
+    private UsersApi lookupService;
     private UserDetailsJSONRequestHeaderProvider provider;
     private GeorchestraUser user;
     private Properties headersMapping;
@@ -66,12 +66,12 @@ public class UserDetailsJSONRequestHeaderProviderTest {
     public @Before void before() {
         this.user = newGeorchestraUser("testadmin");
 
-        this.lookupService = mock(AccountsService.class);
-        when(lookupService.findUserByUsername(anyString())).thenReturn(Optional.empty());
-        when(lookupService.findUserByUsername(eq(user.getUsername()))).thenReturn(Optional.of(user));
+        this.lookupService = mock(UsersApi.class);
+        when(lookupService.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(lookupService.findByUsername(eq(user.getUsername()))).thenReturn(Optional.of(user));
 
         this.provider = new UserDetailsJSONRequestHeaderProvider();
-        this.provider.setLookupService(lookupService);
+        this.provider.setUsers(lookupService);
 
         this.headersMapping = new Properties();
         this.request = new MockHttpServletRequest();

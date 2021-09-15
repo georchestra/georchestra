@@ -21,13 +21,14 @@ package org.georchestra.security.api;
 import java.util.List;
 import java.util.Optional;
 
-import org.georchestra.security.model.Organization;
+import org.georchestra.security.model.Role;
 
-public interface OrganizationsApi {
+public interface RolesApi {
 
-    List<Organization> findAll();
+    /**
+     * Find a user by {@link Role#getName() name}
+     */
+    Optional<Role> findByName(String name);
 
-    Optional<Organization> findById(String id);
-
-    Optional<Organization> findByShortName(String shortName);
+    List<Role> findAll();
 }

@@ -40,7 +40,7 @@ import org.springframework.context.annotation.Scope;
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
-public abstract class UserMapper {
+abstract class UserMapper {
 
     private @Autowired OrganizationMapper orgMapper;
     private @Autowired BeanFactory appContext;

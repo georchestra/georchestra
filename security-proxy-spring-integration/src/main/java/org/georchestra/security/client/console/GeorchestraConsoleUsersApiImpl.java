@@ -18,55 +18,43 @@
  */
 package org.georchestra.security.client.console;
 
-import java.net.URI;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.NonNull;
 
 /**
  * {@link UsersApi} implementation as client for geOrchestra's console
  * application
  * {@code org.georchestra.console.ws.security.api.SecurityApiController}
  */
-@Slf4j(topic = "org.georchestra.security.client.console")
 public class GeorchestraConsoleUsersApiImpl implements UsersApi {
 
     private RestClient client;
 
-    public GeorchestraConsoleUsersApiImpl(URI consoleURL) {
-        log.info("Will retrieve georchestra users from " + consoleURL);
-        this.client = new RestClient(consoleURL);
+    public GeorchestraConsoleUsersApiImpl(@NonNull RestClient consoleClient) {
+        this.client = consoleClient;
     }
 
     @Override
-    public Stream<GeorchestraUser> findAll() {
-        GeorchestraUser[] users = client.get("/internal/users", GeorchestraUser[].class);
-        return users == null ? Stream.empty() : Arrays.stream(users);
+    public List<GeorchestraUser> findAll() {
+        return client.getAll("/console/internal/users", GeorchestraUser.class);
     }
 
     @Override
     public Optional<GeorchestraUser> findById(String id) {
-        throw new UnsupportedOperationException("not implemented");
+        Objects.requireNonNull(id);
+        return client.get("/console/internal/users/id/{id}", GeorchestraUser.class, id);
     }
 
     @Override
     public Optional<GeorchestraUser> findByUsername(String username) {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    @Override
-    public Stream<GeorchestraUser> findAllByOrganizationId(String orgId) {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    @Override
-    public Stream<GeorchestraUser> findAllByOrganizationShortName(String orgId) {
-        throw new UnsupportedOperationException("not implemented");
+        Objects.requireNonNull(username);
+        return client.get("/console/internal/users/username/{name}", GeorchestraUser.class, username);
     }
 
 }

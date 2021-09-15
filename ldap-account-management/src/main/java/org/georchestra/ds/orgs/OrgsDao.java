@@ -374,7 +374,30 @@ public class OrgsDao {
     }
 
     public Org findByCommonNameWithExt(String orgCn) {
-        Org org = findByCommonName(orgCn);
+        return addExt(findByCommonName(orgCn));
+    }
+
+    /**
+     * Search by {@link Org#getUniqueIdentifier()} and set its {@link Org#setOrgExt
+     * OrgExt}, if any.
+     *
+     * @return the matching organization or {@code null}
+     */
+    public Org findByIdWithExt(UUID uuid) {
+        return addExt(findById(uuid));
+    }
+
+    /**
+     * Search by {@link Org#getUniqueIdentifier()}
+     *
+     * @return the matching organization or {@code null}
+     */
+    public Org findById(UUID uuid) {
+        Org org = findAll().stream().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
+        return addExt(org);
+    }
+
+    private Org addExt(Org org) {
         if (org == null) {
             return null;
         }

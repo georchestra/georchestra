@@ -19,6 +19,9 @@
 
 package org.georchestra.ds.users;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +32,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -249,6 +253,38 @@ public final class AccountDaoImpl implements AccountDao {
         throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @implNote look up is performed by LDAP attribute
+     *           {@code georchestraObjectIdentifier}
+     */
+    @Override
+    public Account findById(@NonNull UUID id) throws NameNotFoundException {
+        final String georchestraObjectIdentifier = id.toString();
+        final AccountSearcher search = propertyEquals(UserSchema.UUID_KEY, georchestraObjectIdentifier);
+
+        return search.getActiveOrPendingAccounts()//
+                .stream()//
+                .limit(2)//
+                .collect(collectingAndThen(toList(), list -> {
+                    if (list.size() == 1)
+                        return list.get(0);
+                    if (list.isEmpty()) {
+                        throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
+                    }
+                    throw new IllegalStateException("Multiple accounts with the same id: " + id);
+                }));
+    }
+
+    private AccountSearcher propertyEquals(String propertyName, String propertyValue) {
+        return newAccountSearcher(new EqualsFilter(propertyName, propertyValue));
+    }
+
+    private AccountSearcher newAccountSearcher(Filter filter) {
+        return new AccountSearcher().and(filter);
+    }
+
     @Override
     public List<Account> findByShadowExpire() {
         return new AccountSearcher().and(new PresentFilter("shadowExpire"))
@@ -276,6 +312,11 @@ public final class AccountDaoImpl implements AccountDao {
     public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
         List<Account> allUsers = new AccountSearcher().getActiveOrPendingAccounts();
         return filterProtected.filterUsersList(allUsers);
+    }
+
+    @Override
+    public List<Account> findAll(Predicate<Account> filter) throws DataServiceException {
+        return new AccountSearcher().getActiveOrPendingAccounts().stream().filter(filter).collect(Collectors.toList());
     }
 
     @Override
@@ -609,7 +650,7 @@ public final class AccountDaoImpl implements AccountDao {
             SearchControls sc = createSearchControls();
             List<Account> active = ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
             List<Account> pending = ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
-            return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+            return Stream.concat(active.stream(), pending.stream()).collect(toList());
         }
 
         public AccountSearcher() {
@@ -657,4 +698,5 @@ public final class AccountDaoImpl implements AccountDao {
             return userName;
         }
     }
+
 }

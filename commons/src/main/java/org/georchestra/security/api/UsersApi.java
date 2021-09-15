@@ -18,11 +18,10 @@
  */
 package org.georchestra.security.api;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.georchestra.security.model.GeorchestraUser;
-import org.georchestra.security.model.Organization;
 
 public interface UsersApi {
 
@@ -36,17 +35,5 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByUsername(String username);
 
-    Stream<GeorchestraUser> findAll();
-
-    /**
-     * Find all users by {@link Organization#getId()
-     * GeorchestraUser.organization.id}
-     */
-    Stream<GeorchestraUser> findAllByOrganizationId(String orgId);
-
-    /**
-     * Find all users by {@link Organization#getShortName()
-     * GeorchestraUser.organization.shortName}
-     */
-    Stream<GeorchestraUser> findAllByOrganizationShortName(String orgId);
+    List<GeorchestraUser> findAll();
 }

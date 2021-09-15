@@ -16,18 +16,14 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.security.api;
+package org.georchestra.ds.security;
 
-import java.util.List;
-import java.util.Optional;
+import static org.mapstruct.ReportingPolicy.ERROR;
 
-import org.georchestra.security.model.Organization;
+import org.mapstruct.Mapper;
 
-public interface OrganizationsApi {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR)
+interface RoleMapper {
 
-    List<Organization> findAll();
-
-    Optional<Organization> findById(String id);
-
-    Optional<Organization> findByShortName(String shortName);
+    org.georchestra.security.model.Role map(org.georchestra.ds.roles.Role role);
 }

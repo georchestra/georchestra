@@ -29,7 +29,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring", uses = UUIDMapper.class, unmappedTargetPolicy = ERROR)
-public interface OrganizationMapper {
+interface OrganizationMapper {
 
     @Mapping(target = "id", source = "uniqueIdentifier")
     @Mapping(target = "shortName", source = "id")

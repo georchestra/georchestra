@@ -32,7 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.commons.security.SecurityHeaders;
-import org.georchestra.ds.security.AccountsService;
+import org.georchestra.ds.security.OrganizationsApiImpl;
+import org.georchestra.security.api.OrganizationsApi;
+import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.PropertyResolver;
@@ -55,7 +57,7 @@ import lombok.Setter;
 
 /**
  * Adds a {@code sec-user} header with the full {@link GeorchestraUser} obtained
- * from {@link AccountsService} as a Base64 encoded JSON representation.
+ * from {@link OrganizationsApiImpl} as a Base64 encoded JSON representation.
  * <p>
  * This header provider is disabled by default, and reads which target request
  * services to add the header for from {@code headers-mapping.properties} just
@@ -91,13 +93,13 @@ public class UserDetailsJSONRequestHeaderProvider extends HeaderProvider {
 
     @Autowired
     @Setter(value = AccessLevel.PACKAGE)
-    private AccountsService lookupService;
+    private UsersApi users;
 
     private @Autowired GeorchestraConfiguration georchestraConfiguration;
 
     /**
      * Encoder to create the JSON String value for a {@link GeorchestraUser}
-     * obtained from {@link AccountsService}
+     * obtained from {@link OrganizationsApiImpl}
      */
     private ObjectMapper encoder;
 
@@ -233,7 +235,7 @@ public class UserDetailsJSONRequestHeaderProvider extends HeaderProvider {
     }
 
     private GeorchestraUser getUser(String userName) {
-        return this.lookupService.findUserByUsername(userName)
+        return this.users.findByUsername(userName)
                 .orElseThrow(() -> new IllegalArgumentException("User not found:" + userName));
     }
 

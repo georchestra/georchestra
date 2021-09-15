@@ -20,18 +20,16 @@ package org.georchestra.ds.security;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
-import org.georchestra.ds.users.ProtectedUserFilter;
 import org.georchestra.ds.users.UserRule;
+import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
-import org.georchestra.security.model.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.ldap.NameNotFoundException;
@@ -39,53 +37,50 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-public class AccountsService {
+public class UsersApiImpl implements UsersApi {
 
     private @Autowired AccountDao accountsDao;
-    private @Autowired OrgsDao orgsDao;
     private @Autowired UserRule userRule;
-    private @Autowired OrganizationMapper orgMapper;
 
-    /**
-     * Return a list of available users as a json array
-     */
-    public List<GeorchestraUser> findAllUsers() {
+    @Override
+    public List<GeorchestraUser> findAll() {
         final UserMapper mapper = newUserMapper();
-        Stream<Account> accounts = getAccounts().stream()
-                .filter(u -> !u.isPending() && StringUtils.hasLength(u.getOrg()));
-        return accounts.map(mapper::map).collect(Collectors.toList());
+        try {
+            return this.accountsDao.findAll(notPending().and(notProtected()))//
+                    .stream()//
+                    .filter(u -> StringUtils.hasLength(u.getOrg()))//
+                    .map(mapper::map)//
+                    .collect(Collectors.toList());
+        } catch (DataServiceException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Optional<GeorchestraUser> findUserByUsername(String userName) {
-        Account account;
+    @Override
+    public Optional<GeorchestraUser> findById(String id) {
         try {
-            account = this.accountsDao.findByUID(userName);
+            UUID uuid = UUID.fromString(id);
+            return Optional.of(this.accountsDao.findById(uuid)).filter(notPending()).filter(notProtected())
+                    .map(this::map);
+        } catch (NameNotFoundException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<GeorchestraUser> findByUsername(String username) {
+        try {
+            return Optional.of(this.accountsDao.findByUID(username)).filter(notPending()).filter(notProtected())
+                    .map(this::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
         } catch (DataServiceException e) {
             throw new RuntimeException(e);
         }
-        final UserMapper mapper = newUserMapper();
-        return Optional.of(mapper.map(account));
     }
 
-    /**
-     * Return a list of available users as a json array
-     */
-    public List<Organization> findAllOrganizations() {
-        Stream<Org> orgs = orgsDao.findAllWithExt().filter(o -> !o.isPending());
-        return orgs.map(orgMapper::map).collect(Collectors.toList());
-    }
-
-    private List<Account> getAccounts() {
-        List<Account> accounts;
-        try {
-            ProtectedUserFilter filter = new ProtectedUserFilter(this.userRule.getListUidProtected());
-            accounts = this.accountsDao.findFilterBy(filter);
-        } catch (DataServiceException e) {
-            throw new RuntimeException(e);
-        }
-        return accounts;
+    private GeorchestraUser map(Account account) {
+        return newUserMapper().map(account);
     }
 
     /**
@@ -96,4 +91,17 @@ public class AccountsService {
     UserMapper newUserMapper() {
         return null;
     }
+
+    private Predicate<Account> notProtected() {
+        return this.userRule.isProtected().negate();
+    }
+
+    private Predicate<Account> pending() {
+        return Account::isPending;
+    }
+
+    private Predicate<Account> notPending() {
+        return pending().negate();
+    }
+
 }

@@ -16,42 +16,49 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.security.client.console;
+package org.georchestra.ds.security;
+
+import static com.google.common.base.Predicates.not;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.security.api.OrganizationsApi;
 import org.georchestra.security.model.Organization;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import lombok.NonNull;
+@Service
+public class OrganizationsApiImpl implements OrganizationsApi {
 
-/**
- * {@link OrganizationsApi} implementation as client for geOrchestra's console
- * application
- * {@code org.georchestra.console.ws.security.api.SecurityApiController}
- */
-public class GeorchestraConsoleOrganizationsApiImpl implements OrganizationsApi {
-
-    private RestClient client;
-
-    public GeorchestraConsoleOrganizationsApiImpl(@NonNull RestClient consoleClient) {
-        client = consoleClient;
-    }
+    private @Autowired OrgsDao orgsDao;
+    private @Autowired OrganizationMapper orgMapper;
 
     @Override
     public List<Organization> findAll() {
-        return client.getAll("/console/internal/organizations", Organization[].class);
+        return orgsDao.findAllWithExt()//
+                .filter(not(Org::isPending))//
+                .map(orgMapper::map)//
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Organization> findById(String id) {
-        return client.get("/console/internal/organizations/id/{id}", Organization.class, id);
+        final UUID uuid = UUID.fromString(id);
+        return Optional.ofNullable(orgsDao.findByIdWithExt(uuid))//
+                .filter(not(Org::isPending))//
+                .map(orgMapper::map);
     }
 
     @Override
     public Optional<Organization> findByShortName(String shortName) {
-        return client.get("/console/internal/organizations/shortname/{name}", Organization.class, shortName);
+        return Optional.ofNullable(orgsDao.findByCommonNameWithExt(shortName))//
+                .filter(not(Org::isPending))//
+                .map(orgMapper::map);
     }
 
 }

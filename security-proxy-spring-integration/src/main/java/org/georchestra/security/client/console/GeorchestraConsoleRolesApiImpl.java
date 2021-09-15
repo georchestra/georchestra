@@ -19,39 +19,36 @@
 package org.georchestra.security.client.console;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import org.georchestra.security.api.OrganizationsApi;
-import org.georchestra.security.model.Organization;
+import org.georchestra.security.api.RolesApi;
+import org.georchestra.security.model.Role;
 
 import lombok.NonNull;
 
 /**
- * {@link OrganizationsApi} implementation as client for geOrchestra's console
+ * {@link RolesApi} implementation as client for geOrchestra's console
  * application
  * {@code org.georchestra.console.ws.security.api.SecurityApiController}
  */
-public class GeorchestraConsoleOrganizationsApiImpl implements OrganizationsApi {
+public class GeorchestraConsoleRolesApiImpl implements RolesApi {
 
     private RestClient client;
 
-    public GeorchestraConsoleOrganizationsApiImpl(@NonNull RestClient consoleClient) {
-        client = consoleClient;
+    public GeorchestraConsoleRolesApiImpl(@NonNull RestClient consoleClient) {
+        this.client = consoleClient;
     }
 
     @Override
-    public List<Organization> findAll() {
-        return client.getAll("/console/internal/organizations", Organization[].class);
+    public List<Role> findAll() {
+        return client.getAll("/console/internal/roles", Role[].class);
     }
 
     @Override
-    public Optional<Organization> findById(String id) {
-        return client.get("/console/internal/organizations/id/{id}", Organization.class, id);
-    }
-
-    @Override
-    public Optional<Organization> findByShortName(String shortName) {
-        return client.get("/console/internal/organizations/shortname/{name}", Organization.class, shortName);
+    public Optional<Role> findByName(String name) {
+        Objects.requireNonNull(name);
+        return client.get("/console/internal/roles/name/{name}", Role.class, name);
     }
 
 }
