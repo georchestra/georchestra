@@ -152,8 +152,9 @@ public interface AccountDao {
      * @return the Account with {@link Account#getUniqueIdentifier()
      *         uniqueIdentifier == id}
      * @throws NameNotFoundException if no such account is found
+     * @throws DataServiceException
      */
-    Account findById(final UUID id) throws NameNotFoundException;
+    Account findById(final UUID id) throws NameNotFoundException, DataServiceException;
 
     /**
      * Generates a new Id based on the uid provided as parameter.

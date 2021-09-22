@@ -1,0 +1,31 @@
+[
+	{
+		"id": "bddf474d-125d-4b18-92bd-bd8ebb6699a9",
+		"shortName": "PSC",
+		"name": "Project Steering Committee",
+		"linkage": "https://www.georchestra.org/",
+		"postalAddress": "127 rue georchestra, 73590 Chamblille",
+		"category": "Association",
+		"description": "Association PSC geOrchestra",
+		"notes": "Internal CRM notes on PSC",
+		"lastUpdated": "2200a6051fcef499884e1cfa8b6625766e76df75d18ce2316c23b421db99e147",
+		"members": [
+			"testadmin",
+			"testuser"
+		]
+	},
+	{
+		"id": "8c1ef87a-73fc-4d79-80cb-ba4ff7102cca",
+		"shortName": "C2C",
+		"name": "Camptocamp",
+		"linkage": "https://www.camptocamp.com/",
+		"postalAddress": "18 Rue du lac Saint André, 73000 Chambéry",
+		"category": "Company",
+		"description": "Camptocamp SAS France",
+		"notes": "Internal CRM notes on Camptocamp",
+		"lastUpdated": "24166fee9b20a69a1ca402f1b84b80c77ad0fc263542d4de06ad86ec205e5555",
+		"members": [
+			"testeditor"
+		]
+	}
+]

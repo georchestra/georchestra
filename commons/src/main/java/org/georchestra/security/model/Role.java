@@ -24,6 +24,12 @@ public @Data class Role implements Serializable {
     private String description;
 
     /**
+     * String that somehow represents the current version, may be a timestamp, a
+     * hash, etc. Provided by request header {@code sec-lastupdated}
+     */
+    private String lastUpdated;
+
+    /**
      * List of {@link GeorchestraUser#getUsername() user names} that belong to this
      * role
      */

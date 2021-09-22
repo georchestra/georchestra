@@ -63,6 +63,8 @@ public class UsersApiImpl implements UsersApi {
                     .map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
+        } catch (DataServiceException e) {
+            throw new RuntimeException(e);
         }
     }
 

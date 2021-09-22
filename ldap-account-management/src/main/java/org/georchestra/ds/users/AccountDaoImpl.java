@@ -19,7 +19,6 @@
 
 package org.georchestra.ds.users;
 
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
@@ -256,25 +255,24 @@ public final class AccountDaoImpl implements AccountDao {
     /**
      * {@inheritDoc}
      * 
+     * @throws DataServiceException
+     * 
      * @implNote look up is performed by LDAP attribute
      *           {@code georchestraObjectIdentifier}
      */
     @Override
-    public Account findById(@NonNull UUID id) throws NameNotFoundException {
-        final String georchestraObjectIdentifier = id.toString();
-        final AccountSearcher search = propertyEquals(UserSchema.UUID_KEY, georchestraObjectIdentifier);
-
-        return search.getActiveOrPendingAccounts()//
-                .stream()//
-                .limit(2)//
-                .collect(collectingAndThen(toList(), list -> {
-                    if (list.size() == 1)
-                        return list.get(0);
-                    if (list.isEmpty()) {
-                        throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
-                    }
-                    throw new IllegalStateException("Multiple accounts with the same id: " + id);
-                }));
+    public Account findById(@NonNull UUID id) throws NameNotFoundException, DataServiceException {
+        // TODO: optimize, me have no time
+        // final String georchestraObjectIdentifier = id.toString();
+        // final AccountSearcher search = propertyEquals(UserSchema.UUID_KEY,
+        // georchestraObjectIdentifier);
+        List<Account> matches = this.findAll(a -> id.equals(a.getUniqueIdentifier()));
+        if (matches.size() == 1)
+            return matches.get(0);
+        if (matches.isEmpty()) {
+            throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
+        }
+        throw new IllegalStateException("Multiple accounts with the same id: " + id);
     }
 
     private AccountSearcher propertyEquals(String propertyName, String propertyValue) {
@@ -414,18 +412,18 @@ public final class AccountDaoImpl implements AccountDao {
      */
     private void mapToContext(Account account, DirContextOperations context) {
 
-        Set<String> values = new HashSet<>();
+        Set<String> objectClass = new HashSet<>();
 
         if (context.getStringAttributes("objectClass") != null) {
-            Collections.addAll(values, context.getStringAttributes("objectClass"));
+            Collections.addAll(objectClass, context.getStringAttributes("objectClass"));
         }
-        Collections.addAll(values, "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount",
+        Collections.addAll(objectClass, "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount",
                 "georchestraUser", "ldapPublicKey");
 
         if (account.getSshKeys().length == 0) {
-            values.remove("ldapPublicKey");
+            objectClass.remove("ldapPublicKey");
         }
-        context.setAttributeValues("objectClass", values.toArray());
+        context.setAttributeValues("objectClass", objectClass.toArray());
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
@@ -656,7 +654,8 @@ public final class AccountDaoImpl implements AccountDao {
         public AccountSearcher() {
             filter = new AndFilter().and(new EqualsFilter("objectClass", "inetOrgPerson"))
                     .and(new EqualsFilter("objectClass", "organizationalPerson"))
-                    .and(new EqualsFilter("objectClass", "person"));
+                    .and(new EqualsFilter("objectClass", "person"))
+                    .and(new EqualsFilter("objectClass", "georchestraUser"));
         }
 
         public AccountSearcher and(Filter filter) {

@@ -393,8 +393,7 @@ public class OrgsDao {
      * @return the matching organization or {@code null}
      */
     public Org findById(UUID uuid) {
-        Org org = findAll().stream().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
-        return addExt(org);
+        return findAllWithExt().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
     }
 
     private Org addExt(Org org) {

@@ -1,0 +1,59 @@
+[
+	{
+		"username": "testuser",
+		"roles": [
+			"USER"
+		],
+		"organization": "PSC",
+		"id": "048b2f38-6ee7-4eec-9bed-349cc6eb13c3",
+		"lastUpdated": "f30686969d96a5a7962aec9521a97f3493e042b79302f24c15771d90b8b99c56",
+		"firstName": "Test",
+		"lastName": "USER",
+		"email": "psc+testuser@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": "Internal CRM notes on testuser"
+	},
+	{
+		"username": "testeditor",
+		"roles": [
+			"GN_EDITOR",
+			"CKAN_EDITOR",
+			"USER"
+		],
+		"organization": "C2C",
+		"id": "e75b336d-a9fc-4671-8002-e1a49c2acf2c",
+		"lastUpdated": "da930fd1379f2cca2e4932a508f882548e314485332521df1f18ff16f3311997",
+		"firstName": "Test",
+		"lastName": "EDITOR",
+		"email": "psc+testeditor@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": null
+	},
+	{
+		"username": "testadmin",
+		"roles": [
+			"ADMINISTRATOR",
+			"SUPERUSER",
+			"EXTRACTORAPP",
+			"GN_ADMIN",
+			"CKAN_SYSADMIN",
+			"USER",
+			"MAPSTORE_ADMIN",
+			"EMAILPROXY"
+		],
+		"organization": "PSC",
+		"id": "0c6bb556-4ee8-46f2-892d-6116e262b489",
+		"lastUpdated": "60f61489707ee3b56298961ab8027f564951fba391fa414179182aa67d45c619",
+		"firstName": "Test",
+		"lastName": "ADMIN",
+		"email": "psc+testadmin@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": "Internal CRM notes on testadmin"
+	}
+]
