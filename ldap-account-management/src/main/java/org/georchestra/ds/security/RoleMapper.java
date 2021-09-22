@@ -21,9 +21,11 @@ package org.georchestra.ds.security;
 import static org.mapstruct.ReportingPolicy.ERROR;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
 interface RoleMapper {
 
+    @Mapping(target = "id", source = "uniqueIdentifier")
     org.georchestra.security.model.Role map(org.georchestra.ds.roles.Role role);
 }

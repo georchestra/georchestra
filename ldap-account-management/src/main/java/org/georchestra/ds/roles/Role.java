@@ -20,6 +20,7 @@
 package org.georchestra.ds.roles;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -33,7 +34,16 @@ public interface Role {
     final String USER = "USER";
 
     /**
-     * 
+     * @param uniqueId the immutable unique identifier for this role
+     */
+    void setUniqueIdentifier(UUID uniqueId);
+
+    /**
+     * @return the immutable unique identifier for this role
+     */
+    UUID getUniqueIdentifier();
+
+    /**
      * @return the name of this role
      */
     @JsonProperty("cn")

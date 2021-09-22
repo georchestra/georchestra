@@ -22,6 +22,10 @@ package org.georchestra.ds.roles;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * A role and its users.
@@ -31,6 +35,7 @@ import java.util.List;
  */
 class RoleImpl implements Role, Comparable<Role> {
 
+    private @Getter @Setter UUID uniqueIdentifier;
     private String name;
     private List<String> userList = new LinkedList<String>();
     private String description;

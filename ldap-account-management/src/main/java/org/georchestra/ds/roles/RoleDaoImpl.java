@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.naming.Name;
@@ -234,6 +235,10 @@ public class RoleDaoImpl implements RoleDao {
 
             // set the role name
             Role g = RoleFactory.create();
+            String suuid = context.getStringAttribute(RoleSchema.UUID_KEY);
+            UUID uuid = null == suuid ? null : UUID.fromString(suuid);
+
+            g.setUniqueIdentifier(uuid);
             g.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
             g.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
             boolean isFavorite = RoleSchema.FAVORITE_VALUE.equals(context.getStringAttribute(RoleSchema.FAVORITE_KEY));
@@ -293,14 +298,20 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     void mapToContext(Role role, DirContextOperations context) {
-        Set<String> values = new HashSet<>();
+        Set<String> objectClass = new HashSet<>();
 
         if (context.getStringAttributes("objectClass") != null) {
-            Collections.addAll(values, context.getStringAttributes("objectClass"));
+            Collections.addAll(objectClass, context.getStringAttributes("objectClass"));
         }
-        Collections.addAll(values, "top", "groupOfMembers");
+        Collections.addAll(objectClass, "top", "groupOfMembers", "georchestraRole");
 
-        context.setAttributeValues("objectClass", values.toArray());
+        context.setAttributeValues("objectClass", objectClass.toArray());
+
+        if (null == role.getUniqueIdentifier()) {
+            role.setUniqueIdentifier(UUID.randomUUID());
+        }
+        String suuid = role.getUniqueIdentifier().toString();
+        setAccountField(context, RoleSchema.UUID_KEY, suuid);
 
         setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());

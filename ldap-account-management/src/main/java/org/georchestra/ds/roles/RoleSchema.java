@@ -28,6 +28,7 @@ package org.georchestra.ds.roles;
  */
 public interface RoleSchema {
 
+    String UUID_KEY = "georchestraObjectIdentifier";
     String COMMON_NAME_KEY = "cn"; // role name
     String DESCRIPTION_KEY = "description";
     String MEMBER_KEY = "member";
