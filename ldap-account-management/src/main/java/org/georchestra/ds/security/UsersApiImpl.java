@@ -31,7 +31,6 @@ import org.georchestra.ds.users.UserRule;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,12 +38,12 @@ import org.springframework.util.StringUtils;
 @Service
 public class UsersApiImpl implements UsersApi {
 
-    private @Autowired AccountDao accountsDao;
     private @Autowired UserRule userRule;
+    private @Autowired AccountDao accountsDao;
+    private @Autowired UserMapper mapper;
 
     @Override
     public List<GeorchestraUser> findAll() {
-        final UserMapper mapper = newUserMapper();
         try {
             return this.accountsDao.findAll(notPending().and(notProtected()))//
                     .stream()//
@@ -61,7 +60,7 @@ public class UsersApiImpl implements UsersApi {
         try {
             UUID uuid = UUID.fromString(id);
             return Optional.of(this.accountsDao.findById(uuid)).filter(notPending()).filter(notProtected())
-                    .map(this::map);
+                    .map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
         }
@@ -71,25 +70,12 @@ public class UsersApiImpl implements UsersApi {
     public Optional<GeorchestraUser> findByUsername(String username) {
         try {
             return Optional.of(this.accountsDao.findByUID(username)).filter(notPending()).filter(notProtected())
-                    .map(this::map);
+                    .map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
         } catch (DataServiceException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private GeorchestraUser map(Account account) {
-        return newUserMapper().map(account);
-    }
-
-    /**
-     * @return a new instanceof {@link UserMapper}, since it's a bean with prototype
-     *         scope
-     */
-    @Lookup
-    UserMapper newUserMapper() {
-        return null;
     }
 
     private Predicate<Account> notProtected() {

@@ -40,7 +40,6 @@ import java.util.UUID;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
-import org.georchestra.security.model.Organization;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.env.PropertyResolver;
@@ -88,11 +87,7 @@ public class UserDetailsJSONRequestHeaderProviderTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setRoles(Arrays.asList("ADMINISTRATOR", "GN_ADMIN"));
-        Organization org = new Organization();
-        org.setId(UUID.randomUUID().toString());
-        org.setShortName("PSC");
-        org.setName("Project Steering Committee");
-        user.setOrganization(org);
+        user.setOrganization("PSC");
         return user;
     }
 

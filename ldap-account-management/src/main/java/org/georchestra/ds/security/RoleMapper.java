@@ -27,5 +27,6 @@ import org.mapstruct.Mapping;
 interface RoleMapper {
 
     @Mapping(target = "id", source = "uniqueIdentifier")
+    @Mapping(target = "members", source = "userList")
     org.georchestra.security.model.Role map(org.georchestra.ds.roles.Role role);
 }

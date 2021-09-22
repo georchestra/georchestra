@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.ds.security.OrganizationsApiImpl;
-import org.georchestra.security.api.OrganizationsApi;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.springframework.beans.factory.annotation.Autowired;

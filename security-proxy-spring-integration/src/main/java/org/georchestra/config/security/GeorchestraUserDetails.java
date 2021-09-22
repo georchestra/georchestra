@@ -126,13 +126,8 @@ public class GeorchestraUserDetails implements UserDetails {
                 log.info("No unique id provided for user. Using username as identifier: " + username);
                 user.setId(username);
             }
-            if (!StringUtils.hasLength(user.getOrganization().getId())) {
-                String shortName = user.getOrganization().getShortName();
-                log.info("No unique id provided for user's organization. Using shortName as identifier: " + shortName);
-                user.getOrganization().setId(shortName);
-            }
             if (null == user.getLastUpdated()) {
-                String hash = GeorchestraUserHasher.createLastUpdatedUserHash(user);
+                String hash = GeorchestraUserHasher.createHash(user);
                 log.info("lastUpdated not provided for user {}, using a hash based on relevant fields: {}",
                         user.getUsername(), hash);
                 user.setLastUpdated(hash);
@@ -143,15 +138,20 @@ public class GeorchestraUserDetails implements UserDetails {
 
     public static GeorchestraUser buildUserFromHeaders(Map<String, String> headers) {
         final String fullJsonUser = getHeader(headers, "sec-user");
+        GeorchestraUser user;
         if (StringUtils.hasLength(fullJsonUser)) {
             log.info("Decoding user from sec-user header");
-            return decodeFromJSON(fullJsonUser);
+            user = decodeFromJSON(fullJsonUser);
+        } else {
+            user = buildFromIndividualHeaders(headers);
         }
+        return user;
+    }
 
-        Organization organization = buildOrganization(headers);
-
+    private static GeorchestraUser buildFromIndividualHeaders(Map<String, String> headers) {
         String userId = getHeader(headers, SEC_USERID);
         String username = getHeader(headers, SEC_USERNAME);
+        String organization = getHeader(headers, SEC_ORG);
         String lastUpdated = getHeader(headers, SEC_LASTUPDATED);
         List<String> roles = extractRoles(headers);
         String firstName = getHeader(headers, SEC_FIRSTNAME);
@@ -227,6 +227,14 @@ public class GeorchestraUserDetails implements UserDetails {
         if (StringUtils.isEmpty(rolesHeader)) {
             return Collections.emptyList();
         }
-        return Splitter.on(';').omitEmptyStrings().trimResults().splitToList(rolesHeader);
+        return Splitter.on(';').omitEmptyStrings().trimResults()//
+                .splitToStream(rolesHeader)//
+                .map(GeorchestraUserDetails::stripRolesPrefix)//
+                .collect(Collectors.toList());
     }
+
+    private static String stripRolesPrefix(String role) {
+        return (role == null || !role.startsWith("ROLE_")) ? role : role.substring("ROLE_".length());
+    }
+
 }

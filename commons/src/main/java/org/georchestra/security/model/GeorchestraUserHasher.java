@@ -18,51 +18,58 @@
  */
 package org.georchestra.security.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
 /**
- * Utility to create a stable hash for a {@link GeorchestraUser} that can be
- * used as its {@link GeorchestraUser#getLastUpdated lastUpdated} property, in
- * order to quickly compare whether a given instance matches a previously seen
- * version, where the system may save the previously seen "hash" but not the
- * user instance itself.
+ * Utility to create a stable hash for a {@link GeorchestraUser},
+ * {@link Organization}, and {@link Role} objects, that can be used as their
+ * {@code lastUpdated} property, in order to quickly compare whether a given
+ * instance matches a previously seen version, where the system may save the
+ * previously seen "hash" but not the user instance itself.
  */
 public class GeorchestraUserHasher {
 
-    public static String createLastUpdatedUserHash(GeorchestraUser user) {
+    public static String createHash(GeorchestraUser user) {
         Hasher hasher = Hashing.sha256().newHasher();
         hasher.putUnencodedChars(nonNull(user.getId()));
         hasher.putUnencodedChars(nonNull(user.getUsername()));
         hasher.putUnencodedChars(nonNull(user.getFirstName()));
         hasher.putUnencodedChars(nonNull(user.getLastName()));
+        hasher.putUnencodedChars(nonNull(user.getOrganization()));
         hasher.putUnencodedChars(nonNull(user.getEmail()));
         hasher.putUnencodedChars(nonNull(user.getNotes()));
         hasher.putUnencodedChars(nonNull(user.getPostalAddress()));
         hasher.putUnencodedChars(nonNull(user.getTelephoneNumber()));
         hasher.putUnencodedChars(nonNull(user.getTitle()));
+        hashList(user.getRoles(), hasher);
 
-        if (null != user.getRoles()) {
-            user.getRoles().stream().filter(Objects::nonNull).sorted()
-                    .forEach(role -> hasher.putUnencodedChars(nonNull(role)));
-        }
-
-        Organization organization = user.getOrganization();
-        hashOrg(organization, hasher);
         String hexHash = hasher.hash().toString();
         return hexHash;
     }
 
-    public static String createLastUpdatedOrgHash(Organization organization) {
+    public static String createHash(Organization organization) {
         Hasher hasher = Hashing.sha256().newHasher();
         hashOrg(organization, hasher);
         String hexHash = hasher.hash().toString();
         return hexHash;
     }
 
+    public static String createHash(Role role) {
+        Hasher hasher = Hashing.sha256().newHasher();
+        hasher.putUnencodedChars(nonNull(role.getId()));
+        hasher.putUnencodedChars(nonNull(role.getName()));
+        hasher.putUnencodedChars(nonNull(role.getDescription()));
+        hashList(role.getMembers(), hasher);
+        String hexHash = hasher.hash().toString();
+        return hexHash;
+    }
+
     private static void hashOrg(Organization org, Hasher hasher) {
+        hasher.putUnencodedChars("org");
         if (null != org) {
             hasher.putUnencodedChars(nonNull(org.getId()));
             hasher.putUnencodedChars(nonNull(org.getShortName()));
@@ -72,10 +79,18 @@ public class GeorchestraUserHasher {
             hasher.putUnencodedChars(nonNull(org.getDescription()));
             hasher.putUnencodedChars(nonNull(org.getLinkage()));
             hasher.putUnencodedChars(nonNull(org.getNotes()));
+            hashList(org.getMembers(), hasher);
         }
     }
 
     private static CharSequence nonNull(String s) {
         return s == null ? "" : s;
     }
+
+    private static void hashList(List<String> list, Hasher hasher) {
+        if (list != null) {
+            list.stream().filter(Objects::nonNull).sorted().forEach(role -> hasher.putUnencodedChars(nonNull(role)));
+        }
+    }
+
 }

@@ -40,7 +40,12 @@ public class GeorchestraUser implements Serializable {
     /** Provided by request header {@code sec-roles} */
     private List<String> roles = new ArrayList<>();
 
-    private Organization organization;
+    /**
+     * User's organization short name. Provided by request header {@code sec-org},
+     * legacy way of identifying by LDAP's {@code org.cn} attribute, which may
+     * change over time
+     */
+    private String organization;
 
     /////// Default optional properties. /////
     /////// Some may be made mandatory on a per-application basis /////
@@ -75,4 +80,7 @@ public class GeorchestraUser implements Serializable {
     /** Provided by request header {@code sec-notes} */
     private String notes;
 
+    public void setRoles(List<String> roles) {
+        this.roles = roles == null ? new ArrayList<>() : roles;
+    }
 }

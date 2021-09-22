@@ -1,6 +1,8 @@
 package org.georchestra.security.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 
@@ -20,4 +22,15 @@ public @Data class Role implements Serializable {
      * Role intended purpose
      */
     private String description;
+
+    /**
+     * List of {@link GeorchestraUser#getUsername() user names} that belong to this
+     * role
+     */
+    private List<String> members = new ArrayList<>();
+
+    public void setMembers(List<String> members) {
+        this.members = members == null ? new ArrayList<>() : members;
+    }
+
 }

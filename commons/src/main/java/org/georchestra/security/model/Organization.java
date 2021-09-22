@@ -19,6 +19,8 @@
 package org.georchestra.security.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 
@@ -60,4 +62,14 @@ public @Data class Organization implements Serializable {
      * hash, etc. Provided by request header {@code sec-lastupdated}
      */
     private String lastUpdated;
+
+    /**
+     * List of {@link GeorchestraUser#getUsername() user names} that belong to this
+     * organization
+     */
+    private List<String> members = new ArrayList<>();
+
+    public void setMembers(List<String> members) {
+        this.members = members == null ? new ArrayList<>() : members;
+    }
 }
