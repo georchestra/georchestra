@@ -74,8 +74,9 @@ public class RestClient {
         return response.getBody();
     }
 
-    private URI targetUri(String path) {
-        return this.baseUri.resolve(path);
+    private String targetUri(String path) {
+        return String.format("%s%s", this.baseUri, path);
+//        return this.baseUri.resolve(path);
     }
 
 }

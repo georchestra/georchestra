@@ -25,36 +25,54 @@ import org.testcontainers.utility.DockerImageName;
 
 /**
  * A <a href="https://www.testcontainers.org">Testconainers</a> container to run
- * georchestra's LDAP server as a JUnit {@code @Rule}, exposing the container's
- * port {@code 389} on the host's {@code 11389} by default.
+ * georchestra's LDAP server as a JUnit {@code @Rule} based on
+ * {@code georchestra/ldap:latest}.
+ * <p>
+ * Get the host mapped port for {@code 389} with {@link #getMappedPort(int)
+ * getMappedPort(389)}, or directly with {@link #getMappedLdapPort()}
+ * <p>
+ * For convenience, once the container is started, the mapped LDAP port will
+ * automatically set as a {@link System#getProperty System property}
+ * {@code ldapPort=<mapped port>}, following standard georchestra
+ * datadirectory's property name.
  */
 public class GeorchestraLdapContainer extends GenericContainer<GeorchestraLdapContainer> {
 
-    public static final int DEFAULT_HOST_PORT = 11389;
-
     public GeorchestraLdapContainer() {
-        this(DEFAULT_HOST_PORT);
+        this(DockerImageName.parse("georchestra/ldap:latest"));
     }
 
-    public GeorchestraLdapContainer(int hostPort) {
-        this(DockerImageName.parse("georchestra/ldap:latest"), hostPort);
-    }
-
-    GeorchestraLdapContainer(final DockerImageName dockerImageName, int hostPort) {
+    GeorchestraLdapContainer(final DockerImageName dockerImageName) {
         super(dockerImageName);
         withExposedPorts(389);
-        addFixedExposedPort(hostPort, 389);
+//        addFixedExposedPort(hostPort, 389);
         addEnv("SLAPD_ORGANISATION", "georchestra");
         addEnv("SLAPD_DOMAIN", "georchestra.org");
         addEnv("SLAPD_PASSWORD", "secret");
         addEnv("SLAPD_LOG_LEVEL", "32768");
-
-        super.withLogConsumer(outputFrame -> System.out.print("--- ldap: " + outputFrame.getUtf8String()));
 
         withCreateContainerCmdModifier(it -> it.withName("testcontainers-georchestra-ldap-" + Base58.randomString(8)));
 
         // this is faster than Wait.forHealthcheck() which is set every 30secs
         // in georchestra/ldap's Dockerfile
         waitingFor(Wait.forLogMessage(".*slapd starting.*\\n", 1));
+    }
+
+    public GeorchestraLdapContainer withLogToStdOut() {
+        return withLogConsumer(outputFrame -> System.out.print("--- ldap: " + outputFrame.getUtf8String()));
+    }
+
+    public int getMappedLdapPort() {
+        return getMappedPort(389);
+    }
+
+    protected @Override void doStart() {
+        super.doStart();
+        int mappedLdapPort = getMappedLdapPort();
+        String host = getHost();
+        System.setProperty("ldapPort", String.valueOf(mappedLdapPort));
+        System.setProperty("ldapHost", host);
+        System.out.println("Automatically set system property ldapPort=" + mappedLdapPort);
+        System.out.println("Automatically set system property ldapHost=" + host);
     }
 }

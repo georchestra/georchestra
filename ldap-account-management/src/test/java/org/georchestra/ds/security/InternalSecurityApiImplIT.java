@@ -52,7 +52,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 public class InternalSecurityApiImplIT {
 
-    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();
+    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();// .withLogToStdOut();
 
     private @Autowired UsersApi users;
     private @Autowired OrganizationsApi orgs;

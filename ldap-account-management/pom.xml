@@ -62,10 +62,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>1.16.0</version>
-      <scope>test</scope>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-testcontainers</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
