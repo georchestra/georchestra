@@ -22,7 +22,7 @@ public class RestClient {
     private URI baseUri;
     private RestTemplate restTemplate;
 
-    RestClient(@NonNull URI baseUri) {
+    public RestClient(@NonNull URI baseUri) {
         this.baseUri = baseUri;
 
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
