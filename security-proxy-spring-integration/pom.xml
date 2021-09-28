@@ -41,6 +41,7 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>

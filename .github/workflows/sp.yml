@@ -3,10 +3,12 @@ on:
   push:
     paths:
       - "commons/**"
+      - "ldap-account-management/**"
       - "security-proxy/**"
   pull_request:
     paths:
       - "commons/**"
+      - "ldap-account-management/**"
       - "security-proxy/**"
 
 jobs:
@@ -36,11 +38,12 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
-      run: ./mvnw --no-transfer-progress -B -P-all,security-proxy -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw install -pl :security-proxy --also-make -P-all,security-proxy -DskipTests --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
+      # note "-pl :security-proxy --also-make" builds only the project and its dependencies
 
     - name: "Running tests"
       working-directory: security-proxy/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw verify -Pit --no-transfer-progress -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'
@@ -50,7 +53,7 @@ jobs:
     - name: "Building docker image"
       if: github.repository == 'georchestra/georchestra'
       working-directory: security-proxy/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-log4j  -DdockerImageName=georchestra/security-proxy:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../mvnw clean package docker:build -Pdocker,log4j-logstash,sentry-log4j  -DdockerImageName=georchestra/security-proxy:${{ steps.version.outputs.VERSION }} -DskipTests --no-transfer-progress
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1

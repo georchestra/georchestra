@@ -3,10 +3,12 @@ on:
   push:
     paths:
       - "commons/**"
+      - "ldap-account-management/**"
       - "console/**"
   pull_request:
     paths:
       - "commons/**"
+      - "ldap-account-management/**"
       - "console/**"
 
 jobs:
@@ -36,11 +38,12 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
-      run: ./mvnw --no-transfer-progress -B -P-all,console -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw install -pl :console --also-make -P-all,console --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
+      # note "-pl :console --also-make" builds only the project and its dependencies
 
     - name: "Running tests"
       working-directory: console/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dskip.npm
+      run: ../mvnw verify --no-transfer-progress -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dskip.npm
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'

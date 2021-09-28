@@ -35,16 +35,14 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
-      run: |
-          ./mvnw --non-recursive --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
-          ./mvnw -f commons/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
-          ./mvnw -f datafeeder/ --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw install -pl :datafeeder --also-make -P-all,datafeeder --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
+      # note "-pl :datafeeder --also-make" builds only the project and its dependencies
 
     - name: "Running Unit Tests"
-      run: ./mvnw -f datafeeder/ test -DskipITs=true -DskipTests=false -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw test -pl :datafeeder -P-all,datafeeder -DskipITs=true -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: "Running Integration Tests"
-      run: ./mvnw -f datafeeder/ verify -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw verify -pl :datafeeder -P-all,datafeeder -DskipITs=false -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'

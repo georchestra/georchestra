@@ -92,6 +92,8 @@
     <module>ogc-server-statistics</module>
     <module>commons</module>
     <module>security-proxy-spring-integration</module>
+    <module>ldap-account-management</module>
+    <module>testcontainers</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -914,10 +916,11 @@
       <modules>
         <module>cas-server-webapp</module>
         <module>extractorapp</module>
-        <module>testcontainers</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
+        <module>commons</module>
         <module>ldap-account-management</module>
+        <module>testcontainers</module>
         <module>console</module>
         <module>mapfishapp</module>
         <module>atlas</module>
