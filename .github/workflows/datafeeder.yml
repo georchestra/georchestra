@@ -2,9 +2,13 @@ name: "datafeeder"
 on:
   push:
     paths:
+      - "commons/**"
+      - "security-proxy-spring-integration/**"
       - "datafeeder/**"
   pull_request:
     paths:
+      - "commons/**"
+      - "security-proxy-spring-integration/**"
       - "datafeeder/**"
 
 jobs:
