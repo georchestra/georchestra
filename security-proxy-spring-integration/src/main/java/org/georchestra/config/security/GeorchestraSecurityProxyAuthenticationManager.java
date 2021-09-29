@@ -54,7 +54,7 @@ public class GeorchestraSecurityProxyAuthenticationManager implements Authentica
     private PreAuthenticatedAuthenticationToken createAnonymousAuthenticationToken() {
         GeorchestraUser user = new GeorchestraUser();
         user.setUsername("anonymousUser");
-        user.setRoles(Collections.singletonList("ROLE_ANONYMOUS"));
+        user.setRoles(Collections.singletonList("ANONYMOUS"));
 
         final boolean anonymous = true;
         GeorchestraUserDetails principal = new GeorchestraUserDetails(user, anonymous);
