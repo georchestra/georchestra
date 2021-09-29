@@ -111,7 +111,12 @@ public class GeorchestraUserDetails implements UserDetails {
      *         {@link SimpleGrantedAuthority} instances
      */
     public @Override Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return user.getRoles().stream().map(this::addRolePrefix).map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    private String addRolePrefix(String roleName) {
+        return "ROLE_" + roleName;
     }
 
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
