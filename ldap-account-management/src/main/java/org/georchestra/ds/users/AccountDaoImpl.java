@@ -66,7 +66,7 @@ import lombok.NonNull;
  *
  * @author Mauricio Pazos
  */
-public final class AccountDaoImpl implements AccountDao {
+public class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
     private AccountContextMapper attributMapper;

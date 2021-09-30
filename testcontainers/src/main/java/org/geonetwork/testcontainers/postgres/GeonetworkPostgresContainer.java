@@ -18,7 +18,6 @@
  */
 package org.geonetwork.testcontainers.postgres;
 
-import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
