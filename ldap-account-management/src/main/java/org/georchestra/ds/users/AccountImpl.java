@@ -75,8 +75,6 @@ public class AccountImpl implements Serializable, Account {
 
     @JsonIgnore
     private String password; // userPassword
-    @JsonIgnore
-    private String newPassword;
 
     // user details
     // sn, givenName, title, postalAddress, postalCode, registeredAddress,
@@ -158,17 +156,16 @@ public class AccountImpl implements Serializable, Account {
     public String toString() {
         return "AccountImpl{" + "manager='" + manager + '\'' + ", uid='" + uid + '\'' + ", commonName='" + commonName
                 + '\'' + ", surname='" + surname + '\'' + ", email='" + email + '\'' + ", phone='" + phone + '\''
-                + ", description='" + description + '\'' + ", password='" + password + '\'' + ", newPassword='"
-                + newPassword + '\'' + ", givenName='" + givenName + '\'' + ", title='" + title + '\''
-                + ", postalAddress='" + postalAddress + '\'' + ", postalCode='" + postalCode + '\''
-                + ", registeredAddress='" + registeredAddress + '\'' + ", postOfficeBox='" + postOfficeBox + '\''
-                + ", physicalDeliveryOfficeName='" + physicalDeliveryOfficeName + '\'' + ", street='" + street + '\''
-                + ", locality='" + locality + '\'' + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\''
-                + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
-                + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
-                + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
-                + "', saslUser='" + saslUser + "'}";
+                + ", description='" + description + '\'' + ", password='" + password + '\'' + ", givenName='"
+                + givenName + '\'' + ", title='" + title + '\'' + ", postalAddress='" + postalAddress + '\''
+                + ", postalCode='" + postalCode + '\'' + ", registeredAddress='" + registeredAddress + '\''
+                + ", postOfficeBox='" + postOfficeBox + '\'' + ", physicalDeliveryOfficeName='"
+                + physicalDeliveryOfficeName + '\'' + ", street='" + street + '\'' + ", locality='" + locality + '\''
+                + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\'' + ", roomNumber='" + roomNumber
+                + '\'' + ", stateOrProvince='" + stateOrProvince + '\'' + ", homePostalAddress='" + homePostalAddress
+                + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", privacyPolicyAgreementDate='"
+                + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\'' + ", note='" + note + '\''
+                + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "', saslUser='" + saslUser + "'}";
     }
 
     @Override
@@ -237,20 +234,6 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public String getPassword() {
         return password;
-    }
-
-    @Override
-    public void setNewPassword(String newPassword) {
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
-        this.newPassword = encrypted;
-
-    }
-
-    @Override
-    public String getNewPassword() {
-        return this.newPassword;
-
     }
 
     @Override

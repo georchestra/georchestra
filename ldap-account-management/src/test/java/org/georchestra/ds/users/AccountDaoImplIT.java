@@ -28,7 +28,7 @@ public class AccountDaoImplIT {
     private @Autowired AccountDaoImpl accountDao;
     private @Autowired LdapTemplate ldapTemplate;
 
-    Account account;
+    private Account account;
 
     @Before
     public void setup() throws Exception {

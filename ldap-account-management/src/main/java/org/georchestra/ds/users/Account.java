@@ -65,10 +65,6 @@ public interface Account extends Comparable<Account> {
 
     String getPassword();
 
-    void setNewPassword(String newPassword);
-
-    String getNewPassword();
-
     String getSurname();
 
     void setSurname(String surname);
