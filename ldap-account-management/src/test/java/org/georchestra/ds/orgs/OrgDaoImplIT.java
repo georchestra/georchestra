@@ -1,18 +1,14 @@
-package org.georchestra.console.integration.ds;
+package org.georchestra.ds.orgs;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.console.integration.IntegrationTestSupport;
-import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +16,16 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.google.common.collect.Lists;
 
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 public class OrgDaoImplIT {
-    public @Rule @Autowired IntegrationTestSupport support;
-    @Autowired
-    OrgsDao orgDao;
-    @Autowired
-    LdapTemplate ldapTemplate;
+    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
+
+    private @Autowired OrgsDao orgDao;
+    private @Autowired LdapTemplate ldapTemplate;
 
     Org org;
     OrgExt orgExt;
@@ -46,11 +39,7 @@ public class OrgDaoImplIT {
         org.setShortName("tEsTOrG");
         org.setOrgExt(orgExt);
         orgExt.setId("torg");
-        ArrayList<String> cities = new ArrayList<String>() {
-            {
-                add("Paris");
-            }
-        };
+        List<String> cities = Lists.newArrayList("Paris");
         org.setCities(cities);
         orgDao.insert(org);
         orgDao.insert(orgExt);
@@ -78,11 +67,7 @@ public class OrgDaoImplIT {
         orgExt = orgDao.findExtById("torg");
 
         org.setOrgExt(orgExt);
-        ArrayList<String> cities = new ArrayList<String>() {
-            {
-                add("Marseille");
-            }
-        };
+        List<String> cities = Lists.newArrayList("Marseille");
         org.setCities(cities);
         orgDao.update(org);
         assertTrue(Arrays.asList(dco.getStringAttributes("objectClass")).contains("dcObject"));

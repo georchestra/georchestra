@@ -1,19 +1,14 @@
-package org.georchestra.console.integration.ds;
+package org.georchestra.ds.users;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.console.integration.IntegrationTestSupport;
-import org.georchestra.ds.roles.RoleDaoImpl;
-import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDaoImpl;
-import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +16,17 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+
+import com.google.common.collect.Lists;
 
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 public class AccountDaoImplIT {
-    public @Rule @Autowired IntegrationTestSupport support;
-    @Autowired
-    AccountDaoImpl accountDao;
-    @Autowired
-    RoleDaoImpl roleDao;
-    @Autowired
-    LdapTemplate ldapTemplate;
+
+    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
+
+    private @Autowired AccountDaoImpl accountDao;
+    private @Autowired LdapTemplate ldapTemplate;
 
     Account account;
 
@@ -52,7 +45,7 @@ public class AccountDaoImplIT {
     @Test
     public void testObjectClassContextMapper() throws Exception {
         DirContextOperations dco = ldapTemplate.lookupContext("uid=userforittest,ou=users");
-        List<String> oc = new ArrayList<>(Arrays.asList(dco.getStringAttributes("objectClass")));
+        List<String> oc = Lists.newArrayList(dco.getStringAttributes("objectClass"));
         // Adding a random (but valid, we're dealing with real ldap server) objectClass
         oc.add("dcObject");
         dco.setAttributeValues("objectClass", oc.toArray());

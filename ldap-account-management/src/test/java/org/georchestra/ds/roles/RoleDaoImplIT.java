@@ -1,9 +1,7 @@
-package org.georchestra.console.integration.ds;
+package org.georchestra.ds.roles;
 
 import static org.junit.Assert.assertTrue;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,17 +9,13 @@ import java.util.stream.Collectors;
 
 import javax.naming.Name;
 
-import org.apache.log4j.Logger;
-import org.georchestra.console.integration.IntegrationTestSupport;
-import org.georchestra.ds.roles.Role;
-import org.georchestra.ds.roles.RoleDaoImpl;
-import org.georchestra.ds.roles.RoleFactory;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,27 +23,20 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.google.common.collect.Lists;
 
 @RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 public class RoleDaoImplIT {
-    private static Logger LOGGER = Logger.getLogger(org.georchestra.console.integration.RolesIT.class);
-    private static DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
-    public @Rule @Autowired IntegrationTestSupport support;
-    @Autowired
-    AccountDaoImpl accountDao;
-    @Autowired
-    RoleDaoImpl roleDao;
-    @Autowired
-    LdapTemplate ldapTemplate;
+    private @Autowired AccountDaoImpl accountDao;
+    private @Autowired RoleDaoImpl roleDao;
+    private @Autowired LdapTemplate ldapTemplate;
 
-    Account account;
-    Role role;
+    private Account account;
+    private Role role;
 
     @Before
     public void setUp() throws Exception {
