@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -144,7 +145,7 @@ public class UsersIT {
         support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
         support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
         support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-        support.perform(get("/private/roles/" + role2Name)).andExpect(jsonPath("$.users").isEmpty());
+        support.perform(get("/private/roles/" + role2Name)).andDo(print()).andExpect(jsonPath("$.users").isEmpty());
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 

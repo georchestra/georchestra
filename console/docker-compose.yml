@@ -1,0 +1,32 @@
+# Docker composition to run integration tests against.
+# Sets up required external services:
+# - ldap
+# - database
+version: '3.8'
+
+services:
+  smtp:
+    image: camptocamp/smtp-sink:latest
+    #volumes:
+    #  - smtp_maildir:/home/smtp/Maildir/
+    ports:
+      - ${SMTP_PORT}:25
+    restart: always
+  ldap:
+    image: georchestra/ldap:latest
+    environment:
+        - SLAPD_ORGANISATION=georchestra
+        - SLAPD_DOMAIN=georchestra.org
+        - SLAPD_PASSWORD=secret
+        - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
+    restart: always
+    ports:
+      - ${LDAP_PORT}:389
+  database:
+    image: georchestra/database:latest
+    environment:
+      - POSTGRES_USER=georchestra
+      - POSTGRES_PASSWORD=georchestra
+    ports:
+      - ${POSTGRESQL_PORT}:5432
+    restart: always

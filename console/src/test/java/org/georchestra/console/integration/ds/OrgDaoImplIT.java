@@ -22,6 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.google.common.collect.Lists;
+
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
@@ -64,7 +66,7 @@ public class OrgDaoImplIT {
     @Test
     public void testObjectClassContextMapper() throws Exception {
         DirContextOperations dco = ldapTemplate.lookupContext("cn=torg,ou=orgs");
-        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
+        List<String> oc = Lists.newArrayList(dco.getStringAttributes("objectClass"));
         // Adding a random (but valid, we're dealing with real ldap server) objectClass
         oc.add("dcObject");
         dco.setAttributeValues("objectClass", oc.toArray());

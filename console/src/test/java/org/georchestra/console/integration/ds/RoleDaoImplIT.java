@@ -31,6 +31,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.google.common.collect.Lists;
+
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
@@ -76,7 +78,7 @@ public class RoleDaoImplIT {
         // Adding another objectClass to the role "TEST_ROLE", created in @Before
         Name roleDn = roleDao.buildRoleDn("TEST_ROLE");
         DirContextOperations dco = ldapTemplate.lookupContext(roleDn);
-        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
+        List<String> oc = Lists.newArrayList(dco.getStringAttributes("objectClass"));
         oc.add("uidObject");
         dco.setAttributeValue("uid", "1234");
         dco.setAttributeValues("objectClass", oc.toArray());

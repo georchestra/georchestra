@@ -141,16 +141,23 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    public void deleteUser(String roleName, Account account, final String originLogin) throws DataServiceException {
+    public void deleteUser(String roleName, Account account, final String originLogin)
+            throws NameNotFoundException, DataServiceException {
         /* TODO Add hierarchic behaviour here like addUser method */
 
-        Name dnSvUser = buildRoleDn(roleName);
-
-        DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
-        ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
-        ctx.removeAttributeValue("member", accountDao.buildFullUserDn(account));
-
-        this.ldapTemplate.modifyAttributes(ctx);
+        Role role = this.findByCommonName(roleName);
+        String username = account.getUid();
+        List<String> userList = role.getUserList();
+        boolean removed = userList != null && userList.remove(username);
+        if (removed) {
+            try {
+                this.update(roleName, role);
+            } catch (NameNotFoundException | DuplicatedCommonNameException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new DataServiceException(e);
+            }
+        }
     }
 
     @Override
@@ -311,10 +318,10 @@ public class RoleDaoImpl implements RoleDao {
             role.setUniqueIdentifier(UUID.randomUUID());
         }
         String suuid = role.getUniqueIdentifier().toString();
-        setAccountField(context, RoleSchema.UUID_KEY, suuid);
+        setContextField(context, RoleSchema.UUID_KEY, suuid);
 
-        setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
-        setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
+        setContextField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
+        setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
         context.setAttributeValues(RoleSchema.MEMBER_KEY, role.getUserList().stream().map(userUid -> {
             try {
                 return accountDao.findByUID(userUid);
@@ -324,7 +331,7 @@ public class RoleDaoImpl implements RoleDao {
         }).filter(account -> null != account).map(account -> accountDao.buildFullUserDn(account))
                 .collect(Collectors.toList()).toArray());
         if (role.isFavorite()) {
-            setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
+            setContextField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         } else {
             context.removeAttributeValue(RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         }
@@ -337,7 +344,7 @@ public class RoleDaoImpl implements RoleDao {
      * @param fieldName
      * @param value
      */
-    private void setAccountField(DirContextOperations context, String fieldName, Object value) {
+    private void setContextField(DirContextOperations context, String fieldName, Object value) {
 
         if (!isNullValue(value)) {
             context.setAttributeValue(fieldName, value);

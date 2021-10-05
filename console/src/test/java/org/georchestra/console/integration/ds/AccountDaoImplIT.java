@@ -2,6 +2,7 @@ package org.georchestra.console.integration.ds;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class AccountDaoImplIT {
     @Test
     public void testObjectClassContextMapper() throws Exception {
         DirContextOperations dco = ldapTemplate.lookupContext("uid=userforittest,ou=users");
-        List<String> oc = Arrays.asList(dco.getStringAttributes("objectClass"));
+        List<String> oc = new ArrayList<>(Arrays.asList(dco.getStringAttributes("objectClass")));
         // Adding a random (but valid, we're dealing with real ldap server) objectClass
         oc.add("dcObject");
         dco.setAttributeValues("objectClass", oc.toArray());
