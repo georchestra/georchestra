@@ -21,6 +21,7 @@ services:
     ports:
       - ${SMTP_PORT}:25
     restart: always
+
   ldap:
     image: georchestra/ldap:latest
     environment:
@@ -32,6 +33,7 @@ services:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
     restart: always
+
   database:
     image: georchestra/database:latest
     environment:
@@ -42,6 +44,20 @@ services:
     ports:
       - ${POSTGRESQL_PORT}:5432
     restart: always
+
+  console:
+    image: georchestra/console:latest
+    depends_on:
+      - ldap
+      - database
+    volumes:
+      - ./src/test/resources/datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=1G
+    restart: always
+
   geoserver:
     image: georchestra/geoserver:latest
     depends_on:
@@ -56,11 +72,11 @@ services:
     ports:
       - ${GEOSERVER_PORT}:8080
     restart: always
+
   geonetwork:
     image: georchestra/geonetwork:latest
     depends_on:
-      - ldap
-      - database
+      - console
     volumes:
       # - ./src/test/resources/datadir:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
