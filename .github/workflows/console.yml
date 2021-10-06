@@ -2,11 +2,15 @@ name: "console"
 on:
   push:
     paths:
+      - "ldap/**"
+      - "postgresql/**"
       - "commons/**"
       - "ldap-account-management/**"
       - "console/**"
   pull_request:
     paths:
+      - "ldap/**"
+      - "postgresql/**"
       - "commons/**"
       - "ldap-account-management/**"
       - "console/**"
@@ -40,6 +44,12 @@ jobs:
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :console --also-make -P-all,console --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
       # note "-pl :console --also-make" builds only the project and its dependencies
+
+    - name: "Building LDAP and PostgreSQL docker images"
+      if: github.repository == 'georchestra/georchestra'
+      run: |
+        docker build -t georchestra/ldap:latest ./ldap
+        docker build -t georchestra/database:latest ./postgresql
 
     - name: "Running tests"
       working-directory: console/
