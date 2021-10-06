@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.model.GeorchestraUser;
-import org.georchestra.security.model.GeorchestraUserHasher;
 import org.georchestra.security.model.Organization;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -128,14 +127,8 @@ public class GeorchestraUserDetails implements UserDetails {
             user = buildUserFromHeaders(headers);
             if (!StringUtils.hasLength(user.getId())) {
                 String username = user.getUsername();
-                log.info("No unique id provided for user. Using username as identifier: " + username);
+                log.debug("No unique id provided for user. Using username as identifier: " + username);
                 user.setId(username);
-            }
-            if (null == user.getLastUpdated()) {
-                String hash = GeorchestraUserHasher.createHash(user);
-                log.info("lastUpdated not provided for user {}, using a hash based on relevant fields: {}",
-                        user.getUsername(), hash);
-                user.setLastUpdated(hash);
             }
         }
         return new GeorchestraUserDetails(user, anonymous);
@@ -222,7 +215,7 @@ public class GeorchestraUserDetails implements UserDetails {
             else
                 log.debug("Found header {}={} ({})", headerName, value, decoded);
         } else {
-            log.info("NOT Found header {}", headerName);
+            log.trace("NOT Found header {}", headerName);
         }
         return decoded;
     }
