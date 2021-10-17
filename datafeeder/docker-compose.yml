@@ -1,26 +1,26 @@
-# Docker composition to run integration tests against.
-# Sets up required external services:
-# - ldap
-# - database
-# - geoserver
-# - geonetwork
-version: '3.8'
+version: "3.1"
 
 volumes:
-  postgresql_data:
-  ldap_data:
-  ldap_config:
-  geoserver_datadir:
-  geonetwork_datadir:
+  config:
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/src/test/resources/datadir
 
 services:
   smtp:
     image: camptocamp/smtp-sink:latest
-    #volumes:
-    #  - smtp_maildir:/home/smtp/Maildir/
     ports:
-      - ${SMTP_PORT}:25
+      - "2025:25"
     restart: always
+
+  database:
+    image: georchestra/database:latest
+    environment:
+      - POSTGRES_USER=georchestra
+      - POSTGRES_PASSWORD=georchestra
+    ports:
+      - "15432:5432"
 
   ldap:
     image: georchestra/ldap:latest
@@ -29,21 +29,6 @@ services:
         - SLAPD_DOMAIN=georchestra.org
         - SLAPD_PASSWORD=secret
         - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
-    volumes:
-      - ldap_data:/var/lib/ldap
-      - ldap_config:/etc/ldap
-    restart: always
-
-  database:
-    image: georchestra/database:latest
-    environment:
-      - POSTGRES_USER=georchestra
-      - POSTGRES_PASSWORD=georchestra
-    volumes:
-      - postgresql_data:/var/lib/postgresql/data
-    ports:
-      - ${POSTGRESQL_PORT}:5432
-    restart: always
 
   console:
     image: georchestra/console:latest
@@ -51,39 +36,55 @@ services:
       - ldap
       - database
     volumes:
-      - ./src/test/resources/datadir:/etc/georchestra
+      - config:/etc/georchestra
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
-    restart: always
+    ports:
+      - "38080:8080"
 
   geoserver:
     image: georchestra/geoserver:latest
     depends_on:
       - ldap
     volumes:
-      - ./src/test/resources/datadir:/etc/georchestra
-      - geoserver_datadir:/mnt/geoserver_datadir
+      - config:/etc/georchestra
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
-      - XMX=1G
     ports:
-      - ${GEOSERVER_PORT}:8080
-    restart: always
+      - "18080:8080"
 
   geonetwork:
     image: georchestra/geonetwork:latest
     depends_on:
       - console
+      - database
+      - kibana
+      - elasticsearch
     volumes:
-      # - ./src/test/resources/datadir:/etc/georchestra
-      - geonetwork_datadir:/mnt/geonetwork_datadir
+      - config:/etc/georchestra
     environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - DATA_DIR=/var/lib/geonetwork_data
+      - ES_HOST=elasticsearch
+      - ES_PROTOCOL=http
+      - ES_PORT=9200
+      - KB_URL=http://kibana:5601
+      - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
-      - XMX=2G
     ports:
-      - ${GEONETWORK_PORT}:8080
-    restart: always
+      - "28080:8080"
+
+  elasticsearch:
+    image: elasticsearch:7.9.0
+    environment:
+      discovery.type: single-node
+
+  kibana:
+    image: kibana:7.9.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    volumes:
+      - ./src/test/resources/datadir/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+

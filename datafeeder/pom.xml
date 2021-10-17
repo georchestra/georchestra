@@ -698,11 +698,6 @@
       </activation>
       <properties>
         <!-- define the ports where the services will be exposed to on localhost -->
-        <smtpHost>localhost</smtpHost>
-        <smtpPort>2025</smtpPort>
-        <postgresql.port>15432</postgresql.port>
-        <geoserver.port>18080</geoserver.port>
-        <geonetwork.port>28080</geonetwork.port>
         <skipTests>false</skipTests>
         <skipITs>${skipTests}</skipITs>
         <docker-compose.skip>${skipITs}</docker-compose.skip>
@@ -723,11 +718,6 @@
             </executions>
             <configuration>
               <skipITs>${skipITs}</skipITs>
-              <systemProperties>
-                <geoserver_api_url>http://localhost:${geoserver.port}/geoserver/rest</geoserver_api_url>
-                <geoserver_admin_user>admin</geoserver_admin_user>
-                <geoserver_admin_password>geoserver</geoserver_admin_password>
-              </systemProperties>
             </configuration>
           </plugin>
           <plugin>
@@ -743,7 +733,7 @@
                 </goals>
                 <configuration>
                   <awaitCmd>curl</awaitCmd>
-                  <awaitCmdArgs>http://localhost:${geonetwork.port}/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
+                  <awaitCmdArgs>http://localhost:28080/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
                   <awaitTimeout>120</awaitTimeout>
                 </configuration>
               </execution>
@@ -759,12 +749,6 @@
             <configuration>
               <skip>${docker-compose.skip}</skip>
               <composeFile>${project.basedir}/docker-compose.yml</composeFile>
-              <envVars>
-                <SMTP_PORT>${smtpPort}</SMTP_PORT>
-                <POSTGRESQL_PORT>${postgresql.port}</POSTGRESQL_PORT>
-                <GEOSERVER_PORT>${geoserver.port}</GEOSERVER_PORT>
-                <GEONETWORK_PORT>${geonetwork.port}</GEONETWORK_PORT>
-              </envVars>
               <detachedMode>true</detachedMode>
               <verbose>false</verbose>
               <removeVolumes>true</removeVolumes>
