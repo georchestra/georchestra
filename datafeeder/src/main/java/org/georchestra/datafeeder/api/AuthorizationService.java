@@ -93,8 +93,11 @@ public class AuthorizationService {
         Object principal = auth.getPrincipal();
         UserInfo user = new UserInfo();
         if (principal instanceof GeorchestraUserDetails) {
-            GeorchestraUserDetails georUser = (GeorchestraUserDetails) principal;
-            return userInfoMapper.map(georUser);
+            GeorchestraUserDetails userDetails = (GeorchestraUserDetails) principal;
+            userDetails.getOrganization().orElseThrow(
+                    () -> new IllegalStateException("User organization not provided through authentication headers"));
+
+            user = userInfoMapper.map(userDetails);
         }
         return user;
     }

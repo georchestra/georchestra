@@ -99,7 +99,7 @@ public class GeorchestraDataBackendServiceIT {
     public @Before void before() throws SQLException {
         testConnection = support.createLocalPostgisConnection();
         user = authSupport.buildUser();
-        expectedSchemaName = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getId());
+        expectedSchemaName = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getShortName());
         support.deleteLocalDatabaseSchema(expectedSchemaName);
 
         job = new DataUploadJob();

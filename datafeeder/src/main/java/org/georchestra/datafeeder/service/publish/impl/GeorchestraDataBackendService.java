@@ -35,8 +35,8 @@ import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.UserInfo;
-import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.geotools.data.DataStore;
@@ -133,7 +133,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
             @NonNull ProgressListener progressListener) {
         requireNonNull(dataset.getName(), "Dataset name is null");
         requireNonNull(user.getOrganization(), "Organization is null");
-        requireNonNull(user.getOrganization().getId(), "Organization is null");
+        requireNonNull(user.getOrganization().getShortName(), "Organization is null");
         requireNonNull(dataset.getPublishing(), "Dataset 'publishing' settings is null");
 
         final Map<String, String> connectionParams = resolveConnectionParams(user);
@@ -176,7 +176,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
     public @VisibleForTesting Map<String, String> resolveConnectionParams(@NonNull UserInfo user) {
         Map<String, String> connectionParams = props.getPublishing().getBackend().getLocal();
         Organization org = user.getOrganization();
-        String orgName = org == null ? null : org.getId();
+        String orgName = org == null ? null : org.getShortName();
         if (orgName == null) {
             throw new IllegalStateException("Georchestra organization name not provided in job.user.organization.id");
         }

@@ -115,7 +115,7 @@ public class GeorchestraOwsPublicationServiceIT {
 
     public @Before void setup() {
         user = authSupport.buildUser();
-        expectedWorksapce = nameResolver.resolveWorkspaceName(user.getOrganization().getId());
+        expectedWorksapce = nameResolver.resolveWorkspaceName(user.getOrganization().getShortName());
         expectedDataStore = nameResolver.resolveDataStoreName(expectedWorksapce);
         geoServerClient.setDebugRequests(true);
 

@@ -98,8 +98,8 @@ public class MockDataBackendService implements DataBackendService, DisposableBea
     }
 
     private File resolveKey(DataUploadJob job, UserInfo user) {
-        String orgName = (user.getOrganization() == null || user.getOrganization().getId() == null) ? NULL_ORG
-                : user.getOrganization().getId();
+        String orgName = (user.getOrganization() == null || user.getOrganization().getShortName() == null) ? NULL_ORG
+                : user.getOrganization().getShortName();
         File directory = baseDirectory.toPath().resolve(job.getJobId().toString()).resolve(orgName).toFile();
         directory.mkdirs();
         this.directories.add(directory);

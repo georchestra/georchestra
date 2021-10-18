@@ -38,8 +38,8 @@ import org.georchestra.datafeeder.batch.analysis.BatchTestConfiguration.UploadJo
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
+import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.UserInfo;
-import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
@@ -88,7 +88,7 @@ public class UploadAnalysisJobConfigurationTest {
         jobParameters = new HashMap<>();
         testUser = new UserInfo();
         Organization org = new Organization();
-        org.setId("test-org");
+        org.setShortName("test-org");
         testUser.setOrganization(org);
     }
 

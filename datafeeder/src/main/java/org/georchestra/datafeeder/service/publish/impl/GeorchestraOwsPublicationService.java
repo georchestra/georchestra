@@ -35,9 +35,9 @@ import org.georchestra.datafeeder.model.BoundingBoxMetadata;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
+import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
-import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
@@ -92,7 +92,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(dataset.getJob());
         final Organization userOrganization = user.getOrganization();
         requireNonNull(userOrganization, "organization name not provided");
-        requireNonNull(userOrganization.getId(), "organization name not provided");
+        requireNonNull(userOrganization.getShortName(), "organization name not provided");
         requireNonNull(dataset.getName(), "dataset native name not provided");
 
         PublishSettings publishing = dataset.getPublishing();
@@ -209,7 +209,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         Map<String, String> connectionParams = new HashMap<>(
                 configProperties.getPublishing().getBackend().getGeoserver());
 
-        String schema = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getId());
+        String schema = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getShortName());
         for (String k : connectionParams.keySet()) {
             String v = connectionParams.get(k);
             if ("<schema>".equals(v)) {
@@ -295,7 +295,7 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
     }
 
     private String resolveWorkspace(@NonNull UserInfo user) {
-        final @NonNull String orgName = user.getOrganization().getId();
+        final @NonNull String orgName = user.getOrganization().getShortName();
         final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
         String baseNamespaceURI = this.configProperties.getPublishing().getGeoserver().getBaseNamespaceURI();
         String namespaceURI = URI.create(baseNamespaceURI + "/" + workspaceName).normalize().toString();

@@ -18,20 +18,14 @@
  */
 package org.georchestra.datafeeder.model;
 
-import java.util.List;
-
 import lombok.Data;
 
-@Data
-public class UserInfo {
-    private String username;
-    private List<String> roles;
-    private String firstName;
-    private String lastName;
-    private Organization organization;
-    private String email;
+public @Data class Organization {
+    private String shortName;
+    private String name;
+    private String linkage;
     private String postalAddress;
-    private String telephoneNumber;
-    private String title;
+    private String category;
+    private String description;
     private String notes;
 }
