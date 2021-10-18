@@ -37,8 +37,10 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
+import org.georchestra.security.api.OrganizationsApi;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.env.PropertyResolver;
@@ -53,23 +55,32 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class UserDetailsJSONRequestHeaderProviderTest {
+public class UserOrganizationJSONRequestHeaderProviderTest {
 
-    private UsersApi lookupService;
-    private UserDetailsJSONRequestHeaderProvider provider;
-    private GeorchestraUser user;
+    private UsersApi userLookupService;
+    private OrganizationsApi orgsLookupService;
+    private UserOrganizationJSONRequestHeaderProvider orgHeaderProvider;
+
+    private Organization org;
+
     private Properties headersMapping;
     private MockHttpServletRequest request = new MockHttpServletRequest();
 
     public @Before void before() {
-        this.user = newGeorchestraUser("testadmin");
+        GeorchestraUser user = newGeorchestraUser("testadmin");
+        this.org = newOrganization(user.getOrganization(), user.getUsername());
 
-        this.lookupService = mock(UsersApi.class);
-        when(lookupService.findByUsername(anyString())).thenReturn(Optional.empty());
-        when(lookupService.findByUsername(eq(user.getUsername()))).thenReturn(Optional.of(user));
+        this.userLookupService = mock(UsersApi.class);
+        when(userLookupService.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userLookupService.findByUsername(eq(user.getUsername()))).thenReturn(Optional.of(user));
 
-        this.provider = new UserDetailsJSONRequestHeaderProvider();
-        this.provider.setUsers(lookupService);
+        this.orgsLookupService = mock(OrganizationsApi.class);
+        when(orgsLookupService.findByShortName(anyString())).thenReturn(Optional.empty());
+        when(orgsLookupService.findByShortName(eq(user.getOrganization()))).thenReturn(Optional.of(org));
+
+        this.orgHeaderProvider = new UserOrganizationJSONRequestHeaderProvider();
+        this.orgHeaderProvider.setUsers(userLookupService);
+        this.orgHeaderProvider.setOrgs(orgsLookupService);
 
         this.headersMapping = new Properties();
         this.request = new MockHttpServletRequest();
@@ -81,6 +92,7 @@ public class UserDetailsJSONRequestHeaderProviderTest {
     private GeorchestraUser newGeorchestraUser(String username) {
         GeorchestraUser user = new GeorchestraUser();
         user.setId(UUID.randomUUID().toString());
+        user.setLastUpdated(UUID.randomUUID().toString());
         user.setUsername(username);
         user.setEmail(username + "@georchestra.org");
         user.setFirstName("John");
@@ -90,19 +102,36 @@ public class UserDetailsJSONRequestHeaderProviderTest {
         return user;
     }
 
+    private Organization newOrganization(String orgShortName, String userName) {
+        Organization org = new Organization();
+
+        org.setShortName(orgShortName);
+        org.setId(UUID.randomUUID().toString());
+        org.setLastUpdated(UUID.randomUUID().toString());
+
+        org.setName(orgShortName + " Org Name");
+        org.setCategory(orgShortName + " category");
+        org.setDescription(orgShortName + " description");
+        org.setLinkage("http://test.com/" + orgShortName);
+        org.setNotes(orgShortName + " notes");
+        org.setPostalAddress(orgShortName + " postal address");
+        org.setMembers(Arrays.asList("user1", "user2", "user3", userName));
+        return org;
+    }
+
     private void enableGlobally() {
-        headersMapping.setProperty(UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY, "true");
+        headersMapping.setProperty(UserOrganizationJSONRequestHeaderProvider.CONFIG_PROPERTY, "true");
         init();
     }
 
     private void enableService(String service, boolean enabled) {
-        String key = String.format("%s.%s", service, UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY);
+        String key = String.format("%s.%s", service, UserOrganizationJSONRequestHeaderProvider.CONFIG_PROPERTY);
         headersMapping.setProperty(key, String.valueOf(enabled));
         init();
     }
 
     private void init() {
-        provider.init(headersMapping);
+        orgHeaderProvider.init(headersMapping);
     }
 
     public @Test void testAnonymous() {
@@ -111,7 +140,7 @@ public class UserDetailsJSONRequestHeaderProviderTest {
                 Collections.singletonList(new SimpleGrantedAuthority("ANONYMOUS")));
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        Map<String, String> headers = provider.getCustomRequestHeaders(request, null);
+        Map<String, String> headers = orgHeaderProvider.getCustomRequestHeaders(request, null);
         assertEquals(Collections.emptyMap(), headers);
     }
 
@@ -120,14 +149,14 @@ public class UserDetailsJSONRequestHeaderProviderTest {
         enableGlobally();
         enableService(service, false);
 
-        Map<String, String> headers = provider.getCustomRequestHeaders(request, service);
+        Map<String, String> headers = orgHeaderProvider.getCustomRequestHeaders(request, service);
         assertEquals(Collections.emptyMap(), headers);
 
-        headers = provider.getCustomRequestHeaders(request, null);
-        assertTrue(headers.containsKey("sec-user"));
+        headers = orgHeaderProvider.getCustomRequestHeaders(request, null);
+        assertTrue(headers.containsKey("sec-organization"));
 
-        headers = provider.getCustomRequestHeaders(request, "atlas");
-        assertTrue(headers.containsKey("sec-user"));
+        headers = orgHeaderProvider.getCustomRequestHeaders(request, "atlas");
+        assertTrue(headers.containsKey("sec-organization"));
     }
 
     public @Test void testDisabledGloballyAndEnabledForService()
@@ -143,49 +172,50 @@ public class UserDetailsJSONRequestHeaderProviderTest {
     }
 
     private void testHeader(final String service) throws IOException, JsonParseException, JsonMappingException {
-        Map<String, String> headers = provider.getCustomRequestHeaders(request, service);
-        assertTrue(headers.containsKey("sec-user"));
+        Map<String, String> headers = orgHeaderProvider.getCustomRequestHeaders(request, service);
+        assertTrue(headers.containsKey("sec-organization"));
 
-        final String base64Json = headers.get("sec-user");
+        final String base64Json = headers.get("sec-organization");
         assertNotNull(base64Json);
 
         final String json = SecurityHeaders.decode(base64Json);
         assertEquals(SecurityHeaders.encodeBase64(json), base64Json);
 
-        GeorchestraUser decodedUser = new ObjectMapper().readValue(json, GeorchestraUser.class);
-        assertEquals(this.user, decodedUser);
+        Organization decodedOrg = new ObjectMapper().readValue(json, Organization.class);
+        Organization expected = this.org.withMembers(Collections.emptyList());
+        assertEquals(expected, decodedOrg);
     }
 
     public @Test void testCacheTTL() throws InterruptedException {
         // set cache TTL to 500ms
         PropertyResolver env = mock(PropertyResolver.class);
         when(env.getProperty("security-proxy.ldap.cache.ttl")).thenReturn("500");
-        this.provider.setPropertyResolver(env);
+        this.orgHeaderProvider.setPropertyResolver(env);
         this.enableGlobally();
 
-        Map<String, String> pre1 = provider.getCustomRequestHeaders(request, null);
-        Map<String, String> pre2 = provider.getCustomRequestHeaders(request, null);
+        Map<String, String> pre1 = orgHeaderProvider.getCustomRequestHeaders(request, null);
+        Map<String, String> pre2 = orgHeaderProvider.getCustomRequestHeaders(request, null);
         Thread.sleep(1000);
-        Map<String, String> post = provider.getCustomRequestHeaders(request, null);
+        Map<String, String> post = orgHeaderProvider.getCustomRequestHeaders(request, null);
 
-        assertTrue(pre1.containsKey("sec-user"));
-        assertSame(pre1.get("sec-user"), pre2.get("sec-user"));
+        assertTrue(pre1.containsKey("sec-organization"));
+        assertSame(pre1.get("sec-organization"), pre2.get("sec-organization"));
 
-        assertTrue(post.containsKey("sec-user"));
-        assertNotSame(pre1.get("sec-user"), post.get("sec-user"));
+        assertTrue(post.containsKey("sec-organization"));
+        assertNotSame(pre1.get("sec-organization"), post.get("sec-organization"));
     }
 
     public @Test void testCacheDisabledByConfig() throws InterruptedException {
         // set cache TTL to 0ms
         PropertyResolver env = mock(PropertyResolver.class);
         when(env.getProperty("security-proxy.ldap.cache.ttl")).thenReturn("0");
-        this.provider.setPropertyResolver(env);
+        this.orgHeaderProvider.setPropertyResolver(env);
         this.enableGlobally();
 
-        Map<String, String> r1 = provider.getCustomRequestHeaders(request, null);
-        Map<String, String> r2 = provider.getCustomRequestHeaders(request, null);
+        Map<String, String> r1 = orgHeaderProvider.getCustomRequestHeaders(request, null);
+        Map<String, String> r2 = orgHeaderProvider.getCustomRequestHeaders(request, null);
 
-        assertTrue(r1.containsKey("sec-user"));
-        assertNotSame(r1.get("sec-user"), r2.get("sec-user"));
+        assertTrue(r1.containsKey("sec-organization"));
+        assertNotSame(r1.get("sec-organization"), r2.get("sec-organization"));
     }
 }

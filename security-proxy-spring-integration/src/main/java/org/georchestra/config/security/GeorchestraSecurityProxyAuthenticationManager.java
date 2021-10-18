@@ -20,13 +20,17 @@ package org.georchestra.config.security;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import lombok.NonNull;
 
 public class GeorchestraSecurityProxyAuthenticationManager implements AuthenticationManager {
 
@@ -57,7 +61,8 @@ public class GeorchestraSecurityProxyAuthenticationManager implements Authentica
         user.setRoles(Collections.singletonList("ANONYMOUS"));
 
         final boolean anonymous = true;
-        GeorchestraUserDetails principal = new GeorchestraUserDetails(user, anonymous);
+        Optional<Organization> org = Optional.empty();
+        GeorchestraUserDetails principal = new GeorchestraUserDetails(user, org, anonymous);
         Object credentials = null;// i.e. password
         return new PreAuthenticatedAuthenticationToken(principal, credentials, principal.getAuthorities());
     }

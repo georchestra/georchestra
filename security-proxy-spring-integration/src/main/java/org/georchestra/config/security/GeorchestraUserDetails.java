@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.georchestra.commons.security.SecurityHeaders;
@@ -49,7 +50,7 @@ public class GeorchestraUserDetails implements UserDetails {
     private static final long serialVersionUID = -8672954222635750682L;
 
     /**
-     * Parser for SEC_USER, see {@link #decodeFromJSON}
+     * Parser for SEC_USER, see {@link #decodeUserFromJSON}
      */
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -77,8 +78,11 @@ public class GeorchestraUserDetails implements UserDetails {
     static final String SEC_ORG_CATEGORY = "sec-org-category";
     static final String SEC_ORG_DESCRIPTION = "sec-org-description";
     static final String SEC_ORG_LASTUPDATED = org.georchestra.commons.security.SecurityHeaders.SEC_ORG_LASTUPDATED;
+    static final String SEC_ORG_NOTES = "sec-org-notes";
 
     private @NonNull GeorchestraUser user;
+
+    private @NonNull Optional<Organization> organization;
 
     /** {@code true} if request header {@code sec-username} is {@code null} */
     private boolean anonymous;
@@ -121,17 +125,69 @@ public class GeorchestraUserDetails implements UserDetails {
     public static GeorchestraUserDetails fromHeaders(Map<String, String> headers) {
         final boolean anonymous = !headers.containsKey(SEC_USERNAME) && !headers.containsKey(SEC_USER);
         final GeorchestraUser user;
+        final Optional<Organization> org;
+
         if (anonymous) {
             user = buildUserFromHeaders(Collections.singletonMap(SEC_USERNAME, "anonymousUser"));
+            org = Optional.empty();
         } else {
             user = buildUserFromHeaders(headers);
+            org = buildOrgFromHeaders(headers);
             if (!StringUtils.hasLength(user.getId())) {
                 String username = user.getUsername();
                 log.debug("No unique id provided for user. Using username as identifier: " + username);
                 user.setId(username);
             }
         }
-        return new GeorchestraUserDetails(user, anonymous);
+        return new GeorchestraUserDetails(user, org, anonymous);
+    }
+
+    public static Optional<Organization> buildOrgFromHeaders(Map<String, String> headers) {
+        final String fullJsonOrg = getHeader(headers, "sec-organization");
+        Organization org = null;
+        if (StringUtils.hasLength(fullJsonOrg)) {
+            log.debug("Decoding org from sec-organization header");
+            org = decodeOrgFromJSON(fullJsonOrg);
+        } else if (headers.containsKey(SEC_ORGID) || headers.containsKey(SEC_ORGNAME)) {
+            log.debug("Decoding org from sec-org* individual headers");
+            org = buildOrgFromIndividualHeaders(headers);
+        } else {
+            log.debug("Organization info not provided");
+        }
+        return Optional.ofNullable(org);
+    }
+
+    private static Organization buildOrgFromIndividualHeaders(Map<String, String> headers) {
+        String shortName = getHeader(headers, SEC_ORG);
+        String id = getHeader(headers, SEC_ORGID);
+        String name = getHeader(headers, SEC_ORGNAME);
+        String category = getHeader(headers, SEC_ORG_CATEGORY);
+        String lastUpdated = getHeader(headers, SEC_ORG_LASTUPDATED);
+        String linkage = getHeader(headers, SEC_ORG_LINKAGE);
+        String notes = getHeader(headers, SEC_ORG_NOTES);
+        String postalAddress = getHeader(headers, SEC_ORG_ADDRESS);
+        String description = getHeader(headers, SEC_ORG_DESCRIPTION);
+
+        Organization org = new Organization();
+        org.setShortName(shortName);
+        org.setId(id);
+        org.setName(name);
+        org.setDescription(description);
+        org.setCategory(category);
+        org.setLastUpdated(lastUpdated);
+        org.setLinkage(linkage);
+        org.setNotes(notes);
+        org.setPostalAddress(postalAddress);
+
+        return org;
+    }
+
+    private static Organization decodeOrgFromJSON(String fullJsonOrg) {
+        try {
+            return OBJECT_MAPPER.readValue(fullJsonOrg, Organization.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static GeorchestraUser buildUserFromHeaders(Map<String, String> headers) {
@@ -139,14 +195,14 @@ public class GeorchestraUserDetails implements UserDetails {
         GeorchestraUser user;
         if (StringUtils.hasLength(fullJsonUser)) {
             log.info("Decoding user from sec-user header");
-            user = decodeFromJSON(fullJsonUser);
+            user = decodeUserFromJSON(fullJsonUser);
         } else {
-            user = buildFromIndividualHeaders(headers);
+            user = buildUserFromIndividualHeaders(headers);
         }
         return user;
     }
 
-    private static GeorchestraUser buildFromIndividualHeaders(Map<String, String> headers) {
+    private static GeorchestraUser buildUserFromIndividualHeaders(Map<String, String> headers) {
         String userId = getHeader(headers, SEC_USERID);
         String username = getHeader(headers, SEC_USERNAME);
         String organization = getHeader(headers, SEC_ORG);
@@ -176,34 +232,12 @@ public class GeorchestraUserDetails implements UserDetails {
         return user;
     }
 
-    private static GeorchestraUser decodeFromJSON(String fullJsonUser) {
+    private static GeorchestraUser decodeUserFromJSON(String fullJsonUser) {
         try {
             return OBJECT_MAPPER.readValue(fullJsonUser, GeorchestraUser.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static @NonNull Organization buildOrganization(Map<String, String> headers) {
-        String uniqueId = getHeader(headers, SEC_ORGID);
-        String organization = getHeader(headers, SEC_ORG);
-        String organizationName = getHeader(headers, SEC_ORGNAME);
-        String linkage = getHeader(headers, SEC_ORG_LINKAGE);
-        String postalAddress = getHeader(headers, SEC_ORG_ADDRESS);
-        String category = getHeader(headers, SEC_ORG_CATEGORY);
-        String description = getHeader(headers, SEC_ORG_DESCRIPTION);
-        String lastUpdated = getHeader(headers, SEC_ORG_LASTUPDATED);
-
-        Organization org = new Organization();
-        org.setId(uniqueId);
-        org.setShortName(organization);
-        org.setName(organizationName);
-        org.setLinkage(linkage);
-        org.setPostalAddress(postalAddress);
-        org.setCategory(category);
-        org.setDescription(description);
-        org.setLastUpdated(lastUpdated);
-        return org;
     }
 
     private static String getHeader(Map<String, String> headers, String headerName) {

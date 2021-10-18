@@ -22,9 +22,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 
-public @Data class Organization implements Serializable {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@With
+public class Organization implements Serializable {
     private static final long serialVersionUID = -1;
 
     /** Provided by request header {@code sec-orgid}, usually stable UUID */

@@ -38,6 +38,16 @@ interface OrganizationMapper {
     @Mapping(target = "postalAddress", source = "orgAddress")
     @Mapping(target = "category", source = "orgType")
     @Mapping(target = "lastUpdated", ignore = true)
+    @Mapping(target = "withId", ignore = true)
+    @Mapping(target = "withShortName", ignore = true)
+    @Mapping(target = "withName", ignore = true)
+    @Mapping(target = "withLinkage", ignore = true)
+    @Mapping(target = "withPostalAddress", ignore = true)
+    @Mapping(target = "withCategory", ignore = true)
+    @Mapping(target = "withDescription", ignore = true)
+    @Mapping(target = "withNotes", ignore = true)
+    @Mapping(target = "withLastUpdated", ignore = true)
+    @Mapping(target = "withMembers", ignore = true)
     Organization map(Org org);
 
     @AfterMapping

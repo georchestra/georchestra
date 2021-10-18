@@ -255,7 +255,8 @@ public class LdapHeaderMappings {
     }
 
     private boolean includeConfigProp(String property) {
-        return property != null && !property.contains(UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY);
+        return property != null && !property.contains(UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY)
+                && !property.contains(UserOrganizationJSONRequestHeaderProvider.CONFIG_PROPERTY);
     }
 
     public HeaderMappings getDefaultMappings() {

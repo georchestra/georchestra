@@ -30,7 +30,9 @@ import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORGNAME
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_ADDRESS;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_CATEGORY;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_DESCRIPTION;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_LASTUPDATED;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_LINKAGE;
+import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ORG_NOTES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_ROLES;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TEL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TITLE;
@@ -43,10 +45,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.model.GeorchestraUser;
@@ -63,9 +63,37 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
     private GeorchestraSecurityProxyAuthenticationFilter filter;
     private MockHttpServletRequest request;
 
+    private GeorchestraUser user;
+    private Organization org;
+
     public @Before void before() {
         request = new MockHttpServletRequest();
         filter = new GeorchestraSecurityProxyAuthenticationFilter();
+
+        user = new GeorchestraUser();
+        user.setId(UUID.randomUUID().toString());
+        user.setLastUpdated("anystringwoulddo");
+        user.setUsername("testadmin");
+        user.setEmail("testadmin@georchestra.org");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setRoles(Arrays.asList("ADMINISTRATOR", "GN_ADMIN"));
+        user.setTelephoneNumber("341444111");
+        user.setTitle("developer");
+        user.setNotes("user notes");
+        user.setPostalAddress("123 java street");
+        user.setOrganization("PSC");
+
+        org = new Organization();
+        org.setShortName("PSC");
+        org.setId(UUID.randomUUID().toString());
+        org.setLastUpdated(UUID.randomUUID().toString());
+        org.setName("Org Name");
+        org.setCategory("category");
+        org.setDescription("description");
+        org.setLinkage("http://test.com/PSC");
+        org.setNotes("org notes");
+        org.setPostalAddress("org postal address");
     }
 
     @Test
@@ -86,16 +114,6 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
 
     @Test
     public void getPreAuthenticatedCredentials_SingleHeader() throws JsonProcessingException {
-        GeorchestraUser user = new GeorchestraUser();
-        user.setId(UUID.randomUUID().toString());
-        user.setUsername("testadmin");
-        user.setEmail("testadmin@georchestra.org");
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setRoles(Arrays.asList("ADMINISTRATOR", "GN_ADMIN"));
-        user.setLastUpdated("anystringwoulddo");
-        user.setOrganization("PSC");
-
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(user);
 
@@ -106,50 +124,83 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
         assertNotNull(preauth);
         assertNotNull(preauth.getUser());
         assertEquals(user, preauth.getUser());
+        assertFalse(preauth.getOrganization().isPresent());
+    }
+
+    @Test
+    public void getPreAuthenticatedCredentials_SingleHeader_Include_Organization() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        String userJson = mapper.writeValueAsString(user);
+        String orgJson = mapper.writeValueAsString(org);
+
+        addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
+        addEncodedHeader(SecurityHeaders.SEC_USER, userJson);
+        addEncodedHeader(SecurityHeaders.SEC_ORGANIZATION, orgJson);
+
+        GeorchestraUserDetails preauth = filter.getPreAuthenticatedPrincipal(request);
+        assertEquals(user, preauth.getUser());
+        assertTrue(preauth.getOrganization().isPresent());
+        assertEquals(org, preauth.getOrganization().get());
     }
 
     @Test
     public void getPreAuthenticatedCredentials_IndividualHeaders() {
         addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
-        Map<String, String> headers = new HashMap<>();
-
-        final String rolesHeader = "ROLE_USER;ROLE_ADMINISTRATOR";
-        final List<String> expectedRoles = Arrays.asList("USER", "ADMINISTRATOR");
-
-        headers.put(SEC_USERID, UUID.randomUUID().toString());
-        headers.put(SEC_LASTUPDATED, "abc123");
-        headers.put(SEC_USERNAME, "test?user");
-        headers.put(SEC_FIRSTNAME, "Gábriel");
-        headers.put(SEC_LASTNAME, "Roldán");
-        headers.put(SEC_ORG, "test'org");
-        headers.put(SEC_ROLES, rolesHeader);
-        headers.put(SEC_EMAIL, "test@email.com");
-        headers.put(SEC_TEL, "123456");
-        headers.put(SEC_ADDRESS, "Test Postal Address");
-        headers.put(SEC_TITLE, "Test Title");
-        headers.put(SEC_NOTES, "Test User notes");
-
-        headers.forEach(this::addEncodedHeader);
+        addUserHeaders();
 
         GeorchestraUserDetails userDetails = filter.getPreAuthenticatedPrincipal(request);
         assertNotNull(userDetails);
         assertFalse(userDetails.isAnonymous());
 
         GeorchestraUser user = userDetails.getUser();
+        assertEquals(this.user, user);
+        assertFalse(userDetails.getOrganization().isPresent());
+    }
 
-        assertEquals(headers.get(SEC_USERID), user.getId());
-        assertEquals(headers.get(SEC_LASTUPDATED), user.getLastUpdated());
-        assertEquals(headers.get(SEC_USERNAME), user.getUsername());
-        assertEquals(headers.get(SEC_FIRSTNAME), user.getFirstName());
-        assertEquals(headers.get(SEC_ORG), user.getOrganization());
-        assertEquals(headers.get(SEC_LASTNAME), user.getLastName());
-        assertEquals(headers.get(SEC_EMAIL), user.getEmail());
-        assertEquals(headers.get(SEC_TEL), user.getTelephoneNumber());
-        assertEquals(headers.get(SEC_ADDRESS), user.getPostalAddress());
-        assertEquals(headers.get(SEC_TITLE), user.getTitle());
-        assertEquals(headers.get(SEC_NOTES), user.getNotes());
+    private void addUserHeaders() {
+        final String rolesHeader = this.user.getRoles().stream().collect(Collectors.joining(";"));
+        addEncodedHeader(SEC_USERID, user.getId());
+        addEncodedHeader(SEC_LASTUPDATED, user.getLastUpdated());
+        addEncodedHeader(SEC_USERNAME, user.getUsername());
+        addEncodedHeader(SEC_FIRSTNAME, user.getFirstName());
+        addEncodedHeader(SEC_LASTNAME, user.getLastName());
+        addEncodedHeader(SEC_ORG, user.getOrganization());
+        addEncodedHeader(SEC_ROLES, rolesHeader);
+        addEncodedHeader(SEC_EMAIL, user.getEmail());
+        addEncodedHeader(SEC_TEL, user.getTelephoneNumber());
+        addEncodedHeader(SEC_ADDRESS, user.getPostalAddress());
+        addEncodedHeader(SEC_TITLE, user.getTitle());
+        addEncodedHeader(SEC_NOTES, user.getNotes());
+    }
 
-        assertEquals(expectedRoles, user.getRoles());
+    @Test
+    public void getPreAuthenticatedCredentials_IndividualHeaders_including_Organization() {
+        addEncodedHeader(SecurityHeaders.SEC_PROXY, "true");
+        addUserHeaders();
+        addOrgHeaders();
+
+        GeorchestraUserDetails userDetails = filter.getPreAuthenticatedPrincipal(request);
+        assertNotNull(userDetails);
+        assertFalse(userDetails.isAnonymous());
+
+        GeorchestraUser user = userDetails.getUser();
+        assertEquals(this.user, user);
+        assertTrue(userDetails.getOrganization().isPresent());
+        assertEquals(this.org, userDetails.getOrganization().get());
+    }
+
+    private void addOrgHeaders() {
+        request.removeHeader(SEC_ORG);
+        addEncodedHeader(SEC_ORG, org.getShortName());
+
+        addEncodedHeader(SEC_ORGID, org.getId());
+        addEncodedHeader(SEC_ORGNAME, org.getName());
+        addEncodedHeader(SEC_ORG_LASTUPDATED, org.getLastUpdated());
+        addEncodedHeader(SEC_ORG_CATEGORY, org.getCategory());
+        addEncodedHeader(SEC_ORG_DESCRIPTION, org.getDescription());
+        addEncodedHeader(SEC_ORG_LINKAGE, org.getLinkage());
+        addEncodedHeader(SEC_ORG_NOTES, org.getNotes());
+        addEncodedHeader(SEC_ORG_ADDRESS, org.getPostalAddress());
     }
 
     private void addEncodedHeader(String name, String value) {

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
 
 /**
  * A collection of header names commonly used by the security-proxy gateway
@@ -44,6 +45,10 @@ public class SecurityHeaders {
      * encoded JSON string
      */
     public static final String SEC_USER = "sec-user";
+    /**
+     * Used to send the full {@link Organization} as a Base64 encoded JSON string
+     */
+    public static final String SEC_ORGANIZATION = "sec-organization";
 
     public static final String SEC_USERID = "sec-userid";
     public static final String SEC_LASTUPDATED = "sec-lastupdated";
