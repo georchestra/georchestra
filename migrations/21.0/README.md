@@ -1,4 +1,4 @@
-# From 19.04 to 20.0.x
+# From 20.X to 21.x
 
 ## Geonetwork 4
 
