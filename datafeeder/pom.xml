@@ -734,8 +734,8 @@
                 </goals>
                 <configuration>
                   <awaitCmd>curl</awaitCmd>
-                  <awaitCmdArgs>http://localhost:28080/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
-                  <awaitTimeout>120</awaitTimeout>
+                  <awaitCmdArgs>-s,http://localhost:28080/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
+                  <awaitTimeout>360</awaitTimeout>
                 </configuration>
               </execution>
               <execution>

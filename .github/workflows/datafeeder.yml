@@ -58,7 +58,7 @@ jobs:
     - name: "Build required docker image (geonetwork)"
       run: |
         git submodule update --init --recursive --depth 1 geonetwork/
-        cd geonetwork && ../mvnw install -ntp -DskipTests
+        cd geonetwork && ../mvnw install -T1C -ntp -DskipTests
         cd web && ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=latest -ntp -DskipTests
 
     - name: "Build required docker image (console)"

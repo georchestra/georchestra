@@ -17,6 +17,7 @@ docker-build-database:
 	docker build -t georchestra/database:${BTAG} .
 
 docker-build-gn: docker-pull-jetty
+	mvn install -pl security-proxy-spring-integration --also-make -DskipTests; \
 	cd geonetwork; \
 	mvn -DskipTests clean install; \
 	cd web; \
