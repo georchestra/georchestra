@@ -53,7 +53,7 @@ jobs:
 
     - name: "Running tests"
       working-directory: console/
-      run: ../mvnw verify --no-transfer-progress -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dskip.npm
+      run: ../mvnw verify --no-transfer-progress -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dskip.npm
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'

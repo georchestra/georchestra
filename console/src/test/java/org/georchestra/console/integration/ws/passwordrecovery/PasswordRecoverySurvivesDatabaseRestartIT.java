@@ -38,6 +38,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormBean;
@@ -63,7 +64,7 @@ import org.springframework.web.bind.support.SessionStatus;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class PasswordRecoverySurvivesDatabaseRestartIT {
+public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 

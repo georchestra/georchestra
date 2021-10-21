@@ -13,8 +13,6 @@
   <name>Console</name>
   <url>http://www.georchestra.org</url>
   <properties>
-    <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them
-      which enables them -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
     <context.name>${project.artifactId}</context.name>
@@ -419,12 +417,23 @@
       <artifactId>rider-spring</artifactId>
       <version>1.5.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <!-- so that dbunit can write to extractorapp.extractor_layer_log's bbox column -->
       <groupId>net.postgis</groupId>
       <artifactId>postgis-jdbc</artifactId>
       <version>2.5.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-testcontainers</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -584,13 +593,22 @@
           </execution>
         </executions>
         <configuration>
-          <skip>${node.skip}</skip>
+          <skip>${skip.npm}</skip>
           <nodeVersion>v10.18.0</nodeVersion>
           <npmVersion>6.13.4</npmVersion>
           <installDirectory>${project.basedir}</installDirectory>
           <workingDirectory>${project.basedir}/src/main/webapp/manager</workingDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!-- fork to avoid system properties for different ITs stepping onto each other -->
+          <forkCount>2</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>          
     </plugins>
   </build>
   <profiles>
@@ -834,102 +852,6 @@
                 <version>28.2-jre</version>
               </dependency>
             </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>it</id> <!-- Profile to enable integration tests with on the fly docker containers -->
-      <properties>
-        <skipIT>false</skipIT> <!-- re-enable integration tests -->
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <environmentVariables>
-                <!-- expose these two environment variables for Spring to
-                  resolve the connection URLs to ldap and psql as the mapped ports set up by
-                  docker-maven-plugin bellow -->
-                <pgsqlPort>${database_container.port}</pgsqlPort>
-                <ldapPort>${ldap_container.port}</ldapPort>
-              </environmentVariables>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>prepare-containers</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>start</goal>
-                </goals>
-                <configuration>
-                  <images>
-                    <image>
-                      <name>georchestra/database</name>
-                      <alias>database</alias>
-                      <run>
-                        <ports> <!-- expose the mapped port as the database_container.port maven property -->
-                          <port>database_container.port:5432</port>
-                        </ports>
-                        <wait>
-                          <healthy>true</healthy>
-                          <log>(?s)database system is ready to accept connections</log>
-                          <time>50000</time>
-                        </wait>
-                      </run>
-                    </image>
-                    <image>
-                      <name>georchestra/ldap</name>
-                      <alias>ldap</alias>
-                      <run>
-                        <ports> <!-- expose the mapped port as the ldap_container.port maven property -->
-                          <port>ldap_container.port:389</port>
-                        </ports>
-                        <env>
-                          <SLAPD_ORGANISATION>georchestra</SLAPD_ORGANISATION>
-                          <SLAPD_DOMAIN>georchestra.org</SLAPD_DOMAIN>
-                          <SLAPD_PASSWORD>secret</SLAPD_PASSWORD>
-                        </env>
-                        <wait>
-                          <!-- Need to figure out a good way to make sure
-                            the ldap service is ready before the tests are run. The healthy check seems
-                            to be good enough but the tests still can't connect -->
-                          <time>20000</time>
-                          <!-- <healthy>true</healthy> -->
-                          <tcp>
-                            <mode>mapped</mode>
-                            <ports>
-                              <port>389</port>
-                            </ports>
-                          </tcp>
-                        </wait>
-                      </run>
-                    </image>
-                  </images>
-                </configuration>
-              </execution>
-              <execution>
-                <id>remove-containers</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>

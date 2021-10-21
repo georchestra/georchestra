@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
+import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -50,7 +51,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @WebAppConfiguration
 @PropertySource("classpath:/console-it.properties")
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class AdvancedDelegationDaoIT {
+public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 

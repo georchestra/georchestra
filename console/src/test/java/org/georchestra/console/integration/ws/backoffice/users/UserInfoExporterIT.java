@@ -2,6 +2,7 @@ package org.georchestra.console.integration.ws.backoffice.users;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.ws.backoffice.users.UserInfoExporter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class UserInfoExporterIT {
+public class UserInfoExporterIT extends ConsoleIntegrationTest {
 
     private @Autowired UserInfoExporter ldifExporter;
 

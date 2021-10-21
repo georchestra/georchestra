@@ -12,6 +12,7 @@ import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
 import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
+import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.ds.AccountGDPRDaoImpl;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
@@ -48,7 +49,7 @@ import com.github.database.rider.spring.api.DBRider;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 @DBRider
-public class AccountGDPRDaoIT {
+public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
 
     private @Autowired AccountGDPRDao dao;
     private Account user1, user2;

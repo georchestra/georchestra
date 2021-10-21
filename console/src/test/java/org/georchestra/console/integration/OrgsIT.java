@@ -47,7 +47,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
-public class OrgsIT {
+public class OrgsIT extends ConsoleIntegrationTest {
 
     public static final String CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD = "/testData/createOrgWithMoreFieldsPayload.json";
     public static final String CREATE_ORG_BASE_FIELD_PAYLOAD_JSON = "/testData/createOrgPayload.json";

@@ -56,7 +56,7 @@ import com.github.database.rider.spring.api.DBRider;
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 @DBRider
-public class UsersIT {
+public class UsersIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 

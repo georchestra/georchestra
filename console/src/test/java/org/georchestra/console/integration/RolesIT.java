@@ -50,7 +50,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class RolesIT {
+public class RolesIT extends ConsoleIntegrationTest {
     private static Logger LOGGER = Logger.getLogger(RolesIT.class);
     private static DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
