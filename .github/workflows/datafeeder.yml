@@ -14,7 +14,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     steps:
     - name: "Checking out"
       uses: actions/checkout@v1
@@ -43,11 +43,31 @@ jobs:
       # note "-pl :datafeeder --also-make" builds only the project and its dependencies
 
     - name: "Running Unit Tests"
-      run: ./mvnw test -pl :datafeeder -P-all,datafeeder -DskipITs=true -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw test -pl :datafeeder -P-all,datafeeder -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+
+      # pull images, fetches in parallel docker layers and speeds up the process
+    - name: "Pull required docker images for integration testing"
+      working-directory: datafeeder/
+      run: docker-compose pull -q
+
+    - name: "Build required docker images (ldap, database)"
+      run: |
+        docker build -t georchestra/ldap:latest ./ldap
+        docker build -t georchestra/database:latest ./postgresql
+
+    - name: "Build required docker image (geonetwork)"
+      run: |
+        git submodule update --init --recursive --depth 1 geonetwork/
+        cd geonetwork && ../mvnw install -ntp -DskipTests
+        cd web && ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=latest -ntp -DskipTests
+
+    - name: "Build required docker image (console)"
+      run: |
+        ./mvnw -pl :console -am clean install docker:build -P-all,console,docker -DdockerImageName=georchestra/console:latest -DskipTests -ntp -Dskip.npm -Dfmt.skip
 
     - name: "Running Integration Tests"
       working-directory: datafeeder/
-      run: ../mvnw verify -P-all,datafeeder -DskipITs=false -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw verify -P-all,datafeeder -DskipITs=false -DskipTests -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'
