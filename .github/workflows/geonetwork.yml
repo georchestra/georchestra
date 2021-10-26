@@ -5,6 +5,7 @@ on:
       - "commons/**"
       - "security-proxy-spring-integration/**"
       - "geonetwork/**"
+      - ".github/workflows/geonetwork.yml"
   pull_request:
     paths:
       - "commons/**"
