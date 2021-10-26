@@ -1,0 +1,570 @@
+/*
+ * Copyright (C) 2009-2018 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.georchestra.ds.orgs;
+
+import static java.util.stream.Collectors.joining;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextAdapter;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.Filter;
+import org.springframework.ldap.support.LdapNameBuilder;
+import org.springframework.util.StringUtils;
+
+/**
+ * This class manage organization membership
+ */
+public class OrgsDao {
+
+    private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
+
+    @Autowired
+    private AccountDao accountDao;
+
+    private LdapTemplate ldapTemplate;
+    private String[] orgTypeValues;
+    private String basePath;
+    private String orgSearchBaseDN;
+    private String pendingOrgSearchBaseDN;
+    private OrgExtension orgExtension = new OrgExtension();
+    private OrgExtExtension orgExtExtension = new OrgExtExtension();
+
+    public abstract class Extension<T extends AbstractOrg> {
+
+        private AndFilter objectClassFilter;
+
+        public Extension() {
+            objectClassFilter = new AndFilter();
+            for (int i = 0; i < getObjectClass().length; i++) {
+                objectClassFilter.and(new EqualsFilter("objectClass", getObjectClass()[i]));
+            }
+        }
+
+        public AndFilter getObjectClassFilter() {
+            return objectClassFilter;
+        }
+
+        public Name buildOrgDN(T org) {
+            return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
+                    .add(getLdapKeyField(), org.getId()).build();
+        }
+
+        public ContextMapperSecuringReferenceAndMappingAttributes<T> getContextMapper(boolean pending) {
+            return new ContextMapperSecuringReferenceAndMappingAttributes(getAttributeMapper(pending));
+        }
+
+        public void mapToContext(T org, DirContextOperations context) {
+            Set<String> values = new HashSet<>();
+
+            if (context.getStringAttributes("objectClass") != null) {
+                Collections.addAll(values, context.getStringAttributes("objectClass"));
+            }
+            Collections.addAll(values, getObjectClass());
+
+            context.setAttributeValues("objectClass", values.toArray());
+
+            context.setAttributeValue(getLdapKeyField(), org.getId());
+            mapPayloadToContext(org, context);
+        }
+
+        public <T extends AbstractOrg> T findById(T org) {
+            String ldapKeyField = this.getLdapKeyField();
+            try {
+                Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, org.getId()).build();
+                return (T) ldapTemplate.lookup(dn, this.getContextMapper(false));
+            } catch (NameNotFoundException ex) {
+                Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, org.getId()).build();
+                return (T) ldapTemplate.lookup(dn, this.getContextMapper(true));
+            }
+        }
+
+        protected abstract void mapPayloadToContext(T org, DirContextOperations context);
+
+        protected abstract String getLdapKeyField();
+
+        protected abstract String[] getObjectClass();
+
+        public abstract AttributesMapper<T> getAttributeMapper(boolean pending);
+    }
+
+    class OrgExtension extends Extension<Org> {
+
+        @Override
+        public void mapPayloadToContext(Org org, DirContextOperations context) {
+            String seeAlsoValueExt = LdapNameBuilder
+                    .newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath)
+                    .add("o", org.getId()).build().toString();
+
+            context.setAttributeValue("seeAlso", seeAlsoValueExt);
+
+            // Mandatory attribute
+            context.setAttributeValue("o", org.getName());
+
+            if (org.getMembers() != null) {
+                context.setAttributeValues("member", org.getMembers().stream().map(userUid -> {
+                    try {
+                        return accountDao.findByUID(userUid);
+                    } catch (DataServiceException e) {
+                        return null;
+                    }
+                }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account))
+                        .collect(Collectors.toList()).toArray(new String[] {}));
+            }
+
+            // Optional ones
+            if (org.getShortName() != null)
+                context.setAttributeValue("ou", org.getShortName());
+
+            if (org.getCities() != null) {
+                StringBuilder buffer = new StringBuilder();
+                List<String> descriptions = new ArrayList();
+                int maxFieldSize = 1000;
+
+                for (String city : org.getCities()) {
+                    if (buffer.length() > maxFieldSize) {
+                        descriptions.add(buffer.substring(1));
+                        buffer = new StringBuilder();
+                    }
+                    buffer.append("," + city);
+                }
+                if (buffer.length() > 0)
+                    descriptions.add(buffer.substring(1));
+
+                if (descriptions.size() > 0)
+                    context.setAttributeValues("description", descriptions.toArray());
+            }
+        }
+
+        @Override
+        protected String getLdapKeyField() {
+            return "cn";
+        }
+
+        @Override
+        protected String[] getObjectClass() {
+            return new String[] { "top", "groupOfMembers" };
+        }
+
+        @Override
+        public AttributesMapper<Org> getAttributeMapper(boolean pending) {
+            return new AttributesMapper() {
+                public Org mapFromAttributes(Attributes attrs) throws NamingException {
+                    Org org = new Org();
+                    org.setId(asStringStream(attrs, "cn").collect(joining(",")));
+                    org.setName(asStringStream(attrs, "o").collect(joining(",")));
+                    org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
+                    org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
+                            .collect(Collectors.toList()));
+                    org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
+                            .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
+                            .collect(Collectors.toList()));
+                    org.setPending(pending);
+                    return org;
+                }
+            };
+        }
+    }
+
+    class OrgExtExtension extends Extension<OrgExt> {
+
+        @Override
+        public void mapPayloadToContext(OrgExt org, DirContextOperations context) {
+            if (org.getOrgType() != null)
+                context.setAttributeValue("businessCategory", org.getOrgType());
+            if (org.getAddress() != null)
+                context.setAttributeValue("postalAddress", org.getAddress());
+            if (org.getUniqueIdentifier() == null) {
+                org.setUniqueIdentifier(UUID.randomUUID());
+            }
+            setOrDeleteField(context, "georchestraObjectIdentifier", org.getUniqueIdentifier().toString());
+            setOrDeleteField(context, "knowledgeInformation", org.getNote());
+            setOrDeleteField(context, "description", org.getDescription());
+            setOrDeleteField(context, "labeledURI", org.getUrl());
+            setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
+        }
+
+        @Override
+        protected String getLdapKeyField() {
+            return "o";
+        }
+
+        @Override
+        protected String[] getObjectClass() {
+            return new String[] { "top", "organization", "georchestraOrg" };
+        }
+
+        @Override
+        public AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
+            return new AttributesMapper() {
+                public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
+                    OrgExt orgExt = new OrgExt();
+                    // georchestraObjectIdentifier
+                    orgExt.setUniqueIdentifier(asUuid(attrs.get("georchestraObjectIdentifier")));
+                    orgExt.setId(asString(attrs.get("o")));
+                    orgExt.setOrgType(asString(attrs.get("businessCategory")));
+                    orgExt.setAddress(asString(attrs.get("postalAddress")));
+                    orgExt.setDescription(asStringStream(attrs, "description").collect(joining(",")));
+                    orgExt.setUrl(asStringStream(attrs, "labeledURI").collect(joining(",")));
+                    orgExt.setNote(asStringStream(attrs, "knowledgeInformation").collect(joining(",")));
+                    orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
+                    orgExt.setPending(pending);
+                    return orgExt;
+                }
+            };
+        }
+    }
+
+    public Extension<Org> getExtension(Org org) {
+        return orgExtension;
+    }
+
+    public Extension<OrgExt> getExtension(OrgExt org) {
+        return orgExtExtension;
+    }
+
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
+
+    public void setOrgTypeValues(String orgTypeValues) {
+        this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
+    }
+
+    public String[] getOrgTypeValues() {
+        return orgTypeValues;
+    }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
+        this.orgSearchBaseDN = orgSearchBaseDN;
+    }
+
+    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
+        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
+    }
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
+
+    /**
+     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search
+     * path in ldap.
+     *
+     * @return list of organizations
+     */
+    public List<Org> findAll() {
+        Org org = new Org();
+        Filter filter = getExtension(org).getObjectClassFilter();
+        List<Org> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
+                getExtension(org).getAttributeMapper(false));
+        List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
+                getExtension(org).getAttributeMapper(true));
+        return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+    }
+
+    public Stream<Org> findAllWithExt() {
+        final Map<String, OrgExt> exts = this.findAllExt().stream()
+                .collect(Collectors.toMap(OrgExt::getId, Function.identity()));
+        List<Org> orgs = this.findAll();
+        return orgs.stream().map(o -> {
+            OrgExt orgExt = exts.get(o.getId());
+            o.setOrgExt(orgExt);
+            return o;
+        });
+    }
+
+    /**
+     * Search for validated organizations defined in ldap.
+     *
+     * @return list of validated organizations
+     */
+    public List<Org> findValidated() {
+        EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
+        AndFilter filter = new AndFilter();
+        filter.and(classFilter);
+        return ldapTemplate.search(orgSearchBaseDN, filter.encode(), getExtension(new Org()).getAttributeMapper(false));
+    }
+
+    /**
+     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search
+     * path in ldap.
+     *
+     * @return list of organizations (ldap organization object)
+     */
+    public List<OrgExt> findAllExt() {
+        OrgExt orgExt = new OrgExt();
+        Filter filter = getExtension(orgExt).getObjectClassFilter();
+        List<OrgExt> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
+                getExtension(orgExt).getAttributeMapper(false));
+        List<OrgExt> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
+                getExtension(orgExt).getAttributeMapper(true));
+        return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+    }
+
+    /**
+     * Search organization with 'commonName' as distinguish name
+     * 
+     * @param commonName distinguish name of organization for example : 'psc' to
+     *                   retrieve 'cn=psc,ou=orgs,dc=georchestra,dc=org'
+     * @return Org instance with specified DN
+     */
+    public Org findByCommonName(String commonName) {
+        if (commonName.length() <= 0) {
+            return null;
+        }
+        Org org = new Org();
+        org.setId(commonName);
+        return getExtension(org).findById(org);
+    }
+
+    public Org findByCommonNameWithExt(Account user) {
+        return findByCommonNameWithExt(user.getOrg());
+    }
+
+    public Org findByCommonNameWithExt(String orgCn) {
+        return addExt(findByCommonName(orgCn));
+    }
+
+    /**
+     * Search by {@link Org#getUniqueIdentifier()} and set its {@link Org#setOrgExt
+     * OrgExt}, if any.
+     *
+     * @return the matching organization or {@code null}
+     */
+    public Org findByIdWithExt(UUID uuid) {
+        return addExt(findById(uuid));
+    }
+
+    /**
+     * Search by {@link Org#getUniqueIdentifier()}
+     *
+     * @return the matching organization or {@code null}
+     */
+    public Org findById(UUID uuid) {
+        return findAllWithExt().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
+    }
+
+    private Org addExt(Org org) {
+        if (org == null) {
+            return null;
+        }
+        org.setOrgExt(findExtById(org.getId()));
+        return org;
+    }
+
+    /**
+     * Search for organization extension with specified identifier
+     * 
+     * @param cn distinguish name of organization for example : 'psc' to retrieve
+     *           'o=psc,ou=orgs,dc=georchestra,dc=org'
+     * @return OrgExt instance corresponding to extended attributes
+     */
+    public OrgExt findExtById(String cn) {
+        OrgExt org = new OrgExt();
+        org.setId(cn);
+        return getExtension(org).findById(org);
+    }
+
+    public void insert(AbstractOrg org) {
+        DirContextAdapter context = new DirContextAdapter(org.getExtension(this).buildOrgDN(org));
+        org.getExtension(this).mapToContext(org, context);
+        ldapTemplate.bind(context);
+    }
+
+    public void update(AbstractOrg org) {
+        Name newName = org.getExtension(this).buildOrgDN(org);
+        if (newName.compareTo(org.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(org.getReference().getDn(), newName);
+        }
+        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+        org.getExtension(this).mapToContext(org, context);
+        this.ldapTemplate.modifyAttributes(context);
+    }
+
+    public void delete(AbstractOrg org) {
+        this.ldapTemplate.unbind(org.getExtension(this).buildOrgDN(org));
+    }
+
+    public void linkUser(Account user) {
+        if (user.getOrg().length() <= 0) {
+            return;
+        }
+        Org org = findByCommonName(user.getOrg());
+        DirContextOperations context = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
+        context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
+        this.ldapTemplate.modifyAttributes(context);
+    }
+
+    public void unlinkUser(Account user) {
+        if (user.getOrg().length() <= 0) {
+            return;
+        }
+        Org org = findByCommonName(user.getOrg());
+        DirContextOperations ctx = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
+        ctx.removeAttributeValue("member", accountDao.buildFullUserDn(user));
+        this.ldapTemplate.modifyAttributes(ctx);
+    }
+
+    public String reGenerateId(String orgName, String allowedId) throws IOException {
+        // Check name
+        if (orgName == null || orgName.length() == 0)
+            throw new IOException("Invalid org name");
+
+        String id = orgName.replaceAll("\\W", "_");
+
+        int i = 0;
+        String suffix = "";
+
+        while (i < 250) {
+            String cnToConsider = id + suffix;
+            try {
+                if (cnToConsider.equalsIgnoreCase(allowedId)) {
+                    return allowedId;
+                }
+                this.findByCommonName(cnToConsider);
+                i++;
+                suffix = "" + i;
+            } catch (NameNotFoundException ex) {
+                return cnToConsider;
+            }
+        }
+        throw new IOException("Trouble when generating id/cn for org.");
+    }
+
+    public String generateId(String org_name) throws IOException {
+        return reGenerateId(org_name, "");
+    }
+
+    private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
+        try {
+            if (value == null || value.length() == 0) {
+                Attribute attributeToDelete = context.getAttributes().get(fieldName);
+                if (attributeToDelete != null) {
+                    Collections.list(attributeToDelete.getAll()).stream()
+                            .forEach(x -> context.removeAttributeValue(fieldName, x));
+                }
+            } else {
+                context.setAttributeValue(fieldName, value);
+            }
+        } catch (NamingException e) {
+            // no need to remove an nonexistant attribute
+        }
+    }
+
+    private void setOrDeletePhoto(DirContextOperations context, String fieldName, String value) {
+        try {
+            if (value == null || value.length() == 0) {
+                Attribute attributeToDelete = context.getAttributes().get(fieldName);
+                if (attributeToDelete != null) {
+                    Collections.list(attributeToDelete.getAll()).stream()
+                            .forEach(x -> context.removeAttributeValue(fieldName, x));
+                }
+            } else {
+                context.setAttributeValue(fieldName, Base64.getMimeDecoder().decode(value));
+            }
+        } catch (NamingException e) {
+            // no need to remove an nonexistant attribute
+        }
+    }
+
+    public String asString(Attribute att) throws NamingException {
+        if (att == null)
+            return "";
+        else
+            return (String) att.get();
+    }
+
+    public UUID asUuid(Attribute att) throws NamingException {
+        String asString = asString(att);
+        if (StringUtils.hasLength(asString)) {
+            return UUID.fromString(asString);
+        }
+        return null;
+    }
+
+    public String asPhoto(Attribute att) throws NamingException {
+        if (att == null)
+            return "";
+        else
+            return Base64.getMimeEncoder().encodeToString((byte[]) att.get());
+    }
+
+    public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
+        Attribute attribute = attributes.get(attributeName);
+        if (attribute == null) {
+            return Stream.empty();
+        } else {
+            return Collections.list(attribute.getAll()).stream().map(Object::toString);
+        }
+    }
+
+    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends AbstractOrg>
+            implements ContextMapper<T> {
+
+        private AttributesMapper<T> attributesMapper;
+
+        public ContextMapperSecuringReferenceAndMappingAttributes(AttributesMapper<T> attributesMapper) {
+            this.attributesMapper = attributesMapper;
+        }
+
+        @Override
+        public T mapFromContext(Object o) throws NamingException {
+            DirContextAdapter dirContext = (DirContextAdapter) o;
+            T dto = attributesMapper.mapFromAttributes(dirContext.getAttributes());
+            dto.setReference(dirContext);
+            return dto;
+        }
+    }
+}

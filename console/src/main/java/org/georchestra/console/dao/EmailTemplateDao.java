@@ -19,7 +19,6 @@
 
 package org.georchestra.console.dao;
 
-import org.georchestra.console.model.Attachment;
 import org.georchestra.console.model.EmailTemplate;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

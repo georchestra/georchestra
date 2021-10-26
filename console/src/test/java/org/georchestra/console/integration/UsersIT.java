@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,12 +18,12 @@ import java.util.Set;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,7 +56,7 @@ import com.github.database.rider.spring.api.DBRider;
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 @DBRider
-public class UsersIT {
+public class UsersIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 
@@ -144,7 +145,7 @@ public class UsersIT {
         support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
         support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
         support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-        support.perform(get("/private/roles/" + role2Name)).andExpect(jsonPath("$.users").isEmpty());
+        support.perform(get("/private/roles/" + role2Name)).andDo(print()).andExpect(jsonPath("$.users").isEmpty());
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 

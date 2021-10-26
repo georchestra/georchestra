@@ -32,9 +32,9 @@ import java.util.function.Supplier;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
+import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
-import org.georchestra.datafeeder.model.UserInfo.Organization;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkResponse;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
@@ -87,7 +87,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         // The metadata is inserted into the group which already exists due to
         // GeoNetwork's LDAP sync (which currently garantees that a geonetwork group
         // exists for the publishing organization)
-        String mdGroupId = organization.getId();
+        String mdGroupId = organization.getShortName();
         GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId);
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
@@ -229,7 +229,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(org.getId());
+        contact.setName(org.getShortName());
         contact.setOrganizationName(org.getName());
         contact.setProtocol("URL");
         contact.setLinkage(org.getLinkage());
@@ -260,7 +260,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         ContactInfo contact = new ContactInfo();
         contact.setIndividualName(individualName);
         contact.setEmail(user.getEmail());
-        contact.setName(org.getId());
+        contact.setName(org.getShortName());
         contact.setOrganizationName(org.getName());
         contact.setProtocol("URL");
         contact.setLinkage(org.getLinkage());// ?? labeledURI from LDAP

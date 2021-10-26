@@ -1,7 +1,7 @@
 package org.georchestra.security;
 
-import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.georchestra.security.HeaderNames.PRE_AUTH_REQUEST_PROPERTY;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

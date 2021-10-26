@@ -7,10 +7,9 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.http.Header;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,11 +31,11 @@ public class ImpersonateUserRequestHeaderProviderTest {
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("randomUser", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
     }
 
     @Test
@@ -49,28 +48,21 @@ public class ImpersonateUserRequestHeaderProviderTest {
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");
         provider.setTrustedUsers(trustedUsers);
-        assertEquals(0, provider.getCustomRequestHeaders(null, request, null).size());
+        assertEquals(0, provider.getCustomRequestHeaders(request, null).size());
 
         Authentication auth = new UsernamePasswordAuthenticationToken("jeichar", "random");
         SecurityContextHolder.getContext().setAuthentication(auth);
-        final Collection<Header> customRequestHeaders = provider.getCustomRequestHeaders(null, request, null);
+        final Map<String, String> customRequestHeaders = provider.getCustomRequestHeaders(request, null);
         assertEquals(2, customRequestHeaders.size());
         assertContains(customRequestHeaders, SEC_USERNAME, "imp-user");
         assertContains(customRequestHeaders, SEC_ROLES, "ROLE_IMP");
     }
 
-    private void assertContains(Collection<Header> customRequestHeaders, String headerName,
+    private void assertContains(Map<String, String> customRequestHeaders, String headerName,
             String expectedHeaderValue) {
 
-        for (Header header : customRequestHeaders) {
-            if (header.getName().equals(headerName)) {
-                assertEquals("Wrong value for header: " + headerName, expectedHeaderValue, header.getValue());
-                return;
-            }
-        }
-
-        throw new AssertionError(
-                "No header " + headerName + ": " + expectedHeaderValue + " in: " + customRequestHeaders);
+        String actualValue = customRequestHeaders.get(headerName);
+        assertEquals("Wrong value for header: " + headerName, expectedHeaderValue, actualValue);
     }
 
 }

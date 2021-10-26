@@ -19,6 +19,8 @@
 
 package org.georchestra.console.ws.utils;
 
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ReCaptchaV2;

@@ -110,7 +110,8 @@ class LdapHeaderMappingsTestSupport {
                 "title", "Amo del universo", //
                 "objectClass", "georchestraUser", //
                 "knowledgeInformation", "Internal CRM notes on testadmin", //
-                "manager", "uid=testeditor,ou=users,dc=georchestra,dc=org"//
+                "manager", "uid=testeditor,ou=users,dc=georchestra,dc=org", //
+                "georchestraObjectIdentifier", "0c6bb556-4ee8-46f2-892d-6116e262b489"//
         );
 
         map.put("memberOf", "cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org");
@@ -155,7 +156,8 @@ class LdapHeaderMappingsTestSupport {
                 "postalAddress", "127 rue georchestra, 73590 Chamblille", //
                 "description", "Association PSC geOrchestra", //
                 "knowledgeInformation", "Internal CRM notes on PSC", //
-                "objectClass", "organization"//
+                "objectClass", "organization", //
+                "georchestraObjectIdentifier", "bddf474d-125d-4b18-92bd-bd8ebb6699a9"//
         );
         return asMultimap(map);
     }
@@ -241,6 +243,8 @@ class LdapHeaderMappingsTestSupport {
             contextMap = (ListMultimap<String, Object>) orgContextMap;
         } else if (propertyName.startsWith("manager")) {
             contextMap = (ListMultimap<String, Object>) managerContextMap;
+        } else if (propertyName.indexOf('.') == -1) {
+            contextMap = (ListMultimap<String, Object>) userContextMap;
         } else if (propertyName.indexOf('.') == -1) {
             contextMap = (ListMultimap<String, Object>) userContextMap;
         } else {

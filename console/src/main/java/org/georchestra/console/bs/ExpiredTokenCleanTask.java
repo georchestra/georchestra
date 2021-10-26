@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.UserTokenDao;
+import org.georchestra.ds.DataServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

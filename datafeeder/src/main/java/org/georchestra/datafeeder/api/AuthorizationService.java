@@ -24,6 +24,7 @@ import org.georchestra.config.security.GeorchestraUserDetails;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataUploadService;
+import org.georchestra.security.model.GeorchestraUser;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -58,7 +59,9 @@ public class AuthorizationService {
         Authentication auth = context.getAuthentication();
         Object principal = auth.getPrincipal();
         if (principal instanceof GeorchestraUserDetails) {
-            return ((GeorchestraUserDetails) principal).getOrganization().getId();
+            GeorchestraUserDetails userDetails = (GeorchestraUserDetails) principal;
+            GeorchestraUser user = userDetails.getUser();
+            return user.getOrganization();
         }
         return null;
     }
@@ -90,8 +93,11 @@ public class AuthorizationService {
         Object principal = auth.getPrincipal();
         UserInfo user = new UserInfo();
         if (principal instanceof GeorchestraUserDetails) {
-            GeorchestraUserDetails georUser = (GeorchestraUserDetails) principal;
-            return userInfoMapper.map(georUser);
+            GeorchestraUserDetails userDetails = (GeorchestraUserDetails) principal;
+            userDetails.getOrganization().orElseThrow(
+                    () -> new IllegalStateException("User organization not provided through authentication headers"));
+
+            user = userInfoMapper.map(userDetails);
         }
         return user;
     }

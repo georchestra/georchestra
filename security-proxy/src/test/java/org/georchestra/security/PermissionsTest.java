@@ -13,13 +13,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Sets;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.ResolverDelegate;
 import org.georchestra.security.permissions.UriMatcher;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 public class PermissionsTest {

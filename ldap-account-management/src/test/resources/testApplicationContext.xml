@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/data/jpa
+            http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+  <context:annotation-config/>
+  <context:component-scan base-package="org.georchestra.ds"/>
+  <context:property-placeholder 
+    location="classpath:/default.properties"
+    ignore-resource-not-found="false" 
+    ignore-unresolvable="false" />
+
+  <!-- LDAP connection -->
+  <bean id="singleContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+    <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
+    <property name="base" value="${ldapBaseDn}"/>
+    <property name="userDn" value="${ldapAdminDn}"/>
+    <property name="password" value="${ldapAdminPassword}"/>
+  </bean>
+
+  <bean id="ldapContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator">
+  </bean>
+  
+  <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" destroy-method="destroy">
+    <property name="contextSource" ref="singleContextSource"/>
+    <property name="dirContextValidator" ref="ldapContextValidator"/>
+    <property name="testOnBorrow" value="${ldap.pool.testOnBorrow:true}"/>
+    <property name="maxActive" value="${ldap.pool.maxActive:8}"/>
+    <property name="minIdle" value="${ldap.pool.minIdle:1}"/>
+    <property name="maxIdle" value="${ldap.pool.maxIdle:8}"/>
+    <property name="maxTotal" value="${ldap.pool.maxTotal:-1}"/>
+    <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
+  </bean>
+  
+  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+    <constructor-arg ref="contextSource"/>
+  </bean>
+
+  <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
+  </bean>
+
+  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDao">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
+  </bean>
+
+  <bean id="accountDao" class="org.georchestra.ds.users.AccountDaoImpl">
+    <constructor-arg ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
+    <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
+  </bean>
+
+  <bean class="org.georchestra.ds.users.UserRule">
+    <property name="listOfprotectedUsers">
+      <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
+        <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUsersList" key-->
+        <value>${protectedUsersList:geoserver_privileged_user}</value>
+    </property>
+  </bean>
+
+  <bean class="org.georchestra.ds.roles.RoleProtected">
+    <property name="listOfprotectedRoles">
+      <description>Comma separated list of one or more protected Roles</description>
+        <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
+      <value>${protectedRolesList:ADMINISTRATOR,EXTRACTORAPP,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER}</value>
+    </property>
+  </bean>
+</beans>

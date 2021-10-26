@@ -1,5 +1,8 @@
 package org.georchestra.console.integration.instruments;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -8,9 +11,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
-
-import java.util.Collections;
-import java.util.Set;
 
 public class WithMockRandomUidUserSecurityContextFactory implements WithSecurityContextFactory<WithMockRandomUidUser> {
 

@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.awaitility.Awaitility;
-import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
+import org.georchestra.config.security.DatafeederAuthenticationTestSupport;
 import org.georchestra.datafeeder.api.AnalysisStatusEnum;
 import org.georchestra.datafeeder.api.DatasetMetadata;
 import org.georchestra.datafeeder.api.DatasetPublishRequest;
@@ -87,7 +87,7 @@ import lombok.NonNull;
 public class GeorchestraIntegrationIT {
 
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
-    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
+    public @Rule DatafeederAuthenticationTestSupport authSupport = new DatafeederAuthenticationTestSupport();
 
     public @Autowired @Rule IntegrationTestSupport testSupport;
 

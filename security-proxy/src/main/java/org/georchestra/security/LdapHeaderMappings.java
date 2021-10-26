@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 import lombok.NonNull;
 import lombok.Value;
@@ -169,7 +170,8 @@ public class LdapHeaderMappings {
             "uid", //
             "givenName", //
             "sn", //
-            "knowledgeInformation"//
+            "knowledgeInformation", //
+            "georchestraObjectIdentifier"//
     ));
 
     private static final Set<String> MANAGER_ATTRIBUTES = ImmutableSet.copyOf(Arrays.asList(//
@@ -195,7 +197,8 @@ public class LdapHeaderMappings {
             "org.seeAlso.description", //
             "org.seeAlso.knowledgeInformation", //
             "org.seeAlso.objectClass", //
-            "org.seeAlso.o"//
+            "org.seeAlso.o", //
+            "org.seeAlso.georchestraObjectIdentifier"//
     ));
 
     static final Set<String> ALL_VALID_ATTRIBUTES = ImmutableSet.<String>builder()//
@@ -235,6 +238,9 @@ public class LdapHeaderMappings {
      *                                  field)
      */
     public void loadFrom(Map<String, String> rawMappings) {
+
+        rawMappings = Maps.filterKeys(rawMappings, this::includeConfigProp);
+
         final Map<String, String> defaultRawMappings;
         final Map<String, Map<String, String>> perServiceRawMappings;
 
@@ -246,6 +252,11 @@ public class LdapHeaderMappings {
         perServiceRawMappings.forEach((service, raw) -> {
             serviceMappings.put(service, HeaderMappings.valueOf(raw));
         });
+    }
+
+    private boolean includeConfigProp(String property) {
+        return property != null && !property.contains(UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY)
+                && !property.contains(UserOrganizationJSONRequestHeaderProvider.CONFIG_PROPERTY);
     }
 
     public HeaderMappings getDefaultMappings() {

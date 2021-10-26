@@ -1,15 +1,26 @@
 package org.georchestra.console.ws.backoffice;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.Matchers.eq;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.naming.directory.SearchControls;
+
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleFactory;
-import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.ws.backoffice.users.UserRule;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.roles.RoleFactory;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.ds.users.UserRule;
+import org.georchestra.ds.users.UserSchema;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,16 +36,6 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
-
-import javax.naming.directory.SearchControls;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assume.assumeTrue;
-import static org.mockito.Matchers.eq;
 
 public class UsersRolesControllerTest {
 
@@ -98,22 +99,22 @@ public class UsersRolesControllerTest {
 
         // fake account list
         List<Account> fakeAccountList = new ArrayList<Account>();
-        fakeAccountList.add(AccountFactory.createFull("testadmin", "testadmin", "testadmin", "administrator",
+        fakeAccountList.add(AccountFactory.createFull(null, "testadmin", "testadmin", "testadmin", "administrator",
                 "psc@georchestra.org", "administrator", "+331234567890", "admin", "48 avenue du lac du Bourget",
                 "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget",
                 "Savoie-Technolac", "+331234567899", "geodata administration", "Undisclosed", "+336123457890", "42",
                 "Rhone-Alpes", null, "testnote", null, new String[0], null));
 
-        fakeAccountList.add(AccountFactory.createFull("testuser", "testuser", "testuser", "regular user",
+        fakeAccountList.add(AccountFactory.createFull(null, "testuser", "testuser", "testuser", "regular user",
                 "psc@georchestra.org", "user", "+331234567890", "user", "48 avenue du lac du Bourget", "73000",
                 "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget", "Savoie-Technolac",
                 "+331234567899", "Peon", "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, "testnote", null,
                 new String[0], null));
-        Account tempAccount = AccountFactory.createFull("testadminTmp", "testadminTmp", "testadminTmp", "administrator",
-                "psc@georchestra.org", "administrator", "+331234567890", "admin", "48 avenue du lac du Bourget",
-                "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac", "avenue du lac du Bourget",
-                "Savoie-Technolac", "+331234567899", "geodata administration", "Undisclosed", "+336123457890", "42",
-                "Rhone-Alpes", null, "testnote", null, new String[0], null);
+        Account tempAccount = AccountFactory.createFull(null, "testadminTmp", "testadminTmp", "testadminTmp",
+                "administrator", "psc@georchestra.org", "administrator", "+331234567890", "admin",
+                "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
+                "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
+                "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, "testnote", null, new String[0], null);
         fakeAccountList.add(tempAccount);
 
         // fake role List

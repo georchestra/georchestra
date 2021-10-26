@@ -19,12 +19,14 @@
 
 package org.georchestra.console.ws.passwordrecovery;
 
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.ws.utils.PasswordUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.AccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -38,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-
-import java.io.IOException;
 
 /**
  * This controller implements the interactions required to ask for a new

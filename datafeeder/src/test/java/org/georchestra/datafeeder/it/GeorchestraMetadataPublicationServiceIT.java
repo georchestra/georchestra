@@ -32,7 +32,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.georchestra.config.security.GeorchestraAuthenticationTestSupport;
+import org.georchestra.config.security.DatafeederAuthenticationTestSupport;
 import org.georchestra.datafeeder.app.DataFeederApplicationConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -71,7 +71,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GeorchestraMetadataPublicationServiceIT {
 
-    public @Rule GeorchestraAuthenticationTestSupport authSupport = new GeorchestraAuthenticationTestSupport();
+    public @Rule DatafeederAuthenticationTestSupport authSupport = new DatafeederAuthenticationTestSupport();
     public @Autowired @Rule IntegrationTestSupport support;
 
     private @Autowired GeorchestraMetadataPublicationService service;

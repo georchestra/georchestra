@@ -151,33 +151,15 @@ protectedUsersList=geoserver_privileged_user
 
 ### Integration Testing
 
-> TL;DR: run integration tests with `mvn verify -Pit`. The `it` maven profile enables the tests and starts the `ldap` and `database` docker containers at the `pre-integration-test` phase and kills them on `post-integration-test`.
-
+> TL;DR: run integration tests with `mvn verify`. 
 
 While `mvn test` will run the unit tests but not the integration tests, `mvn verify` (or any goal past that, like `mvn install`) is used to run (also) integration tests.
 
-A convenient `skipUT` property was added to allow ignoring the unit tests and to run only the integration tests. e.g.:
-`mvn -DskipUT=true verify`. The standard `-DskipTests` flag can't be used because it will make maven also ignore the integration tests.
+Integration tests that require an LDAP and/or PostgreSQL database will set them up
+using georchestra's "testcontainers".
 
-Integration test sources and resources are under `src/it/java` and `src/it/resources` respectively, and follow the convention of calling test classes `**IT.java`.
-
-Running integration tests and require connecting to geOrchestra's LDAP and Postgres instances.
-
-In order to automate these external resources, the [docker-maven-plugin](fabric8io/docker-maven-plugin) is used, which engages in the regular maven build lifecycle, launching the `georchestra/ldap` and `georchestra/database` docker images on the `pre-integration-test` phase and shuting them down in `post-integration-test`.
-
-Integration tests are run after `test` and `package`, and consists of the `pre-integration-test` -> `integration-test` -> `post-integration-test` -> `verify` phases.
-
-**Do not** run `mvn integration-test` directly as it won't have a chance to properly shut down the external resources (the docker containers in this case).
-
-See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It essentially launches the two mentioned containers and uses dynamic port mapping on port `389` for `georchestra/ldap` and port `5432` for `georchestra/database`. These mapped ports are then exposed by the `maven-failsafe-plugin` (the one used to run integration tests) as environment variables `ldapPort` and `pgsqlPort` to the test JVM, which in turn are picked up by Spring while resolving `src/it/resources/console-it.properties` property source:
-
-```
-ldapHost=localhost
-ldapPort=${ldapPort}
-pgsqlHost=localhost
-pgsqlPort=${pgsqlPort}
-pgsqlDatabase=georchestra
-```
+To skip integration tests, use the standard `maven-failsafe-plugin`'s flag `-DskipITs`. `maven-surefire-plugin`'s `-DskipTests` 
+skips both unit and integration tests.
 
 #### Running from an IDE while developing
 

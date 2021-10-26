@@ -1,7 +1,7 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.dto.Account;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.Account;
 import org.springframework.ldap.NameNotFoundException;
 
 public interface UserInfoExporter {

@@ -21,6 +21,7 @@ package org.georchestra.security;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -182,5 +183,29 @@ public class LdapHeaderMappingsTest {
 
         assertEquals(expected.keySet(), console.toMap().keySet());
         assertEquals(expected, console.toMap());
+    }
+
+    /**
+     * Verify {@code headers-mapping.properties} config for
+     * {@link UserDetailsJSONRequestHeaderProvider} are ignored
+     */
+    @Test
+    public void loadConfig_IgnoresJSONProviderKeys() {
+        final String propToIgnore = UserDetailsJSONRequestHeaderProvider.CONFIG_PROPERTY;
+        final String servicePropToIgnore = "service." + propToIgnore;
+
+        final Map<String, String> config = support.asMap(//
+                SEC_EMAIL, "mail", //
+                SEC_FIRSTNAME, "givenName", //
+                "analytics.sec-lastname", "sn", //
+                propToIgnore, "true", //
+                servicePropToIgnore, "false"//
+        );
+
+        mappings.loadFrom(config);
+
+        final Map<String, String> defaultMappings = mappings.getDefaultMappings().toMap();
+        assertFalse(defaultMappings.keySet().contains(propToIgnore));
+        assertFalse(defaultMappings.keySet().contains(servicePropToIgnore));
     }
 }

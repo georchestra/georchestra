@@ -24,15 +24,16 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
@@ -50,6 +50,7 @@ import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.security.LdapHeaderMappings.HeaderMapping;
 import org.georchestra.security.LdapHeaderMappings.HeaderMappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
@@ -60,7 +61,11 @@ import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicates;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
+
+import lombok.NonNull;
 
 /**
  * Reads information from a user node in LDAP and adds the information as
@@ -94,10 +99,6 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     private static final String MEMBER_OF_PATTERN = "([^=,]+)=([^=,]+),%s.*";
 
-    private static final String CACHED_USERNAME_KEY = "security-proxy-cached-username";
-
-    private static final String CACHED_HEADERS_KEY = "security-proxy-cached-attrs";
-
     private final Supplier<FilterBasedLdapUserSearch> userSearchFactory;
     private final Pattern orgSearchMemberOfPattern;
     private final String orgSearchBaseDN;
@@ -107,8 +108,24 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     @VisibleForTesting
     LdapTemplate ldapTemplate;
 
+    private @Autowired Environment env;
+
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
+
+    /**
+     * Cache of collected headers by user/service. Entries should expire in a long
+     * enough time to avoid concurrent requests flooding the LDAP server with
+     * requests, but short enough to allow propagating changes down to proxied
+     * services asap.
+     */
+    private final Cache<String, Map<String, String>> cache;
+
+    /**
+     * Cache time-to-live in milliseconds, can be given through an external
+     * configuration property {@code security-proxy.ldap.cache.ttl}
+     */
+    private static final long DEFAULT_CACHE_TTL = 2000;
 
     /**
      * @param contextSource    provider for the base LDAP path
@@ -128,6 +145,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         this.orgSearchBaseDN = ldapOrgsRdn;
         this.userSearchFactory = () -> new FilterBasedLdapUserSearch(ldapUsersRdn, userSearchFilter, contextSource);
         this.orgSearchMemberOfPattern = Pattern.compile(format(MEMBER_OF_PATTERN, ldapOrgsRdn));
+        this.cache = createCache();
     }
 
     @VisibleForTesting
@@ -135,6 +153,16 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         this.orgSearchBaseDN = ldapOrgsRdn;
         this.userSearchFactory = userSearchFactory;
         this.orgSearchMemberOfPattern = Pattern.compile(format(MEMBER_OF_PATTERN, ldapOrgsRdn));
+        this.cache = createCache();
+    }
+
+    private Cache<String, Map<String, String>> createCache() {
+        long ttl = DEFAULT_CACHE_TTL;
+        if (this.env != null) {
+            ttl = this.env.getProperty("security-proxy.ldap.cache.ttl", Long.class, DEFAULT_CACHE_TTL);
+        }
+        logger.info(String.format("Setting up LDAP headers cache ttl %,d ms", ttl));
+        return CacheBuilder.newBuilder().expireAfterWrite(ttl, TimeUnit.MILLISECONDS).build();
     }
 
     @PostConstruct
@@ -158,35 +186,33 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Map<String, String> getCustomRequestHeaders(final HttpServletRequest originalRequest,
+            final String targetServiceName) {
 
         // Don't use this provider for trusted request
         if (isPreAuthorized(originalRequest) || isAnnonymous()) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
-        Optional<Collection<Header>> cached = getCachedHeaders(session, targetServiceName);
-        return cached.orElseGet(() -> {
-            synchronized (session) {
-                Collection<Header> headers = collectHeaders(session, targetServiceName);
-                setCachedHeaders(session, headers, targetServiceName);
-                return headers;
-            }
-        });
+        final String key = serviceCacheKey(targetServiceName);
+        try {
+            return cache.get(key, () -> collectHeaders(targetServiceName));
+        } catch (ExecutionException e) {
+            throw new IllegalStateException(e.getCause());
+        }
     }
 
     /**
      * Actually performs the building of the request headers list
      */
-    private Collection<Header> collectHeaders(HttpSession session, @Nullable String serviceName) {
+    private Map<String, String> collectHeaders(@Nullable String serviceName) {
         final String username = getCurrentUserName();
 
         final HeaderMappings mappings = serviceName == null ? mappingsSupport.getDefaultMappings()
                 : mappingsSupport.getMappings(serviceName);
         logger.debug("Collecting headers, service = " + serviceName + ", mappings:" + mappings.all());
 
-        List<Header> headers = new ArrayList<>();
+        Map<String, String> headers = new HashMap<>();
         try {
             final DirContextOperations userContext = loadUser(username, mappings.getUserHeaders());
             final Optional<String> orgCn = findOrgCn(userContext);
@@ -207,17 +233,12 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
             // Collections.sort(headers, (h1, h2) -> h1.getName().compareTo(h2.getName()));
         } catch (Exception e) {
             logger.error("Unable to collect headers for user:" + username, e);
-            return Collections.emptyList();
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Final headers:");
-            headers.forEach(logger::debug);
+            return Collections.emptyMap();
         }
         return headers;
     }
 
-    private void addManagerHeaders(String uid, List<HeaderMapping> mappings, List<Header> target) {
+    private void addManagerHeaders(String uid, List<HeaderMapping> mappings, Map<String, String> target) {
         if (!mappings.isEmpty()) {
             DirContextOperations managerContext = userSearchFactory.get().searchForUser(uid);
             listcontext("* LDAP user's manager context", managerContext);
@@ -225,7 +246,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         }
     }
 
-    private void addOrgHeaders(String orgCn, HeaderMappings mappings, List<Header> target) {
+    private void addOrgHeaders(String orgCn, HeaderMappings mappings, Map<String, String> target) {
         final String groupDn = format("cn=%s,%s", orgCn, this.orgSearchBaseDN);
         DirContextOperations orgContext = this.ldapTemplate.lookupContext(groupDn);
         listcontext("* LDAP org context", orgContext);
@@ -236,7 +257,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         seeAlsoOrgName.ifPresent(cn -> addOrgExtHeaders(cn, mappings.getOrgExtensionHeaders(), target));
     }
 
-    private void addOrgExtHeaders(String cn, List<HeaderMapping> mappings, List<Header> target) {
+    private void addOrgExtHeaders(String cn, List<HeaderMapping> mappings, Map<String, String> target) {
         if (mappings.isEmpty()) {
             return;
         }
@@ -258,11 +279,11 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         return Optional.empty();
     }
 
-    private void addHeaders(DirContextOperations context, List<HeaderMapping> mappings, List<Header> target) {
+    private void addHeaders(DirContextOperations context, List<HeaderMapping> mappings, Map<String, String> target) {
         mappings.stream()//
                 .map(mapping -> buildHeader(context, mapping))//
                 .filter(Predicates.notNull())//
-                .forEach(target::add);
+                .forEach(h -> target.put(h.getName(), h.getValue()));
 
     }
 
@@ -336,7 +357,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         }
     }
 
-    private String getCurrentUserName() {
+    private @NonNull String getCurrentUserName() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new IllegalStateException("Request is not authenticated");
@@ -345,39 +366,22 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     }
 
     @VisibleForTesting
-    Optional<Collection<Header>> getCachedHeaders(HttpSession session, String service) {
-        final String username = getCurrentUserName();
-
+    Map<String, String> getCachedHeaders(String service) {
         final String cacheKey = serviceCacheKey(service);
-        final boolean cached = session.getAttribute(cacheKey) != null;
-        if (cached) {
-            try {
-                @SuppressWarnings("unchecked")
-                Collection<Header> headers = (Collection<Header>) session.getAttribute(cacheKey);
-                String expectedUsername = (String) session.getAttribute(CACHED_USERNAME_KEY);
-
-                if (username.equals(expectedUsername)) {
-                    return Optional.of(headers);
-                }
-            } catch (Exception e) {
-                logger.info("Unable to lookup cached user's attributes for user :" + username + ", service: " + service,
-                        e);
-            }
-        }
-        return Optional.empty();
+        Map<String, String> headers = cache.getIfPresent(cacheKey);
+        return headers == null ? Collections.emptyMap() : headers;
     }
 
     @VisibleForTesting
-    void setCachedHeaders(HttpSession session, Collection<Header> headers, String service) {
-        final String username = getCurrentUserName();
+    void setCachedHeaders(@NonNull Map<String, String> headers, String service) {
         final String cacheKey = serviceCacheKey(service);
-        logger.debug("Storing attributes into session for user :" + username + ", service: " + service);
-        session.setAttribute(CACHED_USERNAME_KEY, username);
-        session.setAttribute(cacheKey, new ArrayList<>(headers));
+        logger.debug("Storing attributes into session for " + cacheKey);
+        cache.put(cacheKey, new HashMap<>(headers));
     }
 
     private String serviceCacheKey(String service) {
-        return service == null ? CACHED_HEADERS_KEY : CACHED_HEADERS_KEY + "@" + service;
+        String userName = getCurrentUserName();
+        return String.format("%s@%s", userName, service == null ? "global" : service);
     }
 
     private boolean isAnnonymous() {

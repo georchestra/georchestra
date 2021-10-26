@@ -91,6 +91,9 @@
   <modules>
     <module>ogc-server-statistics</module>
     <module>commons</module>
+    <module>security-proxy-spring-integration</module>
+    <module>ldap-account-management</module>
+    <module>testcontainers</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -521,6 +524,12 @@
         <artifactId>commons-net</artifactId>
         <version>3.6</version>
       </dependency>
+      <dependency>
+        <groupId>org.georchestra</groupId>
+        <artifactId>georchestra-testcontainers</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
@@ -909,6 +918,9 @@
         <module>extractorapp</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
+        <module>commons</module>
+        <module>ldap-account-management</module>
+        <module>testcontainers</module>
         <module>console</module>
         <module>mapfishapp</module>
         <module>atlas</module>

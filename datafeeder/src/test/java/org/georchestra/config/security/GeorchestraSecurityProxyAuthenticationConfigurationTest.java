@@ -34,6 +34,7 @@ import java.util.Arrays;
 import org.georchestra.datafeeder.api.AuthorizationService;
 import org.georchestra.datafeeder.api.DataFeederApiConfiguration;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.georchestra.datafeeder.service.DataPublishingService;
 import org.georchestra.datafeeder.service.DataUploadService;
 import org.georchestra.datafeeder.service.DatasetsService;
@@ -88,7 +89,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
 
     private HttpHeaders requestHeaders;
 
-    private ResponseEntity<GeorchestraUserDetails> response;
+    private ResponseEntity<UserInfo> response;
 
     public @Before void before() {
         baseURI = "http://localhost:" + port + contextPath + "/test/security/georchestra";
@@ -105,14 +106,14 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         requestHeaders.set("sec-linkage", "http://test.com");
     }
 
-    public ResponseEntity<GeorchestraUserDetails> doGet(String relaitvePath) {
+    public ResponseEntity<UserInfo> doGet(String relaitvePath) {
         HttpHeaders headers = this.requestHeaders;
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         String uri = baseURI + relaitvePath;
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
-        return template.exchange(uri, HttpMethod.GET, requestEntity, GeorchestraUserDetails.class);
+        return template.exchange(uri, HttpMethod.GET, requestEntity, UserInfo.class);
     }
 
     public @Test void requestNotProxied() {
@@ -126,7 +127,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         response = doGet("/anonymous");
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        GeorchestraUserDetails authenticatedAs = response.getBody();
+        UserInfo authenticatedAs = response.getBody();
         assertNotNull(authenticatedAs);
         assertEquals("anonymousUser", authenticatedAs.getUsername());
 
@@ -146,7 +147,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         response = doGet("/user");
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        GeorchestraUserDetails authenticatedAs = response.getBody();
+        UserInfo authenticatedAs = response.getBody();
         assertNotNull(authenticatedAs);
         assertEquals("testUserName", authenticatedAs.getUsername());
 
@@ -167,7 +168,7 @@ public class GeorchestraSecurityProxyAuthenticationConfigurationTest {
         response = doGet("/admin");
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        GeorchestraUserDetails authenticatedAs = response.getBody();
+        UserInfo authenticatedAs = response.getBody();
         assertNotNull(authenticatedAs);
         assertEquals("testUserName", authenticatedAs.getUsername());
     }

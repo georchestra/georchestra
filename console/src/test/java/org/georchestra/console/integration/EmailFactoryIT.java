@@ -1,6 +1,13 @@
 package org.georchestra.console.integration;
 
-import com.google.common.io.Files;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import javax.mail.MessagingException;
+
 import org.apache.commons.io.FileUtils;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -12,13 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.mail.MessagingException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-
-import static org.junit.Assert.assertTrue;
+import com.google.common.io.Files;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration

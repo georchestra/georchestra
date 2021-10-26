@@ -115,7 +115,7 @@ public class HeadersManagementStrategy {
             StringBuilder headersLog, String targetServiceName) {
 
         final boolean preAuthorized = HeaderProvider.isPreAuthorized(originalRequest);
-        final HttpSession session = originalRequest.getSession();
+        Map<String, String> collectedHeaders = new HashMap<>();
         for (HeaderProvider provider : headerProviders) {
 
             // Don't include headers from security framework for request coming from trusted
@@ -124,32 +124,28 @@ public class HeadersManagementStrategy {
                 logger.debug("Bypassing header provider : {}", provider.getClass().toString());
                 continue;
             }
-
-            Collection<Header> providerHeaders = provider.getCustomRequestHeaders(session, originalRequest,
-                    targetServiceName);
-            for (Header header : providerHeaders) {
-
-                final String providerHeaderName = header.getName();
-                logger.debug("Processing  header  {} from {}", providerHeaderName, provider.getClass().toString());
-                // ignore Host and Content-Length header
-                if (isOneOf(providerHeaderName, HOST, CONTENT_LENGTH)) {
-                    continue;
-                }
-
-                if (isOneOf(providerHeaderName, SEC_USERNAME, SEC_ROLES)
-                        && proxyRequest.getFirstHeader(providerHeaderName) != null) {
-                    Header[] originalHeaders = proxyRequest.getHeaders(providerHeaderName);
-                    for (Header originalHeader : originalHeaders) {
-                        addHeaderLog(headersLog, originalHeader.getName(), originalHeader.getValue());
-                    }
-                    continue;
-                }
-
-                logger.debug("Adding header to proxied request: {} = {}", providerHeaderName, header.getValue());
-                proxyRequest.addHeader(header);
-                addHeaderLog(headersLog, providerHeaderName, header.getValue());
-            }
+            Map<String, String> providerHeaders = provider.getCustomRequestHeaders(originalRequest, targetServiceName);
+            collectedHeaders.putAll(providerHeaders);
         }
+
+        collectedHeaders.forEach((headerName, headerValue) -> {
+            // ignore Host and Content-Length header
+            if (isOneOf(headerName, HOST, CONTENT_LENGTH)) {
+                return;
+            }
+
+            if (isOneOf(headerName, SEC_USERNAME, SEC_ROLES) && proxyRequest.getFirstHeader(headerName) != null) {
+                Header[] originalHeaders = proxyRequest.getHeaders(headerName);
+                for (Header originalHeader : originalHeaders) {
+                    addHeaderLog(headersLog, originalHeader.getName(), originalHeader.getValue());
+                }
+                return;
+            }
+
+            logger.debug("Adding header to proxied request: {} = {}", headerName, headerValue);
+            proxyRequest.addHeader(headerName, headerValue);
+            addHeaderLog(headersLog, headerName, headerValue);
+        });
     }
 
     private boolean isOneOf(String header, String... names) {

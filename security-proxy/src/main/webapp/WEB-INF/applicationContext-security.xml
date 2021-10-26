@@ -242,4 +242,46 @@
         <constructor-arg value="security-proxy" />
     </bean>
 
+  <context:component-scan base-package="org.georchestra.ds"/>
+
+  <bean class="org.georchestra.ds.users.UserRule">
+    <property name="listOfprotectedUsers">
+      <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
+        <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUsersList" key-->
+        <value>${protectedUsersList:geoserver_privileged_user}</value>
+    </property>
+  </bean>
+
+  <bean class="org.georchestra.ds.roles.RoleProtected">
+    <property name="listOfprotectedRoles">
+      <description>Comma separated list of one or more protected Roles</description>
+        <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
+      <value>${protectedRolesList:ADMINISTRATOR,EXTRACTORAPP,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER}</value>
+    </property>
+  </bean>
+
+  <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
+  </bean>
+
+  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDao">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
+  </bean>
+
+  <bean id="accountDao" class="org.georchestra.ds.users.AccountDaoImpl">
+    <constructor-arg ref="ldapTemplate"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
+    <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
+  </bean>
+
 </beans>

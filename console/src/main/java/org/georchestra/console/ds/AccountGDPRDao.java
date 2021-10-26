@@ -24,7 +24,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.georchestra.console.dto.Account;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.users.Account;
 import org.locationtech.jts.geom.Geometry;
 
 import lombok.AllArgsConstructor;

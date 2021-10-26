@@ -19,13 +19,14 @@
 
 package org.georchestra.console.ws.backoffice.utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Utility class which contains useful method to prepare the http response.

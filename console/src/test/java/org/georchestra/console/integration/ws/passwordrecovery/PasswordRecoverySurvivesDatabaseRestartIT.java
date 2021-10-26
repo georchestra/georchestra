@@ -25,7 +25,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.sql.Connection;
@@ -39,6 +38,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormBean;
@@ -64,7 +64,7 @@ import org.springframework.web.bind.support.SessionStatus;
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class PasswordRecoverySurvivesDatabaseRestartIT {
+public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 

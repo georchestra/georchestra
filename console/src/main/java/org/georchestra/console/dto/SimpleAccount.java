@@ -1,11 +1,13 @@
 package org.georchestra.console.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
+
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.UserSchema;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-
-import java.time.LocalDate;
 
 public class SimpleAccount {
 

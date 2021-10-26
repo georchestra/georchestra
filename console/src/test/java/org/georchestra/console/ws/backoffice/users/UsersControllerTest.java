@@ -9,9 +9,11 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -25,19 +27,20 @@ import javax.naming.ldap.LdapName;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDaoImpl;
-import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.model.DelegationEntry;
-import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.roles.RoleProtected;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.ds.users.DuplicatedEmailException;
+import org.georchestra.ds.users.UserRule;
+import org.georchestra.ds.users.UserSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -109,7 +112,7 @@ public class UsersControllerTest {
         orgsDao.setBasePath("dc=georchestra,dc=org");
 
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate);
+        dao = spy(new AccountDaoImpl(ldapTemplate));
         dao.setUserSearchBaseDN("ou=users");
         dao.setPendingUserSearchBaseDN("ou=pendingusers");
         dao.setOrgSearchBaseDN("ou=orgs");
@@ -284,46 +287,36 @@ public class UsersControllerTest {
         usersCtrl.update("pmauduit", request);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = DuplicatedEmailException.class)
     public void testUpdateDuplicatedEmailException() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("mail", "tomcat2@localhost");
+        final String duplicateEmail = "tomcat2@localhost";
+        JSONObject reqUsr = new JSONObject().put("mail", duplicateEmail);
         request.setContent(reqUsr.toString().getBytes());
-        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
+        Account updatingToDuplicateEmail = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        Account fakedAccount2 = AccountFactory.createBrief("pmauduit2", "monkey123", "Pierre", "pmauduit",
-                "tomcat2@localhost", "+33123456789", "developer & sysadmin", "dev&ops");
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), any(ContextMapper.class));
-        // Returns the same account when searching it back
-        AndFilter filter = new AndFilter();
-        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-        filter.and(new EqualsFilter("objectClass", "person"));
-        filter.and(new EqualsFilter("mail", "tomcat2@localhost"));
+        Account existingWithSameEmail = AccountFactory.createBrief("pmauduit2", "monkey123", "Pierre", "pmauduit",
+                duplicateEmail, "+33123456789", "developer & sysadmin", "dev&ops");
 
-        List<Account> listFakedAccount = new ArrayList<Account>();
-        listFakedAccount.add(fakedAccount2);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
-                eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
+        Mockito.doReturn(updatingToDuplicateEmail).when(ldapTemplate).lookup(any(Name.class),
+                eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class));
 
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE),
-                any(ContextMapper.class));
-
+        doReturn(existingWithSameEmail).when(dao).findByEmail(eq(duplicateEmail));
         usersCtrl.update("pmauduit", request);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = DataServiceException.class)
     public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
         JSONObject reqUsr = new JSONObject().put("mail", "tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
-                + "(objectClass=person)(mail=tomcat2@localhost))";
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE),
-                any(ContextMapper.class));
-        doThrow(DataServiceException.class).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")), eq(mFilter),
-                any(SearchControls.class), any(ContextMapper.class));
 
+        doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE),
+                any(ContextMapper.class));
+
+        when(ldapTemplate.lookupContext(any(Name.class))).thenThrow(DataServiceException.class);
         usersCtrl.update("pmauduit", request);
 
     }

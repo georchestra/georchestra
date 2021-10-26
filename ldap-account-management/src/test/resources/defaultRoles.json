@@ -1,0 +1,129 @@
+[
+	{
+		"id": "67148edb-ac2a-4959-a42c-8361fcb057bd",
+		"name": "ORGADMIN",
+		"description": "This role is automatically granted to all users holding an admin delegation",
+		"lastUpdated": "bfbfc6658089c91218b41ce195c68cd1afc385ecedbc5dd1c891bb51fb55a07b",
+		"members": [
+			"testdelegatedadmin"
+		]
+	},
+	{
+		"id": "fdff2189-2321-455f-b59c-e831fa14f084",
+		"name": "CKAN_SYSADMIN",
+		"description": "This role grants full admin rights to CKAN",
+		"lastUpdated": "7ccffd8b2a71e529be7e2ac24f90aff751578ba789497f5268b5765695f8ce77",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "7ca8708f-8056-48d0-abff-0c34ed66328a",
+		"name": "MAPSTORE_ADMIN",
+		"description": "This role grants administrative access to MapStore2",
+		"lastUpdated": "e769f6007949980f048f3e40aa670e4f7bb2ca227551dd4440f906cfb2cca613",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "204747a2-7cab-4835-be5e-af9c46ae3b9e",
+		"name": "GN_EDITOR",
+		"description": "This role grants edit rights in GeoNetwork",
+		"lastUpdated": "d185e5580310fd92f6244b560e352648ca50fbd9f917e1cc2613ad7afe597e7a",
+		"members": [
+			"testeditor"
+		]
+	},
+	{
+		"id": "3ebc8f3f-a211-4a4d-996e-e1236c380bad",
+		"name": "GN_REVIEWER",
+		"description": "This role grants reviewer (publish) rights in GeoNetwork",
+		"lastUpdated": "1afe0c6e0abefb5b5f760d535a62d18ba97ae0777a7a91f5448eef9b955c95d7",
+		"members": [
+			"testreviewer"
+		]
+	},
+	{
+		"id": "7637a7bc-e540-4a5a-b828-dc2530540017",
+		"name": "CKAN_ADMIN",
+		"description": "This role grants admin rights in CKAN, scoped to user's org",
+		"lastUpdated": "f3f31065d550f0f0da979a306cff55853c0152272e52950bea0ab6305b073502",
+		"members": []
+	},
+	{
+		"id": "26aa3643-5c37-4e10-961f-4ad1bccd85c0",
+		"name": "REFERENT",
+		"description": "This role allows users to update their organisation",
+		"lastUpdated": "27da01179bb34515f7f78ea19fb0d6886e3c8732f44415d0bad8b65f32a0df9b",
+		"members": []
+	},
+	{
+		"id": "6e2b47da-051e-4a06-82ee-ace349e4337e",
+		"name": "SUPERUSER",
+		"description": "This role grants full control of users, roles & organizations via the console application",
+		"lastUpdated": "ea88eb28d22326355396e1725edf0527001519765ce6c2b62698d459279c0514",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "ab9d8932-a17c-4767-840d-940a183654f3",
+		"name": "GN_ADMIN",
+		"description": "This role grants admin access to GeoNetwork",
+		"lastUpdated": "23d138ea682a104ef579712a308444899440c607a1c7253c3ba0760aa500ae1a",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "2b5150f7-6451-4bd7-8ecb-b44ffa39fa08",
+		"name": "EMAILPROXY",
+		"description": "This role allows to use the emailProxy webservice from the console",
+		"lastUpdated": "319f6ecacc25d6f146e2d482b47d4811b6d6c04871ab55bf91e9b825e88c8daa",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "6b98583f-0ff0-465f-bb29-e9696a634c74",
+		"name": "ADMINISTRATOR",
+		"description": "This role grants admin access to GeoServer",
+		"lastUpdated": "3a33e37f8ca3dcd35e6806001da8b1da827ede7bbdba15032270031677770aa7",
+		"members": [
+			"geoserver_privileged_user",
+			"testadmin"
+		]
+	},
+	{
+		"id": "7a75bb00-6f0a-4917-96d2-41e90f7b8651",
+		"name": "EXTRACTORAPP",
+		"description": "This role allows users to extract geodata",
+		"lastUpdated": "31819308e18f275855187718f5a7967d4da659728e6b8ccff17cc81cf7c2070f",
+		"members": [
+			"testadmin"
+		]
+	},
+	{
+		"id": "9354df17-ed78-42e2-8d5b-089bfbe9fd0c",
+		"name": "CKAN_EDITOR",
+		"description": "This role grants metadata edit rights in CKAN, scoped to user's org",
+		"lastUpdated": "f0241fc015f032e3d24bdddfbc1009e21a777d113fb82572d1bfe04bad9d2807",
+		"members": [
+			"testeditor"
+		]
+	},
+	{
+		"id": "ad243705-eeec-4d1c-aa28-abb631e23a65",
+		"name": "USER",
+		"description": "This role is required to log into geOrchestra",
+		"lastUpdated": "6e125ba6fafdecb6b9cd46c269f0db64e4e1c49315f9766c9cd82d768493bff0",
+		"members": [
+			"testuser",
+			"testeditor",
+			"testreviewer",
+			"testadmin",
+			"testdelegatedadmin"
+		]
+	}
+]

@@ -22,23 +22,21 @@ package org.georchestra.security;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Generates {@code sec-username} and {@code sec-roles} headers based on the
@@ -56,20 +54,22 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
     }
 
     @Override
-    public Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest,
-            String targetServiceName) {
+    public Map<String, String> getCustomRequestHeaders(HttpServletRequest originalRequest, String targetServiceName) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();
         if (authName.equals("anonymousUser"))
-            return Collections.emptyList();
+            return Collections.emptyMap();
 
-        List<Header> headers = new ArrayList<>();
-        headers.add(new BasicHeader(SEC_USERNAME, authName));
+        String roles = buildRolesList(authentication);
+        return ImmutableMap.of(//
+                SEC_USERNAME, authName, //
+                SEC_ROLES, roles);
+    }
+
+    private String buildRolesList(Authentication authentication) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(";"));
-        headers.add(new BasicHeader(SEC_ROLES, roles.toString()));
-
-        return headers;
+        return roles;
     }
 }

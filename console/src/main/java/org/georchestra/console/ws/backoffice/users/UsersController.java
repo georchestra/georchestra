@@ -19,15 +19,34 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import lombok.Setter;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+
+import java.io.IOException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.mail.MessagingException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.*;
-import org.georchestra.console.dto.*;
-import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
@@ -35,6 +54,19 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAcco
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleDao;
+import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
+import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.ds.users.DuplicatedEmailException;
+import org.georchestra.ds.users.DuplicatedUidException;
+import org.georchestra.ds.users.ProtectedUserFilter;
+import org.georchestra.ds.users.UserRule;
+import org.georchestra.ds.users.UserSchema;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,23 +83,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.mail.MessagingException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
-import java.io.IOException;
-import java.text.Normalizer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.Setter;
 
 /**
  * Web Services to maintain the User information.
@@ -779,9 +801,15 @@ public class UsersController {
 
         String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-        Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
-                postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
-                note, context, org, sshKeysA, saslUser);
+        UUID uuid = null;
+        String suuid = RequestUtil.getFieldValue(json, UserSchema.UUID_KEY);
+        if (StringUtils.hasLength(suuid)) {
+            uuid = UUID.fromString(suuid);
+        }
+
+        Account a = AccountFactory.createFull(uuid, uid, commonName, surname, givenName, email, title, phone,
+                description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "",
+                "", manager, note, context, org, sshKeysA, saslUser);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {

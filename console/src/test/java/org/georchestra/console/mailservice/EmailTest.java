@@ -2,21 +2,23 @@ package org.georchestra.console.mailservice;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.io.FileUtils;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import org.apache.commons.io.FileUtils;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
 public class EmailTest {
 

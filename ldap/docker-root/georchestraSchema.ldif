@@ -6,16 +6,28 @@ olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.1
     DESC 'georchestra user'
     SUP top
     AUXILIARY
-    MAY ( privacyPolicyAgreementDate $ knowledgeInformation ))
+    MAY ( privacyPolicyAgreementDate $ knowledgeInformation $ georchestraObjectIdentifier ))
 olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.1
     NAME 'privacyPolicyAgreementDate'
     DESC 'Epoch day when a user agrees to the privacy policy (terms and conditions)'
     EQUALITY integerMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
     SINGLE-VALUE )
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.2
+    NAME 'georchestraObjectIdentifier'
+    DESC 'A UUID identifying the geOrchestra object'
+    SYNTAX 1.3.6.1.1.16.1
+    SINGLE-VALUE  )
 olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
     NAME 'georchestraOrg'
     DESC 'georchestra org'
     SUP top
     AUXILIARY
-    MAY (jpegphoto $ labeledURI $ knowledgeInformation))
+    MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier))
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
+    NAME 'georchestraRole'
+    DESC 'Uniquely identifiable georchestra role'
+    SUP top
+    AUXILIARY
+    MAY (georchestraObjectIdentifier))
+    

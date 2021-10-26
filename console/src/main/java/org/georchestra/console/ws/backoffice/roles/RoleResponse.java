@@ -22,13 +22,12 @@ package org.georchestra.console.ws.backoffice.roles;
 import java.io.IOException;
 import java.util.List;
 
-import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.dto.Role;
-import org.georchestra.console.dto.RoleSchema;
+import org.georchestra.ds.roles.Role;
+import org.georchestra.ds.roles.RoleSchema;
+import org.georchestra.ds.users.ProtectedUserFilter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Mauricio Pazos

@@ -47,10 +47,11 @@ import org.xml.sax.InputSource;
 
 import com.google.common.io.CharStreams;
 
-@SpringBootTest(classes = { //
-        GeorchestraIntegrationAutoConfiguration.class, //
-        DataFeederServiceConfiguration.class, //
-        IntegrationTestSupport.class }, //
+@SpringBootTest(//
+        classes = { //
+                GeorchestraIntegrationAutoConfiguration.class, //
+                DataFeederServiceConfiguration.class, //
+                IntegrationTestSupport.class }, //
         webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)

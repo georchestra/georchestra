@@ -27,6 +27,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.georchestra.security.model.GeorchestraUser;
+import org.georchestra.security.model.Organization;
+
 /**
  * A collection of header names commonly used by the security-proxy gateway
  * application
@@ -36,14 +39,30 @@ import java.util.stream.Stream;
 public class SecurityHeaders {
     // well-known header names
     public static final String SEC_PROXY = "sec-proxy";
+
+    /**
+     * Used to send the full {@link GeorchestraUser user details} as a Base64
+     * encoded JSON string
+     */
+    public static final String SEC_USER = "sec-user";
+    /**
+     * Used to send the full {@link Organization} as a Base64 encoded JSON string
+     */
+    public static final String SEC_ORGANIZATION = "sec-organization";
+
+    public static final String SEC_USERID = "sec-userid";
+    public static final String SEC_LASTUPDATED = "sec-lastupdated";
     public static final String SEC_USERNAME = "sec-username";
-    public static final String SEC_ORG = "sec-org";
-    public static final String SEC_ORGNAME = "sec-orgname";
     public static final String SEC_ROLES = "sec-roles";
     public static final String SEC_FIRSTNAME = "sec-firstname";
     public static final String SEC_LASTNAME = "sec-lastname";
     public static final String SEC_EMAIL = "sec-email";
     public static final String SEC_TEL = "sec-tel";
+
+    public static final String SEC_ORG = "sec-org";
+    public static final String SEC_ORGID = "sec-orgid";
+    public static final String SEC_ORGNAME = "sec-orgname";
+    public static final String SEC_ORG_LASTUPDATED = "sec-org-lastupdated";
     public static final String IMP_ROLES = "imp-roles";
     public static final String IMP_USERNAME = "imp-username";
 

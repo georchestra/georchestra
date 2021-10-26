@@ -19,9 +19,6 @@
 
 package org.georchestra.console.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +26,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 @Entity
 @Table(schema = "console", name = "email_template")

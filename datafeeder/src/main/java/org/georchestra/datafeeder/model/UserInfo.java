@@ -20,12 +20,9 @@ package org.georchestra.datafeeder.model;
 
 import java.util.List;
 
-import javax.persistence.Embeddable;
-
 import lombok.Data;
 
 @Data
-@Embeddable
 public class UserInfo {
     private String username;
     private List<String> roles;
@@ -37,14 +34,4 @@ public class UserInfo {
     private String telephoneNumber;
     private String title;
     private String notes;
-
-    public static @Data class Organization {
-        private String id;
-        private String name;
-        private String linkage;
-        private String postalAddress;
-        private String category;
-        private String description;
-        private String notes;
-    }
 }
