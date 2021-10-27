@@ -198,7 +198,7 @@ GEOR.cswbrowser = (function() {
                                 version: "1.1.0",
                                 Filter: new OpenLayers.Filter.Comparison({
                                     type: OpenLayers.Filter.Comparison.EQUAL_TO,
-                                    property: GEOR.config.CSW_GETDOMAIN_PROPERTY,
+                                    property: GEOR.config.GN4_INDEX_KEYWORD_FIELD,
                                     value: treeNode.text
                                 })
                             },
@@ -287,21 +287,56 @@ GEOR.cswbrowser = (function() {
         cleanTree(tree);
         var getDomainFormat = new OpenLayers.Format.CSWGetDomain();
         OpenLayers.Request.POST({
-            url: GEONETWORK_URL + '/csw',
-            data: getDomainFormat.write({
-                PropertyName: GEOR.config.CSW_GETDOMAIN_PROPERTY
+            url: GEONETWORK_URL + "/../api/search/records/_search?bucket=bucket",
+            data: Ext.encode({
+                "aggregations": {
+                    "keywords": {
+                        "terms": {
+                            "field": GEOR.config.GN4_INDEX_KEYWORD_FIELD,
+                            "include": ".*",
+                            "size": 10000
+                        },
+                        "meta": {
+                            "caseInsensitiveInclude": true
+                        }
+                    }
+                },
+                "query": {
+                    "bool": {
+                        "must": [
+                            {
+                                "query_string": {
+                                    "query": "(+linkProtocol:/OGC:WMS.*/)"
+                                }
+                            },
+                            {
+                                "terms": {
+                                    "isTemplate": [
+                                        "n"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                from: 0,
+                size: 10
             }),
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
             success: function(response) {
-                var r = getDomainFormat.read(response.responseXML || response.responseText);
-                Ext.each(r.DomainValues[0].ListOfValues, function (item) {
-                    appendKeyword(tree, item.Value.value);
+                var json = Ext.decode(response.responseText)
+                Ext.each(json.aggregations["keywords"].buckets, function (item) {
+                    appendKeyword(tree, item.key);
                 }, this);
                 mask && mask.hide();
             },
             failure: function() {
                 mask && mask.hide();
                 GEOR.util.errorDialog({
-                    msg: tr("The getDomain CSW query failed")
+                    msg: tr("The request to GeoNetwork 4 aggregations failed")
                 });
             }
         });

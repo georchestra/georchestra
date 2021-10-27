@@ -88,7 +88,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_cswbrowser.js strings */
     "NAME layer": "Cлой с именем... ou слой${NAME}",
     "Metadata without a name": "Метаданные без имени",
-    "The getDomain CSW query failed": "Запрос на получение метаданных Корпоративного Программного Обеспечения (CSW) не получил одобрения",
+    "The request to GeoNetwork 4 aggregations failed": "Запрос на получение метаданных Корпоративного Программного Обеспечения (Geonetwork 4) не получил одобрения",
     "Error for the thesaurus": "Ошибка относительно тезауруса",
     "Missing key to access the thesaurus": "Отсутствует ключ к тезаурусу",
     "Keywords query failed": "Запрос на ключевые слова отклонён",
