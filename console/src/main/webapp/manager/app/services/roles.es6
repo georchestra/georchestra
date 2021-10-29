@@ -23,6 +23,7 @@ angular.module('manager')
       'SUPERUSER',
       'ADMINISTRATOR',
       'GN_ADMIN',
+      'GN_USERADMIN',
       'GN_EDITOR',
       'GN_REVIEWER',
       'ORGADMIN',
