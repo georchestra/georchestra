@@ -69,9 +69,9 @@ public class InternalSecurityApiImplIT {
         List<GeorchestraUser> defaultUsers = loadJson("/defaultUsers.json", GeorchestraUser.class);
         List<Organization> defaultOrganizations = loadJson("/defaultOrganizations.json", Organization.class);
         List<Role> defaultRoles = loadJson("/defaultRoles.json", Role.class);
-        assertEquals(3, defaultUsers.size());
+        assertEquals(6, defaultUsers.size());
         assertEquals(2, defaultOrganizations.size());
-        assertEquals(14, defaultRoles.size());
+        assertEquals(15, defaultRoles.size());
 
         expectedUsers = toMap(defaultUsers, GeorchestraUser::getId);
         expectedOrganizations = toMap(defaultOrganizations, Organization::getId);

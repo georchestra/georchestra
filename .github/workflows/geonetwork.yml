@@ -4,13 +4,19 @@ on:
     paths:
       - "commons/**"
       - "security-proxy-spring-integration/**"
-      - "geonetwork/**"
+      - "geonetwork"
       - ".github/workflows/geonetwork.yml"
+      - "ldap-account-management/**"
+      - "console/**"
+      - "ldap/**"
   pull_request:
     paths:
       - "commons/**"
       - "security-proxy-spring-integration/**"
-      - "geonetwork/**"
+      - "geonetwork"
+      - "ldap-account-management/**"
+      - "console/**"
+      - "ldap/**"
 
 jobs:
   build:

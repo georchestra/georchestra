@@ -34,6 +34,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
 abstract class UserMapper {
@@ -53,12 +54,18 @@ abstract class UserMapper {
 
     @AfterMapping
     protected void addRoles(Account source, @MappingTarget GeorchestraUser target) {
-
         List<String> roles = findRoles(source);
         target.setRoles(roles);
 
         String hash = GeorchestraUserHasher.createHash(target);
         target.setLastUpdated(hash);
+    }
+
+    @AfterMapping
+    protected void setOrgToNullIfEmpty(Account source, @MappingTarget GeorchestraUser target) {
+        if (!StringUtils.hasLength(source.getOrg())) {
+            target.setOrganization(null);
+        }
     }
 
     private List<String> findRoles(Account source) {

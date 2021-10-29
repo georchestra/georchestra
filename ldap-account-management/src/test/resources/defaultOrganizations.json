@@ -8,10 +8,11 @@
 		"category": "Association",
 		"description": "Association PSC geOrchestra",
 		"notes": "Internal CRM notes on PSC",
-		"lastUpdated": "2200a6051fcef499884e1cfa8b6625766e76df75d18ce2316c23b421db99e147",
+		"lastUpdated": "53c634aad30ebd750630fe2e16470d9cce2c9e27a4d35b5d1e0dcbc7fa53b6ff",
 		"members": [
 			"testadmin",
-			"testuser"
+			"testuser",
+			"testuseradmin"
 		]
 	},
 	{
