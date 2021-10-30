@@ -103,7 +103,6 @@ public class UsersControllerTest {
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoles(this.roles);
         roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setBasePath("dc=georchestra,dc=org");
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);

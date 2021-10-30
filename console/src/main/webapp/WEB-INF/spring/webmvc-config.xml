@@ -112,7 +112,6 @@
 
   <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 

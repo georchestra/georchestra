@@ -59,12 +59,7 @@ public class RoleDaoImpl implements RoleDao {
 
     private LdapTemplate ldapTemplate;
 
-    private String basePath;
     private String roleSearchBaseDN;
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
 
     public void setRoleSearchBaseDN(String roleSearchBaseDN) {
         this.roleSearchBaseDN = roleSearchBaseDN;
