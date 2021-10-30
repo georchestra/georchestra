@@ -48,6 +48,7 @@ import lombok.Setter;
  * @author Mauricio Pazos
  *
  */
+@SuppressWarnings("deprecation")
 public class AccountImpl implements Serializable, Account {
 
     private static final long serialVersionUID = -8022496448991887664L;

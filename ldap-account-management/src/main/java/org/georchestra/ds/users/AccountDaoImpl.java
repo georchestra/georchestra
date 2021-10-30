@@ -66,6 +66,7 @@ import lombok.NonNull;
  *
  * @author Mauricio Pazos
  */
+@SuppressWarnings("deprecation")
 public class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
@@ -273,14 +274,6 @@ public class AccountDaoImpl implements AccountDao {
             throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
         }
         throw new IllegalStateException("Multiple accounts with the same id: " + id);
-    }
-
-    private AccountSearcher propertyEquals(String propertyName, String propertyValue) {
-        return newAccountSearcher(new EqualsFilter(propertyName, propertyValue));
-    }
-
-    private AccountSearcher newAccountSearcher(Filter filter) {
-        return new AccountSearcher().and(filter);
     }
 
     @Override
@@ -526,7 +519,7 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
-    static public class AccountContextMapper implements ContextMapper {
+    static public class AccountContextMapper implements ContextMapper<Account> {
 
         private final Pattern pattern;
         private LdapName pendingUserSearchBaseDN;
@@ -538,7 +531,7 @@ public class AccountDaoImpl implements AccountDao {
         }
 
         @Override
-        public Object mapFromContext(Object ctx) {
+        public Account mapFromContext(Object ctx) {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
             Set<String> sshKeys = context.getAttributeSortedStringSet(UserSchema.SSH_KEY);
