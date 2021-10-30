@@ -21,9 +21,11 @@ package org.georchestra.ds.orgs;
 
 import java.util.UUID;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+@EqualsAndHashCode(callSuper = true)
 public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
 
     public static final String JSON_ADDRESS = "address";
@@ -109,4 +111,5 @@ public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
     public OrgExt clone() throws CloneNotSupportedException {
         return (OrgExt) super.clone();
     }
+
 }

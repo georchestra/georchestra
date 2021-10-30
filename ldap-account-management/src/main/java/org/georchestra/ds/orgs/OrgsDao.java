@@ -249,12 +249,17 @@ public class OrgsDao {
                     orgExt.setId(asString(attrs.get("o")));
                     orgExt.setOrgType(asString(attrs.get("businessCategory")));
                     orgExt.setAddress(asString(attrs.get("postalAddress")));
-                    orgExt.setDescription(asStringStream(attrs, "description").collect(joining(",")));
-                    orgExt.setUrl(asStringStream(attrs, "labeledURI").collect(joining(",")));
-                    orgExt.setNote(asStringStream(attrs, "knowledgeInformation").collect(joining(",")));
+                    orgExt.setDescription(listToCommaSeparatedString(attrs, "description"));
+                    orgExt.setUrl(listToCommaSeparatedString(attrs, "labeledURI"));
+                    orgExt.setNote(listToCommaSeparatedString(attrs, "knowledgeInformation"));
                     orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
                     orgExt.setPending(pending);
                     return orgExt;
+                }
+
+                private String listToCommaSeparatedString(Attributes atts, String attName) throws NamingException {
+                    String s = asStringStream(atts, attName).collect(joining(","));
+                    return s.isEmpty() ? null : s;
                 }
             };
         }
@@ -492,7 +497,7 @@ public class OrgsDao {
 
     private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
         try {
-            if (value == null || value.length() == 0) {
+            if (StringUtils.isEmpty(value)) {
                 Attribute attributeToDelete = context.getAttributes().get(fieldName);
                 if (attributeToDelete != null) {
                     Collections.list(attributeToDelete.getAll()).stream()
@@ -539,18 +544,16 @@ public class OrgsDao {
 
     public String asPhoto(Attribute att) throws NamingException {
         if (att == null)
-            return "";
-        else
-            return Base64.getMimeEncoder().encodeToString((byte[]) att.get());
+            return null;
+        return Base64.getMimeEncoder().encodeToString((byte[]) att.get());
     }
 
     public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
         Attribute attribute = attributes.get(attributeName);
         if (attribute == null) {
             return Stream.empty();
-        } else {
-            return Collections.list(attribute.getAll()).stream().map(Object::toString);
         }
+        return Collections.list(attribute.getAll()).stream().map(Object::toString);
     }
 
     private class ContextMapperSecuringReferenceAndMappingAttributes<T extends AbstractOrg<?>>

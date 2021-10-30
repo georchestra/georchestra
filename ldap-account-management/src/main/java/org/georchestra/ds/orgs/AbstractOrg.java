@@ -22,6 +22,9 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(exclude = { "reference" })
 public abstract class AbstractOrg<T extends AbstractOrg<?>> implements ReferenceAware<T> {
 
     @JsonIgnore

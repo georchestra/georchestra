@@ -413,7 +413,7 @@ public class AccountDaoImpl implements AccountDao {
         Collections.addAll(objectClass, "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount",
                 "georchestraUser", "ldapPublicKey");
 
-        if (account.getSshKeys().length == 0) {
+        if (account.getSshKeys() == null || account.getSshKeys().length == 0) {
             objectClass.remove("ldapPublicKey");
         }
         context.setAttributeValues("objectClass", objectClass.toArray());
@@ -461,7 +461,7 @@ public class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
-        if (account.getSshKeys().length > 0) {
+        if (account.getSshKeys() == null || account.getSshKeys().length > 0) {
             context.setAttributeValues(UserSchema.SSH_KEY, account.getSshKeys());
         }
         if (account.getManager() != null)
