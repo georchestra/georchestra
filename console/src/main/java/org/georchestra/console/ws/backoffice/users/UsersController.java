@@ -367,7 +367,7 @@ public class UsersController {
         }
 
         // Saves the user in the LDAP
-        accountDao.insert(account, requestOriginator);
+        accountDao.insert(account);
 
         roleDao.addUser(Role.USER, account, requestOriginator);
 
@@ -452,7 +452,7 @@ public class UsersController {
             orgDao.unlinkUser(originalAcount);
         }
 
-        accountDao.update(originalAcount, modifiedAccount, auth.getName());
+        accountDao.update(originalAcount, modifiedAccount);
 
         // log update modifications
         logUtils.logChanges(modifiedAccount, originalAcount);
@@ -527,7 +527,7 @@ public class UsersController {
     }
 
     private void deleteAccount(Account account, String requestOriginator) throws DataServiceException {
-        accountDao.delete(account, requestOriginator);
+        accountDao.delete(account);
         roleDao.deleteUser(account, requestOriginator);
 
         // Also delete delegation if exists

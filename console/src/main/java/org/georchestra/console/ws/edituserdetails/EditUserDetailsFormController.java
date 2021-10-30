@@ -211,7 +211,7 @@ public class EditUserDetailsFormController {
             Account originalAccount = this.accountDao.findByUID(username);
             Account modifiedAccount = this.accountDao.findByUID(username);
             Account account = modify(modifiedAccount, formBean);
-            accountDao.update(account, username);
+            accountDao.update(account);
 
             model.addAttribute("success", true);
             Org org = orgsDao.findByCommonNameWithExt(account);

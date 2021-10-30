@@ -283,7 +283,7 @@ public final class NewAccountFormController {
             }
 
             String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-            accountDao.insert(account, requestOriginator);
+            accountDao.insert(account);
             roleDao.addUser(Role.USER, account, requestOriginator);
             orgDao.linkUser(account);
 

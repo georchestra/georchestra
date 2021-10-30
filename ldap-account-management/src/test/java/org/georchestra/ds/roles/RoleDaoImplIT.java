@@ -42,14 +42,14 @@ public class RoleDaoImplIT {
     public void setUp() throws Exception {
         account = AccountFactory.createBrief("userforrolestest", "monkey123", "userforrolestest", "userforrolestest123",
                 "userforrolestest@localhost", "+33123456789", "UnknownPomPom", "");
-        accountDao.insert(account, "test");
+        accountDao.insert(account);
         role = RoleFactory.create("TEST_ROLE", "sample role", false);
         roleDao.insert(role);
     }
 
     @After
     public void cleanLdap() throws Exception {
-        accountDao.delete(account, "test");
+        accountDao.delete(account);
         roleDao.delete("TEST_ROLE");
     }
 

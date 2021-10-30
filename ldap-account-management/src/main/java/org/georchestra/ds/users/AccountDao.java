@@ -90,22 +90,20 @@ public interface AccountDao {
      * Creates a new account
      * 
      * @param account
-     * @param originLogin login of admin that create user
      * @throws DataServiceException
      * @throws DuplicatedEmailException
      */
-    void insert(@NonNull final Account account, final String originLogin)
+    void insert(@NonNull final Account account)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
     /**
      * Updates the user account
      * 
      * @param account
-     * @param originLogin login of admin that issue this modification
      * @throws DataServiceException
      * @throws DuplicatedEmailException
      */
-    void update(final Account account, String originLogin) throws DataServiceException, DuplicatedEmailException;
+    void update(final Account account) throws DataServiceException, DuplicatedEmailException;
 
     /**
      * Updates the user account, given the old and the new state of the account
@@ -113,13 +111,12 @@ public interface AccountDao {
      *
      * @param account
      * @param modified
-     * @param originLogin login of admin that issue this modification
      *
      * @throws DuplicatedEmailException
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
-    void update(Account account, Account modified, String originLogin)
+    void update(Account account, Account modified)
             throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
 
     /**
@@ -131,7 +128,7 @@ public interface AccountDao {
      */
     void changePassword(final String uid, final String password) throws DataServiceException;
 
-    void delete(Account account, final String originLogin) throws DataServiceException, NameNotFoundException;
+    void delete(Account account) throws DataServiceException, NameNotFoundException;
 
     /**
      * Returns the account that contains the uid provided as parameter.

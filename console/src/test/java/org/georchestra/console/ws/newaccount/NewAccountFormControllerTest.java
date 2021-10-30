@@ -148,7 +148,7 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(mockAccountDao).insert(accountCaptor.capture(), anyString());
+        verify(mockAccountDao).insert(accountCaptor.capture());
         assertEquals(true, accountCaptor.getValue().isPending());
     }
 
@@ -166,7 +166,7 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(mockAccountDao).insert(accountCaptor.capture(), anyString());
+        verify(mockAccountDao).insert(accountCaptor.capture());
         assertEquals(false, accountCaptor.getValue().isPending());
     }
 
@@ -226,7 +226,7 @@ public class NewAccountFormControllerTest {
     public void createDuplicatedEmail() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
@@ -238,7 +238,7 @@ public class NewAccountFormControllerTest {
     public void createUserWithError() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DataServiceException("Something went wrong when dealing with LDAP")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         try {
             toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
@@ -254,7 +254,7 @@ public class NewAccountFormControllerTest {
     public void createDuplicatedUid() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 

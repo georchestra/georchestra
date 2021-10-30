@@ -119,7 +119,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void insert(@NonNull final Account account, final String originLogin)
+    public synchronized void insert(@NonNull final Account account)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
 
         checkMandatoryFields(account);
@@ -170,8 +170,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void update(final Account account, String originLogin)
-            throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account) throws DataServiceException, DuplicatedEmailException {
         checkMandatoryFields(account);
 
         // checks unique email
@@ -202,7 +201,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void update(Account account, Account modified, String originLogin)
+    public synchronized void update(Account account, Account modified)
             throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
         if (!Objects.equals(account.getUniqueIdentifier(), modified.getUniqueIdentifier())) {
             modified.setUniqueIdentifier(account.getUniqueIdentifier());
@@ -210,7 +209,7 @@ public class AccountDaoImpl implements AccountDao {
         if (hasUserDnChanged(account, modified)) {
             ldapTemplate.rename(buildUserDn(account), buildUserDn(modified));
         }
-        update(modified, originLogin);
+        update(modified);
     }
 
     @Override
@@ -224,7 +223,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void delete(Account account, final String originLogin) throws NameNotFoundException {
+    public synchronized void delete(Account account) throws NameNotFoundException {
         this.ldapTemplate.unbind(buildUserDn(account), true);
     }
 

@@ -41,12 +41,12 @@ public class AccountDaoImplIT {
     public void setup() throws Exception {
         account = AccountFactory.createBrief("userforittest", "monkey123", "userforrolestest", "userforrolestest123",
                 "userforrolestest@localhost", "+33123456789", "UnknownPomPom", "");
-        accountDao.insert(account, "test");
+        accountDao.insert(account);
     }
 
     @After
     public void cleanLdap() {
-        accountDao.delete(account, "test");
+        accountDao.delete(account);
     }
 
     @Test
@@ -60,21 +60,21 @@ public class AccountDaoImplIT {
         ldapTemplate.modifyAttributes(dco);
         dco = ldapTemplate.lookupContext("uid=userforittest,ou=users");
         account.setDescription("This is a new desc");
-        accountDao.update(account, "test");
+        accountDao.update(account);
         assertTrue(Arrays.asList(dco.getStringAttributes("objectClass")).contains("dcObject"));
     }
 
     @Test
     public void testBlankFields_issues_1086_1096() throws Exception {
         Account testadminAc = accountDao.findByUID("testadmin");
-        accountDao.update(testadminAc, "admin");
+        accountDao.update(testadminAc);
 
         ContextSource contextSource = ldapTemplate.getContextSource();
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
 
         boolean hasStillUserPassword = attrs.get("userPassword") != null;
 
-        accountDao.update(testadminAc, "testadmin");
+        accountDao.update(testadminAc);
 
         assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
     }
@@ -88,7 +88,7 @@ public class AccountDaoImplIT {
 
         newTestAdminAc.setUid("testadminblah");
 
-        accountDao.update(testadminAc, newTestAdminAc, "testadmin");
+        accountDao.update(testadminAc, newTestAdminAc);
 
         ContextSource contextSource = ldapTemplate.getContextSource();
         Attributes attrs = contextSource.getReadWriteContext()
@@ -104,7 +104,7 @@ public class AccountDaoImplIT {
         }
 
         // restoring testadmin in its initial state
-        accountDao.update(newTestAdminAc, testadminAc, "testadmin");
+        accountDao.update(newTestAdminAc, testadminAc);
 
         assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
         assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);
