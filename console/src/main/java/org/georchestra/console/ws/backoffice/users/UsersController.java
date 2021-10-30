@@ -844,11 +844,10 @@ public class UsersController {
 
         String proposedUid = normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
 
-        if (!this.accountDao.exist(proposedUid)) {
-            return proposedUid;
-        } else {
+        if (this.accountDao.exists(proposedUid)) {
             return this.accountDao.generateUid(proposedUid);
         }
+        return proposedUid;
     }
 
     /**

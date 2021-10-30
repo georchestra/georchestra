@@ -310,7 +310,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public boolean exist(final String uid) {
+    public boolean exists(final String uid) {
 
         try {
             ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false));
@@ -337,7 +337,7 @@ public class AccountDaoImpl implements AccountDao {
 
         String newUid = UidGenerator.next(uid);
 
-        while (exist(newUid)) {
+        while (exists(newUid)) {
 
             newUid = UidGenerator.next(newUid);
         }

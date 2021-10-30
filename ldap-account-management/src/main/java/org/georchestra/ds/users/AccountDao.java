@@ -43,7 +43,7 @@ public interface AccountDao {
      * @return true if the uid exist, false in other case.
      * @throws DataServiceException
      */
-    boolean exist(final String uid) throws DataServiceException;
+    boolean exists(final String uid) throws DataServiceException;
 
     /**
      * users in LDAP directory with shadowExpire field filled

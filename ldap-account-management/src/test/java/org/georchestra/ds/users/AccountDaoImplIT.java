@@ -113,7 +113,7 @@ public class AccountDaoImplIT {
 
     @Test
     public void pendingUserExists() throws Exception {
-        assertTrue(accountDao.exist("testpendinguser"));
+        assertTrue(accountDao.exists("testpendinguser"));
     }
 
     @Test
