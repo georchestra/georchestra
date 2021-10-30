@@ -91,8 +91,7 @@ public class RoleDaoImpl implements RoleDao {
         this.accountDao = accountDao;
     }
 
-    public void addUser(String roleID, Account user, String originLogin)
-            throws DataServiceException, NameNotFoundException {
+    public void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException {
 
         /*
          * TODO Add hierarchic behaviour here : if configuration flag hierarchic_roles
@@ -127,17 +126,16 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public void deleteUser(Account account, final String originLogin) throws DataServiceException {
+    public void deleteUser(Account account) throws DataServiceException {
 
         List<Role> allRoles = findAllForUser(account);
 
         for (Role role : allRoles) {
-            deleteUser(role.getName(), account, originLogin);
+            deleteUser(role.getName(), account);
         }
     }
 
-    public void deleteUser(String roleName, Account account, final String originLogin)
-            throws NameNotFoundException, DataServiceException {
+    public void deleteUser(String roleName, Account account) throws NameNotFoundException, DataServiceException {
         /* TODO Add hierarchic behaviour here like addUser method */
 
         Role role = this.findByCommonName(roleName);
@@ -401,38 +399,37 @@ public class RoleDaoImpl implements RoleDao {
 
     }
 
-    private void addUsers(String roleName, List<Account> addList, final String originLogin)
-            throws NameNotFoundException, DataServiceException {
+    private void addUsers(String roleName, List<Account> addList) throws NameNotFoundException, DataServiceException {
 
         for (Account account : addList) {
-            addUser(roleName, account, originLogin);
+            addUser(roleName, account);
         }
     }
 
-    private void deleteUsers(String roleName, List<Account> deleteList, final String originLogin)
+    private void deleteUsers(String roleName, List<Account> deleteList)
             throws DataServiceException, NameNotFoundException {
 
         for (Account account : deleteList) {
-            deleteUser(roleName, account, originLogin);
+            deleteUser(roleName, account);
         }
 
     }
 
     @Override
-    public void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)
+    public void addUsersInRoles(List<String> putRole, List<Account> users)
             throws DataServiceException, NameNotFoundException {
 
         for (String roleName : putRole) {
-            addUsers(roleName, users, originLogin);
+            addUsers(roleName, users);
         }
     }
 
     @Override
-    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin)
+    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
             throws DataServiceException, NameNotFoundException {
 
         for (String roleName : deleteRole) {
-            deleteUsers(roleName, users, originLogin);
+            deleteUsers(roleName, users);
         }
 
     }

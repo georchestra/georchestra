@@ -457,8 +457,8 @@ public class RolesController {
             this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
         }
 
-        this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
-        this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
+        this.roleDao.addUsersInRoles(putRole, accounts);
+        this.roleDao.deleteUsersInRoles(deleteRole, accounts);
 
         // create log
         logUtils.logRolesUsersAction(putRole, deleteRole, accounts);

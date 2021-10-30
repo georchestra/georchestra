@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.newaccount;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Clock;
@@ -43,7 +41,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -282,9 +279,8 @@ public final class NewAccountFormController {
                 account.setPrivacyPolicyAgreementDate(LocalDate.now(clock));
             }
 
-            String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
             accountDao.insert(account);
-            roleDao.addUser(Role.USER, account, requestOriginator);
+            roleDao.addUser(Role.USER, account);
             orgDao.linkUser(account);
 
             final ServletContext servletContext = request.getSession().getServletContext();

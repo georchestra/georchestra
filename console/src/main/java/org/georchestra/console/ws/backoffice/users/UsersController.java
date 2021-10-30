@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
 import java.io.IOException;
 import java.text.Normalizer;
 import java.text.ParseException;
@@ -43,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.dto.SimpleAccount;
@@ -355,7 +352,7 @@ public class UsersController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         // Verify that org is under delegation if user is not SUPERUSER
-        String requestOriginator = auth.getName();
+        final String requestOriginator = auth.getName();
         if (!callerIsSuperUser()) {
             DelegationEntry delegation = this.delegationDao.findOne(requestOriginator);
             if (delegation != null && !Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
@@ -369,7 +366,7 @@ public class UsersController {
         // Saves the user in the LDAP
         accountDao.insert(account);
 
-        roleDao.addUser(Role.USER, account, requestOriginator);
+        roleDao.addUser(Role.USER, account);
 
         orgDao.linkUser(account);
 
@@ -521,14 +518,13 @@ public class UsersController {
         this.checkAuthorization(uid);
 
         final Account account = accountDao.findByUID(uid);
-        final String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-        deleteAccount(account, requestOriginator);
+        deleteAccount(account);
         ResponseUtil.writeSuccess(response);
     }
 
-    private void deleteAccount(Account account, String requestOriginator) throws DataServiceException {
+    private void deleteAccount(Account account) throws DataServiceException {
         accountDao.delete(account);
-        roleDao.deleteUser(account, requestOriginator);
+        roleDao.deleteUser(account);
 
         // Also delete delegation if exists
         if (delegationDao.findOne(account.getUid()) != null) {
@@ -571,7 +567,7 @@ public class UsersController {
 
         LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
 
-        deleteAccount(account, accountId);
+        deleteAccount(account);
 
         DeletedAccountSummary summary = gdprInfoWorker.deleteAccountRecords(account);
 

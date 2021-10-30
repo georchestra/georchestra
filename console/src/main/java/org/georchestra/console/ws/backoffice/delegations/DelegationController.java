@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.delegations;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
@@ -118,7 +115,7 @@ public class DelegationController {
         delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
         this.delegationDao.save(delegation);
         Account account = accountDao.findByUID(uid);
-        this.roleDao.addUser("ORGADMIN", account, SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
+        this.roleDao.addUser("ORGADMIN", account);
 
         return delegation.toJSON().toString();
     }
@@ -139,8 +136,7 @@ public class DelegationController {
 
         // TODO deny if request came from delegated admin
         this.delegationDao.delete(uid);
-        this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid),
-                SecurityHeaders.decode(request.getHeader(SEC_USERNAME)));
+        this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid));
         return new JSONObject().put("result", "ok").toString();
     }
 
