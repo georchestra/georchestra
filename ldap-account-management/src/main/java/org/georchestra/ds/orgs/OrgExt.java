@@ -24,7 +24,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
-public class OrgExt extends AbstractOrg implements Cloneable {
+public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
 
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ORG_TYPE = "orgType";

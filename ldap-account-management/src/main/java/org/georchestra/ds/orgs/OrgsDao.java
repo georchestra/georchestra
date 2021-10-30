@@ -41,8 +41,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
@@ -62,9 +60,8 @@ import org.springframework.util.StringUtils;
 /**
  * This class manage organization membership
  */
+@SuppressWarnings("unchecked")
 public class OrgsDao {
-
-    private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
 
     @Autowired
     private AccountDao accountDao;
@@ -77,7 +74,7 @@ public class OrgsDao {
     private OrgExtension orgExtension = new OrgExtension();
     private OrgExtExtension orgExtExtension = new OrgExtExtension();
 
-    public abstract class Extension<T extends AbstractOrg> {
+    public abstract class Extension<T extends AbstractOrg<?>> {
 
         private AndFilter objectClassFilter;
 
@@ -98,7 +95,7 @@ public class OrgsDao {
         }
 
         public ContextMapperSecuringReferenceAndMappingAttributes<T> getContextMapper(boolean pending) {
-            return new ContextMapperSecuringReferenceAndMappingAttributes(getAttributeMapper(pending));
+            return new ContextMapperSecuringReferenceAndMappingAttributes<>(getAttributeMapper(pending));
         }
 
         public void mapToContext(T org, DirContextOperations context) {
@@ -115,14 +112,14 @@ public class OrgsDao {
             mapPayloadToContext(org, context);
         }
 
-        public <T extends AbstractOrg> T findById(T org) {
+        public <O extends AbstractOrg<?>> O findById(O org) {
             String ldapKeyField = this.getLdapKeyField();
             try {
                 Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, org.getId()).build();
-                return (T) ldapTemplate.lookup(dn, this.getContextMapper(false));
+                return (O) ldapTemplate.lookup(dn, this.getContextMapper(false));
             } catch (NameNotFoundException ex) {
                 Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, org.getId()).build();
-                return (T) ldapTemplate.lookup(dn, this.getContextMapper(true));
+                return (O) ldapTemplate.lookup(dn, this.getContextMapper(true));
             }
         }
 
@@ -165,7 +162,7 @@ public class OrgsDao {
 
             if (org.getCities() != null) {
                 StringBuilder buffer = new StringBuilder();
-                List<String> descriptions = new ArrayList();
+                List<String> descriptions = new ArrayList<>();
                 int maxFieldSize = 1000;
 
                 for (String city : org.getCities()) {
@@ -195,7 +192,7 @@ public class OrgsDao {
 
         @Override
         public AttributesMapper<Org> getAttributeMapper(boolean pending) {
-            return new AttributesMapper() {
+            return new AttributesMapper<Org>() {
                 public Org mapFromAttributes(Attributes attrs) throws NamingException {
                     Org org = new Org();
                     org.setId(asStringStream(attrs, "cn").collect(joining(",")));
@@ -243,7 +240,7 @@ public class OrgsDao {
 
         @Override
         public AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
-            return new AttributesMapper() {
+            return new AttributesMapper<OrgExt>() {
                 public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
                     OrgExt orgExt = new OrgExt();
                     // georchestraObjectIdentifier
@@ -417,13 +414,13 @@ public class OrgsDao {
         return getExtension(org).findById(org);
     }
 
-    public void insert(AbstractOrg org) {
+    public void insert(@SuppressWarnings("rawtypes") AbstractOrg org) {
         DirContextAdapter context = new DirContextAdapter(org.getExtension(this).buildOrgDN(org));
         org.getExtension(this).mapToContext(org, context);
         ldapTemplate.bind(context);
     }
 
-    public void update(AbstractOrg org) {
+    public void update(@SuppressWarnings("rawtypes") AbstractOrg org) {
         Name newName = org.getExtension(this).buildOrgDN(org);
         if (newName.compareTo(org.getReference().getDn()) != 0) {
             this.ldapTemplate.rename(org.getReference().getDn(), newName);
@@ -433,7 +430,7 @@ public class OrgsDao {
         this.ldapTemplate.modifyAttributes(context);
     }
 
-    public void delete(AbstractOrg org) {
+    public void delete(@SuppressWarnings("rawtypes") AbstractOrg org) {
         this.ldapTemplate.unbind(org.getExtension(this).buildOrgDN(org));
     }
 
@@ -550,7 +547,7 @@ public class OrgsDao {
         }
     }
 
-    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends AbstractOrg>
+    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends AbstractOrg<?>>
             implements ContextMapper<T> {
 
         private AttributesMapper<T> attributesMapper;

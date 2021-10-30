@@ -4,7 +4,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public abstract class AbstractOrg implements ReferenceAware {
+public abstract class AbstractOrg<T extends AbstractOrg<?>> implements ReferenceAware<T> {
 
     @JsonIgnore
     protected boolean isPending;

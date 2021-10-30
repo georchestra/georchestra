@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
+public class Org extends AbstractOrg<Org> implements Comparable<Org>, Cloneable {
 
     public static final String JSON_UUID = "uuid";
     public static final String JSON_ID = "id";
