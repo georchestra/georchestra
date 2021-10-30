@@ -228,31 +228,31 @@ public class RoleDaoImpl implements RoleDao {
 
     }
 
-    private static class RoleContextMapper implements ContextMapper {
+    private static class RoleContextMapper implements ContextMapper<Role> {
 
         @Override
-        public Object mapFromContext(Object ctx) {
+        public Role mapFromContext(Object ctx) {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
 
             // set the role name
-            Role g = RoleFactory.create();
+            Role role = RoleFactory.create();
             String suuid = context.getStringAttribute(RoleSchema.UUID_KEY);
             UUID uuid = null == suuid ? null : UUID.fromString(suuid);
 
-            g.setUniqueIdentifier(uuid);
-            g.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
-            g.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
+            role.setUniqueIdentifier(uuid);
+            role.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
+            role.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
             boolean isFavorite = RoleSchema.FAVORITE_VALUE.equals(context.getStringAttribute(RoleSchema.FAVORITE_KEY));
-            g.setFavorite(isFavorite);
+            role.setFavorite(isFavorite);
 
             // set the list of user
             Object[] members = getUsers(context);
             for (int i = 0; i < members.length; i++) {
-                g.addUser((String) members[i]);
+                role.addUser((String) members[i]);
             }
 
-            return g;
+            return role;
         }
 
         private Object[] getUsers(DirContextAdapter context) {
