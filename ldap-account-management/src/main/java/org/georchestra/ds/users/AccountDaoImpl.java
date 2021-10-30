@@ -60,6 +60,7 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).

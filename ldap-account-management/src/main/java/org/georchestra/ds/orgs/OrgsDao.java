@@ -57,14 +57,15 @@ import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.util.StringUtils;
 
+import lombok.Setter;
+
 /**
  * This class manage organization membership
  */
 @SuppressWarnings("unchecked")
 public class OrgsDao {
 
-    @Autowired
-    private AccountDao accountDao;
+    private @Autowired AccountDao accountDao;
 
     private LdapTemplate ldapTemplate;
     private String[] orgTypeValues;
@@ -397,7 +398,12 @@ public class OrgsDao {
         if (org == null) {
             return null;
         }
-        org.setOrgExt(findExtById(org.getId()));
+        try {
+            OrgExt ext = findExtById(org.getId());
+            org.setOrgExt(ext);
+        } catch (NameNotFoundException extNotFound) {
+            org.setOrgExt(null);
+        }
         return org;
     }
 
@@ -435,7 +441,7 @@ public class OrgsDao {
     }
 
     public void linkUser(Account user) {
-        if (user.getOrg().length() <= 0) {
+        if (StringUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
@@ -445,7 +451,7 @@ public class OrgsDao {
     }
 
     public void unlinkUser(Account user) {
-        if (user.getOrg().length() <= 0) {
+        if (StringUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());

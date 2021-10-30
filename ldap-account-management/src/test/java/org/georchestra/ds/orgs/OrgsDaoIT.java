@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
-public class OrgDaoImplIT {
+public class OrgsDaoIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
     private @Autowired OrgsDao orgDao;

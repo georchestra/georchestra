@@ -46,6 +46,8 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
+import lombok.Setter;
+
 /**
  * Maintains the role of users in the ldap store.
  *
@@ -123,6 +125,7 @@ public class RoleDaoImpl implements RoleDao {
             throw new DataServiceException(e);
         }
 
+        Role r = findByCommonName(roleID);
     }
 
     @Override
@@ -146,8 +149,6 @@ public class RoleDaoImpl implements RoleDao {
             try {
                 this.update(roleName, role);
             } catch (NameNotFoundException | DuplicatedCommonNameException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
                 throw new DataServiceException(e);
             }
         }
@@ -218,12 +219,15 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public void delete(final String commonName) throws DataServiceException, NameNotFoundException {
 
-        if (!this.roles.isProtected(commonName)) {
-            this.ldapTemplate.unbind(buildRoleDn(commonName), true);
-        } else {
+        if (this.roles.isProtected(commonName)) {
             throw new DataServiceException("Role " + commonName + " is a protected role");
         }
 
+        try {
+            this.ldapTemplate.unbind(buildRoleDn(commonName), true);
+        } catch (NameNotFoundException ignore) {
+            LOG.debug("Tried to remove a non exising role, ignoring: " + commonName);
+        }
     }
 
     private static class RoleContextMapper implements ContextMapper<Role> {
@@ -396,7 +400,6 @@ public class RoleDaoImpl implements RoleDao {
         DirContextOperations context = ldapTemplate.lookupContext(destDn);
         mapToContext(role, context);
         ldapTemplate.modifyAttributes(context);
-
     }
 
     private void addUsers(String roleName, List<Account> addList) throws NameNotFoundException, DataServiceException {
