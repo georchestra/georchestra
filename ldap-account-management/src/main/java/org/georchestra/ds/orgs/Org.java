@@ -29,8 +29,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org extends AbstractOrg<Org> implements Comparable<Org>, Cloneable {
 
@@ -120,10 +122,7 @@ public class Org extends AbstractOrg<Org> implements Comparable<Org>, Cloneable 
             return this.orgExt.getAddress();
     }
 
-    public String toString() {
-        return this.getName();
-    }
-
+    @Override
     public int compareTo(Org org) {
         return this.getName().compareToIgnoreCase(org.getName());
     }

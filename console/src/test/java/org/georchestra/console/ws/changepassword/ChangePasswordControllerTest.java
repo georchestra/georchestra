@@ -17,7 +17,7 @@ import javax.naming.Name;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
@@ -53,7 +53,7 @@ public class ChangePasswordControllerTest {
         RoleDaoImpl roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
 
-        OrgsDao orgsDao = new OrgsDao();
+        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgSearchBaseDN("ou=orgs");
 

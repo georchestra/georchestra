@@ -24,8 +24,10 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
 
     public static final String JSON_ADDRESS = "address";
@@ -33,12 +35,14 @@ public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
 
     private @Getter @Setter UUID uniqueIdentifier;
     private String id;
-    private String orgType;
-    private String address;
-    private String description;
-    private String url;
-    private String logo;
-    private String note;
+    private String orgType = null;
+    // these attribute default values are the empty string to match how they're
+    // mapped to the ldap context and keep equals and hashCode consistency
+    private String address = "";
+    private String description = "";
+    private String url = "";
+    private String logo = "";
+    private String note = "";
 
     public String getId() {
         return id;
@@ -94,12 +98,6 @@ public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    @Override
-    public String toString() {
-        return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
-                + ", description='" + description + '\'' + '}';
     }
 
     @Override

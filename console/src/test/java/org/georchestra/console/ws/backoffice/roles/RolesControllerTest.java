@@ -28,7 +28,7 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.roles.RoleFactory;
@@ -100,7 +100,7 @@ public class RolesControllerTest {
         roleDao.setRoles(roles);
         roleDao.setRoleSearchBaseDN("ou=roles");
 
-        OrgsDao orgsDao = new OrgsDao();
+        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
         orgsDao.setLdapTemplate(ldapTemplate);
 
         AccountDao accountDao = new AccountDaoImpl(ldapTemplate);

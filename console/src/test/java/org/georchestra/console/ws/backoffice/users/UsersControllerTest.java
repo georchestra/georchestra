@@ -32,7 +32,7 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAcco
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.roles.RoleProtected;
 import org.georchestra.ds.users.Account;
@@ -104,7 +104,7 @@ public class UsersControllerTest {
         roleDao.setRoles(this.roles);
         roleDao.setRoleSearchBaseDN("ou=roles");
 
-        OrgsDao orgsDao = new OrgsDao();
+        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgSearchBaseDN("ou=orgs");
         orgsDao.setOrgSearchBaseDN("ou=orgs");

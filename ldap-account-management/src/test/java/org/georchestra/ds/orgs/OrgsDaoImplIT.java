@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
-public class OrgsDaoIT {
+public class OrgsDaoImplIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
     private @Autowired OrgsDao dao;
@@ -50,13 +50,16 @@ public class OrgsDaoIT {
     @Before
     public void setup() throws Exception {
         org = new Org();
-        orgExt = new OrgExt();
         org.setId("torg");
         org.setName("testorg");
         org.setShortName("tEsTOrG");
-        org.setOrgExt(orgExt);
-        orgExt.setId(org.getId());
         org.setCities(Lists.newArrayList("Paris"));
+
+        orgExt = new OrgExt();
+        orgExt.setId(org.getId());
+        orgExt.setOrgType("Non Profit");
+
+        org.setOrgExt(orgExt);
         dao.insert(org);
         dao.insert(orgExt);
 
@@ -172,14 +175,14 @@ public class OrgsDaoIT {
     public void findByCommonNameWithExt() {
         Org expected = this.org;
         Org found = dao.findByCommonNameWithExt(expected.getId());
-        assertEquals(org, found);
+        assertEquals(expected, found);
     }
 
     @Test
     public void findByCommonNamePendingOrg() throws NamingException {
-        Org found = dao.findByCommonName(this.pendingOrg.getId());
-
-        assertEquals(pendingOrg, found);
+        Org expected = this.pendingOrg;
+        Org found = dao.findByCommonName(expected.getId());
+        assertEquals(expected, found);
     }
 
     @Test
