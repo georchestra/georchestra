@@ -2,28 +2,24 @@ package org.georchestra.console.ws.backoffice.users;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.naming.Name;
-import javax.naming.directory.SearchControls;
-import javax.naming.ldap.LdapName;
+import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
@@ -32,31 +28,21 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAcco
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDaoImpl;
-import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleProtected;
 import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDaoImpl;
+import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountFactory;
 import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.UserRule;
-import org.georchestra.ds.users.UserSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.filter.EqualsFilter;
-import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -68,12 +54,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 public class UsersControllerTest {
-    private LdapTemplate ldapTemplate;
-    private LdapContextSource contextSource;
 
     private UsersController usersCtrl;
-    private AccountDaoImpl dao;
-    private RoleDaoImpl roleDao;
+    private AccountDao dao;
+    private RoleDao roleDao;
+    private OrgsDao orgsDao;
+
     private UserRule userRule;
     private RoleProtected roles;
     private GDPRAccountWorker mockGDPR;
@@ -86,46 +72,26 @@ public class UsersControllerTest {
 
     @Before
     public void setUp() throws DataServiceException {
+        dao = mock(AccountDao.class);
+        roleDao = mock(RoleDao.class);
+        orgsDao = mock(OrgsDao.class);
+
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
-        ldapTemplate = mock(LdapTemplate.class);
-        contextSource = mock(LdapContextSource.class);
         roles = mock(RoleProtected.class);
-        mockLogUtils = mock(LogUtils.class);
-
-        when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
-        when(ldapTemplate.getContextSource()).thenReturn(contextSource);
         when(roles.isProtected(Mockito.eq("USER"))).thenReturn(true);
 
-        // Configures roleDao
-        roleDao = new RoleDaoImpl();
-        roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setRoles(this.roles);
-        roleDao.setRoleSearchBaseDN("ou=roles");
+        mockLogUtils = mock(LogUtils.class);
 
-        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
-        orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
-        orgsDao.setBasePath("dc=georchestra,dc=org");
-
-        // configures AccountDao
-        dao = spy(new AccountDaoImpl(ldapTemplate));
-        dao.setUserSearchBaseDN("ou=users");
-        dao.setPendingUserSearchBaseDN("ou=pendingusers");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setRoleSearchBaseDN("ou=roles");
-        dao.setBasePath("dc=georchestra,dc=org");
-        roleDao.setAccountDao(dao);
-        orgsDao.setAccountDao(dao);
         usersCtrl = new UsersController(dao, userRule);
         usersCtrl.setOrgDao(orgsDao);
+        usersCtrl.setRoleDao(roleDao);
+
         mockDelegationDao = mock(DelegationDao.class);
         mockAdvancedDelegationDao = mock(AdvancedDelegationDao.class);
         usersCtrl.setDelegationDao(mockDelegationDao);
         usersCtrl.setAdvancedDelegationDao(mockAdvancedDelegationDao);
-        usersCtrl.setRoleDao(roleDao);
 
         usersCtrl.logUtils = mockLogUtils;
 
@@ -148,13 +114,13 @@ public class UsersControllerTest {
 
     @Test(expected = DataServiceException.class)
     public void testFindAllException() throws DataServiceException {
-        doThrow(DataServiceException.class).when(ldapTemplate).search(any(Name.class), anyString(),
-                any(SearchControls.class), any(ContextMapper.class));
+        doThrow(DataServiceException.class).when(dao).findFilterBy(any());
         usersCtrl.findAll();
     }
 
     @Test(expected = NameNotFoundException.class)
     public void testFindByUidEmpty() throws Exception {
+        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("nonexistentuser"));
         usersCtrl.findByUid("nonexistentuser");
     }
 
@@ -165,13 +131,13 @@ public class UsersControllerTest {
 
     @Test(expected = NameNotFoundException.class)
     public void testFindByUidNotFound() throws Exception {
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(any(Name.class), any(ContextMapper.class));
+        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("notfounduser"));
         usersCtrl.findByUid("notfounduser");
     }
 
-    @Test(expected = NameNotFoundException.class)
+    @Test(expected = DataServiceException.class)
     public void testFindByUidDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup(any(Name.class), any(ContextMapper.class));
+        doThrow(DataServiceException.class).when(dao).findByUID(eq("failingUser"));
         usersCtrl.findByUid("failingUser");
     }
 
@@ -179,8 +145,8 @@ public class UsersControllerTest {
     public void testFindByUid() throws Exception {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "developer", "");
-        when(ldapTemplate.lookup(any(LdapName.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class)))
-                .thenReturn(pmauduit);
+        mockLookup(pmauduit);
+
         Account res = usersCtrl.findByUid("pmauduit");
         assertEquals(pmauduit, res);
     }
@@ -195,20 +161,19 @@ public class UsersControllerTest {
         // geoserver_privileged_user is not a valid username automatically generated
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user", "ggeoserverprivilegeduser" });
         request.setContent(reqUsr.toString().getBytes());
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(any(Name.class));
 
         usersCtrl.create(request);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateIllegalArgumentException() throws Exception {
+    public void testCreateIllegalArgumentException_FirstNameIsRequired() throws Exception {
         JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user")
                 .put("telephoneNumber", "+331234567890").put("facsimileTelephoneNumber", "+33123456788")
                 .put("street", "Avenue des Ducs de Savoie").put("postalCode", "73000").put("l", "Chambéry")
                 .put("postOfficeBox", "1234").put("o", "GeoServer");
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(any(Name.class));
+
         usersCtrl.create(request);
     }
 
@@ -220,17 +185,18 @@ public class UsersControllerTest {
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
-        doThrow(DuplicatedEmailException.class).when(ldapTemplate).lookup(any(Name.class));
+
+        doThrow(DuplicatedEmailException.class).when(dao).insert(any());
         usersCtrl.create(request);
     }
 
     @Test
+    @Ignore("not implemented")
     public void testCreateSaslUser() {
         JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
-
     }
 
     @Test
@@ -242,12 +208,11 @@ public class UsersControllerTest {
                 .put("privacyPolicyAgreementDate", "2019-03-12");
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(any(Name.class));
-        when(ldapTemplate.search(any(Name.class), anyString(), any(ContextMapper.class))).thenReturn(new ArrayList<>());
-        when(ldapTemplate.lookupContext(LdapNameBuilder.newInstance("cn=USER,ou=roles").build()))
-                .thenReturn(mock(DirContextOperations.class));
 
         Account res = usersCtrl.create(request);
+        assertNotNull(res);
+
+        verify(dao).insert(notNull(Account.class));
 
         assertEquals(res.getUid(), "ggeoserverprivilegeduser");
         assertEquals(res.getEmail(), "tomcat@localhost");
@@ -274,48 +239,50 @@ public class UsersControllerTest {
 
     @Test(expected = NameNotFoundException.class)
     public void testUpdateUserNotFound() throws Exception {
-        doThrow(NameNotFoundException.class).when(ldapTemplate)
-                .lookup(argThat(getMatcherFor("uid=usernotfound,ou=users")), any(ContextMapper.class));
+        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("usernotfound"));
         usersCtrl.update("usernotfound", request);
     }
 
     @Test(expected = DataServiceException.class)
     public void testUpdateUserDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup(argThat(getMatcherFor("uid=pmauduit,ou=users")),
-                any(String[].class), any(ContextMapper.class));
+        doThrow(DataServiceException.class).when(dao).findByUID(eq("pmauduit"));
         usersCtrl.update("pmauduit", request);
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = DuplicatedEmailException.class)
     public void testUpdateDuplicatedEmailException() throws Exception {
+
         final String duplicateEmail = "tomcat2@localhost";
-        JSONObject reqUsr = new JSONObject().put("mail", duplicateEmail);
-        request.setContent(reqUsr.toString().getBytes());
-        Account updatingToDuplicateEmail = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
+
+        request.setContent(new JSONObject().put("mail", duplicateEmail).toString().getBytes());
+
+        Account originalAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        Account existingWithSameEmail = AccountFactory.createBrief("pmauduit2", "monkey123", "Pierre", "pmauduit",
-                duplicateEmail, "+33123456789", "developer & sysadmin", "dev&ops");
+        originalAccount.setOrg("psc");
+        mockLookup(originalAccount);
 
-        Mockito.doReturn(updatingToDuplicateEmail).when(ldapTemplate).lookup(any(Name.class),
-                eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class));
+        Account expectedModifiedAccount = AccountFactory.create(originalAccount);
+        // the clone method above does not clone pwd
+        originalAccount.setPassword(null);
+        expectedModifiedAccount.setPassword(null);
 
-        doReturn(existingWithSameEmail).when(dao).findByEmail(eq(duplicateEmail));
+        assertEquals(originalAccount, expectedModifiedAccount);
+
+        expectedModifiedAccount.setEmail(duplicateEmail);
+
+        doThrow(DuplicatedEmailException.class).when(dao).update(eq(originalAccount), eq(expectedModifiedAccount));
         usersCtrl.update("pmauduit", request);
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = DataServiceException.class)
     public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
         JSONObject reqUsr = new JSONObject().put("mail", "tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
+        mockLookup(fakedAccount);
 
-        doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE),
-                any(ContextMapper.class));
-
-        when(ldapTemplate.lookupContext(any(Name.class))).thenThrow(DataServiceException.class);
+        doThrow(DataServiceException.class).when(dao).update(eq(fakedAccount), any());
         usersCtrl.update("pmauduit", request);
 
     }
@@ -323,24 +290,30 @@ public class UsersControllerTest {
     @Test(expected = JSONException.class)
     public void testUpdateBadJSON() throws Exception {
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
-        when(ldapTemplate.lookup(any(Name.class), any(String[].class), any(ContextMapper.class)))
-                .thenReturn(AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit", "pmt@c2c.com",
-                        "+123", "developer", "developer"));
+
+        mockLookup("pmauduit", false);
 
         usersCtrl.update("pmauduit", request);
     }
 
     @Test
     public void testUpdate() throws Exception {
-        Mockito.reset(ldapTemplate);
         Mockito.reset(mockDelegationDao);
 
-        JSONObject reqUsr = new JSONObject().put("sn", "newPmauduit").put("postalAddress", "newAddress")
-                .put("postOfficeBox", "newPOBox").put("postalCode", "73000").put("street", "newStreet")
+        JSONObject reqUsr = new JSONObject()//
+                .put("sn", "newPmauduit")//
+                .put("org", "new_org")//
+                .put("postalAddress", "newAddress")//
+                .put("postOfficeBox", "newPOBox")//
+                .put("postalCode", "73000").put("street", "newStreet")//
                 .put("l", "newLocality") // locality
-                .put("telephoneNumber", "+33987654321").put("facsimileTelephoneNumber", "+339182736745")
-                .put("title", "CEO").put("description", "CEO geOrchestra Corporation").put("givenName", "newPierre")
-                .put("pending", "true").put("org", "new_org").put("uid", "pMaUdUiT")
+                .put("telephoneNumber", "+33987654321")//
+                .put("facsimileTelephoneNumber", "+339182736745")//
+                .put("title", "CEO")//
+                .put("description", "CEO geOrchestra Corporation")//
+                .put("givenName", "newPierre")//
+                .put("pending", "true")//
+                .put("uid", "pMaUdUiT")//
                 .put("privacyPolicyAgreementDate", "");
 
         request.setContent(reqUsr.toString().getBytes());
@@ -349,61 +322,32 @@ public class UsersControllerTest {
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
         initialState.setPending(false);
         initialState.setOrg("psc");
+        mockLookup(initialState);
 
-        Mockito.doReturn(initialState).when(ldapTemplate).lookup(any(Name.class), any(String[].class),
-                any(ContextMapper.class));
-        // Returns the same account when searching it back
-        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
-                + "(objectClass=person)(mail=tomcat2@localhost))";
-        List<Account> listFakedAccount = new ArrayList<Account>();
-        listFakedAccount.add(initialState);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")), eq(mFilter),
-                any(SearchControls.class), any(ContextMapper.class));
-        DirContextOperations mockDirCtxForPsc = mock(DirContextOperations.class);
-        Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate)
-                .lookupContext(argThat(new ArgumentMatcher<Name>() {
-                    @Override
-                    public boolean matches(Object o) {
-                        return o.toString().startsWith("uid=pMaUdUiT,ou=pendingusers");
-                    }
-                }));
-        Mockito.doReturn(mockDirCtxForPsc).when(ldapTemplate).lookupContext(argThat(new ArgumentMatcher<Name>() {
-            @Override
-            public boolean matches(Object o) {
-                return o.toString().startsWith("cn=psc");
-            }
-        }));
-        DirContextOperations mockDirCtxForNewOrg = mock(DirContextOperations.class);
-        Mockito.doReturn(mockDirCtxForNewOrg).when(ldapTemplate).lookupContext(argThat(new ArgumentMatcher<Name>() {
-            @Override
-            public boolean matches(Object o) {
-                return o.toString().startsWith("cn=new_org");
-            }
-        }));
+        when(dao.hasUserDnChanged(eq(initialState), any())).thenReturn(true);
+        when(dao.hasUserLoginChanged(eq(initialState), any())).thenReturn(true);
 
         Org initialOrg = new Org();
         initialOrg.setId("psc");
+        when(orgsDao.findByCommonName(initialOrg.getId())).thenReturn(initialOrg);
+
         Org newOrg = new Org();
         newOrg.setId("new_org");
-
-        Mockito.doReturn(initialOrg).when(ldapTemplate).lookup(argThat(new ArgumentMatcher<Name>() {
-            @Override
-            public boolean matches(Object o) {
-                return o.toString().startsWith("cn=psc,ou=orgs");
-            }
-        }), any(ContextMapper.class));
-        Mockito.doReturn(newOrg).when(ldapTemplate).lookup(argThat(new ArgumentMatcher<Name>() {
-            @Override
-            public boolean matches(Object o) {
-                return o.toString().startsWith("cn=new_org,ou=orgs");
-            }
-        }), any(ContextMapper.class));
+        when(orgsDao.findByCommonName(newOrg.getId())).thenReturn(newOrg);
 
         DelegationEntry toBeModified = new DelegationEntry();
         toBeModified.setUid("dummy");
-        Mockito.when(mockDelegationDao.findOne("pmauduit")).thenReturn(toBeModified);
+        when(mockDelegationDao.findOne("pmauduit")).thenReturn(toBeModified);
 
         Account ret = usersCtrl.update("pmauduit", request);
+
+        verify(orgsDao).unlinkUser(eq(initialState));
+        verify(dao).update(eq(initialState), eq(ret));
+        verify(orgsDao).linkUser(eq(ret));
+        verify(roleDao).modifyUser(eq(initialState), eq(ret));
+        verify(mockDelegationDao).delete(toBeModified);
+        verify(mockDelegationDao).save(toBeModified);
+        assertEquals("pMaUdUiT", toBeModified.getUid());
 
         // Add missing param in request
         assertEquals("newPmauduit", ret.getSurname());
@@ -423,23 +367,10 @@ public class UsersControllerTest {
         assertTrue(ret.isPending());
         assertEquals("new_org", ret.getOrg());
         assertNull(ret.getPrivacyPolicyAgreementDate());
-
-        ArgumentCaptor<String> delDnCaptor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(mockDirCtxForPsc).removeAttributeValue(anyString(), delDnCaptor.capture());
-        ArgumentCaptor<String> addDnCaptor = ArgumentCaptor.forClass(String.class);
-        Mockito.verify(mockDirCtxForNewOrg).addAttributeValue(anyString(), addDnCaptor.capture(), eq(false));
-
-        assertEquals("uid=pmauduit,ou=users,dc=georchestra,dc=org", delDnCaptor.getValue());
-        assertEquals("uid=pMaUdUiT,ou=pendingusers,dc=georchestra,dc=org", addDnCaptor.getValue());
-
-        Mockito.verify(mockDelegationDao).delete(toBeModified);
-        Mockito.verify(mockDelegationDao).save(toBeModified);
-        assertEquals("pMaUdUiT", toBeModified.getUid());
     }
 
     @Test
     public void updateUidChangeButNoAssociatedDelegation() throws Exception {
-        Mockito.reset(ldapTemplate);
         Mockito.reset(mockDelegationDao);
 
         JSONObject reqUsr = new JSONObject().put("sn", "newPmauduit").put("uid", "pMaUdUiT").put("org", "psc");
@@ -450,24 +381,14 @@ public class UsersControllerTest {
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
         initialState.setPending(false);
         initialState.setOrg("psc");
+        mockLookup(initialState);
 
-        Mockito.doReturn(initialState).when(ldapTemplate).lookup(any(Name.class), any(String[].class),
-                any(ContextMapper.class));
-
-        Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate)
-                .lookupContext(argThat(new ArgumentMatcher<Name>() {
-                    @Override
-                    public boolean matches(Object o) {
-                        return o.toString().startsWith("uid=pMaUdUiT,ou=users");
-                    }
-                }));
-
-        Mockito.when(mockDelegationDao.findOne("pmauduit")).thenReturn(null);
+        when(mockDelegationDao.findOne("pmauduit")).thenReturn(null);
 
         usersCtrl.update("pmauduit", request);
 
-        Mockito.verify(mockDelegationDao, never()).delete(anyString());
-        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
     @Test
@@ -480,24 +401,14 @@ public class UsersControllerTest {
                 .put("telephoneNumber", "").put("facsimileTelephoneNumber", "+339182736745").put("title", "CEO")
                 .put("description", "CEO geOrchestra Corporation").put("givenName", "newPierre");
         request.setContent(reqUsr.toString().getBytes());
+
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
                 "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE),
-                any(ContextMapper.class));
-        // Returns the same account when searching it back
-        AndFilter filter = new AndFilter();
-        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-        filter.and(new EqualsFilter("objectClass", "person"));
-        filter.and(new EqualsFilter("mail", "tomcat2@localhost"));
-
-        List<Account> listFakedAccount = new ArrayList<Account>();
-        listFakedAccount.add(fakedAccount);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
-                eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
-        Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(any(Name.class));
+        mockLookup(fakedAccount);
 
         Account ret = usersCtrl.update("pmauduit", request);
+
+        verify(dao).update(eq(fakedAccount), eq(ret));
 
         assertEquals("", ret.getPhone());
         assertEquals("newPmauduit", ret.getSurname());
@@ -516,10 +427,9 @@ public class UsersControllerTest {
         assertEquals("pmauduit", ret.getUid());
         assertEquals("", ret.getOrg());
 
-        Mockito.verify(mockDelegationDao, never()).findOne(anyString());
-        Mockito.verify(mockDelegationDao, never()).delete(anyString());
-        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
-
+        verify(mockDelegationDao, never()).findOne(anyString());
+        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -529,26 +439,26 @@ public class UsersControllerTest {
         mockLookup("geoserver_privileged_user", false);
 
         DelegationEntry toBeDeleted = new DelegationEntry();
-        Mockito.when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
+        when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
 
         usersCtrl.delete("geoserver_privileged_user", request, response);
 
-        Mockito.verify(mockDelegationDao).delete(toBeDeleted);
-        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+        verify(mockDelegationDao).delete(toBeDeleted);
+        verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
 
     }
 
     @Test(expected = DataServiceException.class)
     public void testDeleteDataServiceExDataServiceExceptionceptionCaught() throws Exception {
-        mockLookup("pmauduit", false);
-        doThrow(DataServiceException.class).when(ldapTemplate).unbind(any(Name.class), eq(true));
+        Account acc = mockLookup("pmauduit", false);
+        doThrow(DataServiceException.class).when(dao).delete(eq(acc));
         usersCtrl.delete("pmauduit", request, response);
     }
 
     @Test(expected = NameNotFoundException.class)
     public void testDeleteNotFoundExceptionCaught() throws Exception {
-        mockLookup("pmauduitnotfound", false);
-        doThrow(NameNotFoundException.class).when(ldapTemplate).unbind(any(Name.class), eq(true));
+        Account acc = mockLookup("pmauduitnotfound", false);
+        doThrow(NameNotFoundException.class).when(dao).delete(eq(acc));
         usersCtrl.delete("pmauduitnotfound", request, response);
     }
 
@@ -613,23 +523,18 @@ public class UsersControllerTest {
     public void testGDPRDisabled() throws DataServiceException {
         usersCtrl.setGdprAllowAccountDeletion(false);
         usersCtrl.deleteCurrentUserAndGDPRData(response);
-        assertEquals(response.SC_NOT_FOUND, response.getStatus());
+        assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
     }
 
-    private void mockLookup(String uuid, boolean pending) {
+    private Account mockLookup(String uuid, boolean pending) throws NameNotFoundException, DataServiceException {
         Account mockAccount = mock(Account.class);
         when(mockAccount.isPending()).thenReturn(pending);
         when(mockAccount.getUid()).thenReturn(uuid);
-        when(ldapTemplate.lookup(any(Name.class), anyObject(), any(AccountDaoImpl.AccountContextMapper.class)))
-                .thenReturn(mockAccount);
+        mockLookup(mockAccount);
+        return mockAccount;
     }
 
-    private ArgumentMatcher<LdapName> getMatcherFor(final String dn) {
-        return new ArgumentMatcher<LdapName>() {
-            @Override
-            public boolean matches(Object o) {
-                return ((LdapName) o).toString().equalsIgnoreCase(dn);
-            }
-        };
+    private void mockLookup(Account mockAccount) throws DataServiceException {
+        when(dao.findByUID(eq(mockAccount.getUid()))).thenReturn(mockAccount);
     }
 }

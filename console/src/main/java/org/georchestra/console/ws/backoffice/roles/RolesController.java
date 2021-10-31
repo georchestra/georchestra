@@ -68,6 +68,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -180,8 +181,10 @@ public class RolesController {
             + "/{cn:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     @ResponseBody
     public Role findByCN(@PathVariable String cn) throws DataServiceException {
+        if (StringUtils.isEmpty(cn)) {
+            throw new IllegalArgumentException("name is empty");
+        }
         Role res;
-
         if (cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
             res = this.generateVirtualRoles().getLeft();
         else

@@ -227,9 +227,13 @@ public class AccountImpl implements Serializable, Account {
 
     @Override
     public void setPassword(String password) {
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
-        this.password = encrypted;
+        if (password == null) {
+            this.password = null;
+        } else {
+            LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+            String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
+            this.password = encrypted;
+        }
     }
 
     @Override

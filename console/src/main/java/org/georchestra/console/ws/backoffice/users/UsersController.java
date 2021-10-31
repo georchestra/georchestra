@@ -204,11 +204,11 @@ public class UsersController {
 
         // Retrieve organizations list to display org name instead of org DN
         List<Org> orgs = this.orgDao.findAll();
-        Map<String, String> orgNames = new HashMap();
+        Map<String, String> orgNames = new HashMap<>();
         for (Org org : orgs)
             orgNames.put(org.getId(), org.getName());
 
-        List<SimpleAccount> res = new LinkedList();
+        List<SimpleAccount> res = new LinkedList<>();
         for (Account account : list) {
             SimpleAccount simpleAccount = new SimpleAccount(account);
             // Set Org Name with the human readable org name
