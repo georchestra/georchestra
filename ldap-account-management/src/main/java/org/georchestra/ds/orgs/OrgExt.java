@@ -26,12 +26,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Extended organization properties, used internally as a composition
+ * relationship for {@link Org} to handle non standard LDAP org properties.
+ */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
-
-    public static final String JSON_ADDRESS = "address";
-    public static final String JSON_ORG_TYPE = "orgType";
+class OrgExt extends ReferenceAware implements Cloneable {
 
     private @Getter @Setter UUID uniqueIdentifier;
     private String id;
@@ -101,13 +102,12 @@ public class OrgExt extends AbstractOrg<OrgExt> implements Cloneable {
     }
 
     @Override
-    public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
-        return orgDao.getExtension(this);
-    }
-
-    @Override
-    public OrgExt clone() throws CloneNotSupportedException {
-        return (OrgExt) super.clone();
+    public OrgExt clone() {
+        try {
+            return (OrgExt) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

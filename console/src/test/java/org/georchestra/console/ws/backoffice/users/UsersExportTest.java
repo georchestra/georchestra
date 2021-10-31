@@ -111,7 +111,6 @@ import org.apache.commons.csv.CSVRecord;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountDaoImpl;
@@ -132,7 +131,6 @@ public class UsersExportTest {
 
     private AccountImpl account1, account2;
     private Org org1, org2;
-    private OrgExt orgExt1;
 
     private static final String headers = "First Name,Middle Name,Last Name,Title,Suffix,Initials,Web Page,Gender,Birthday,Anniversary,"
             + "Location,Language,Internet Free Busy,Notes,E-mail Address,E-mail 2 Address,E-mail 3 Address,Primary Phone,Home Phone,"
@@ -171,8 +169,8 @@ public class UsersExportTest {
         org2.setId("org2");
         org2.setName("Org2");
 
-        when(orgDao.findByCommonNameWithExt(eq(account1))).thenReturn(org1);
-        when(orgDao.findByCommonNameWithExt(eq(account2))).thenReturn(org2);
+        when(orgDao.findByUser(eq(account1))).thenReturn(org1);
+        when(orgDao.findByUser(eq(account2))).thenReturn(org2);
 
         Authentication auth = mock(Authentication.class);
         Collection<GrantedAuthority> authorities = Collections.singleton(AdvancedDelegationDao.ROLE_SUPERUSER);
@@ -208,7 +206,7 @@ public class UsersExportTest {
         assertEquals(account1.getCommonName(), FIRST_NAME.apply(account1, org1));
         assertEquals(account1.getSurname(), LAST_NAME.apply(account1, org1));
         assertEquals(account1.getTitle(), TITLE.apply(account1, org1));
-        assertEquals(orgExt1.getDescription(), NOTES.apply(account1, org1));
+        assertEquals(org1.getDescription(), NOTES.apply(account1, org1));
         assertEquals(account1.getEmail(), EMAIL.apply(account1, org1));
         assertEquals(account1.getPhone(), PHONE.apply(account1, org1));
         assertEquals(account1.getMobile(), MOBILE_PHONE.apply(account1, org1));
@@ -338,12 +336,10 @@ public class UsersExportTest {
         account1.setLocality("Paris");
 
         org1.setCities(Arrays.asList("Paris", "Seoul"));
-        orgExt1 = new OrgExt();
-        org1.setOrgExt(orgExt1);
-        orgExt1.setAddress("c2c address");
+        org1.setAddress("c2c address");
         // https://translate.google.com/#view=home&op=translate&sl=fr&tl=ko&text=Camptocamp.org%20a%20pour%20but%20de%20faciliter%20%0Ale%20partage%20d'informations%20entre%20les%20pratiquants%20%0Ade%20sports%20de%20montagne%20et%20de%20contribuer%20%C3%A0%20la%20%0As%C3%A9curit%C3%A9%20des%20activit%C3%A9s%20montagne.
-        orgExt1.setDescription("Camptocamp.org의 목표는\n실무자 간의 정보 공유\n산악 스포츠와에 기여\n산악 활동의 안전.");
-        orgExt1.setUrl("https://www.camptocamp.org/");
+        org1.setDescription("Camptocamp.org의 목표는\n실무자 간의 정보 공유\n산악 스포츠와에 기여\n산악 활동의 안전.");
+        org1.setUrl("https://www.camptocamp.org/");
     }
 
     @Test

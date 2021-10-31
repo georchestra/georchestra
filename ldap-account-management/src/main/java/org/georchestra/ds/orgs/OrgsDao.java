@@ -22,36 +22,13 @@ package org.georchestra.ds.orgs;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
-
-import javax.naming.Name;
 
 import org.georchestra.ds.users.Account;
-import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.filter.AndFilter;
 
 /**
  * This class manage organization membership
  */
 public interface OrgsDao {
-
-    public static interface Extension<T extends AbstractOrg<?>> {
-
-        AndFilter getObjectClassFilter();
-
-        Name buildOrgDN(T org);
-
-        void mapToContext(T org, DirContextOperations context);
-
-        <O extends AbstractOrg<?>> O findById(O org);
-
-        AttributesMapper<T> getAttributeMapper(boolean pending);
-    }
-
-    public Extension<Org> getExtension(Org org);
-
-    public Extension<OrgExt> getExtension(OrgExt org);
 
     /**
      * Search all organizations defined in ldap. this.orgSearchBaseDN hold search
@@ -61,22 +38,12 @@ public interface OrgsDao {
      */
     public List<Org> findAll();
 
-    public Stream<Org> findAllWithExt();
-
     /**
      * Search for validated organizations defined in ldap.
      *
      * @return list of validated organizations
      */
     public List<Org> findValidated();
-
-    /**
-     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search
-     * path in ldap.
-     *
-     * @return list of organizations (ldap organization object)
-     */
-    public List<OrgExt> findAllExt();
 
     /**
      * Search organization with 'commonName' as distinguish name
@@ -87,17 +54,7 @@ public interface OrgsDao {
      */
     public Org findByCommonName(String commonName);
 
-    public Org findByCommonNameWithExt(Account user);
-
-    public Org findByCommonNameWithExt(String orgCn);
-
-    /**
-     * Search by {@link Org#getUniqueIdentifier()} and set its {@link Org#setOrgExt
-     * OrgExt}, if any.
-     *
-     * @return the matching organization or {@code null}
-     */
-    public Org findByIdWithExt(UUID uuid);
+    public Org findByUser(Account user);
 
     /**
      * Search by {@link Org#getUniqueIdentifier()}
@@ -106,20 +63,11 @@ public interface OrgsDao {
      */
     public Org findById(UUID uuid);
 
-    /**
-     * Search for organization extension with specified identifier
-     * 
-     * @param cn distinguish name of organization for example : 'psc' to retrieve
-     *           'o=psc,ou=orgs,dc=georchestra,dc=org'
-     * @return OrgExt instance corresponding to extended attributes
-     */
-    public OrgExt findExtById(String cn);
+    public void insert(Org org);
 
-    public void insert(@SuppressWarnings("rawtypes") AbstractOrg org);
+    public void update(Org org);
 
-    public void update(@SuppressWarnings("rawtypes") AbstractOrg org);
-
-    public void delete(@SuppressWarnings("rawtypes") AbstractOrg org);
+    public void delete(Org org);
 
     public void linkUser(Account user);
 

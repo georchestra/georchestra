@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -48,7 +49,6 @@ import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
@@ -68,6 +68,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.collect.Sets;
 
 @Controller
 public class OrgsController {
@@ -163,10 +165,7 @@ public class OrgsController {
     public Org getOrgInfos(@PathVariable String cn) {
         this.checkOrgAuthorization(cn);
 
-        Org org = this.orgDao.findByCommonName(cn);
-        OrgExt orgExt = this.orgDao.findExtById(cn);
-        org.setOrgExt(orgExt);
-        return org;
+        return this.orgDao.findByCommonName(cn);
     }
 
     /**
@@ -208,23 +207,14 @@ public class OrgsController {
 
         // Retrieve current orgs state from ldap
         Org org = this.orgDao.findByCommonName(commonName);
-        OrgExt orgExt = this.orgDao.findExtById(commonName);
-        Org initialOrg = null;
-        OrgExt initialOrgExt = null;
+        final Org initialOrg = org.clone();
 
         // get default pending status
         Boolean defaultPending = org.isPending();
 
         // Update org and orgExt fields
-        try {
-            initialOrg = org.clone();
-            initialOrgExt = orgExt.clone();
-        } catch (CloneNotSupportedException cloneException) {
-            LOG.info("Log action will fail. Clone org or orgExt is not supported.", cloneException);
-        }
         this.updateFromRequest(org, json);
-        orgExt.setId(org.getId());
-        this.updateFromRequest(orgExt, json);
+
         // Persist changes to LDAP server
         this.orgDao.update(org);
 
@@ -236,14 +226,8 @@ public class OrgsController {
             }
         }
 
-        this.orgDao.update(orgExt);
-        org.setOrgExt(orgExt);
-
         // log org and orgExt changes
-        if (initialOrg != null && initialOrgExt != null) {
-            logUtils.logOrgChanged(initialOrg, json);
-            logUtils.logOrgExtChanged(initialOrgExt, json);
-        }
+        logUtils.logOrgChanged(initialOrg, json);
 
         // log if pending status change
         String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
@@ -287,15 +271,8 @@ public class OrgsController {
         org.setId("");
         this.updateFromRequest(org, json);
 
-        OrgExt orgExt = new OrgExt();
-        orgExt.setId(org.getId());
-        this.updateFromRequest(orgExt, json);
-
         // Persist changes to LDAP server
         this.orgDao.insert(org);
-        this.orgDao.insert(orgExt);
-
-        org.setOrgExt(orgExt);
 
         logUtils.createLog(org.getId(), AdminLogType.ORG_CREATED, null);
 
@@ -320,7 +297,6 @@ public class OrgsController {
         Org org = this.orgDao.findByCommonName(commonName);
         Boolean isPending = org.isPending();
 
-        this.orgDao.delete(this.orgDao.findExtById(commonName));
         this.orgDao.delete(org);
 
         // get authent info without request
@@ -399,18 +375,22 @@ public class OrgsController {
     public void orgTypeDistribution(HttpServletResponse response, @PathVariable String format)
             throws IOException, JSONException {
 
-        Map<String, Integer> distribution = new HashMap();
-        List<OrgExt> orgs = this.orgDao.findAllExt();
+        Map<String, Integer> distribution = new HashMap<>();
+        List<Org> orgs = this.orgDao.findAll();
 
         // Filter results if user is not SUPERUSER
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
-            orgs.retainAll(Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()));
+        if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+            String[] filteredIds = this.delegationDao.findOne(auth.getName()).getOrgs();
+            if (filteredIds != null && filteredIds.length > 0) {
+                final Set<String> retain = Sets.newHashSet(filteredIds);
+                orgs = orgs.stream().filter(o -> retain.contains(o.getName())).collect(Collectors.toList());
+            }
+        }
 
-        for (OrgExt org : orgs) {
+        for (Org org : orgs) {
             try {
                 distribution.put(org.getOrgType(), distribution.get(org.getOrgType()) + 1);
-
             } catch (NullPointerException e) {
                 distribution.put(org.getOrgType(), 1);
             }
@@ -423,16 +403,18 @@ public class OrgsController {
             response.setHeader("Content-Disposition", "attachment;filename=orgsTypeDistribution.csv");
 
             out.println("organisation type, count");
-            for (String type : distribution.keySet())
+            for (String type : distribution.keySet()) {
                 out.println(type + "," + distribution.get(type));
+            }
             out.close();
 
         } else if (format.equalsIgnoreCase("json")) {
             response.setContentType("application/json");
 
             JSONArray res = new JSONArray();
-            for (String type : distribution.keySet())
+            for (String type : distribution.keySet()) {
                 res.put(new JSONObject().put("type", type).put("count", distribution.get(type)));
+            }
             out.println(res.toString(4));
             out.close();
         }
@@ -492,27 +474,13 @@ public class OrgsController {
                     .map(Object::toString).collect(Collectors.toList()));
         }
         org.setPending(json.optBoolean(Org.JSON_PENDING));
-    }
 
-    /**
-     * Update orgExt instance based on field found in json object.
-     *
-     * All field of OrgExt instance will be updated if corresponding key exists in
-     * json document.
-     *
-     * @param orgExt OrgExt instance to update
-     * @param json   Json document to take information from
-     * @throws JSONException If something went wrong during information extraction
-     *                       from json document
-     */
-    private void updateFromRequest(OrgExt orgExt, JSONObject json) {
-        orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
-        orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
-        orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
-        orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
-        orgExt.setNote(json.optString(Org.JSON_NOTE));
-        orgExt.setUrl(json.optString(Org.JSON_URL));
-        orgExt.setLogo(json.optString(Org.JSON_LOGO));
+        org.setOrgType(json.optString(Org.JSON_ORG_TYPE));
+        org.setAddress(json.optString(Org.JSON_ADDRESS));
+        org.setDescription(json.optString(Org.JSON_DESCRIPTION));
+        org.setNote(json.optString(Org.JSON_NOTE));
+        org.setUrl(json.optString(Org.JSON_URL));
+        org.setLogo(json.optString(Org.JSON_LOGO));
     }
 
     /**

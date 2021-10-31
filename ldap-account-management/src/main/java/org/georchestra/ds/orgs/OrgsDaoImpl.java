@@ -19,7 +19,9 @@
 
 package org.georchestra.ds.orgs;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,7 +76,7 @@ public class OrgsDaoImpl implements OrgsDao {
     private OrgExtension orgExtension = new OrgExtension();
     private OrgExtExtension orgExtExtension = new OrgExtExtension();
 
-    public abstract class Extension<T extends AbstractOrg<?>> implements OrgsDao.Extension<T> {
+    abstract class Extension<T extends ReferenceAware> {
 
         private AndFilter objectClassFilter;
 
@@ -113,13 +114,13 @@ public class OrgsDaoImpl implements OrgsDao {
             mapPayloadToContext(org, context);
         }
 
-        public <O extends AbstractOrg<?>> O findById(O org) {
+        public <O extends ReferenceAware> O findById(String id) {
             String ldapKeyField = this.getLdapKeyField();
             try {
-                Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, org.getId()).build();
+                Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, id).build();
                 return (O) ldapTemplate.lookup(dn, this.getContextMapper(false));
             } catch (NameNotFoundException ex) {
-                Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, org.getId()).build();
+                Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, id).build();
                 return (O) ldapTemplate.lookup(dn, this.getContextMapper(true));
             }
         }
@@ -267,11 +268,11 @@ public class OrgsDaoImpl implements OrgsDao {
         }
     }
 
-    public Extension<Org> getExtension(Org org) {
+    Extension<Org> getOrgExtension() {
         return orgExtension;
     }
 
-    public Extension<OrgExt> getExtension(OrgExt org) {
+    Extension<OrgExt> getOrgExtExtension() {
         return orgExtExtension;
     }
 
@@ -309,37 +310,25 @@ public class OrgsDaoImpl implements OrgsDao {
      *
      * @return list of organizations
      */
+    @Override
     public List<Org> findAll() {
-        Org org = new Org();
-        Filter filter = getExtension(org).getObjectClassFilter();
+        return findAllWithExt().collect(Collectors.toList());
+    }
+
+    private Stream<Org> findAllWithExt() {
+        final Extension<Org> orgExtension = getOrgExtension();
+
+        Filter filter = orgExtension.getObjectClassFilter();
         List<Org> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                getExtension(org).getAttributeMapper(false));
+                orgExtension.getAttributeMapper(false));
         List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                getExtension(org).getAttributeMapper(true));
-        return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
-    }
+                orgExtension.getAttributeMapper(true));
 
-    public Stream<Org> findAllWithExt() {
-        final Map<String, OrgExt> exts = this.findAllExt().stream()
-                .collect(Collectors.toMap(OrgExt::getId, Function.identity()));
-        List<Org> orgs = this.findAll();
-        return orgs.stream().map(o -> {
-            OrgExt orgExt = exts.get(o.getId());
-            o.setOrgExt(orgExt);
-            return o;
-        });
-    }
+        Stream<Org> orgs = Stream.concat(active.stream(), pending.stream());
+        final Map<String, OrgExt> exts = this.findAllExt().collect(toMap(OrgExt::getId, identity()));
 
-    /**
-     * Search for validated organizations defined in ldap.
-     *
-     * @return list of validated organizations
-     */
-    public List<Org> findValidated() {
-        EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
-        AndFilter filter = new AndFilter();
-        filter.and(classFilter);
-        return ldapTemplate.search(orgSearchBaseDN, filter.encode(), getExtension(new Org()).getAttributeMapper(false));
+        Stream<Org> all = orgs.map(o -> o.setOrgExt(exts.get(o.getId())));
+        return all;
     }
 
     /**
@@ -348,14 +337,31 @@ public class OrgsDaoImpl implements OrgsDao {
      *
      * @return list of organizations (ldap organization object)
      */
-    public List<OrgExt> findAllExt() {
-        OrgExt orgExt = new OrgExt();
-        Filter filter = getExtension(orgExt).getObjectClassFilter();
+    private Stream<OrgExt> findAllExt() {
+        Extension<OrgExt> orgExtExtension = getOrgExtExtension();
+        Filter filter = orgExtExtension.getObjectClassFilter();
         List<OrgExt> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                getExtension(orgExt).getAttributeMapper(false));
+                orgExtExtension.getAttributeMapper(false));
         List<OrgExt> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                getExtension(orgExt).getAttributeMapper(true));
-        return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+                orgExtExtension.getAttributeMapper(true));
+        return Stream.concat(active.stream(), pending.stream());
+    }
+
+    /**
+     * Search for validated organizations defined in ldap.
+     *
+     * @return list of validated organizations
+     */
+    @Override
+    public List<Org> findValidated() {
+        EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
+        AndFilter filter = new AndFilter();
+        filter.and(classFilter);
+        AttributesMapper<Org> notPendingMapper = getOrgExtension().getAttributeMapper(false);
+        return ldapTemplate.search(orgSearchBaseDN, filter.encode(), notPendingMapper)//
+                .stream()//
+                .map(this::addExt)//
+                .collect(Collectors.toList());
     }
 
     /**
@@ -365,31 +371,17 @@ public class OrgsDaoImpl implements OrgsDao {
      *                   retrieve 'cn=psc,ou=orgs,dc=georchestra,dc=org'
      * @return Org instance with specified DN
      */
+    @Override
     public Org findByCommonName(String commonName) {
-        if (commonName.length() <= 0) {
+        if (StringUtils.isEmpty(commonName)) {
             return null;
         }
-        Org org = new Org();
-        org.setId(commonName);
-        return getExtension(org).findById(org);
+        return addExt(getOrgExtension().findById(commonName));
     }
 
-    public Org findByCommonNameWithExt(Account user) {
-        return findByCommonNameWithExt(user.getOrg());
-    }
-
-    public Org findByCommonNameWithExt(String orgCn) {
-        return addExt(findByCommonName(orgCn));
-    }
-
-    /**
-     * Search by {@link Org#getUniqueIdentifier()} and set its {@link Org#setOrgExt
-     * OrgExt}, if any.
-     *
-     * @return the matching organization or {@code null}
-     */
-    public Org findByIdWithExt(UUID uuid) {
-        return addExt(findById(uuid));
+    @Override
+    public Org findByUser(Account user) {
+        return findByCommonName(user.getOrg());
     }
 
     /**
@@ -397,6 +389,7 @@ public class OrgsDaoImpl implements OrgsDao {
      *
      * @return the matching organization or {@code null}
      */
+    @Override
     public Org findById(UUID uuid) {
         return findAllWithExt().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
     }
@@ -421,52 +414,92 @@ public class OrgsDaoImpl implements OrgsDao {
      *           'o=psc,ou=orgs,dc=georchestra,dc=org'
      * @return OrgExt instance corresponding to extended attributes
      */
-    public OrgExt findExtById(String cn) {
-        OrgExt org = new OrgExt();
-        org.setId(cn);
-        return getExtension(org).findById(org);
+    OrgExt findExtById(String cn) {
+        return getOrgExtExtension().findById(cn);
     }
 
-    public void insert(@SuppressWarnings("rawtypes") AbstractOrg org) {
-        DirContextAdapter context = new DirContextAdapter(org.getExtension(this).buildOrgDN(org));
-        org.getExtension(this).mapToContext(org, context);
-        ldapTemplate.bind(context);
-    }
-
-    public void update(@SuppressWarnings("rawtypes") AbstractOrg org) {
-        Name newName = org.getExtension(this).buildOrgDN(org);
-        if (newName.compareTo(org.getReference().getDn()) != 0) {
-            this.ldapTemplate.rename(org.getReference().getDn(), newName);
+    @Override
+    public void insert(Org org) {
+        {
+            Extension<Org> orgExtension = getOrgExtension();
+            DirContextAdapter orgContext = new DirContextAdapter(orgExtension.buildOrgDN(org));
+            orgExtension.mapToContext(org, orgContext);
+            ldapTemplate.bind(orgContext);
         }
-        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-        org.getExtension(this).mapToContext(org, context);
-        this.ldapTemplate.modifyAttributes(context);
+        {
+            OrgExt ext = org.getExt();
+            Extension<OrgExt> orgExtExtension = getOrgExtExtension();
+            DirContextAdapter orgExtContext = new DirContextAdapter(orgExtExtension.buildOrgDN(ext));
+            orgExtExtension.mapToContext(ext, orgExtContext);
+            ldapTemplate.bind(orgExtContext);
+        }
+        Org o = findByCommonName(org.getId());
     }
 
-    public void delete(@SuppressWarnings("rawtypes") AbstractOrg org) {
-        this.ldapTemplate.unbind(org.getExtension(this).buildOrgDN(org));
+    @Override
+    public void update(Org org) {
+        {
+            Extension<Org> orgExtension = getOrgExtension();
+            Name newName = orgExtension.buildOrgDN(org);
+            if (newName.compareTo(org.getReference().getDn()) != 0) {
+                this.ldapTemplate.rename(org.getReference().getDn(), newName);
+            }
+            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+            orgExtension.mapToContext(org, context);
+            this.ldapTemplate.modifyAttributes(context);
+        }
+        {
+            OrgExt ext = org.getExt();
+            Extension<OrgExt> extExtension = getOrgExtExtension();
+            Name newName = extExtension.buildOrgDN(ext);
+            if (newName.compareTo(ext.getReference().getDn()) != 0) {
+                this.ldapTemplate.rename(ext.getReference().getDn(), newName);
+            }
+            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+            extExtension.mapToContext(ext, context);
+            this.ldapTemplate.modifyAttributes(context);
+        }
+        Org o = findByCommonName(org.getId());
     }
 
+    @Override
+    public void delete(Org org) {
+        Org o;
+        try {
+            o = findByCommonName(org.getId());
+        } catch (NameNotFoundException noSuchOrg) {
+            o = null;
+        }
+        Name orgDN = getOrgExtension().buildOrgDN(org);
+        Name orgExtDN = getOrgExtExtension().buildOrgDN(org.getExt());
+        this.ldapTemplate.unbind(orgDN);
+        this.ldapTemplate.unbind(orgExtDN);
+    }
+
+    @Override
     public void linkUser(Account user) {
         if (StringUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
-        DirContextOperations context = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
-        context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
-        this.ldapTemplate.modifyAttributes(context);
+        org.getMembers().remove(user.getUid());
+        org.getMembers().add(user.getUid());
+        this.update(org);
     }
 
+    @Override
     public void unlinkUser(Account user) {
         if (StringUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
-        DirContextOperations ctx = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
-        ctx.removeAttributeValue("member", accountDao.buildFullUserDn(user));
-        this.ldapTemplate.modifyAttributes(ctx);
+        boolean removed = org.getMembers().remove(user.getUid());
+        if (removed) {
+            this.update(org);
+        }
     }
 
+    @Override
     public String reGenerateId(String orgName, String allowedId) throws IOException {
         // Check name
         if (orgName == null || orgName.length() == 0)
@@ -493,6 +526,7 @@ public class OrgsDaoImpl implements OrgsDao {
         throw new IOException("Trouble when generating id/cn for org.");
     }
 
+    @Override
     public String generateId(String org_name) throws IOException {
         return reGenerateId(org_name, "");
     }
@@ -529,12 +563,12 @@ public class OrgsDaoImpl implements OrgsDao {
         }
     }
 
-    public String asString(Attribute att) throws NamingException {
+    private String asString(Attribute att) throws NamingException {
         String v = att == null ? null : (String) att.get();
         return StringUtils.isEmpty(v) ? "" : v;
     }
 
-    public UUID asUuid(Attribute att) throws NamingException {
+    private UUID asUuid(Attribute att) throws NamingException {
         String asString = asString(att);
         if (StringUtils.hasLength(asString)) {
             return UUID.fromString(asString);
@@ -542,13 +576,13 @@ public class OrgsDaoImpl implements OrgsDao {
         return null;
     }
 
-    public String asPhoto(Attribute att) throws NamingException {
+    private String asPhoto(Attribute att) throws NamingException {
         if (att == null)
             return "";
         return Base64.getMimeEncoder().encodeToString((byte[]) att.get());
     }
 
-    public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
+    private Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
         Attribute attribute = attributes.get(attributeName);
         if (attribute == null) {
             return Stream.empty();
@@ -556,7 +590,7 @@ public class OrgsDaoImpl implements OrgsDao {
         return Collections.list(attribute.getAll()).stream().map(Object::toString);
     }
 
-    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends AbstractOrg<?>>
+    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends ReferenceAware>
             implements ContextMapper<T> {
 
         private AttributesMapper<T> attributesMapper;

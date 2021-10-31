@@ -188,7 +188,7 @@ public class CSVAccountExporter {
 
         final CSVPrinter printer = FORMAT.print(target);
         for (Account acc : accounts) {
-            Org org = orgsById.computeIfAbsent(acc.getOrg(), id -> orgsDao.findByCommonNameWithExt(acc));
+            Org org = orgsById.computeIfAbsent(acc.getOrg(), id -> orgsDao.findByUser(acc));
             printer.printRecord(toRecord(acc, org));
         }
         printer.flush();

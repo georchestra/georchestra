@@ -14,7 +14,6 @@ import java.util.List;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.Account;
@@ -137,10 +136,8 @@ public class EditUserDetailsFormControllerTest {
         Org org = new Org();
         org.setId("georTest");
         org.setName("geOrchestra testing LLC");
-        OrgExt orgExt = new OrgExt();
-        orgExt.setDescription(incredibleDesc);
-        org.setOrgExt(orgExt);
-        Mockito.when(this.orgsDao.findByCommonNameWithExt(Mockito.any(Account.class))).thenReturn(org);
+        org.setDescription(incredibleDesc);
+        Mockito.when(this.orgsDao.findByUser(Mockito.any(Account.class))).thenReturn(org);
 
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 

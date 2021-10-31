@@ -35,9 +35,7 @@ import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.AbstractOrg;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.Account;
@@ -179,13 +177,10 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
+        verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
         assertTrue(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
-        assertTrue(orgCaptor.getAllValues().get(1).isPending());
-        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
-
     }
 
     @Test
@@ -198,12 +193,10 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
+        verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
         assertFalse(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
-        assertFalse(orgCaptor.getAllValues().get(1).isPending());
-        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
     }
 
     /**

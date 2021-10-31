@@ -43,7 +43,6 @@ public class OrgsDaoImplIT {
     private @Autowired LdapTemplate ldapTemplate;
 
     Org org;
-    OrgExt orgExt;
 
     Org pendingOrg;
 
@@ -54,27 +53,22 @@ public class OrgsDaoImplIT {
         org.setName("testorg");
         org.setShortName("tEsTOrG");
         org.setCities(Lists.newArrayList("Paris"));
+        org.setOrgType("Non Profit");
 
-        orgExt = new OrgExt();
-        orgExt.setId(org.getId());
-        orgExt.setOrgType("Non Profit");
-
-        org.setOrgExt(orgExt);
         dao.insert(org);
-        dao.insert(orgExt);
 
         pendingOrg = new Org();
         pendingOrg.setId("testPendingOrg");
         pendingOrg.setShortName("PO");
         pendingOrg.setName("Pending Org");
         pendingOrg.setPending(true);
+        pendingOrg.setOrgType("For Profit");
         dao.insert(pendingOrg);
     }
 
     @After
     public void cleanLdap() {
         dao.delete(org);
-        dao.delete(orgExt);
         dao.delete(pendingOrg);
     }
 
@@ -90,9 +84,7 @@ public class OrgsDaoImplIT {
         dco = ldapTemplate.lookupContext("cn=torg,ou=orgs");
 
         org = dao.findByCommonName("torg");
-        orgExt = dao.findExtById("torg");
 
-        org.setOrgExt(orgExt);
         List<String> cities = Lists.newArrayList("Marseille");
         org.setCities(cities);
         dao.update(org);
@@ -158,7 +150,6 @@ public class OrgsDaoImplIT {
 
         List<Org> orgs = dao.findAll();
 
-        org.setOrgExt(null);// findAll does not return exts
         assertTrue(orgs.contains(org));
         assertTrue(orgs.contains(pendingOrg));
     }
@@ -166,7 +157,6 @@ public class OrgsDaoImplIT {
     @Test
     public void findByCommonNameNotPendingOrg() {
         Org expected = this.org;
-        expected.setOrgExt(null);
         Org found = dao.findByCommonName(expected.getId());
         assertEquals(expected, found);
     }
@@ -174,7 +164,7 @@ public class OrgsDaoImplIT {
     @Test
     public void findByCommonNameWithExt() {
         Org expected = this.org;
-        Org found = dao.findByCommonNameWithExt(expected.getId());
+        Org found = dao.findByCommonName(expected.getId());
         assertEquals(expected, found);
     }
 
@@ -209,7 +199,7 @@ public class OrgsDaoImplIT {
     public void testOrgAttributeMapperCities() throws NamingException {
         Attributes orgToDeserialize = new BasicAttributes();
         orgToDeserialize.put("description", "1,2,3");
-        AttributesMapper<Org> toTest = dao.getExtension(new Org()).getAttributeMapper(true);
+        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgExtension().getAttributeMapper(true);
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
 
@@ -223,7 +213,7 @@ public class OrgsDaoImplIT {
         desc.add("1,2,3");
         desc.add("4,5,6");
         orgToDeserialize.put(desc);
-        AttributesMapper<Org> toTest = dao.getExtension(new Org()).getAttributeMapper(true);
+        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgExtension().getAttributeMapper(true);
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
         assertTrue("Expected 6 cities", org.getCities().size() == 6);

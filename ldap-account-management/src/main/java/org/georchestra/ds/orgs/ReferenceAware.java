@@ -20,13 +20,35 @@ package org.georchestra.ds.orgs;
 
 import org.springframework.ldap.core.DirContextAdapter;
 
-public interface ReferenceAware<T extends AbstractOrg<?>> {
-    DirContextAdapter getReference();
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    void setReference(DirContextAdapter reference);
+import lombok.EqualsAndHashCode;
 
-    void setPending(boolean pending);
+@EqualsAndHashCode(exclude = "reference")
+abstract class ReferenceAware {
 
-    OrgsDao.Extension<T> getExtension(OrgsDao orgDao);
+    @JsonIgnore
+    protected boolean isPending;
+
+    @JsonIgnore
+    private DirContextAdapter reference;
+
+    public abstract String getId();
+
+    public boolean isPending() {
+        return isPending;
+    }
+
+    public void setPending(boolean pending) {
+        isPending = pending;
+    }
+
+    DirContextAdapter getReference() {
+        return reference;
+    }
+
+    void setReference(DirContextAdapter reference) {
+        this.reference = reference;
+    }
 
 }

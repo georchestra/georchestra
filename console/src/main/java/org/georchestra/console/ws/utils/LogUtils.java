@@ -12,7 +12,6 @@ import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.roles.RoleProtected;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.UserSchema;
@@ -193,7 +192,7 @@ public class LogUtils {
      */
     public void logOrgChanged(Org org, JSONObject json) throws IOException {
         final int MAX_CITIES = 32;
-        String id = json.optString(Org.JSON_ID);
+        final String id = json.optString(Org.JSON_ID);
         // log name changed
         if (!org.getName().equals(json.optString(Org.JSON_NAME))) {
             createAndLogDetails(id, Org.JSON_NAME, org.getName(), json.optString(Org.JSON_NAME),
@@ -231,45 +230,32 @@ public class LogUtils {
             details.put("removed", rmLen);
             createLog(id, AdminLogType.ORG_ATTRIBUTE_CHANGED, details.toString());
         }
-    }
 
-    /**
-     * Log update orgExt from json object.
-     *
-     * @param orgExt OrgExt instance to update
-     * @param json   Json document to take information from
-     * @throws JSONException If something went wrong during information extraction
-     *                       from json document
-     */
-    public void logOrgExtChanged(OrgExt orgExt, JSONObject json) {
-        String orgId = orgExt.getId();
         AdminLogType type = AdminLogType.ORG_ATTRIBUTE_CHANGED;
         // log orgType changed
-        if (!orgExt.getOrgType().equals(json.optString(OrgExt.JSON_ORG_TYPE))) {
-            createAndLogDetails(orgId, OrgExt.JSON_ORG_TYPE, orgExt.getOrgType(), json.optString(OrgExt.JSON_ORG_TYPE),
-                    type);
+        if (!org.getOrgType().equals(json.optString(Org.JSON_ORG_TYPE))) {
+            createAndLogDetails(id, Org.JSON_ORG_TYPE, org.getOrgType(), json.optString(Org.JSON_ORG_TYPE), type);
         }
 
-        if (!orgExt.getAddress().equals(json.optString(OrgExt.JSON_ADDRESS))) {
-            createAndLogDetails(orgId, OrgExt.JSON_ADDRESS, orgExt.getAddress(), json.optString(OrgExt.JSON_ADDRESS),
-                    type);
+        if (!org.getAddress().equals(json.optString(Org.JSON_ADDRESS))) {
+            createAndLogDetails(id, Org.JSON_ADDRESS, org.getAddress(), json.optString(Org.JSON_ADDRESS), type);
         }
         // log description changed
-        if (!orgExt.getDescription().equals(json.optString(Org.JSON_DESCRIPTION))) {
-            createAndLogDetails(orgId, Org.JSON_DESCRIPTION, orgExt.getDescription(),
-                    json.optString(Org.JSON_DESCRIPTION), type);
+        if (!org.getDescription().equals(json.optString(Org.JSON_DESCRIPTION))) {
+            createAndLogDetails(id, Org.JSON_DESCRIPTION, org.getDescription(), json.optString(Org.JSON_DESCRIPTION),
+                    type);
         }
         // log web site url changed
-        if (!orgExt.getUrl().equals(json.optString(Org.JSON_URL))) {
-            createAndLogDetails(orgId, Org.JSON_URL, orgExt.getUrl(), json.optString(Org.JSON_URL), type);
+        if (!org.getUrl().equals(json.optString(Org.JSON_URL))) {
+            createAndLogDetails(id, Org.JSON_URL, org.getUrl(), json.optString(Org.JSON_URL), type);
         }
         // log logo changed
-        if (!orgExt.getLogo().equals(json.get("logo"))) {
-            createAndLogDetails(orgId, Org.JSON_LOGO, orgExt.getLogo(), json.getString("logo"), type);
+        if (!org.getLogo().equals(json.get("logo"))) {
+            createAndLogDetails(id, Org.JSON_LOGO, org.getLogo(), json.getString("logo"), type);
         }
         // log note changed
-        if (!orgExt.getNote().equals(json.optString(Org.JSON_NOTE))) {
-            createAndLogDetails(orgId, Org.JSON_NOTE, orgExt.getNote(), json.optString(Org.JSON_NOTE), type);
+        if (!org.getNote().equals(json.optString(Org.JSON_NOTE))) {
+            createAndLogDetails(id, Org.JSON_NOTE, org.getNote(), json.optString(Org.JSON_NOTE), type);
         }
     }
 
