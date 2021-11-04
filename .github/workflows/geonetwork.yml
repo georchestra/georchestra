@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 45
     steps:
     - name: "Checking out"
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: "Checking out submodules"
       run: git submodule update --init --recursive --depth 1 geonetwork/
@@ -78,7 +78,7 @@ jobs:
       if: github.repository == 'georchestra/georchestra'
       run: |
         cd geonetwork/web
-        ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests
+        ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
