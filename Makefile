@@ -79,7 +79,8 @@ war-build-geoserver-geofence: build-deps
 war-build-geowebcache: build-deps
 	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
 
-war-build-gn:
+war-build-gn: build-deps
+	mvn clean install -pl testcontainers,ldap-account-management,security-proxy-spring-integration -DskipTests
 	mvn clean install -f geonetwork/pom.xml -DskipTests
 
 war-build-georchestra: war-build-gn war-build-geoserver
