@@ -55,13 +55,30 @@ objectClass: person
 objectClass: shadowAccount
 objectClass: top
 uid: testeditor
-givenName: Test
 sn: EDITOR
 description: editor
 userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
 mail: psc+testeditor@georchestra.org
 cn: testeditor
 georchestraObjectIdentifier: e75b336d-a9fc-4671-8002-e1a49c2acf2c
+
+# testuseradmin, users, georchestra.org
+dn: uid=testuseradmin,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testuseradmin
+givenName: Test
+sn: USERADMIN
+description: UserAdmin
+userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
+mail: psc+testuseradmin@georchestra.org
+knowledgeInformation: Test user with UserAdmin GeoNetwork profile 
+cn: testuseradmin
+georchestraObjectIdentifier: e75b336d-a9fc-4671-8002-e1a49c2ac123
 
 # testadmin, users, georchestra.org
 dn: uid=testadmin,ou=users,dc=georchestra,dc=org
@@ -183,6 +200,16 @@ description: This role grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: ab9d8932-a17c-4767-840d-940a183654f3
 
+# GN_USERADMIN, roles, georchestra.org
+dn: cn=GN_USERADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+objectClass: georchestraRole
+cn: GN_USERADMIN
+description: This role grants admin access to the user's GeoNetwork group
+member: uid=testuseradmin,ou=users,dc=georchestra,dc=org
+georchestraObjectIdentifier: 5fd23d51-0d68-4d60-98ab-59fb383ebe39
+
 # GN_EDITOR, roles, georchestra.org
 dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
@@ -253,6 +280,7 @@ member: uid=testeditor,ou=users,dc=georchestra,dc=org
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+member: uid=testuseradmin,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: ad243705-eeec-4d1c-aa28-abb631e23a65
 
 # ORGADMIN, roles, georchestra.org
@@ -370,6 +398,7 @@ cn: PSC
 description: 2A004,2B033
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
+member: uid=testuseradmin,ou=users,dc=georchestra,dc=org
 o: Project Steering Committee
 ou: PSC
 seeAlso: o=PSC,ou=orgs,dc=georchestra,dc=org

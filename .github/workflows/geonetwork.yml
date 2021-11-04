@@ -4,13 +4,19 @@ on:
     paths:
       - "commons/**"
       - "security-proxy-spring-integration/**"
-      - "geonetwork/**"
+      - "geonetwork"
       - ".github/workflows/geonetwork.yml"
+      - "ldap-account-management/**"
+      - "console/**"
+      - "ldap/**"
   pull_request:
     paths:
       - "commons/**"
       - "security-proxy-spring-integration/**"
-      - "geonetwork/**"
+      - "geonetwork"
+      - "ldap-account-management/**"
+      - "console/**"
+      - "ldap/**"
 
 jobs:
   build:
@@ -18,7 +24,7 @@ jobs:
     timeout-minutes: 45
     steps:
     - name: "Checking out"
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
 
     - name: "Checking out submodules"
       run: git submodule update --init --recursive --depth 1 geonetwork/
@@ -50,6 +56,15 @@ jobs:
       working-directory: geonetwork/
       run: ../mvnw install -DskipTests -T1C -ntp -B -Dadditionalparam=-Xdoclint:none
 
+    - name: "Build required docker images (ldap, database)"
+      run: |
+        docker build -t georchestra/ldap:latest ./ldap
+        docker build -t georchestra/database:latest ./postgresql
+
+    - name: "Build required docker image (console)"
+      run: |
+        ./mvnw -pl :console -am clean install docker:build -P-all,console,docker -DdockerImageName=georchestra/console:latest -DskipTests -ntp -Dskip.npm -Dfmt.skip
+
     - name: "Run Georchestra Integration Tests"
       working-directory: geonetwork/georchestra-integration/
       run: ../../mvnw verify -ntp -Dadditionalparam=-Xdoclint:none
@@ -63,7 +78,7 @@ jobs:
       if: github.repository == 'georchestra/georchestra'
       run: |
         cd geonetwork/web
-        ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests
+        ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1

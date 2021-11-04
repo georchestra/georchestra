@@ -33,7 +33,6 @@ import org.georchestra.security.model.GeorchestraUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 public class UsersApiImpl implements UsersApi {
@@ -47,7 +46,6 @@ public class UsersApiImpl implements UsersApi {
         try {
             return this.accountsDao.findAll(notPending().and(notProtected()))//
                     .stream()//
-                    .filter(u -> StringUtils.hasLength(u.getOrg()))//
                     .map(mapper::map)//
                     .collect(Collectors.toList());
         } catch (DataServiceException e) {
@@ -59,7 +57,9 @@ public class UsersApiImpl implements UsersApi {
     public Optional<GeorchestraUser> findById(String id) {
         try {
             UUID uuid = UUID.fromString(id);
-            return Optional.of(this.accountsDao.findById(uuid)).filter(notPending()).filter(notProtected())
+            return Optional.of(//
+                    this.accountsDao.findById(uuid))//
+                    .filter(notPending().and(notProtected()))//
                     .map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
@@ -71,7 +71,8 @@ public class UsersApiImpl implements UsersApi {
     @Override
     public Optional<GeorchestraUser> findByUsername(String username) {
         try {
-            return Optional.of(this.accountsDao.findByUID(username)).filter(notPending()).filter(notProtected())
+            return Optional.of(this.accountsDao.findByUID(username))//
+                    .filter(notPending().and(notProtected()))//
                     .map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();

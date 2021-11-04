@@ -16,6 +16,23 @@
 		"notes": "Internal CRM notes on testuser"
 	},
 	{
+		"username": "testreviewer",
+		"roles": [
+			"GN_REVIEWER",
+			"USER"
+		],
+		"organization": null,
+		"id": "5f6ce744-4f36-4432-9543-7f6025fab02c",
+		"lastUpdated": "047b2c52239c66fad08638b5a584f2392772ab53169dfc2f9dbc92bac8ef4b7e",
+		"firstName": "Test",
+		"lastName": "REVIEWER",
+		"email": "psc+testreviewer@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": null
+	},
+	{
 		"username": "testeditor",
 		"roles": [
 			"GN_EDITOR",
@@ -24,14 +41,31 @@
 		],
 		"organization": "C2C",
 		"id": "e75b336d-a9fc-4671-8002-e1a49c2acf2c",
-		"lastUpdated": "da930fd1379f2cca2e4932a508f882548e314485332521df1f18ff16f3311997",
-		"firstName": "Test",
+		"lastUpdated": "673077112eccd42a8091e47af29db45f5c879e0cc89fc79f2e7270e4cded428d",
+		"firstName": null,
 		"lastName": "EDITOR",
 		"email": "psc+testeditor@georchestra.org",
 		"postalAddress": null,
 		"telephoneNumber": null,
 		"title": null,
 		"notes": null
+	},
+	{
+		"username": "testuseradmin",
+		"roles": [
+			"GN_USERADMIN",
+			"USER"
+		],
+		"organization": "PSC",
+		"id": "e75b336d-a9fc-4671-8002-e1a49c2ac123",
+		"lastUpdated": "4822e624d3cad3f5f4e03cd0067374cf2da872f387418abe5290358a26b34c37",
+		"firstName": "Test",
+		"lastName": "USERADMIN",
+		"email": "psc+testuseradmin@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": "Test user with UserAdmin GeoNetwork profile "
 	},
 	{
 		"username": "testadmin",
@@ -55,5 +89,22 @@
 		"telephoneNumber": null,
 		"title": null,
 		"notes": "Internal CRM notes on testadmin"
+	},
+	{
+		"username": "testdelegatedadmin",
+		"roles": [
+			"USER",
+			"ORGADMIN"
+		],
+		"organization": null,
+		"id": "003860e1-19d9-4fda-a3e8-3eda577b4918",
+		"lastUpdated": "6481a3d4a1b5ca2d4c02d62351dac15bdf7e76772cc43a0dadd762a740abbd6e",
+		"firstName": "Test",
+		"lastName": "DELEGATEDADMIN",
+		"email": "psc+testdelegatedadmin@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": null
 	}
 ]
