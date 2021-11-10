@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2001-2016 Food and Agriculture Organization of the
+  ~ United Nations (FAO-UN), United Nations World Food Programme (WFP)
+  ~ and United Nations Environment Programme (UNEP)
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or (at
+  ~ your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but
+  ~ WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  ~ General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+  ~
+  ~ Contact: Jeroen Ticheler - FAO - Viale delle Terme di Caracalla 2,
+  ~ Rome - Italy. email: geonetwork@osgeo.org
+  -->
+
+<strings>
+  <understandResource>Comprendre la ressource</understandResource>
+  <relatedResources>Service disponible et données associées</relatedResources>
+  <techInfo>Les informations techniques</techInfo>
+  <contactInfo>Les contacts</contactInfo>
+  <mdContactInfo>Contacts pour les métadonnées</mdContactInfo>
+  <temporalRef>Référence(s) temporelle(s)</temporalRef>
+  <refDate>Date(s) de référence</refDate>
+  <constraintInfo>Contraintes d'accès et d'utilisation</constraintInfo>
+  <overviews>Aperçus</overviews>
+  <metadataInXML>XML</metadataInXML>
+  <providedBy>Fourni par</providedBy>
+  <shareOnSocialSite>Partager</shareOnSocialSite>
+  <viewMode>Mode d'affichage</viewMode>
+  <linkToPortal>Lien vers le portail</linkToPortal>
+  <linkToPortal-help>Consultez l'intégralité des métadonnées et accédez à la donnée.</linkToPortal-help>
+
+
+  <advanced>Complète</advanced>
+  <default>Simple</default>
+  <simple>Simple</simple>
+  <inspire>INSPIRE</inspire>
+  <resource>Ressource</resource>
+  <xml>XML</xml>
+  <metadata>Métadonnées</metadata>
+  <identificationInfo>Identification</identificationInfo>
+  <distributionInfo>Distribution</distributionInfo>
+  <dataQualityInfo>Qualité</dataQualityInfo>
+  <spatialRepresentationInfo>Information spatiale</spatialRepresentationInfo>
+  <referenceSystemInfo>Système de réf.</referenceSystemInfo>
+  <contentInfo>Contenu</contentInfo>
+  <portrayalCatalogueInfo>Représentation</portrayalCatalogueInfo>
+  <metadataConstraints>Md. contraintes</metadataConstraints>
+  <metadataMaintenance>Md. maintenance</metadataMaintenance>
+  <applicationSchemaInfo>Extension</applicationSchemaInfo>
+  <noThesaurusName>Mots clés</noThesaurusName>
+  <bboxesSection>Zone géographique</bboxesSection>
+  <citationProposal>Proposition de citation</citationProposal>
+  <citationProposal-help>Cette proposition de citation a été générée automatiquement selon le format suggéré par DataCite. Nous vous invitons à vérifier dans les métadonnées si les auteurs n'ont pas imposé un format de citation spécifique.</citationProposal-help>
+  <associatedResources>Ressources associées</associatedResources>
+
+  <keywordFrom>Mots clés - </keywordFrom>
+  <!-- XSD error translation -->
+  <invalidElement>Contenu invalide à l'élément </invalidElement>
+  <onElementOf>Un des éléments suivants : </onElementOf>
+  <isExpected> est attendu.</isExpected>
+  <isNotComplete>.</isNotComplete>
+  <elementLocated> L'élément parent est </elementLocated>
+  <missingElement>Élément manquant dans </missingElement>
+  <invalidValue>Valeur manquante ou invalide. </invalidValue>
+  <notValidFor> n'est pas une valeur valide pour </notValidFor>
+  <xsdErrorIs>L'erreur est : </xsdErrorIs>
+  <inElement> contenu dans </inElement>
+  <enum1>La valeur </enum1>
+  <enum2> n'est pas valide pour le champ </enum2>
+  <enum3>Les valeurs possibles sont : </enum3>
+
+  <!-- INSPIRE view labels and help -->
+  <url>Localisateur de la ressource</url>
+  <identifier>Identificateur de ressource unique</identifier>
+  <rsIdentifier>Référentiel de coordonnées</rsIdentifier>
+  <referenceDate>Date de référence</referenceDate>
+  <creationDate>Date de création</creationDate>
+  <hierarchyLevel>Type de ressource</hierarchyLevel>
+  <publicationDate>Date de publication</publicationDate>
+  <revisionDate>Date de révision</revisionDate>
+  <conformity>Conformité</conformity>
+  <conformity_title>Spécification</conformity_title>
+  <conformity_date>Date de publication</conformity_date>
+  <explanation>Explanation</explanation>
+  <pass>Conformité</pass>
+  <pointOfContact>Organisation responsable de la ressource</pointOfContact>
+  <metadataPointOfContact>Point de contact des métadonnées</metadataPointOfContact>
+  <organisationName>Nom de l'organisation</organisationName>
+  <electronicMailAddress>Email de l'organisation</electronicMailAddress>
+  <role>Rôle</role>
+  <encoding>Encodage</encoding>
+  <serviceCategory>Catégorie de service</serviceCategory>
+  <format>Format</format>
+  <indeterminatePosition>Position indéterminée</indeterminatePosition>
+  <format_version>Version</format_version>
+  <format_specification>Specification</format_specification>
+  <inspireTheme>Thème INSPIRE</inspireTheme>
+  <inspireThemeURI>Thème INSPIRE</inspireThemeURI>
+  <temporalRangeSection>Étendue temporelle</temporalRangeSection>
+  <beginPosition>Date de début</beginPosition>
+  <endPosition>Date de fin</endPosition>
+  <lineage>Généalogie</lineage>
+  <spatialResolution>Résolution spatiale (échelle)</spatialResolution>
+  <spatialDistance>Résolution spatiale (distance)</spatialDistance>
+  <accessConstraints>Limitations d'accès public</accessConstraints>
+  <useLimitation>Conditions applicables à l'accès et à l'utilisation</useLimitation>
+
+  <add-resource-id>Générer un identifiant</add-resource-id>
+  <add-resource-idHelp>Construit un identifiant en utilisant le préfixe défini dans les paramètres
+    du catalogue ou l'URL du catalogue et l'identifiant de la fiche (eg.
+    http://www.organization.org/catalogue/5391bf69-44bc-4ea0-8cc0-6cf6c3bc81ae).
+  </add-resource-idHelp>
+  <add-extent-from-geokeywords>Ajouter les emprises correspondantes</add-extent-from-geokeywords>
+  <add-one-extent-from-geokeywords>Ajouter une emprise globale</add-one-extent-from-geokeywords>
+  <add-extent-from-geokeywordsHelp>Analyse les mots clés de type géographique et ajoute les emprises
+    correspondantes.
+  </add-extent-from-geokeywordsHelp>
+  <classificationSection>Classification of data and services</classificationSection>
+  <temporalSection>Temporal reference</temporalSection>
+  <restrictionsSection>Restrictions on access and use</restrictionsSection>
+  <metadataSection>Metadata information</metadataSection>
+  <responsibleOrganisationSection>Responsible organization (s)</responsibleOrganisationSection>
+  <qualityAndValiditySection>Quality and validity</qualityAndValiditySection>
+  <spatialRepresentationType>Spatial representation type</spatialRepresentationType>
+  <topicCategory>Topic category code</topicCategory>
+  <metadataLanguage>Metadata language</metadataLanguage>
+  <inspireServiceTaxonomy>INSPIRE Service Taxonomy</inspireServiceTaxonomy>
+  <otherConstraints>Other constraints</otherConstraints>
+  <operatesOn>Coupled resource</operatesOn>
+  <extent>Étendue spatiale</extent>
+  <spatialExtent>Étendue spatiale</spatialExtent>
+  <freeTextKeywords>Other keywords</freeTextKeywords>
+
+  <addCrs>Projection</addCrs>
+  <addCrs4936>ETRS89-XYZ</addCrs4936>
+  <addCrs4937>ETRS89-GRS80h</addCrs4937>
+  <addCrs4258>ETRS89-GRS80</addCrs4258>
+  <addCrs3035>ETRS89-LAEA</addCrs3035>
+  <addCrs3034>ETRS89-LCC</addCrs3034>
+  <addCrs3038>ETRS89-TM26N</addCrs3038>
+  <addCrs3039>ETRS89-TM27N</addCrs3039>
+  <addCrs3040>ETRS89-TM28N</addCrs3040>
+  <addCrs3041>ETRS89-TM29N</addCrs3041>
+  <addCrs3042>ETRS89-TM30N</addCrs3042>
+  <addCrs3043>ETRS89-TM31N</addCrs3043>
+  <addCrs3044>ETRS89-TM32N</addCrs3044>
+  <addCrs3045>ETRS89-TM33N</addCrs3045>
+  <addCrs3046>ETRS89-TM34N</addCrs3046>
+  <addCrs3047>ETRS89-TM35N</addCrs3047>
+  <addCrs3048>ETRS89-TM36N</addCrs3048>
+  <addCrs3049>ETRS89-TM37N</addCrs3049>
+  <addCrs3050>ETRS89-TM38N</addCrs3050>
+  <addCrs3051>ETRS89-TM39N</addCrs3051>
+  <addCrs5730>EVRS</addCrs5730>
+  <addCrs7409>ETRS89-GRS80-EVRS</addCrs7409>
+
+  <!-- String for INSPIRE SDS tab -->
+
+  <inspire_sds_cc1>Conformance class 1: invocable</inspire_sds_cc1>
+  <inspire_sds_cc2>Conformance class 2: interoperable</inspire_sds_cc2>
+  <inspire_sds_cc3>Conformance class 3: harmonized</inspire_sds_cc3>
+
+  <sds-category>Category</sds-category>
+  <inspire_add_pass>Add pass element</inspire_add_pass>
+  <sds-add-dataquality>Add DataQuality element</sds-add-dataquality>
+  <sds-add-dataqualityHelp>TG4: For each spatial data service, there shall be one and only one set
+    of quality information (dataQualityInfo element) scoped to “service”.
+  </sds-add-dataqualityHelp>
+  <sds-add-tech-spec>Add a technical specification</sds-add-tech-spec>
+  <sds-add-tech-specHelp>TG8: The Specification metadata element shall at least refer to or contain
+    one technical specification to which the invocable spatial data service fully conforms,
+    providing all the necessary technical elements, to actually invoke the service and enable its
+    usage.
+  </sds-add-tech-specHelp>
+  <sds-tech-spec>Technical specification</sds-tech-spec>
+  <conformity_desc>Tech spec title</conformity_desc>
+  <conformity_linkage>Tech spec URL</conformity_linkage>
+
+
+  <sds-section-qos>Quality of Service</sds-section-qos>
+  <sds-add-qualityofservice>Add missing Quality of Service criteria</sds-add-qualityofservice>
+  <sds-add-qualityofserviceHelp>INSPIRE SDS requires three quality of service criteria to be
+    reported in the metadata: Availability, Performance and Capacity. This button will add the
+    missing criteria.
+  </sds-add-qualityofserviceHelp>
+  <qos_measure>Measure:</qos_measure>
+  <qos_uom>UOM</qos_uom>
+  <qos_description>Description</qos_description>
+  <qos_value>Value</qos_value>
+  <sds-section-crs>Coordinate reference system</sds-section-crs>
+
+  <sds-fix-category>Fix the Category element</sds-fix-category>
+  <sds-fix-categoryHelp>(Rec1) Replace gco:CharacterString with gmx:Anchor in the description
+    metadata element.
+  </sds-fix-categoryHelp>
+
+  <sds-accesspoint>Access Point URL</sds-accesspoint>
+  <sds-add-accesspoint>Add Access Point</sds-add-accesspoint>
+
+  <sds-endpoint>Endpoint URL</sds-endpoint>
+  <sds-add-endpoint>Add Endpoint</sds-add-endpoint>
+
+  <sds-addNoConstraints>No Limitation</sds-addNoConstraints>
+  <sds-addNoConstraintsHelp>Add an element that documents that there are no limitation for this
+    service.
+  </sds-addNoConstraintsHelp>
+  <sds-addUnknownConstraints>Unknown Limitation</sds-addUnknownConstraints>
+  <sds-addConstraints>Customizable constraints</sds-addConstraints>
+
+  <sds>
+    <noConditionsApply>No conditions apply</noConditionsApply>
+    <conditionsUnknown>Conditions unknown</conditionsUnknown>
+  </sds>
+
+  <sds-limitation>Limitation</sds-limitation>
+
+  <sds-section-custodian>Responsible custodian</sds-section-custodian>
+  <sds-addOperation>Add Operation</sds-addOperation>
+
+  <trueValue>Oui</trueValue>
+  <falseValue>Non</falseValue>
+  <nilValue>Non défini</nilValue>
+
+  <g2f-flat-view>Simplifiée à plat</g2f-flat-view>
+  <g2f-bg>
+    <div class="bg">
+      <div class="col-sm-2 light-bg"></div>
+      <div class="col-sm-10 no-bg"></div>
+    </div>
+  </g2f-bg>
+  <g2f-title>Titre</g2f-title>
+  <g2f-title-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">Un titre explicite qui aide à identifier la donnée</div>
+    </div>
+  </g2f-title-help>
+  <g2f-abstract>Résumé</g2f-abstract>
+  <g2f-abstract-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">Présentation de la donnée, de son contexte, de la façon dont elle a été produite, des données qui ont servi à la produire et de l'usage pour lequel elle a été pensée</div>
+    </div>
+  </g2f-abstract-help>
+  <g2f-lineage>Généalogie</g2f-lineage>
+  <g2f-lineage-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">Présentation de la donnée, de son contexte, de la façon dont elle a été produite, des données qui ont servi à la produire et de l'usage pour lequel elle a été pensée</div>
+    </div>
+  </g2f-lineage-help>
+  <g2f-status-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">Etat de la donnée</div>
+    </div>
+  </g2f-status-help>
+  <g2f-label-override-poc>
+    <div class="label-override poc">
+      <div class="col-sm-2 newlabel">Points de contact pour la donnée</div>
+    </div>
+  </g2f-label-override-poc>
+  <g2f-poc-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        Il est fortement conseillé de charger les contacts via les entrées d'annuaire, via la barre de recherche ci-dessus.
+        <br />Si vous ne sélectionnez qu'un contact, la convention est de la définir comme "Point de contact"
+      </div>
+    </div>
+  </g2f-poc-help>
+  <g2f-add-keyword>Ajouter un mot clef</g2f-add-keyword>
+  <g2f-add>Ajouter</g2f-add>
+  <g2f-label-override-gemet>
+    <div class="label-override">
+      <div class="col-sm-2 newlabel">Mots clefs génériques (Thesaurus GEMET)</div>
+    </div>
+  </g2f-label-override-gemet>
+  <g2f-th-gemet-keywords-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        Le thésaurus GEMET propose un grand nombre de mots clefs liés à l'environnement. <a href="https://www.eionet.europa.eu/gemet/en/about/" >En savoir plus</a>.
+      </div>
+    </div>
+  </g2f-th-gemet-keywords-help>
+  <g2f-label-override-territories>
+    <div class="label-override">
+      <div class="col-sm-2 newlabel">Territoires</div>
+    </div>
+  </g2f-label-override-territories>
+  <g2f-th-geo-keywords-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        Ce thesaurus géographique vous permet de sélectionner l'emprise concernée par votre donnée.
+        <br />De manière générale, on sélectionnera l'entité englobante de plus faible niveau (ex. commune plutôt que EPCI si la donnée ne concerne qu'une commune).
+        <br />Vous pouvez générer l'emprise géographique de votre métadonnée en cliquant sur le bouton ci-dessus. Il est recommandé d'en créer au moins une.
+      </div>
+    </div>
+  </g2f-th-geo-keywords-help>
+  <g2f-label-override-geoextent>
+    <div class="label-override">
+      <div class="col-sm-2 newlabel">Etendue géographique</div>
+    </div>
+  </g2f-label-override-geoextent>
+  <g2f-th-geo-extent-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+      </div>
+    </div>
+  </g2f-th-geo-extent-help>
+  <g2f-label-override-territorialgranularity>
+  <div class="label-override">
+    <div class="col-sm-2 newlabel">Granularité territoriale</div>
+  </div>
+</g2f-label-override-territorialgranularity>
+  <g2f-th-granularity-keywords-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        Définir la granularité territoriale
+      </div>
+    </div>
+  </g2f-th-granularity-keywords-help>
+  <g2f-label-override-denominator>
+    <div class="label-override">
+      <div class="col-sm-2 newlabel">Résolution spatiale</div>
+    </div>
+  </g2f-label-override-denominator>
+  <g2f-label-override-spatialDistance>
+    <div class="label-override invisible">
+      <div class="col-sm-2 newlabel">.</div>
+    </div>
+  </g2f-label-override-spatialDistance>
+  <g2f-geo-denominator-help>
+    <div class="row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+      </div>
+    </div>
+  </g2f-geo-denominator-help>
+  <g2f-geo-spatialResolution-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        <b>Dimension de référence : remplissez-en une, supprimez l'autre</b>
+        <ul>
+          <li>En cas de donnée vectorielle, il s'agit de l'échelle de référence. Champ spécifique à une donnée géospatiale de type vecteur. Ce champ prend le dénominateur d'échelle (ex. 25000 si échelle 1/25000e).
+            Il et conseillé d'utiliser la boite déroulante à droite pour saisir l'échelle de référence.</li>
+          <li>En cas de donnée raster, il s'agit de la dimension d'un pixel de la donnée raster</li>
+        </ul>
+      </div>
+    </div>
+  </g2f-geo-spatialResolution-help>
+  <g2f-addConstraint>Définir la licence</g2f-addConstraint>
+  <g2f-label-override-otherConstraints>
+    <div class="label-override">
+      <div class="col-sm-2 newlabel">Licence</div>
+    </div>
+  </g2f-label-override-otherConstraints>
+  <g2f-license-odbl>Licence ODbL 1.0</g2f-license-odbl>
+  <g2f-license-licenceouverte>Licence ouverte 2.0</g2f-license-licenceouverte>
+  <g2f-license-other>Autre</g2f-license-other>
+  <g2f-license-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">Si vous choisissez <i>Autre</i>, saisissez la description de la licence d'utilisation dans le champ vide
+      </div>
+    </div>
+  </g2f-license-help>
+  <g2f-creation-or-update-date>Date de creation/MaJ de la donnée</g2f-creation-or-update-date>
+  <g2f-time-updatedate-help>
+    <div class="row field-helper">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        Date de création ou dernière date de mise à jour. En cas de mise à jour, préférez la date de mise à jour (la plus récente).
+      </div>
+    </div>
+  </g2f-time-updatedate-help>
+</strings>
