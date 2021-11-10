@@ -275,7 +275,8 @@ public class ProxyTest {
     @Test
     public void testWebDavVerb() {
 
-        for (String webDavVerb : Arrays.asList("PROPFIND", "SEARCH")) {
+        for (String webDavVerb : Arrays.asList("COPY", "LOCK", "UNLOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK",
+                "REPORT", "SEARCH" )) {
             request = new MockHttpServletRequest(webDavVerb, "/nextcloud/plop");
             response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), webDavVerb + " worked");
             response.setHeader("X-Test-Header", webDavVerb + " worked");
