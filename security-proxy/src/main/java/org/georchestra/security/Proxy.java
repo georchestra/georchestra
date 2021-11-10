@@ -24,7 +24,6 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
