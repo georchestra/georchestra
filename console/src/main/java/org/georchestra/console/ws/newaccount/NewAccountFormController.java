@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.newaccount;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Clock;
@@ -43,7 +41,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -55,7 +52,6 @@ import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
@@ -227,31 +223,27 @@ public final class NewAccountFormController {
         if (formBean.getCreateOrg()) {
             try {
                 Org org = new Org();
-                OrgExt orgExt = new OrgExt();
 
                 // Generate textual identifier based on name
                 String orgId = orgDao.generateId(formBean.getOrgShortName());
                 org.setId(orgId);
-                orgExt.setId(orgId);
 
                 // Store name, short name, orgType and address
                 org.setName(formBean.getOrgName());
                 org.setShortName(formBean.getOrgShortName());
-                orgExt.setAddress(formBean.getOrgAddress());
-                orgExt.setOrgType(formBean.getOrgType());
-                orgExt.setDescription(formBean.getOrgDescription());
-                orgExt.setUrl(formBean.getOrgUrl());
-                orgExt.setLogo(formBean.getOrgLogo());
+                org.setAddress(formBean.getOrgAddress());
+                org.setOrgType(formBean.getOrgType());
+                org.setDescription(formBean.getOrgDescription());
+                org.setUrl(formBean.getOrgUrl());
+                org.setLogo(formBean.getOrgLogo());
                 // Parse and store cities
                 orgCities = orgCities.trim();
                 if (orgCities.length() > 0)
                     org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
 
                 org.setPending(this.moderatedSignup);
-                orgExt.setPending(this.moderatedSignup);
                 // Persist changes to LDAP server
                 orgDao.insert(org);
-                orgDao.insert(orgExt);
 
                 // Set real org identifier in form
                 formBean.setOrg(orgId);
@@ -282,9 +274,8 @@ public final class NewAccountFormController {
                 account.setPrivacyPolicyAgreementDate(LocalDate.now(clock));
             }
 
-            String requestOriginator = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-            accountDao.insert(account, requestOriginator);
-            roleDao.addUser(Role.USER, account, requestOriginator);
+            accountDao.insert(account);
+            roleDao.addUser(Role.USER, account);
             orgDao.linkUser(account);
 
             final ServletContext servletContext = request.getSession().getServletContext();

@@ -22,7 +22,6 @@ import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +41,6 @@ public class OrgsControllerTest {
     private DelegationEntry mockEntry1;
     private DelegationEntry mockEntry2;
     private Org mockOrg;
-    private OrgExt mockOrgExt;
     private OrgsDao mockOrgsDao;
     private DelegationDao delegationDaoMock;
     private LogUtils mockLogUtils;
@@ -86,7 +84,6 @@ public class OrgsControllerTest {
         toTest.deleteOrg("csc", mockResponse);
 
         verify(mockOrgsDao).delete(mockOrg);
-        verify(mockOrgsDao).delete(mockOrgExt);
         verify(mockEntry1).removeOrg("csc");
         verify(mockEntry2).removeOrg("csc");
         verify(delegationDaoMock).save(mockEntry1);
@@ -107,7 +104,6 @@ public class OrgsControllerTest {
         toTest.updateOrgInfos("csc", request);
 
         verify(mockOrgsDao).update(mockOrg);
-        verify(mockOrgsDao).update(mockOrgExt);
         verify(mockEntry1).removeOrg("csc");
         verify(mockEntry1).setOrgs(aryEq(new String[] { "momorg", "c2c42" }));
         verify(mockEntry2).removeOrg("csc");
@@ -121,7 +117,6 @@ public class OrgsControllerTest {
         delegationDaoMock = mock(DelegationDao.class);
         mockLogUtils = mock(LogUtils.class);
         mockOrg = mock(Org.class);
-        mockOrgExt = mock(OrgExt.class);
         AdvancedDelegationDao advancedDelegationDaoMock = mock(AdvancedDelegationDao.class);
         Validation mockValidation = mock(Validation.class);
         when(mockValidation.validateOrgField(anyString(), any(JSONObject.class))).thenReturn(true);
@@ -132,7 +127,6 @@ public class OrgsControllerTest {
         toTest.validation = mockValidation;
         toTest.logUtils = mockLogUtils;
         when(mockOrgsDao.findByCommonName("csc")).thenReturn(mockOrg);
-        when(mockOrgsDao.findExtById("csc")).thenReturn(mockOrgExt);
         mockEntry1 = mock(DelegationEntry.class);
         mockEntry2 = mock(DelegationEntry.class);
         Mockito.when(advancedDelegationDaoMock.findByOrg("csc"))

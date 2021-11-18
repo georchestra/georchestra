@@ -40,7 +40,8 @@ public class OrganizationsApiImpl implements OrganizationsApi {
 
     @Override
     public List<Organization> findAll() {
-        return orgsDao.findAllWithExt()//
+        return orgsDao.findAll()//
+                .stream()//
                 .filter(not(Org::isPending))//
                 .map(orgMapper::map)//
                 .collect(Collectors.toList());
@@ -49,14 +50,14 @@ public class OrganizationsApiImpl implements OrganizationsApi {
     @Override
     public Optional<Organization> findById(String id) {
         final UUID uuid = UUID.fromString(id);
-        return Optional.ofNullable(orgsDao.findByIdWithExt(uuid))//
+        return Optional.ofNullable(orgsDao.findById(uuid))//
                 .filter(not(Org::isPending))//
                 .map(orgMapper::map);
     }
 
     @Override
     public Optional<Organization> findByShortName(String shortName) {
-        return Optional.ofNullable(orgsDao.findByCommonNameWithExt(shortName))//
+        return Optional.ofNullable(orgsDao.findByCommonName(shortName))//
                 .filter(not(Org::isPending))//
                 .map(orgMapper::map);
     }

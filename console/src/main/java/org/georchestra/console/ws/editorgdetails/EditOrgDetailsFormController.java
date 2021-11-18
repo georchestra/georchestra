@@ -33,7 +33,6 @@ import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -89,9 +88,6 @@ public class EditOrgDetailsFormController {
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
     public String setupForm(HttpServletRequest request, Model model) {
         Org org = this.orgsDao.findByCommonName(SecurityHeaders.decode(request.getHeader(SEC_ORG)));
-        OrgExt orgExt = this.orgsDao.findExtById(org.getId());
-        org.setOrgExt(orgExt);
-
         model.addAttribute(createForm(org));
         model.addAttribute("name", org.getName());
         model.addAttribute("id", org.getId());
@@ -117,26 +113,21 @@ public class EditOrgDetailsFormController {
             return "editOrgDetailsForm";
         }
 
-        OrgExt orgExtOrigin = orgsDao.findExtById(formBean.getId());
-        OrgExt orgExtOriginClone = null;
-        try {
-            orgExtOriginClone = orgExtOrigin.clone();
-        } catch (CloneNotSupportedException cloneException) {
-            LOG.info("Log action will fail. Clone org or orgExt is not supported.", cloneException);
-        }
+        Org orgOrigin = orgsDao.findByCommonName(formBean.getId());
+        final Org orgOriginClone = orgOrigin.clone();
 
-        OrgExt orgExt = modifyOrgExt(orgExtOrigin, formBean);
+        orgOrigin.setDescription(formBean.getDescription());
+        orgOrigin.setUrl(formBean.getUrl());
+        orgOrigin.setAddress(formBean.getAddress());
 
         if (!logo.isEmpty()) {
-            orgExt.setLogo(transformLogoFileToBase64(logo));
+            orgOrigin.setLogo(transformLogoFileToBase64(logo));
         }
-        orgsDao.update(orgExt);
+        orgsDao.update(orgOrigin);
         model.addAttribute("success", true);
 
         // log each attributes modifications
-        if (orgExtOriginClone != null) {
-            logOrgExtChanges(orgExtOriginClone, formBean, logo);
-        }
+        logOrgDetailsChanges(orgOriginClone, formBean, logo);
 
         return "redirect:/account/userdetails";
 
@@ -154,49 +145,42 @@ public class EditOrgDetailsFormController {
         formBean.setShortName(org.getShortName());
         formBean.setDescription(org.getDescription());
         formBean.setUrl(org.getUrl());
-        formBean.setAddress(org.getOrgAddress());
+        formBean.setAddress(org.getAddress());
         formBean.setOrgType(org.getOrgType());
         return formBean;
-    }
-
-    private OrgExt modifyOrgExt(OrgExt orgExt, EditOrgDetailsFormBean formBean) {
-        orgExt.setDescription(formBean.getDescription());
-        orgExt.setUrl(formBean.getUrl());
-        orgExt.setAddress(formBean.getAddress());
-        return orgExt;
     }
 
     /**
      * Method to compare attributes and create log for each attributes if attribute
      * changes
      * 
-     * @param orgExt   OrgExt represent organization to update
+     * @param org      organization to update
      * @param formBean EditOrgDetailsFormBean to get information about user input
      * @param logo     MultipartFile spring to treat a picture as logo
      */
-    protected void logOrgExtChanges(OrgExt orgExt, EditOrgDetailsFormBean formBean, MultipartFile logo) {
+    protected void logOrgDetailsChanges(Org org, EditOrgDetailsFormBean formBean, MultipartFile logo) {
         AdminLogType type = AdminLogType.ORG_ATTRIBUTE_CHANGED;
-        String id = orgExt.getId();
+        String id = org.getId();
 
         try {
-            if (logo != null && orgExt.getLogo() != null && !orgExt.getLogo().equals(transformLogoFileToBase64(logo))) {
+            if (logo != null && org.getLogo() != null && !org.getLogo().equals(transformLogoFileToBase64(logo))) {
                 logUtils.createAndLogDetails(id, Org.JSON_LOGO, null, null, type);
             }
         } catch (IOException e) {
             LOG.info("Can't create admin log and detail for logo replacement.", e);
         }
 
-        if (!orgExt.getDescription().equals(formBean.getDescription())) {
-            logUtils.createAndLogDetails(id, Org.JSON_DESCRIPTION, orgExt.getDescription(), formBean.getDescription(),
+        if (!org.getDescription().equals(formBean.getDescription())) {
+            logUtils.createAndLogDetails(id, Org.JSON_DESCRIPTION, org.getDescription(), formBean.getDescription(),
                     type);
         }
 
-        if (!orgExt.getUrl().equals(formBean.getUrl())) {
-            logUtils.createAndLogDetails(id, Org.JSON_URL, orgExt.getUrl(), formBean.getUrl(), type);
+        if (!org.getUrl().equals(formBean.getUrl())) {
+            logUtils.createAndLogDetails(id, Org.JSON_URL, org.getUrl(), formBean.getUrl(), type);
         }
 
-        if (!orgExt.getAddress().equals(formBean.getAddress())) {
-            logUtils.createAndLogDetails(id, OrgExt.JSON_ADDRESS, orgExt.getAddress(), formBean.getAddress(), type);
+        if (!org.getAddress().equals(formBean.getAddress())) {
+            logUtils.createAndLogDetails(id, Org.JSON_ADDRESS, org.getAddress(), formBean.getAddress(), type);
         }
     }
 

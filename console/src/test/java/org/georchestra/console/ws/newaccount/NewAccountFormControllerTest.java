@@ -35,9 +35,7 @@ import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.AbstractOrg;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.Account;
@@ -148,7 +146,7 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(mockAccountDao).insert(accountCaptor.capture(), anyString());
+        verify(mockAccountDao).insert(accountCaptor.capture());
         assertEquals(true, accountCaptor.getValue().isPending());
     }
 
@@ -166,7 +164,7 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(mockAccountDao).insert(accountCaptor.capture(), anyString());
+        verify(mockAccountDao).insert(accountCaptor.capture());
         assertEquals(false, accountCaptor.getValue().isPending());
     }
 
@@ -179,13 +177,10 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
+        verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
         assertTrue(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
-        assertTrue(orgCaptor.getAllValues().get(1).isPending());
-        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
-
     }
 
     @Test
@@ -198,12 +193,10 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
+        verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
         assertFalse(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
-        assertFalse(orgCaptor.getAllValues().get(1).isPending());
-        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
     }
 
     /**
@@ -226,7 +219,7 @@ public class NewAccountFormControllerTest {
     public void createDuplicatedEmail() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
@@ -238,7 +231,7 @@ public class NewAccountFormControllerTest {
     public void createUserWithError() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DataServiceException("Something went wrong when dealing with LDAP")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         try {
             toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
@@ -254,7 +247,7 @@ public class NewAccountFormControllerTest {
     public void createDuplicatedUid() throws Exception {
         configureFormBean();
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).when(mockAccountDao)
-                .insert((Account) any(), anyString());
+                .insert((Account) any());
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 

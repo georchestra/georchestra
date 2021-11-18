@@ -60,12 +60,14 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).
  *
  * @author Mauricio Pazos
  */
+@SuppressWarnings("deprecation")
 public class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
@@ -118,7 +120,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void insert(@NonNull final Account account, final String originLogin)
+    public synchronized void insert(@NonNull final Account account)
             throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
 
         checkMandatoryFields(account);
@@ -169,8 +171,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void update(final Account account, String originLogin)
-            throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account) throws DataServiceException, DuplicatedEmailException {
         checkMandatoryFields(account);
 
         // checks unique email
@@ -201,7 +202,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void update(Account account, Account modified, String originLogin)
+    public synchronized void update(Account account, Account modified)
             throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
         if (!Objects.equals(account.getUniqueIdentifier(), modified.getUniqueIdentifier())) {
             modified.setUniqueIdentifier(account.getUniqueIdentifier());
@@ -209,7 +210,7 @@ public class AccountDaoImpl implements AccountDao {
         if (hasUserDnChanged(account, modified)) {
             ldapTemplate.rename(buildUserDn(account), buildUserDn(modified));
         }
-        update(modified, originLogin);
+        update(modified);
     }
 
     @Override
@@ -223,7 +224,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public synchronized void delete(Account account, final String originLogin) throws NameNotFoundException {
+    public synchronized void delete(Account account) throws NameNotFoundException {
         this.ldapTemplate.unbind(buildUserDn(account), true);
     }
 
@@ -275,14 +276,6 @@ public class AccountDaoImpl implements AccountDao {
         throw new IllegalStateException("Multiple accounts with the same id: " + id);
     }
 
-    private AccountSearcher propertyEquals(String propertyName, String propertyValue) {
-        return newAccountSearcher(new EqualsFilter(propertyName, propertyValue));
-    }
-
-    private AccountSearcher newAccountSearcher(Filter filter) {
-        return new AccountSearcher().and(filter);
-    }
-
     @Override
     public List<Account> findByShadowExpire() {
         return new AccountSearcher().and(new PresentFilter("shadowExpire"))
@@ -318,7 +311,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public boolean exist(final String uid) {
+    public boolean exists(final String uid) {
 
         try {
             ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false));
@@ -345,7 +338,7 @@ public class AccountDaoImpl implements AccountDao {
 
         String newUid = UidGenerator.next(uid);
 
-        while (exist(newUid)) {
+        while (exists(newUid)) {
 
             newUid = UidGenerator.next(newUid);
         }
@@ -420,7 +413,7 @@ public class AccountDaoImpl implements AccountDao {
         Collections.addAll(objectClass, "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount",
                 "georchestraUser", "ldapPublicKey");
 
-        if (account.getSshKeys().length == 0) {
+        if (account.getSshKeys() == null || account.getSshKeys().length == 0) {
             objectClass.remove("ldapPublicKey");
         }
         context.setAttributeValues("objectClass", objectClass.toArray());
@@ -468,7 +461,7 @@ public class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
-        if (account.getSshKeys().length > 0) {
+        if (account.getSshKeys() == null || account.getSshKeys().length > 0) {
             context.setAttributeValues(UserSchema.SSH_KEY, account.getSshKeys());
         }
         if (account.getManager() != null)
@@ -526,7 +519,7 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
-    static public class AccountContextMapper implements ContextMapper {
+    static public class AccountContextMapper implements ContextMapper<Account> {
 
         private final Pattern pattern;
         private LdapName pendingUserSearchBaseDN;
@@ -538,7 +531,7 @@ public class AccountDaoImpl implements AccountDao {
         }
 
         @Override
-        public Object mapFromContext(Object ctx) {
+        public Account mapFromContext(Object ctx) {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
             Set<String> sshKeys = context.getAttributeSortedStringSet(UserSchema.SSH_KEY);

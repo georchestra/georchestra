@@ -54,11 +54,10 @@
 
   <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
-  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDao">
+  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
     <property name="basePath" value="${ldapBaseDn}"/>
     <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>

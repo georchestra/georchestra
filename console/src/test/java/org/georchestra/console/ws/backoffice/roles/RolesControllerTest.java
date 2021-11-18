@@ -1,15 +1,17 @@
 package org.georchestra.console.ws.backoffice.roles;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -19,8 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.naming.Name;
-import javax.naming.ldap.LdapName;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -28,14 +28,13 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.DuplicatedCommonNameException;
 import org.georchestra.ds.roles.Role;
-import org.georchestra.ds.roles.RoleDaoImpl;
+import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
 import org.georchestra.ds.roles.RoleProtected;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
-import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.ds.users.UserRule;
 import org.json.JSONArray;
@@ -43,15 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
-import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
@@ -65,9 +57,10 @@ public class RolesControllerTest {
 
     private RolesController roleCtrl;
 
-    private RoleDaoImpl roleDao;
+    private RoleDao roleDao;
+    private AccountDao accountDao;
+
     private UserRule userRule;
-    private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
     private LogUtils mockLogUtils;
 
@@ -78,13 +71,10 @@ public class RolesControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ldapTemplate = mock(LdapTemplate.class);
         contextSource = mock(LdapContextSource.class);
         mockLogUtils = mock(LogUtils.class);
-
-        when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
-
-        when(ldapTemplate.getContextSource()).thenReturn(contextSource);
+        roleDao = mock(RoleDao.class);
+        accountDao = mock(AccountDao.class);
 
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
@@ -92,24 +82,6 @@ public class RolesControllerTest {
         RoleProtected roles = new RoleProtected();
         roles.setListOfprotectedRoles(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });
 
-        // AdminLogDao logDao = new Adm
-
-        // Configures roleDao
-        roleDao = new RoleDaoImpl();
-        roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setRoles(roles);
-        roleDao.setRoleSearchBaseDN("ou=roles");
-
-        OrgsDao orgsDao = new OrgsDao();
-        orgsDao.setLdapTemplate(ldapTemplate);
-
-        AccountDao accountDao = new AccountDaoImpl(ldapTemplate);
-        ((AccountDaoImpl) accountDao).setUserSearchBaseDN("ou=users");
-        ((AccountDaoImpl) accountDao).setOrgSearchBaseDN("ou=orgs");
-        ((AccountDaoImpl) accountDao).setRoleSearchBaseDN("ou=roles");
-
-        orgsDao.setAccountDao(accountDao);
-        roleDao.setAccountDao(accountDao);
         roleCtrl = new RolesController(roleDao, userRule);
         roleCtrl.setAccountDao(accountDao);
 
@@ -142,14 +114,11 @@ public class RolesControllerTest {
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
         Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin", null, role);
         SecurityContextHolder.getContext().setAuthentication(auth);
-
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = DataServiceException.class)
     public void findAllWithException() throws Exception {
-        roleDao = mock(RoleDaoImpl.class);
-        roleCtrl.setRoleDao(roleDao);
-        doThrow(Exception.class).when(roleDao).findAll();
+        doThrow(DataServiceException.class).when(roleDao).findAll();
         roleCtrl.findAll();
     }
 
@@ -160,30 +129,28 @@ public class RolesControllerTest {
 
     @Test(expected = DataServiceException.class)
     public void testFindByCNDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) any(), (ContextMapper) any());
+        doThrow(DataServiceException.class).when(roleDao).findByCommonName(anyString());
         roleCtrl.findByCN("NOTEXISTINGROLE");
     }
 
     @Test
     public void testFindByCN() throws Exception {
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
-        when(ldapTemplate.lookup((Name) any(), (ContextMapper) any())).thenReturn(retAdmin);
-
+        when(roleDao.findByCommonName(eq("ADMINISTRATOR"))).thenReturn(retAdmin);
         Role res = roleCtrl.findByCN("ADMINISTRATOR");
         assertEquals(res, retAdmin);
     }
 
     @Test
     public void testCreateDuplicateRole() throws Exception {
-
-        Name ldapFilter = LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", "MYROLE").build();
         Role myRole = RoleFactory.create("MYROLE", "test role", false);
-        when(ldapTemplate.lookup((Name) eq(ldapFilter), (ContextMapper) any())).thenReturn(myRole);
+        when(roleDao.findByCommonName(eq("MYROLE"))).thenReturn(myRole);
 
         request.setContent(
                 "{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }"
                         .getBytes());
 
+        doThrow(DuplicatedCommonNameException.class).when(roleDao).insert(any());
         roleCtrl.create(request, response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -196,7 +163,7 @@ public class RolesControllerTest {
         request.setContent(
                 "{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }"
                         .getBytes());
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) any(), (ContextMapper) any());
+        doThrow(DataServiceException.class).when(roleDao).findByCommonName(eq("MYROLE"));
 
         try {
             roleCtrl.create(request, response);
@@ -248,11 +215,11 @@ public class RolesControllerTest {
         request.setContent(
                 "{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }"
                         .getBytes());
-        // ensures the mocked object does not return an already existing role
-        // Raising NotFoundException instead
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) any(), (ContextMapper) any());
 
         roleCtrl.create(request, response);
+
+        Role expected = RoleFactory.create("MYROLE", "Description for the role", false);
+        verify(roleDao).insert(eq(expected));
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(ret.getJSONArray("users").length() == 0);
@@ -272,6 +239,9 @@ public class RolesControllerTest {
 
     @Test
     public void testDeleteADMIN() throws Exception {
+        doThrow(new DataServiceException("Role ADMINISTRATOR is a protected role")).when(roleDao)
+                .delete(eq("ADMINISTRATOR"));
+
         roleCtrl.delete(response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -281,6 +251,8 @@ public class RolesControllerTest {
 
     @Test
     public void testDeleteSV() throws Exception {
+        doThrow(DataServiceException.class).when(roleDao).delete("GN_123USERS");
+
         roleCtrl.delete(response, "GN_123USERS");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -290,7 +262,8 @@ public class RolesControllerTest {
 
     @Test
     public void testDeleteException() throws Exception {
-        doThrow(Exception.class).when(ldapTemplate).unbind((Name) any(), anyBoolean());
+
+        doThrow(Exception.class).when(roleDao).delete(eq("ADMINISTRATOR"));
 
         try {
             roleCtrl.delete(response, "ADMINISTRATOR");
@@ -306,7 +279,7 @@ public class RolesControllerTest {
     public void testUpdateNotFound() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
 
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) any(), (ContextMapper) any());
+        doThrow(NameNotFoundException.class).when(roleDao).findByCommonName("ADMINISTRATOR");
 
         roleCtrl.update(request, response, "ADMINISTRATOR");
 
@@ -320,7 +293,7 @@ public class RolesControllerTest {
     public void testUpdateDataServiceExceptionAtLookup() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
 
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) any(), (ContextMapper) any());
+        doThrow(DataServiceException.class).when(roleDao).findByCommonName(eq("ADMINISTRATOR"));
 
         try {
             roleCtrl.update(request, response, "ADMINISTRATOR");
@@ -334,12 +307,11 @@ public class RolesControllerTest {
     public void testUpdateNotFoundAtModification() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
-        when(ldapTemplate.lookup((Name) any(), (ContextMapper) any())).thenReturn(retAdmin);
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) any(), (AttributesMapper) any());
-        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) any());
 
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) any());
+        when(roleDao.findByCommonName(eq("ADMINISTRATOR"))).thenReturn(retAdmin);
+
+        doThrow(NameNotFoundException.class).when(roleDao).update(eq("ADMINISTRATOR"), same(retAdmin));
+
         roleCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -355,14 +327,11 @@ public class RolesControllerTest {
 
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Role retNewName = RoleFactory.create("newName", "new Description", false);
-        Name adminDn = LdapNameBuilder.newInstance("ou=roles").add("cn", "ADMINISTRATOR").build();
-        Name newNameDn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
-        when(ldapTemplate.lookup(eq(adminDn), (ContextMapper) any())).thenReturn(retAdmin);
-        when(ldapTemplate.lookup(eq(newNameDn), (ContextMapper) any())).thenReturn(retNewName);
 
-        DirContextOperations context = mock(DirContextOperations.class);
-        when(ldapTemplate.lookupContext((Name) any())).thenReturn(context);
+        when(roleDao.findByCommonName(eq(retAdmin.getName()))).thenReturn(retAdmin);
+        when(roleDao.findByCommonName(eq(retNewName.getName()))).thenReturn(retNewName);
 
+        doThrow(DuplicatedCommonNameException.class).when(roleDao).update(eq("ADMINISTRATOR"), any());
         roleCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -375,13 +344,9 @@ public class RolesControllerTest {
     public void testUpdateDataServiceExceptionAtUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
-        when(ldapTemplate.lookup((Name) any(), (ContextMapper) any())).thenReturn(retAdmin);
-        doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) any(), (AttributesMapper) any());
-        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) any());
+        when(roleDao.findByCommonName(eq(retAdmin.getName()))).thenReturn(retAdmin);
 
-        DirContextOperations context = mock(DirContextOperations.class);
-        when(ldapTemplate.lookupContext((Name) any())).thenReturn(context);
+        doThrow(DataServiceException.class).when(roleDao).update(eq("ADMINISTRATOR"), any());
 
         try {
             roleCtrl.update(request, response, "ADMINISTRATOR");
@@ -396,17 +361,14 @@ public class RolesControllerTest {
     @Test
     public void testUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
-        when(ldapTemplate.lookup((Name) any(), (ContextMapper) any())).thenReturn(retAdmin);
-        when(ldapTemplate.lookup((Name) any(), (AttributesMapper) any())).thenReturn(-1);
+        Role retUsers = RoleFactory.create("USERS", "USERS role", false);
 
-        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) any());
-
-        DirContextOperations context = mock(DirContextOperations.class);
-        when(ldapTemplate.lookupContext((Name) any())).thenReturn(context);
+        when(roleDao.findByCommonName(eq(retUsers.getName()))).thenReturn(retUsers);
 
         roleCtrl.update(request, response, "USERS");
+
+        Role expected = RoleFactory.create("newName", "new Description", false);
+        verify(roleDao).update(eq("USERS"), eq(expected));
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
@@ -421,8 +383,8 @@ public class RolesControllerTest {
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_users");
-        DirContextOperations context = mock(DirContextOperations.class);
-        doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) any());
+
+        doThrow(NameNotFoundException.class).when(accountDao).findByUID(anyString());
 
         roleCtrl.updateUsers(request, response);
     }
@@ -443,13 +405,13 @@ public class RolesControllerTest {
         JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 
-        mockLdapTemplateLookupToReturnAccountFor("testadmin");
-        mockLdapTemplateLookupToReturnAccountFor("testuser");
+        mockAccountLookup("testadmin");
+        mockAccountLookup("testuser");
 
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_users");
 
-        doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) any());
+        doThrow(DataServiceException.class).when(roleDao).addUsersInRoles(any(), any());
 
         roleCtrl.updateUsers(request, response);
     }
@@ -459,38 +421,32 @@ public class RolesControllerTest {
         JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 
-        mockLdapTemplateLookupToReturnAccountFor("testadmin");
-        mockLdapTemplateLookupToReturnAccountFor("testuser");
+        Account testadmin = mockAccountLookup("testadmin");
+        Account testuser = mockAccountLookup("testuser");
 
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_users");
-        DirContextOperations context = mock(DirContextOperations.class);
-        when(ldapTemplate.lookupContext((Name) any())).thenReturn(context);
 
-        Name roleName = roleDao.buildRoleDn("USERS");
         Role myRole = RoleFactory.create("USERS", "USERS role", false);
-
-        when(ldapTemplate.lookup(eq(roleName), any(ContextMapper.class))).thenReturn(myRole);
+        when(roleDao.findByCommonName(eq(myRole.getName()))).thenReturn(myRole);
 
         roleCtrl.updateUsers(request, response);
+
+        List<Account> accounts = newArrayList(testadmin, testuser);
+
+        verify(roleDao).addUsersInRoles(eq(singletonList("ADMINISTRATOR")), eq(accounts));
+        verify(roleDao).deleteUsersInRoles(eq(singletonList("USERS")), eq(accounts));
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
     }
 
-    private void mockLdapTemplateLookupToReturnAccountFor(String uuid) {
+    private Account mockAccountLookup(String uuid) throws NameNotFoundException, DataServiceException {
         Account account = new AccountImpl();
         account.setUid(uuid);
-        doReturn(account).when(ldapTemplate).lookup(argThat(new ArgumentMatcher<LdapName>() {
-            @Override
-            public boolean matches(Object o) {
-                if (o == null) {
-                    return false;
-                }
-                return ((LdapName) o).get(1).equals(String.format("uid=%s", uuid));
-            }
-        }), any(), any(ContextMapper.class));
+        when(accountDao.findByUID(eq(uuid))).thenReturn(account);
+        return account;
     }
 
     @Test

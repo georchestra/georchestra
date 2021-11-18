@@ -48,6 +48,7 @@ import lombok.Setter;
  * @author Mauricio Pazos
  *
  */
+@SuppressWarnings("deprecation")
 public class AccountImpl implements Serializable, Account {
 
     private static final long serialVersionUID = -8022496448991887664L;
@@ -226,9 +227,13 @@ public class AccountImpl implements Serializable, Account {
 
     @Override
     public void setPassword(String password) {
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
-        this.password = encrypted;
+        if (password == null) {
+            this.password = null;
+        } else {
+            LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+            String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
+            this.password = encrypted;
+        }
     }
 
     @Override

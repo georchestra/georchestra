@@ -115,7 +115,7 @@ public class EditUserDetailsFormController {
             String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
             Account userAccount = this.accountDao.findByUID(username);
             model.addAttribute(createForm(userAccount));
-            Org org = orgsDao.findByCommonNameWithExt(userAccount);
+            Org org = orgsDao.findByUser(userAccount);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(userAccount));
             model.addAttribute("gdprAllowAccountDeletion", gdprAllowAccountDeletion);
@@ -211,10 +211,10 @@ public class EditUserDetailsFormController {
             Account originalAccount = this.accountDao.findByUID(username);
             Account modifiedAccount = this.accountDao.findByUID(username);
             Account account = modify(modifiedAccount, formBean);
-            accountDao.update(account, username);
+            accountDao.update(account);
 
             model.addAttribute("success", true);
-            Org org = orgsDao.findByCommonNameWithExt(account);
+            Org org = orgsDao.findByUser(account);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(account));
 

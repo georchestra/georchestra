@@ -35,7 +35,7 @@ interface OrganizationMapper {
     @Mapping(target = "shortName", source = "id")
     @Mapping(target = "notes", source = "note")
     @Mapping(target = "linkage", source = "url")
-    @Mapping(target = "postalAddress", source = "orgAddress")
+    @Mapping(target = "postalAddress", source = "address")
     @Mapping(target = "category", source = "orgType")
     @Mapping(target = "lastUpdated", ignore = true)
     @Mapping(target = "withId", ignore = true)

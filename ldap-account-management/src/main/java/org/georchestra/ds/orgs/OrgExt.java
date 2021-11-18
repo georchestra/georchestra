@@ -21,22 +21,29 @@ package org.georchestra.ds.orgs;
 
 import java.util.UUID;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-public class OrgExt extends AbstractOrg implements Cloneable {
-
-    public static final String JSON_ADDRESS = "address";
-    public static final String JSON_ORG_TYPE = "orgType";
+/**
+ * Extended organization properties, used internally as a composition
+ * relationship for {@link Org} to handle non standard LDAP org properties.
+ */
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+class OrgExt extends ReferenceAware implements Cloneable {
 
     private @Getter @Setter UUID uniqueIdentifier;
     private String id;
-    private String orgType;
-    private String address;
-    private String description;
-    private String url;
-    private String logo;
-    private String note;
+    private String orgType = null;
+    // these attribute default values are the empty string to match how they're
+    // mapped to the ldap context and keep equals and hashCode consistency
+    private String address = "";
+    private String description = "";
+    private String url = "";
+    private String logo = "";
+    private String note = "";
 
     public String getId() {
         return id;
@@ -95,18 +102,12 @@ public class OrgExt extends AbstractOrg implements Cloneable {
     }
 
     @Override
-    public String toString() {
-        return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
-                + ", description='" + description + '\'' + '}';
+    public OrgExt clone() {
+        try {
+            return (OrgExt) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
-        return orgDao.getExtension(this);
-    }
-
-    @Override
-    public OrgExt clone() throws CloneNotSupportedException {
-        return (OrgExt) super.clone();
-    }
 }

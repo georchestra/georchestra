@@ -18,7 +18,6 @@ import java.util.List;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgExt;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
@@ -62,19 +61,15 @@ public class EditOrgDetailsFormControllerTest {
         formBean.setUrl("https://georchestra.org");
         formBean.setId("georTest");
 
-        OrgExt orgExt = new OrgExt();
-        orgExt.setOrgType("Non profit");
-        orgExt.setAddress("fake address");
-        orgExt.setUrl("https://georchestra.org");
-        orgExt.setDescription("A test desc");
-        orgExt.setId("georTest");
         Org org = new Org();
         org.setId("georTest");
         org.setName("geOrchestra testing LLC");
-        org.setOrgExt(orgExt);
+        org.setOrgType("Non profit");
+        org.setAddress("fake address");
+        org.setUrl("https://georchestra.org");
+        org.setDescription("A test desc");
 
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq("georTest"))).thenReturn(org);
-        Mockito.when(this.orgsDao.findExtById(Mockito.eq("georTest"))).thenReturn(orgExt);
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);
 
         AccountImpl acc_with_referent = new AccountImpl();
@@ -116,7 +111,7 @@ public class EditOrgDetailsFormControllerTest {
             formBean.setUrl("https://newurl.com");
             ctrl.edit(model, formBean, logo, resultErrors);
         }
-        assertEquals("https://newurl.com", orgsDao.findExtById("georTest").getUrl());
+        assertEquals("https://newurl.com", orgsDao.findByCommonName("georTest").getUrl());
     }
 
     @Test
@@ -137,7 +132,7 @@ public class EditOrgDetailsFormControllerTest {
             MultipartFile logo = new MockMultipartFile("image", image2);
             ctrl.edit(model, formBean, logo, resultErrors);
 
-            assertEquals(base64Image, orgsDao.findExtById("georTest").getLogo());
+            assertEquals(base64Image, orgsDao.findByCommonName("georTest").getLogo());
         }
     }
 

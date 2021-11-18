@@ -46,6 +46,8 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
+import lombok.Setter;
+
 /**
  * Maintains the role of users in the ldap store.
  *
@@ -59,12 +61,7 @@ public class RoleDaoImpl implements RoleDao {
 
     private LdapTemplate ldapTemplate;
 
-    private String basePath;
     private String roleSearchBaseDN;
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
 
     public void setRoleSearchBaseDN(String roleSearchBaseDN) {
         this.roleSearchBaseDN = roleSearchBaseDN;
@@ -96,8 +93,7 @@ public class RoleDaoImpl implements RoleDao {
         this.accountDao = accountDao;
     }
 
-    public void addUser(String roleID, Account user, String originLogin)
-            throws DataServiceException, NameNotFoundException {
+    public void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException {
 
         /*
          * TODO Add hierarchic behaviour here : if configuration flag hierarchic_roles
@@ -129,20 +125,20 @@ public class RoleDaoImpl implements RoleDao {
             throw new DataServiceException(e);
         }
 
+        Role r = findByCommonName(roleID);
     }
 
     @Override
-    public void deleteUser(Account account, final String originLogin) throws DataServiceException {
+    public void deleteUser(Account account) throws DataServiceException {
 
         List<Role> allRoles = findAllForUser(account);
 
         for (Role role : allRoles) {
-            deleteUser(role.getName(), account, originLogin);
+            deleteUser(role.getName(), account);
         }
     }
 
-    public void deleteUser(String roleName, Account account, final String originLogin)
-            throws NameNotFoundException, DataServiceException {
+    public void deleteUser(String roleName, Account account) throws NameNotFoundException, DataServiceException {
         /* TODO Add hierarchic behaviour here like addUser method */
 
         Role role = this.findByCommonName(roleName);
@@ -153,8 +149,6 @@ public class RoleDaoImpl implements RoleDao {
             try {
                 this.update(roleName, role);
             } catch (NameNotFoundException | DuplicatedCommonNameException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
                 throw new DataServiceException(e);
             }
         }
@@ -225,39 +219,42 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public void delete(final String commonName) throws DataServiceException, NameNotFoundException {
 
-        if (!this.roles.isProtected(commonName)) {
-            this.ldapTemplate.unbind(buildRoleDn(commonName), true);
-        } else {
+        if (this.roles.isProtected(commonName)) {
             throw new DataServiceException("Role " + commonName + " is a protected role");
         }
 
+        try {
+            this.ldapTemplate.unbind(buildRoleDn(commonName), true);
+        } catch (NameNotFoundException ignore) {
+            LOG.debug("Tried to remove a non exising role, ignoring: " + commonName);
+        }
     }
 
-    private static class RoleContextMapper implements ContextMapper {
+    private static class RoleContextMapper implements ContextMapper<Role> {
 
         @Override
-        public Object mapFromContext(Object ctx) {
+        public Role mapFromContext(Object ctx) {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
 
             // set the role name
-            Role g = RoleFactory.create();
+            Role role = RoleFactory.create();
             String suuid = context.getStringAttribute(RoleSchema.UUID_KEY);
             UUID uuid = null == suuid ? null : UUID.fromString(suuid);
 
-            g.setUniqueIdentifier(uuid);
-            g.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
-            g.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
+            role.setUniqueIdentifier(uuid);
+            role.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
+            role.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
             boolean isFavorite = RoleSchema.FAVORITE_VALUE.equals(context.getStringAttribute(RoleSchema.FAVORITE_KEY));
-            g.setFavorite(isFavorite);
+            role.setFavorite(isFavorite);
 
             // set the list of user
             Object[] members = getUsers(context);
             for (int i = 0; i < members.length; i++) {
-                g.addUser((String) members[i]);
+                role.addUser((String) members[i]);
             }
 
-            return g;
+            return role;
         }
 
         private Object[] getUsers(DirContextAdapter context) {
@@ -403,41 +400,39 @@ public class RoleDaoImpl implements RoleDao {
         DirContextOperations context = ldapTemplate.lookupContext(destDn);
         mapToContext(role, context);
         ldapTemplate.modifyAttributes(context);
-
     }
 
-    private void addUsers(String roleName, List<Account> addList, final String originLogin)
-            throws NameNotFoundException, DataServiceException {
+    private void addUsers(String roleName, List<Account> addList) throws NameNotFoundException, DataServiceException {
 
         for (Account account : addList) {
-            addUser(roleName, account, originLogin);
+            addUser(roleName, account);
         }
     }
 
-    private void deleteUsers(String roleName, List<Account> deleteList, final String originLogin)
+    private void deleteUsers(String roleName, List<Account> deleteList)
             throws DataServiceException, NameNotFoundException {
 
         for (Account account : deleteList) {
-            deleteUser(roleName, account, originLogin);
+            deleteUser(roleName, account);
         }
 
     }
 
     @Override
-    public void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)
+    public void addUsersInRoles(List<String> putRole, List<Account> users)
             throws DataServiceException, NameNotFoundException {
 
         for (String roleName : putRole) {
-            addUsers(roleName, users, originLogin);
+            addUsers(roleName, users);
         }
     }
 
     @Override
-    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin)
+    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
             throws DataServiceException, NameNotFoundException {
 
         for (String roleName : deleteRole) {
-            deleteUsers(roleName, users, originLogin);
+            deleteUsers(roleName, users);
         }
 
     }

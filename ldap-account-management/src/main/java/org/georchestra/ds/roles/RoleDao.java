@@ -37,13 +37,11 @@ public interface RoleDao {
      *
      * @param roleID
      * @param userId
-     * @param originLogin login of admin that generate this request
      * @throws NameNotFoundException
      * @throws DataServiceException
      */
 
-    void addUser(String roleID, Account user, final String originLogin)
-            throws DataServiceException, NameNotFoundException;
+    void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException;
 
     /**
      * Returns all roles. Each roles will contains its list of users.
@@ -54,17 +52,16 @@ public interface RoleDao {
 
     List<Role> findAllForUser(Account account) throws DataServiceException;
 
-    void deleteUser(Account account, final String originLogin) throws DataServiceException;
+    void deleteUser(Account account) throws DataServiceException;
 
     /**
      * Deletes the user from the role
      * 
      * @param roleName
      * @param uid
-     * @param originLogin login of admin that generate this request
      * @throws DataServiceException
      */
-    void deleteUser(String roleName, Account account, final String originLogin) throws DataServiceException;
+    void deleteUser(String roleName, Account account) throws DataServiceException;
 
     void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException;
 
@@ -108,10 +105,9 @@ public interface RoleDao {
     void update(String roleName, Role modified)
             throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
-    void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)
-            throws DataServiceException, NameNotFoundException;
+    void addUsersInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException;
 
-    void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin)
+    void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
             throws DataServiceException, NameNotFoundException;
 
 }
