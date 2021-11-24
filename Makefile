@@ -1,7 +1,8 @@
 # Docker related targets
 
 GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,authkey,mapstore2,mbstyle,ogcapi,web-resource,flatgeobuf,sldservice
-BTAG=latest
+# parameterize BTAG, default to "latest". e.g.: `$ BTAG=21.0 make docker-build-georchestra`
+BTAG ?= latest
 
 docker-pull-jetty:
 	docker pull jetty:9-jre8
