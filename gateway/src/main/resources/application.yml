@@ -1,0 +1,70 @@
+info:
+  component: Gateway Server
+  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
+server:
+  port: 8080
+  http2:
+    enabled: true 
+  compression:
+    enabled: true
+
+georchestra:
+  datadir: file:/etc/georchestra
+  gateway:
+    target-mappings:
+      analytics: http://analytics:8080/analytics/
+      atlas: http://atlas:8080/atlas/
+      console: http://console:8080/console/
+      extractorapp: http://extractorapp:8080/extractorapp/
+      geonetwork: http://geonetwork:8080/geonetwork/
+      geoserver: http://geoserver:8080/geoserver/
+      header: http://header:8080/header/
+      mapfishapp: http://mapfishapp:8080/mapfishapp/
+      geowebcache: http://geowebcache:8080/geowebcache/
+      mapstore: http://mapstore:8080/mapstore/
+      datafeeder: http://datafeeder:8080/datafeeder
+      import: http://import:80/
+
+spring:
+  config:
+    use-legacy-processing: false
+  config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
+  main:
+    banner-mode: off
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      enabled: true 
+      global-filter.websocket-routing.enabled: true
+      metrics.enabled: true
+#      default-filters:
+#      -
+      #routes defined in datadir (e.g. /etc/georchestra/gateway/application.yml)
+      #routes:
+
+management:
+  info:
+    build.enabled: true
+    java.enabled: true
+    env.enabled: true
+    git:
+      enabled: true
+      mode: full
+  endpoint:
+    info.enabled: true
+    metrics.enabled: true
+    health.enabled: true
+    health.probes.enabled: true
+    prometheus.enabled: true
+  endpoints:
+    enabled-by-default: true
+    web.exposure.include: "*"
+
+logging:
+  level:
+    root: INFO
+    '[org.springframework]': info
+    '[org.springframework.cloud.gateway]': debug
+    '[org.georchestra.gateway]': debug

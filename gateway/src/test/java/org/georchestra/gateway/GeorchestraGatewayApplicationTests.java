@@ -18,14 +18,47 @@
  */
 package org.georchestra.gateway;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles({ "default", "test" })
 class GeorchestraGatewayApplicationTests {
 
-    @Test
-    void contextLoads() {
+    private @Autowired Environment env;
+    private @Autowired RouteLocator routeLocator;
+
+    public @Test void contextLoadsFromDatadir() {
+        assertEquals("classpath:/test-datadir", env.getProperty("georchestra.datadir"));
+
+        assertEquals(
+                "optional:classpath:/test-datadir/default.properties,optional:classpath:/test-datadir/gateway/gateway.yaml",
+                env.getProperty("spring.config.import"));
+
+        Boolean propertyFromTestDatadir = env.getProperty("georchestra.test-datadir", Boolean.class);
+        assertTrue(propertyFromTestDatadir,
+                "Configuration property expected to load from classpath:/test-datadir/gateway/gateway.yaml not found");
     }
 
+    public @Test void verifyRoutesLoadedFromDatadir() {
+        Map<String, Route> routesById = routeLocator.getRoutes()
+                .collect(Collectors.toMap(Route::getId, Function.identity())).block();
+
+        Route testRoute = routesById.get("testRoute");
+        assertNotNull(testRoute);
+        assertEquals(URI.create("http://header:8080/header/"), testRoute.getUri());
+    }
 }

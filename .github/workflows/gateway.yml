@@ -31,7 +31,7 @@ jobs:
       run: ./mvnw -pl gateway -am -P-all,gateway de.qaware.maven:go-offline-maven-plugin:resolve-dependencies -B -U
       
     - name: "Install & check formatting"
-      run: ./mvnw install -pl :gateway --also-make -P-all,gateway --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw install -pl :gateway --also-make -P-all,gateway -Dfmt.action=validate -Dpom.fmt.action=verify -DskipTests -ntp -Dadditionalparam=-Xdoclint:none
 
     - name: "Run Tests"
       run: ./mvnw verify -P-all,gateway -f gateway/ -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
