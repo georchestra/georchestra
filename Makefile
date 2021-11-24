@@ -41,6 +41,9 @@ docker-build-geowebcache: docker-pull-jetty
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
+docker-build-gateway:
+	./mvnw -pl gateway -am spring-boot:build-image -DskipTests -DimageTag=${BTAG}
+
 docker-build-cas: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl cas-server-webapp
 
@@ -56,7 +59,7 @@ docker-build-mapfishapp: build-deps docker-pull-jetty
 docker-build-datafeeder: build-deps
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn docker-build-gateway
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,atlas,datafeeder
 
 docker-build: docker-build-gn docker-build-geoserver docker-build-georchestra

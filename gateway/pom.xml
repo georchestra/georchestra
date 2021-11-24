@@ -22,6 +22,8 @@
     <!-- or fmt.action 'validate' -->
     <pom.fmt.action>sort</pom.fmt.action>
     <pom.fmt.skip>${fmt.skip}</pom.fmt.skip>
+    <imageTag>${project.version}</imageTag>
+    <spring-boot.build-image.imageName>georchestra/gateway:${imageTag}</spring-boot.build-image.imageName>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -42,10 +44,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
