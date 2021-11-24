@@ -1,0 +1,69 @@
+name: "gateway"
+on:
+  push:
+    paths:
+      - "commons/**"
+      - "security-proxy-spring-integration/**"
+      - "gateway/**"
+      - ".github/workflows/gateway.yml"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "security-proxy-spring-integration/**"
+      - "gateway/**"
+      - ".github/workflows/gateway.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+        cache: 'maven'
+
+    - name: Update maven dependencies
+      run: ./mvnw -pl gateway -am -P-all,gateway de.qaware.maven:go-offline-maven-plugin:resolve-dependencies -B -U
+      
+    - name: "Install & check formatting"
+      run: ./mvnw install -pl :gateway --also-make -P-all,gateway --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
+
+    - name: "Run Tests"
+      run: ./mvnw verify -P-all,gateway -f gateway/ -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
+
+    - name: "Build docker image"
+      run: BTAG=latest make docker-build-gateway
+
+    - name: Getting image tag
+      if: github.repository == 'georchestra/georchestra'
+      id: version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: "Logging in docker.io"
+      if: github.repository == 'georchestra/georchestra'
+      uses: azure/docker-login@v1
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "Pushing latest to docker.io"
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
+      run: |
+        docker push georchestra/gateway:latest
+
+    - name: "Pushing release branch to docker.io"
+      if: contains(github.ref, 'refs/heads/21.') && github.repository == 'georchestra/georchestra'
+      run: |
+        docker tag georchestra/gateway:latest georchestra/gateway:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/gateway:${{ steps.version.outputs.VERSION }}
+
+    - name: "Pushing release tag to docker.io"
+      if: contains(github.ref, 'refs/tags/') && github.repository == 'georchestra/georchestra'
+      run: |
+        docker tag georchestra/gateway:latest georchestra/gateway:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
