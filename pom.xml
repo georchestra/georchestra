@@ -925,6 +925,7 @@
         <module>mapfishapp</module>
         <module>atlas</module>
         <module>security-proxy</module>
+        <module>gateway</module>
         <module>geonetwork</module>
         <module>analytics</module>
         <module>header</module>
@@ -1008,6 +1009,12 @@
       <id>proxy</id>
       <modules>
         <module>security-proxy</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>gateway</id>
+      <modules>
+        <module>gateway</module>
       </modules>
     </profile>
     <profile>
