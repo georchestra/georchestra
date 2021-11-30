@@ -25,7 +25,7 @@ info:
   instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
 
 spring:
-  #config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
+  config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
   main:
     banner-mode: off
     web-application-type: reactive
@@ -62,10 +62,8 @@ spring:
       metrics.enabled: true
       default-filters:
       - TokenRelay
-      - RemoveRequestHeader=sec-proxy
-      - RemoveRequestHeader=sec-username
-      - RemoveRequestHeader=sec-roles
-      - AddSecHeaders=test
+      - RemoveSecurityHeaders 
+      - AddSecHeaders
       routes:
       - id: root
         uri: ${georchestra.gateway.target-mappings.header}
@@ -107,22 +105,27 @@ spring:
         uri: ${georchestra.gateway.target-mappings.geoserver}
         predicates:
         - Path=/geoserver/**
+
       - id: mapfishapp
         uri: ${georchestra.gateway.target-mappings.mapfishapp}
         predicates:
         - Path=/mapfishapp/**
+
       - id: geowebcache
         uri: ${georchestra.gateway.target-mappings.geowebcache}
         predicates:
         - Path=/geowebcache/**
+
       - id: mapstore
         uri: ${georchestra.gateway.target-mappings.mapstore}
         predicates:
         - Path=/mapstore/**
+
       - id: datafeeder
         uri: ${georchestra.gateway.target-mappings.datafeeder}
         predicates:
         - Path=/datafeeder/**
+
       - id: import
         uri: ${georchestra.gateway.target-mappings.import}
         predicates:

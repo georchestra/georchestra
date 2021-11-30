@@ -16,26 +16,23 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.gateway;
+package org.georchestra.gateway.headers;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Configuration
-@EnableWebFluxSecurity
-public class WebSecurityConfig {
+public class HeaderFiltersConfiguration {
 
-    // private @Autowired RouteLocator routeLocator;
+    public @Bean AddSecHeadersGatewayFilterFactory addSecHeadersGatewayFilterFactory() {
+        return new AddSecHeadersGatewayFilterFactory();
+    }
 
-//    @Bean
-//    SecurityWebFilterChain configure(ServerHttpSecurity http) throws Exception {
-//        http
-//                // ...
-//                .oauth2Client(null/*withDefaults()*/)
-//                .add;
-//        return http.build();
-//    }
+    public @Bean RemoveHeadersGatewayFilterFactory removeHeadersGatewayFilterFactory() {
+        return new RemoveHeadersGatewayFilterFactory();
+    }
+
+    public @Bean RemoveSecurityHeadersGatewayFilterFactory removeSecurityHeadersGatewayFilterFactory() {
+        return new RemoveSecurityHeadersGatewayFilterFactory();
+    }
 }
