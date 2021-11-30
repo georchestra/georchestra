@@ -47,3 +47,13 @@ The docker image is created by the `spring-boot-maven-plugin` under the
 
 
 ### Migrating from security-proxy
+
+Security proxy feature set upgrade matrix
+
+| security-proxy | Gateway | Notes |
+| --- | --- | --- |
+| Per service URI simple routing  | <ul><li>[x] defined in `gateway.yml`</li></ul> | as traditionally defined in `targets-mapping.properties` |
+| Global and per-service `sec-*` headers | <ul><li>[ ] defined in `gateway.yml`</li></ul> | as traditionally defined in `headers-mapping.properties` |
+| Filter incoming `sec-*` headers | <ul><li>[ ] custom regex based filter</li></ul> | prevents impersonation from outside world |
+| `ogc-server-statistics` integration | <ul><li>[ ] </li></ul> |  |
+|  | <ul><li>[ ] </li></ul> |  |

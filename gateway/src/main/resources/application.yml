@@ -1,16 +1,6 @@
-info:
-  component: Gateway Server
-  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
-server:
-  port: 8080
-  http2:
-    enabled: true 
-  compression:
-    enabled: true
-
 georchestra:
-  datadir: file:/etc/georchestra
   gateway:
+    # configure target base URL's per service name. Replaces security-proxy's targets-mapping.properties
     target-mappings:
       analytics: http://analytics:8080/analytics/
       atlas: http://atlas:8080/atlas/
@@ -25,24 +15,118 @@ georchestra:
       datafeeder: http://datafeeder:8080/datafeeder
       import: http://import:80/
 
+server:
+  port: 8080
+  http2.enabled: true
+  compression.enabled: true
+
+info:
+  component: Gateway Server
+  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
+
 spring:
-  config:
-    use-legacy-processing: false
-  config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
+  #config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
   main:
     banner-mode: off
     web-application-type: reactive
-  application:
-    name: gateway-service
+  application.name: gateway-service
+  thymeleaf.cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+           clientId: 539019376623-98bfblg8t9efd507ia4qv0v7r79afits.apps.googleusercontent.com
+           clientSecret: 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
+           scope:
+           - email
+           #- openid
+#          login-client:
+#            provider: uaa
+#            client-id: login-client
+#            client-secret: secret
+#            authorization-grant-type: authorization_code
+#            redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
+#            scope: openid,profile,email,resource.read
+#        provider:
+#          uaa:
+#            authorization-uri: http://localhost:8090/uaa/oauth/authorize
+#            token-uri: http://localhost:8090/uaa/oauth/token
+#            user-info-uri: http://localhost:8090/uaa/userinfo
+#            user-name-attribute: sub
+#            jwk-set-uri: http://localhost:8090/uaa/token_keys
   cloud:
     gateway:
       enabled: true 
       global-filter.websocket-routing.enabled: true
       metrics.enabled: true
-#      default-filters:
-#      -
-      #routes defined in datadir (e.g. /etc/georchestra/gateway/application.yml)
-      #routes:
+      default-filters:
+      - TokenRelay
+      - RemoveRequestHeader=sec-proxy
+      - RemoveRequestHeader=sec-username
+      - RemoveRequestHeader=sec-roles
+      - AddSecHeaders=test
+      routes:
+      - id: root
+        uri: ${georchestra.gateway.target-mappings.header}
+        predicates:
+        - Path=/
+        filters:
+        - RewritePath=/, /header
+      - id: header
+        uri: ${georchestra.gateway.target-mappings.header}
+        predicates:
+        - Path=/header,/header/**
+    
+      - id: analytics
+        uri: ${georchestra.gateway.target-mappings.analytics}
+        predicates:
+        - Path=/analytics/**
+    
+      - id: atlas
+        uri: ${georchestra.gateway.target-mappings.atlas}
+        predicates:
+        - Path=/atlas/**
+    
+      - id: console
+        uri: ${georchestra.gateway.target-mappings.console}
+        predicates:
+        - Path=/console/**
+    
+      - id: extractorapp
+        uri: ${georchestra.gateway.target-mappings.extractorapp}
+        predicates:
+        - Path=/extractorapp/**
+    
+      - id: geonetwork
+        uri: ${georchestra.gateway.target-mappings.geonetwork}
+        predicates:
+        - Path=/geonetwork/**
+    
+      - id: geoserver
+        uri: ${georchestra.gateway.target-mappings.geoserver}
+        predicates:
+        - Path=/geoserver/**
+      - id: mapfishapp
+        uri: ${georchestra.gateway.target-mappings.mapfishapp}
+        predicates:
+        - Path=/mapfishapp/**
+      - id: geowebcache
+        uri: ${georchestra.gateway.target-mappings.geowebcache}
+        predicates:
+        - Path=/geowebcache/**
+      - id: mapstore
+        uri: ${georchestra.gateway.target-mappings.mapstore}
+        predicates:
+        - Path=/mapstore/**
+      - id: datafeeder
+        uri: ${georchestra.gateway.target-mappings.datafeeder}
+        predicates:
+        - Path=/datafeeder/**
+      - id: import
+        uri: ${georchestra.gateway.target-mappings.import}
+        predicates:
+        - Path=/import/**
 
 management:
   info:
@@ -68,3 +152,4 @@ logging:
     '[org.springframework]': info
     '[org.springframework.cloud.gateway]': debug
     '[org.georchestra.gateway]': debug
+

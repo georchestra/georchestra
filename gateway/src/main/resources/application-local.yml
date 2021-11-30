@@ -1,0 +1,16 @@
+georchestra:
+  gateway:
+    # configure target base URL's per service name. Replaces security-proxy's targets-mapping.properties
+    target-mappings:
+      header: http://localhost:10003/header/
+      mapfishapp: http://localhost:10004/mapfishapp/
+      extractorapp: http://localhost:10005/extractorapp/
+      geoserver: http://localhost:10006/geoserver/
+      console: http://localhost:10007/console/
+      geonetwork: http://localhost:10008/geonetwork/
+      analytics: http://localhost:10009/analytics/
+      mapstore: http://localhost:10010/mapstore/
+      datafeeder: http://localhost:10011/datafeeder
+      import: http://localhost:10012/
+      atlas: http://localhost:8080/atlas/
+      geowebcache: http://localhost:8080/geowebcache/
