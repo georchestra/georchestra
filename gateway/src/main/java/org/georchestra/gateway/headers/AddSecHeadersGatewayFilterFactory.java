@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.georchestra.gateway.config.GatewayConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -33,6 +34,7 @@ public class AddSecHeadersGatewayFilterFactory
         extends AbstractGatewayFilterFactory<AbstractGatewayFilterFactory.NameConfig> {
 
     private @Autowired(required = false) List<HeaderProvider> providers = new ArrayList<>();
+    private @Autowired GatewayConfig gatewayConfig;
 
     public AddSecHeadersGatewayFilterFactory() {
         super(NameConfig.class);
@@ -64,12 +66,12 @@ public class AddSecHeadersGatewayFilterFactory
             ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
             providers.forEach(provider -> requestBuilder.headers(provider.prepare(exchange)));
 
-            ServerHttpRequest request = requestBuilder.build();
-//                    .header("sec-proxy", "true")//
-//                    .header("sec-username", name.toFuture().join() + "testuser")//
-//                    .header("sec-org", "PSC")//
-//                    .header("sec-roles", "ROLE_ADMINISTRATOR")//
-//                    .build();
+            ServerHttpRequest request = requestBuilder//
+                    .header("sec-proxy", "true")//
+                    .header("sec-username", "testuser")//
+                    .header("sec-org", "PSC")//
+                    .header("sec-roles", "ROLE_USER")//
+                    .build();
 
             return chain.filter(exchange.mutate().request(request).build());
         };

@@ -18,14 +18,42 @@
  */
 package org.georchestra.gateway.config;
 
-import org.georchestra.gateway.headers.HeaderFiltersConfiguration;
+import org.georchestra.gateway.headers.AddSecHeadersGatewayFilterFactory;
+import org.georchestra.gateway.headers.RemoveHeadersGatewayFilterFactory;
+import org.georchestra.gateway.headers.RemoveSecurityHeadersGatewayFilterFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
+import org.springframework.cloud.gateway.filter.factory.GatewayFilterFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 @Configuration
+@EnableConfigurationProperties(GatewayConfig.class)
 @AutoConfigureBefore(GatewayAutoConfiguration.class)
-@Import(HeaderFiltersConfiguration.class)
 public class HeaderFiltersAutoConfiguration {
+
+    /**
+     * {@link GatewayFilterFactory} to add all necessary {@literal sec-*} request
+     * headers to proxied requests
+     */
+    public @Bean AddSecHeadersGatewayFilterFactory addSecHeadersGatewayFilterFactory() {
+        return new AddSecHeadersGatewayFilterFactory();
+    }
+
+    /**
+     * General purpose {@link GatewayFilterFactory} to remove incoming HTTP request
+     * headers based on a Java regular expression
+     */
+    public @Bean RemoveHeadersGatewayFilterFactory removeHeadersGatewayFilterFactory() {
+        return new RemoveHeadersGatewayFilterFactory();
+    }
+
+    /**
+     * {@link GatewayFilterFactory} to remove incoming HTTP {@literal sec-*} HTTP
+     * request headers to prevent impersonation from outside
+     */
+    public @Bean RemoveSecurityHeadersGatewayFilterFactory removeSecurityHeadersGatewayFilterFactory() {
+        return new RemoveSecurityHeadersGatewayFilterFactory();
+    }
 }

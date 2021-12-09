@@ -34,7 +34,7 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(properties = "georchestra.datadir=classpath:/test-datadir")
 @ActiveProfiles({ "default", "test" })
 class GeorchestraGatewayApplicationTests {
 
@@ -59,6 +59,6 @@ class GeorchestraGatewayApplicationTests {
 
         Route testRoute = routesById.get("testRoute");
         assertNotNull(testRoute);
-        assertEquals(URI.create("http://header:8080/header/"), testRoute.getUri());
+        assertEquals(URI.create("http://test.com:80"), testRoute.getUri());
     }
 }

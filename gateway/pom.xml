@@ -54,16 +54,26 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-    <!-- <dependency> -->
-    <!-- <groupId>org.springframework.cloud</groupId> -->
-    <!-- <artifactId>spring-cloud-starter-bootstrap</artifactId> -->
-    <!-- </dependency> -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
-
+    <dependency>
+      <!-- Annotation processor that generates metadata about classes annotated with @ConfigurationProperties. -->
+      <!-- This metadata is used by IDEs to provide auto-completion and documentation for the properties when editing application.properties 
+        and application.yaml -->
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <!-- Generates META-INF/spring-autoconfigure-metadata.properties for inclusion in the project's jar. -->
+      <!-- This file helps with startup time, but is not necessary for your app to function correctly. -->
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>

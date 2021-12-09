@@ -16,23 +16,24 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.gateway.headers;
+package org.georchestra.gateway.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.net.URL;
+import java.util.List;
 
-@Configuration
-public class HeaderFiltersConfiguration {
+import lombok.Data;
 
-    public @Bean AddSecHeadersGatewayFilterFactory addSecHeadersGatewayFilterFactory() {
-        return new AddSecHeadersGatewayFilterFactory();
-    }
+@Data
+public class Service {
+    /**
+     * Back end service URL
+     */
+    private URL target;
 
-    public @Bean RemoveHeadersGatewayFilterFactory removeHeadersGatewayFilterFactory() {
-        return new RemoveHeadersGatewayFilterFactory();
-    }
+    /**
+     * Service-specific security headers configuration
+     */
+    private HeaderMappings headers;
 
-    public @Bean RemoveSecurityHeadersGatewayFilterFactory removeSecurityHeadersGatewayFilterFactory() {
-        return new RemoveSecurityHeadersGatewayFilterFactory();
-    }
+    private List<RoleBasedAccessRule> accessRules;
 }

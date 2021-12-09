@@ -1,35 +1,11 @@
-georchestra:
-  test-datadir: true #used to verify the config is loaded from the datadir
-  gateway:
-    target-mappings:
-      analytics: http://analytics:8080/analytics/
-      atlas: http://atlas:8080/atlas/
-      console: http://console:8080/console/
-      extractorapp: ://extractorapp:8080/extractorapp/
-      geonetwork: http://geonetwork:8080/geonetwork/
-      geoserver: http://geoserver:8080/geoserver/
-      header: http://header:8080/header/
-      mapfishapp: http://mapfishapp:8080/mapfishapp/
-      geowebcache: http://geowebcache:8080/geowebcache/
-      mapstore: http://mapstore:8080/mapstore/
-      datafeeder: http://datafeeder:8080/datafeeder
-      import: http://import:80/
-
 spring:
+  config.activate.on-profile: test
   cloud:
     gateway:
       routes:
       - id: testRoute
-        uri: ${georchestra.gateway.target-mappings.header}
+        uri: http://test.com
         predicates:
         - Path=/test
-      - id: root
-        uri: ${georchestra.gateway.target-mappings.header}
-        predicates:
-        - Path=/
-        filters:
-        - RewritePath=/, /header
-      - id: header
-        uri: ${georchestra.gateway.target-mappings.header}
-        predicates:
-        - Path=/header,/header/**
+georchestra:
+  test-datadir: true #used to verify the config is loaded from the datadir
