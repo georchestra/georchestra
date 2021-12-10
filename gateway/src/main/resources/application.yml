@@ -1,5 +1,6 @@
 # 
-# configure target base URL's per service name. Replaces security-proxy's targets-mapping.properties
+# configure target base URL's, headers and role based access, per service name.
+# Replaces security-proxy's targets-mapping.properties, headers-mapping.properties, and security-mappings.xml
 #
 georchestra:
   gateway:
