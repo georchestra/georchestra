@@ -21,6 +21,7 @@ package org.georchestra.gateway.config;
 import org.georchestra.gateway.headers.AddSecHeadersGatewayFilterFactory;
 import org.georchestra.gateway.headers.RemoveHeadersGatewayFilterFactory;
 import org.georchestra.gateway.headers.RemoveSecurityHeadersGatewayFilterFactory;
+import org.georchestra.gateway.headers.StandardSecurityHeadersProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
@@ -39,6 +40,10 @@ public class HeaderFiltersAutoConfiguration {
      */
     public @Bean AddSecHeadersGatewayFilterFactory addSecHeadersGatewayFilterFactory() {
         return new AddSecHeadersGatewayFilterFactory();
+    }
+
+    public @Bean StandardSecurityHeadersProvider standardSecurityHeadersProvider() {
+        return new StandardSecurityHeadersProvider();
     }
 
     /**

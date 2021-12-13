@@ -18,8 +18,13 @@
  */
 package org.georchestra.gateway;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
-
-    // private @Autowired RouteLocator routeLocator;
-
+//
+//    private @Autowired RouteLocator routeLocator;
+//
 //    @Bean
 //    SecurityWebFilterChain configure(ServerHttpSecurity http) throws Exception {
 //        http
