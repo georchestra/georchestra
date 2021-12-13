@@ -43,7 +43,7 @@ docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
 docker-build-gateway:
-	./mvnw -pl gateway -am spring-boot:build-image -DskipTests -DimageTag=${BTAG} -P-all,gateway
+	mvn clean install -pl :georchestra-gateway -am -P-all,gateway,docker -DskipTests -Dfmt.skip -Dfmt.pom.skip -DimageTag=${BTAG}
 
 docker-build-cas: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl cas-server-webapp

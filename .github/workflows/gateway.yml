@@ -24,17 +24,22 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
-        java-version: '11'
+        java-version: '8'
         cache: 'maven'
+    
+    - name: Verify formatting
+      run: |
+        ./mvnw -P-all,gateway -pl :georchestra-gateway -am formatter:validate -ntp
+        ./mvnw -P-all,gateway -pl :georchestra-gateway sortpom:verify -ntp
 
     - name: Update maven dependencies
-      run: ./mvnw -pl gateway -am -P-all,gateway de.qaware.maven:go-offline-maven-plugin:resolve-dependencies -B -U
+      run: ./mvnw -pl :georchestra-gateway -am -P-all,gateway de.qaware.maven:go-offline-maven-plugin:resolve-dependencies -B -U -Dfmt.skip -Dfmt.pom.skip -ntp
       
-    - name: "Install & check formatting"
-      run: ./mvnw install -pl :gateway --also-make -P-all,gateway -Dfmt.action=validate -Dpom.fmt.action=verify -DskipTests -ntp -Dadditionalparam=-Xdoclint:none
+    - name: "Install"
+      run: ./mvnw install -pl :georchestra-gateway -am -P-all,gateway -DskipTests -Dfmt.skip -Dfmt.pom.skip -ntp
 
     - name: "Run Tests"
-      run: ./mvnw verify -P-all,gateway -f gateway/ -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw verify -P-all,gateway -pl :georchestra-gateway -ntp -Dfmt.skip -Dfmt.pom.skip
 
     - name: "Build docker image"
       run: BTAG=latest make docker-build-gateway
