@@ -24,11 +24,15 @@ spring:
       client:
         registration:
           google:
-           clientId: 539019376623-98bfblg8t9efd507ia4qv0v7r79afits.apps.googleusercontent.com
-           clientSecret: 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
-           scope:
-           - email
-           #- openid
+            clientId: 539019376623-98bfblg8t9efd507ia4qv0v7r79afits.apps.googleusercontent.com
+            clientSecret: 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
+            scope:
+            - email
+            - openid
+          github:
+            clientId: Iv1.412513e628b94312
+            clientSecret: 423a3c62e00b6eecd6edb69737f536e37feda57e
+           
 #          login-client:
 #            provider: uaa
 #            client-id: login-client
