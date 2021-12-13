@@ -49,11 +49,21 @@ spring:
       global-filter.websocket-routing.enabled: true
       metrics.enabled: true
       default-filters:
+      - SecureHeaders
       - TokenRelay
       - RemoveSecurityHeaders
       # AddSecHeaders appends sec-* headers to proxied requests based on the
       # georchestra.gateway.default-headers and georchestra.gateway.servies.<service>.headers config properties 
-      - AddSecHeaders 
+      - AddSecHeaders
+      filter:
+        secure-headers:
+          enabled: true
+          disable:
+          - content-security-policy
+          frame-options: SAMEORIGIN
+          xss-protection-header: 0
+          referrer-policy: no-referrer
+          #content-security-policy: script-src 'self' 'unsafe-eval'; object-src 'self';
       routes:
       - id: root
         uri: ${georchestra.gateway.services.header.target}
