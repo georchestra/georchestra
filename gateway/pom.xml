@@ -215,6 +215,11 @@
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <image>
+                <pullPolicy>IF_NOT_PRESENT</pullPolicy>
+              </image>
+            </configuration>
           </plugin>
         </plugins>
       </build>

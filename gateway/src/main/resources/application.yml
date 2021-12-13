@@ -1,133 +1,19 @@
-# 
-# configure target base URL's, headers and role based access, per service name.
-# Replaces security-proxy's targets-mapping.properties, headers-mapping.properties, and security-mappings.xml
-#
-georchestra:
-  gateway:
-    default-headers:
-      # Default security headers to append to proxied requests
-      proxy: true
-      username: true
-      roles: true
-      org: true
-      orgname: true
-    global-access-rules:
-    - intercept-url: .*/ogcproxy/.*
-      allowed-roles: NO_ONE
-    - intercept-url: /testPage
-      anonymous: false
-    - intercept-url: .*(\?|&amp;)login.*
-      allowed-roles: USER,GN_EDITOR,GN_REVIEWER,GN_ADMIN,ADMINISTRATOR,SUPERUSER,ORGADMIN
-    - intercept-url:
-      - .*
-      - /proxy/\?url=.*
-      anonymous: true
-      # wonder what's the purpose of having several roles defined in security-proxy's security-mappings.xml
-      # if anonymous access is granted:
-      # <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR,ROLE_SUPERUSER,ROLE_ORGADMIN" />
-    services:
-      cas:
-        target: http://cas:8080/cas/
-        access-rules:
-        - intercept-url: /cas/login.*
-          anonymous: true
-      analytics:
-        target: http://analytics:8080/analytics/
-        access-rules:
-        - intercept-url: /analytics/.*
-          allowed-roles: SUPERUSER,ORGADMIN
-      atlas: 
-        target: http://atlas:8080/atlas/
-      console: 
-        target: http://console:8080/console/
-        access-rules:
-        - intercept-url:
-          - /console/public/.*
-          - /console/manager/public/.*
-          #/console/account resources are private except account/new and account/passwordRecovery
-          - /console/account/new
-          - /console/account/newPassword
-          - /console/account/passwordRecovery
-          - /console/account/js/.*
-          - /console/account/css/.*
-          - /console/account/fonts/.*
-          - /console/testPage
-          anonymous: true
-        - intercept-url:
-          - /console/private/.*
-          - /console/manager/.*
-          - /console/.*/emails
-          - /console/.*/sendEmail # /console/sendEmail features are reserved to SUPERUSER & delegated admins
-          - /console/.*/emailTemplates
-          - /console/attachments
-          allowed-roles: SUPERUSER,ORGADMIN
-        - intercept-url: /console/emailProxy #activated for members having the EMAILPROXY role
-          allowed-roles: EMAILPROXY
-        - intercept-url: /console/internal/.*
-          allowed-roles: SUPERUSER
-        - intercept-url: /console/account/.*
-          anonymous: false
-      extractorapp: 
-        target: http://extractorapp:8080/extractorapp/
-        access-rules:
-        - intercept-url: /extractorapp/(admin.*|jobs/.*)
-          allowed-roles: ADMINISTRATOR
-        - intercept-url: /extractorapp/.*
-          allowed-roles: EXTRACTORAPP
-      geonetwork: 
-        target: http://geonetwork:8080/geonetwork/
-        headers:
-          proxy: true
-          username: false
-          roles: false
-          org: false
-          orgname: true
-          json-user: true
-      geoserver: 
-        target: http://geoserver:8080/geoserver/
-      geofence:
-        target: http://geofence:8080/geofence/
-        access-rules:
-        - intercept-url: /geofence/.*
-          allowed-roles: ADMINISTRATOR
-      header: 
-        target: http://header:8080/header/
-      mapfishapp: 
-        target: http://mapfishapp:8080/mapfishapp/
-      geowebcache: 
-        target: http://geowebcache:8080/geowebcache/
-      mapstore: 
-        target: http://mapstore:8080/mapstore/
-      datafeeder: 
-        target: http://datafeeder:8080/datafeeder
-        headers:
-          proxy: true
-          username: false
-          roles: false
-          org: false
-          orgname: false
-          json-user: true
-          json-organization: true
-        access-rules:
-        - intercept-url: /datafeeder/.*
-          anonymous: false
-      import: 
-        target: http://import:80/
-        access-rules:
-        - intercept-url: /import/.*
-          anonymous: false
+# Spring-boot/cloud application configuration. Imports georchestra specific config files from
+# - classpath:gateway.yml
+# - optional:${georchestra.datadir}/default.properties
+# - optional:${georchestra.datadir}/gateway/gateway.yaml
+# in that order of precedence
+info:
+  component: Gateway Server
+  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
 
 server:
   port: 8080
   http2.enabled: true
   compression.enabled: true
 
-info:
-  component: Gateway Server
-  instance-id: ${spring.application.name}:${spring.application.instance_id:${spring.cloud.client.ip-address}}:${server.port}
-
 spring:
-  config.import: optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
+  config.import: classpath:gateway.yml,optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
   main:
     banner-mode: off
     web-application-type: reactive
@@ -260,21 +146,3 @@ logging:
     '[org.springframework.cloud.gateway]': debug
     '[org.georchestra.gateway]': debug
 
----
-# map to localhost at the ports defined in docker-compose.dev.yml
-# run from docker repo with docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
-# to debug this app directly from the IDE
-spring.config.activate.on-profile: dev
-georchestra.gateway.services:
-  header.target: http://localhost:10003/header/
-  mapfishapp.target: http://localhost:10004/mapfishapp/
-  extractorapp.target: http://localhost:10005/extractorapp/
-  geoserver.target: http://localhost:10006/geoserver/
-  console.target: http://localhost:10007/console/
-  geonetwork.target: http://localhost:10008/geonetwork/
-  analytics.target: http://localhost:10009/analytics/
-  mapstore.target: http://localhost:10010/mapstore/
-  datafeeder.target: http://localhost:10011/datafeeder
-  import.target: http://localhost:10012/
-  atlas.target: http://localhost:8080/atlas/
-  geowebcache.target: http://localhost:8080/geowebcache/

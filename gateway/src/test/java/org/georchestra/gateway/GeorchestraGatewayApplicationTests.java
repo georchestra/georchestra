@@ -45,7 +45,7 @@ class GeorchestraGatewayApplicationTests {
         assertEquals("classpath:/test-datadir", env.getProperty("georchestra.datadir"));
 
         assertEquals(
-                "optional:classpath:/test-datadir/default.properties,optional:classpath:/test-datadir/gateway/gateway.yaml",
+                "classpath:gateway.yml,optional:classpath:/test-datadir/default.properties,optional:classpath:/test-datadir/gateway/gateway.yaml",
                 env.getProperty("spring.config.import"));
 
         Boolean propertyFromTestDatadir = env.getProperty("georchestra.test-datadir", Boolean.class);
