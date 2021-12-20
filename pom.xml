@@ -35,7 +35,7 @@
   </distributionManagement>
   <properties>
     <java.version>1.8</java.version>
-    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
+    <formatter-maven-plugin.version>2.17.1</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
     <!-- flag to disable unit tests when running integration tests (mvn verify). If skipTests were used also IT would be skipped -->
