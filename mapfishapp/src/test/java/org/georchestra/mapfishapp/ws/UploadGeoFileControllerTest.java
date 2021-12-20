@@ -28,6 +28,8 @@ public class UploadGeoFileControllerTest {
     private MockHttpServletResponse response;
 
     public static @BeforeClass void setUpGeoToolsReferencing() {
+        // set org.geotools.referencing.forceXY to true, set by ws-servlet.xml when
+        // running the spring app
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
