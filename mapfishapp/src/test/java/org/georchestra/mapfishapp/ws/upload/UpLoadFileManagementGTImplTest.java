@@ -19,6 +19,7 @@ import org.geotools.referencing.CRS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
@@ -32,6 +33,12 @@ import org.opengis.feature.simple.SimpleFeature;
  * 
  */
 public class UpLoadFileManagementGTImplTest {
+
+    public static @BeforeClass void setUpGeoToolsReferencing() {
+        // set org.geotools.referencing.forceXY to true, set by ws-servlet.xml when
+        // running the spring app
+        System.setProperty("org.geotools.referencing.forceXY", "true");
+    }
 
     /**
      * Test method for
