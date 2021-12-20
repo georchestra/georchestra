@@ -36,7 +36,7 @@ jobs:
       run: ./mvnw install -pl mapfishapp -am -ntp -B -P-all,mapfishapp -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
-      run: ./mvnw verify -pl mapfishapp -Pit -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
+      run: ./mvnw verify -pl mapfishapp -P-all,mapfishapp -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'
@@ -45,7 +45,7 @@ jobs:
 
     - name: "Building docker image"
       if: github.repository == 'georchestra/georchestra'
-      run: ./mvnw clean package -pl mapfishapp docker:build -ntp -Pdocker,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ./mvnw clean package -pl mapfishapp docker:build -ntp -P-all,mapfishapp,docker,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
       if: github.repository == 'georchestra/georchestra'
