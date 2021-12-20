@@ -54,11 +54,11 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.georchestra</groupId> -->
-<!--       <artifactId>georchestra-ldap-account-management</artifactId> -->
-<!--       <version>${project.version}</version> -->
-<!--     </dependency> -->
+    <!--     <dependency> -->
+    <!--       <groupId>org.georchestra</groupId> -->
+    <!--       <artifactId>georchestra-ldap-account-management</artifactId> -->
+    <!--       <version>${project.version}</version> -->
+    <!--     </dependency> -->
 
     <dependency>
       <groupId>org.projectlombok</groupId>
