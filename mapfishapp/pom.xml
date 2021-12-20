@@ -285,6 +285,14 @@
           </filesets>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>${skipUT}</skip>
+          <!-- reuseForks=false to isolate test cases from geotools initialization -->
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>
