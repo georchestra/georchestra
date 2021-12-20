@@ -301,11 +301,10 @@ public class SLDClassifier {
             // create a Rule. A Rule is composed by one Filter and one Symbolizer
             Rule rule = styleFactory.createRule();
             Filter filter = filters.next();
-            rule.setSymbolizers(new Symbolizer[] { symbolizers.next() });
+            rule.symbolizers().add(symbolizers.next());
             rule.setFilter(filter.getGISFilter());
             rule.setName(filter.getName());
-            rule.setTitle(filter.getName());
-            fts.addRule(rule);
+            fts.rules().add(rule);
         }
 
         if (filters.hasNext()) {
@@ -513,8 +512,7 @@ public class SLDClassifier {
         // add a custom style to the user layer
         Style style = styleFactory.createStyle();
         style.setName(_command.getFeatureTypeName());
-        style.setTitle(_command.getFeatureTypeName() + "_classification");
-        style.addFeatureTypeStyle(fts);
+        style.featureTypeStyles().add(fts);
         layer.addStyle(style);
 
         return sld;
