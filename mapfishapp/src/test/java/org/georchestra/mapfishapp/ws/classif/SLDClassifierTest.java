@@ -31,7 +31,7 @@ public class SLDClassifierTest {
             .<String, UsernamePasswordCredentials>emptyMap();
 
     // Use version=2.0 to ensure the SLDClassifier downgrades it to 1.1.0
-    private static final String wfsUrl = "https://geobretagne.fr/geoserver/ccpbs/wfs?service=WFS&request=GetCapabilities&VERSION=2.0";
+    private static final String wfsUrl = "https://geobretagne.fr/geoserver/ccpbs/wfs?service=WFS&request=GetCapabilities&VERSION=2.0.0";
 
     private WFSDataStoreFactory dataStoreFactory;
 
@@ -43,7 +43,7 @@ public class SLDClassifierTest {
     public void testChoropleths() throws Exception {
 
         // build JSON request
-        String featureTypeName = "ccpbs:dechet_zone_collecte";
+        String featureTypeName = "ccpbs:dechet_zone_collecte_om";
         String propertyName = "NUM";
         String firstColor = "#0000ff";
         String lastColor = "#ff0000";

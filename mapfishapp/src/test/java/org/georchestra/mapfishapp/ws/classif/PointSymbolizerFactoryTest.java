@@ -5,13 +5,16 @@ import static org.junit.Assert.assertEquals;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.georchestra.mapfishapp.ws.classif.PointSymbolizerFactory;
+import org.geotools.styling.Graphic;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.Symbolizer;
 import org.junit.Test;
+import org.opengis.style.GraphicalSymbol;
 
 /**
  * Test PointSymbolizerFactory
@@ -142,7 +145,10 @@ public class PointSymbolizerFactoryTest {
         Iterator<Symbolizer> symbolizers = psf.iterator();
 
         PointSymbolizer ps = (PointSymbolizer) symbolizers.next();
-        Mark[] marks = ps.getGraphic().getMarks();
+        Graphic graphic = ps.getGraphic();
+        List<GraphicalSymbol> graphicalSymbols = graphic.graphicalSymbols();
+        Mark[] marks = graphicalSymbols.stream().filter(Mark.class::isInstance).map(Mark.class::cast)
+                .toArray(Mark[]::new);
         assertEquals(StyleBuilder.MARK_STAR, marks[0].getWellKnownName().toString()); // check shape name
         assertEquals("0.2", ps.getGraphic().getOpacity().toString()); // check opacity
         assertEquals("#00FF00", marks[0].getFill().getColor().toString()); // check color

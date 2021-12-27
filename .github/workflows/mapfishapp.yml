@@ -15,35 +15,28 @@ jobs:
     timeout-minutes: 15
     steps:
     - name: "Checking out"
-      uses: actions/checkout@v1
-
-    - name: "Checking out submodules"
-      uses: textbook/git-checkout-submodule-action@2.0.0
+      uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: "Setting up Java"
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: '8.x'
+        distribution: 'temurin'
+        java-version: '8'
+        cache: 'maven'
 
-    - name: "Configuring Maven"
-      run: |
-          mkdir -p $HOME/.m2
-          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
-
-    - name: "Maven repository caching"
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+# Could not transfer artifact org.springframework.boot:spring-boot-dependencies:pom:1.5.19.RELEASE from/to artifactory-georchestra
+#    - name: "Configuring Maven"
+#      run: |
+#          mkdir -p $HOME/.m2
+#          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
     - name: "Installing & checking formatting"
-      run: ./mvnw --no-transfer-progress -B -P-all,mapfishapp -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw install -pl mapfishapp -am -ntp -B -P-all,mapfishapp -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
-      working-directory: mapfishapp/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none -Dorg.geotools.referencing.forceXY=true
+      run: ./mvnw verify -pl mapfishapp -P-all,mapfishapp -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'
@@ -52,8 +45,7 @@ jobs:
 
     - name: "Building docker image"
       if: github.repository == 'georchestra/georchestra'
-      working-directory: mapfishapp/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-log4j  -DdockerImageName=georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ./mvnw clean package -pl mapfishapp docker:build -ntp -P-all,mapfishapp,docker,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
       if: github.repository == 'georchestra/georchestra'

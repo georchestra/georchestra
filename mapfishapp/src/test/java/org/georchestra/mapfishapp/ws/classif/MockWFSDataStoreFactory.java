@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
-import org.geotools.data.ows.SimpleHttpClient;
+import org.geotools.http.SimpleHttpClient;
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.data.wfs.internal.WFSClient;

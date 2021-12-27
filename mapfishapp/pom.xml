@@ -14,6 +14,7 @@
     <maven.test.skip>false</maven.test.skip>
     <!-- Override parent version with 2.1.1-georchestra. Revisit. -->
     <mapfish.version>2.1.1-georchestra</mapfish.version>
+    <gt.version>26.1</gt.version>
     <!--
     	downgrade parent's 20180813 version or org.mapfish.print.servlet.MapPrinterServlet.getInfo
     	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V
@@ -50,11 +51,6 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>3.1-atlassian-2</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -287,6 +283,14 @@
               </includes>
             </fileset>
           </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skip>${skipUT}</skip>
+          <!-- reuseForks=false to isolate test cases from geotools initialization -->
+          <reuseForks>false</reuseForks>
         </configuration>
       </plugin>
     </plugins>
