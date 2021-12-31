@@ -10,31 +10,6 @@
 		]
 	},
 	{
-		"id": "7637a7bc-e540-4a5a-b828-dc2530540017",
-		"name": "CKAN_ADMIN",
-		"description": "This role grants admin rights in CKAN, scoped to user's org",
-		"lastUpdated": "f3f31065d550f0f0da979a306cff55853c0152272e52950bea0ab6305b073502",
-		"members": []
-	},
-	{
-		"id": "9354df17-ed78-42e2-8d5b-089bfbe9fd0c",
-		"name": "CKAN_EDITOR",
-		"description": "This role grants metadata edit rights in CKAN, scoped to user's org",
-		"lastUpdated": "f0241fc015f032e3d24bdddfbc1009e21a777d113fb82572d1bfe04bad9d2807",
-		"members": [
-			"testeditor"
-		]
-	},
-	{
-		"id": "fdff2189-2321-455f-b59c-e831fa14f084",
-		"name": "CKAN_SYSADMIN",
-		"description": "This role grants full admin rights to CKAN",
-		"lastUpdated": "7ccffd8b2a71e529be7e2ac24f90aff751578ba789497f5268b5765695f8ce77",
-		"members": [
-			"testadmin"
-		]
-	},
-	{
 		"id": "2b5150f7-6451-4bd7-8ecb-b44ffa39fa08",
 		"name": "EMAILPROXY",
 		"description": "This role allows to use the emailProxy webservice from the console",
