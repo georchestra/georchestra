@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(GatewayConfig.class)
+@EnableConfigurationProperties(GatewayConfigProperties.class)
 @AutoConfigureBefore(GatewayAutoConfiguration.class)
 public class HeaderFiltersAutoConfiguration {
 

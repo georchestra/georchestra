@@ -28,7 +28,7 @@ import lombok.Data;
 
 @Data
 @ConfigurationProperties("georchestra.gateway")
-public class GatewayConfig {
+public class GatewayConfigProperties {
 
     /**
      * Configures the global security headers to append to all proxied http requests

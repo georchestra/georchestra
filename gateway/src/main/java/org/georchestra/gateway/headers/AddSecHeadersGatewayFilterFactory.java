@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.georchestra.gateway.config.GatewayConfig;
+import org.georchestra.gateway.config.GatewayConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -43,7 +43,7 @@ public class AddSecHeadersGatewayFilterFactory
         extends AbstractGatewayFilterFactory<AbstractGatewayFilterFactory.NameConfig> {
 
     private @Autowired(required = false) List<HeaderProvider> providers = new ArrayList<>();
-    private @Autowired GatewayConfig gatewayConfig;
+    private @Autowired GatewayConfigProperties gatewayConfig;
 
     public AddSecHeadersGatewayFilterFactory() {
         super(NameConfig.class);
