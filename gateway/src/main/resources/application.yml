@@ -12,6 +12,14 @@ server:
   http2.enabled: true
   compression.enabled: true
 
+ldap:
+  url: ${ldapScheme}://${ldapHost}:${ldapPort}
+  baseDn: ${ldapBaseDn:dc=georchestra,dc=org}
+  usersRdn: ${ldapUsersRdn:ou=users}
+  userSearchFilter: ${ldapUserSearchFilter:(uid={0})}
+  rolesRdn: ${ldapRolesRdn:ou=roles}
+  rolesSearchFilter: ${ldapRolesSearchFilter:(member={0})}
+
 spring:
   config.import: classpath:gateway.yml,optional:${georchestra.datadir}/default.properties,optional:${georchestra.datadir}/gateway/gateway.yaml
   main:
@@ -19,6 +27,9 @@ spring:
     web-application-type: reactive
   application.name: gateway-service
   thymeleaf.cache: false
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration
   security:
     oauth2:
       client:

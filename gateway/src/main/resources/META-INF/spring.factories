@@ -1,3 +1,5 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.georchestra.gateway.security.GatewaySecurityAutoconfiguration,\
+org.georchestra.gateway.security.ldap.LdapSecurityAutoConfiguration,\
 org.georchestra.gateway.config.HeaderFiltersAutoConfiguration

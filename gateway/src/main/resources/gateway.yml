@@ -121,6 +121,7 @@ georchestra:
 # run from docker repo with docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 # to debug this app directly from the IDE
 spring.config.activate.on-profile: dev
+ldap.url: ldap://localhost:3891
 georchestra.gateway.services:
   header.target: http://localhost:10003/header/
   mapfishapp.target: http://localhost:10004/mapfishapp/
