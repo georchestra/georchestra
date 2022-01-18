@@ -13,6 +13,7 @@ server:
   compression.enabled: true
 
 ldap:
+  enabled: true
   url: ${ldapScheme}://${ldapHost}:${ldapPort}
   baseDn: ${ldapBaseDn:dc=georchestra,dc=org}
   usersRdn: ${ldapUsersRdn:ou=users}
@@ -168,6 +169,6 @@ logging:
   level:
     root: INFO
     '[org.springframework]': info
-    '[org.springframework.cloud.gateway]': debug
+    '[org.springframework.cloud.gateway]': info
     '[org.georchestra.gateway]': debug
 

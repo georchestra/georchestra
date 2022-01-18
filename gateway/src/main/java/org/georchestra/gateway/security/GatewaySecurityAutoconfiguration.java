@@ -18,6 +18,7 @@
  */
 package org.georchestra.gateway.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -31,21 +32,36 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebFluxSecurity
 public class GatewaySecurityAutoconfiguration {
 
+    private @Value("${ldap.enabled:false}") boolean ldapEnabled;
+
 //
 //    private @Autowired RouteLocator routeLocator;
 //
     @Bean
     SecurityWebFilterChain configure(ServerHttpSecurity http) throws Exception {
         // http.oauth2Client(null/*withDefaults()*/)
-        http//
-                .anonymous().authorities("ROLE_ANONYMOUS")//
-                // enable oauth2 and http basic auth
-                .and().oauth2Login().and().httpBasic().and().formLogin()//
-                // configure path matchers
-                .and()//
-                .authorizeExchange()//
+//		http//
+//				.anonymous().authorities("ROLE_ANONYMOUS")//
+//				// enable oauth2 and http basic auth
+//				.and().oauth2Login().and().httpBasic().and().formLogin()//
+//				// configure path matchers
+//				.and()//
+//				.authorizeExchange()//
+//				.pathMatchers("/", "/header/**").permitAll()//
+//				.pathMatchers("/**").authenticated();
+
+        // http.anonymous().authorities("ROLE_ANONYMOUS");
+        // enable oauth2 and http basic auth
+        http.oauth2Login();
+
+        if (ldapEnabled) {
+            http.httpBasic().and().formLogin();
+        }
+        // configure path matchers
+        http.authorizeExchange()//
                 .pathMatchers("/", "/header/**").permitAll()//
                 .pathMatchers("/**").authenticated();
+
         return http.build();
     }
 }

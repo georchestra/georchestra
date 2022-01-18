@@ -2,13 +2,32 @@
 
 ## Features
 
-- [ ] OpenID Connect authentication
+- [x] OpenID Connect authentication (provided github and google pre-configured auth sources)
+- [x] LDAP authentication
 - [ ] CAS authentication
 - [ ] HTTP Proxy
 - [ ] HTTP/2
 - [ ] Websockets
 
 ## Configuration
+
+### LDAP Authentication
+
+LDAP Authentication is enabled and set up through the following
+configuration properties in `application.yml`:
+
+```yaml
+ldap:
+  enabled: true
+  url: ${ldapScheme}://${ldapHost}:${ldapPort}
+  baseDn: ${ldapBaseDn:dc=georchestra,dc=org}
+  usersRdn: ${ldapUsersRdn:ou=users}
+  userSearchFilter: ${ldapUserSearchFilter:(uid={0})}
+  rolesRdn: ${ldapRolesRdn:ou=roles}
+  rolesSearchFilter: ${ldapRolesSearchFilter:(member={0})}
+```
+
+If `ldap.enabled` is `false`,the log-in page won't show the username/password form inputs.
 
 ## Data directory property sources
 

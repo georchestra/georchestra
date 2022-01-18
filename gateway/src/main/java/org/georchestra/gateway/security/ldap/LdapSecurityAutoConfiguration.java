@@ -2,6 +2,7 @@ package org.georchestra.gateway.security.ldap;
 
 import java.util.Arrays;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 @Configuration(proxyBeanMethods = true)
+@ConditionalOnProperty(name = "ldap.enabled", havingValue = "true", matchIfMissing = false)
 @EnableConfigurationProperties
 public class LdapSecurityAutoConfiguration {
 
