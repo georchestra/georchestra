@@ -87,6 +87,15 @@ spring:
         - Path=/
         filters:
         - RewritePath=/, /header
+
+      - id: loginredirect
+        uri: no://op
+        predicates:
+        - Path=/header
+        - QueryParam=login
+        filters:
+        - RedirectTo=308, /login
+
       - id: header
         uri: ${georchestra.gateway.services.header.target}
         predicates:
@@ -169,6 +178,6 @@ logging:
   level:
     root: INFO
     '[org.springframework]': info
-    '[org.springframework.cloud.gateway]': info
+    '[org.springframework.cloud.gateway]': debug
     '[org.georchestra.gateway]': debug
 
