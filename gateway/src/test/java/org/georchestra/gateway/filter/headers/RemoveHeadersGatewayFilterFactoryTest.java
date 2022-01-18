@@ -16,9 +16,10 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.gateway.headers;
+package org.georchestra.gateway.filter.headers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.stream.IntStream;
 
+import org.georchestra.gateway.filter.headers.RemoveHeadersGatewayFilterFactory;
+import org.georchestra.gateway.filter.headers.RemoveHeadersGatewayFilterFactory.RegExConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,18 +39,21 @@ import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.ServerWebExchange;
 
-class RemoveSecurityHeadersGatewayFilterFactoryTest {
+class RemoveHeadersGatewayFilterFactoryTest {
 
-    private RemoveSecurityHeadersGatewayFilterFactory filter;
+    private RemoveHeadersGatewayFilterFactory filter;
+
+    private final RegExConfig secHeadersConfig = new RemoveHeadersGatewayFilterFactory.RegExConfig(
+            "(?i)(sec-.*|Authorization)");
 
     @BeforeEach
     void setUp() throws Exception {
-        filter = new RemoveSecurityHeadersGatewayFilterFactory();
+        filter = new RemoveHeadersGatewayFilterFactory();
     }
 
     @Test
     void testApply() {
-        GatewayFilter gatewayFilter = filter.apply((Object) null);
+        GatewayFilter gatewayFilter = filter.apply(secHeadersConfig);
         assertNotNull(gatewayFilter);
 
         HttpHeaders headers = headers("sec-proxy", "true", "sec-username", "testadmin", "Host", "localhost", "sec-org",
@@ -65,6 +71,39 @@ class RemoveSecurityHeadersGatewayFilterFactoryTest {
         HttpHeaders mutatedHeaders = mutatedExchange.getRequest().getHeaders();
         HttpHeaders expected = headers("Host", "localhost", "ETag", null);
         assertEquals(expected, mutatedHeaders);
+    }
+
+    @Test
+    void testNeedsFiltering() {
+        HttpHeaders headers = headers("sec-proxy", "true", "sec-username", "testadmin", "Host", "localhost", "sec-org",
+                "PSC", "ETag", null);
+        assertTrue(secHeadersConfig.anyMatches(headers));
+        headers.remove("sec-proxy");
+        assertTrue(secHeadersConfig.anyMatches(headers));
+        headers.remove("sec-username");
+        assertTrue(secHeadersConfig.anyMatches(headers));
+        headers.remove("sec-org");
+        assertFalse(secHeadersConfig.anyMatches(headers));
+    }
+
+    @Test
+    void testRemoveSecurityHeaders() {
+        HttpHeaders headers = headers("sec-proxy", "true", "sec-username", "testadmin", "Host", "localhost", "sec-org",
+                "PSC", "ETag", null);
+
+        secHeadersConfig.removeMatching(headers);
+        HttpHeaders expected = headers("Host", "localhost", "ETag", null);
+        assertEquals(expected, headers);
+    }
+
+    @Test
+    void testIsSecurityHeader() {
+        assertTrue(secHeadersConfig.matches("sec-user"));
+        assertTrue(secHeadersConfig.matches("SEC-USER"));
+        assertTrue(secHeadersConfig.matches("sec-org"));
+        assertTrue(secHeadersConfig.matches("SEC-ORG"));
+        assertTrue(secHeadersConfig.matches("authoriZation"), "Basic Auth header shoulud should be filtered");
+        assertFalse(secHeadersConfig.matches("SECORG"));
     }
 
     private HttpHeaders headers(String... kvp) {

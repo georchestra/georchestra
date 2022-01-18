@@ -1,4 +1,4 @@
-package org.georchestra.gateway.headers;
+package org.georchestra.gateway.filter.headers;
 
 import java.net.URI;
 import java.util.function.Consumer;

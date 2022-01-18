@@ -18,10 +18,10 @@
  */
 package org.georchestra.gateway.config;
 
-import org.georchestra.gateway.headers.AddSecHeadersGatewayFilterFactory;
-import org.georchestra.gateway.headers.RemoveHeadersGatewayFilterFactory;
-import org.georchestra.gateway.headers.RemoveSecurityHeadersGatewayFilterFactory;
-import org.georchestra.gateway.headers.StandardSecurityHeadersProvider;
+import org.georchestra.gateway.filter.headers.AddSecHeadersGatewayFilterFactory;
+import org.georchestra.gateway.filter.headers.RemoveHeadersGatewayFilterFactory;
+import org.georchestra.gateway.filter.headers.RemoveSecurityHeadersGatewayFilterFactory;
+import org.georchestra.gateway.filter.headers.StandardSecurityHeadersProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.gateway.config.GatewayAutoConfiguration;
