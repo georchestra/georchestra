@@ -21,14 +21,8 @@ package org.georchestra.security;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.HEAD;
-import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
-import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-import static org.springframework.web.bind.annotation.RequestMethod.TRACE;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,6 +76,7 @@ import org.apache.http.ProtocolException;
 import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpOptions;
@@ -370,8 +365,7 @@ public class Proxy {
      * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
-    @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
-            TRACE })
+    @RequestMapping(value = "/**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
@@ -957,7 +951,31 @@ public class Proxy {
         try {
             URL url = new URL(sURL);
             URI uri = buildUri(url);
-            HttpMethod meth = HttpMethod.resolve(request.getMethod());
+            String method = request.getMethod();
+
+            // handles webdav specific verbs
+            String[] webdavVerb = { "COPY", "LOCK", "UNLOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK",
+                    "REPORT", "SEARCH" };
+            boolean isWebdav = Arrays.stream(webdavVerb).anyMatch(x -> x.equalsIgnoreCase(method));
+            if (isWebdav) {
+                HttpEntityEnclosingRequestBase heerb = new HttpEntityEnclosingRequestBase() {
+                    @Override
+                    public String getMethod() {
+                        return method.toUpperCase();
+                    }
+                };
+                heerb.setURI(uri);
+                int contentLength = request.getContentLength();
+                ServletInputStream inputStream = request.getInputStream();
+                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+                heerb.setEntity(entity);
+                return heerb;
+            }
+
+            HttpMethod meth = HttpMethod.resolve(method);
+            if (meth == null) {
+                throw new IllegalArgumentException(method + " is not supported.");
+            }
 
             switch (meth) {
             case GET: {
@@ -1033,7 +1051,6 @@ public class Proxy {
                 logger.error(msg);
                 throw new IllegalArgumentException(msg);
             }
-
             }
         } catch (URISyntaxException e) {
             logger.error("ERROR creating URI from " + sURL, e);

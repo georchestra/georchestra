@@ -6,11 +6,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.google.common.collect.Maps;
 
 public class ProxyTest {
@@ -67,6 +66,7 @@ public class ProxyTest {
         targets = Maps.newHashMap();
         targets.put("geonetwork", "http://www.google.com/geonetwork-private");
         targets.put("extractorapp", "http://localhost/extractorapp-private");
+        targets.put("nextcloud", "http://localhost/nextcloud");
         proxy.setTargets(targets);
 
         proxy.setDefaultTarget("/mapfishapp/");
@@ -261,17 +261,45 @@ public class ProxyTest {
     }
 
     @Test
-    public void testVerb() throws UnsupportedEncodingException {
+    public void testVerb() {
 
         for (RequestMethod e : RequestMethod.values()) {
             request = new MockHttpServletRequest(e.toString(), "/extractorapp/home");
             response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), e.toString() + " worked");
             response.setHeader("X-Test-Header", e.toString() + " worked");
             httpResponse = new MockHttpServletResponse();
+
             proxy.handleRequest(request, httpResponse);
+
             assertEquals(HttpStatus.OK.value(), httpResponse.getStatus());
             assertEquals(e.toString() + " worked", httpResponse.getHeader("X-Test-Header"));
         }
     }
 
+    @Test
+    public void testWebDavVerb() {
+
+        for (String webDavVerb : Arrays.asList("PROPFIND", "SEARCH")) {
+            request = new MockHttpServletRequest(webDavVerb, "/nextcloud/plop");
+            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), webDavVerb + " worked");
+            response.setHeader("X-Test-Header", webDavVerb + " worked");
+            httpResponse = new MockHttpServletResponse();
+
+            proxy.handleRequest(request, httpResponse);
+
+            assertEquals(HttpStatus.OK.value(), httpResponse.getStatus());
+            assertEquals(webDavVerb + " worked", httpResponse.getHeader("X-Test-Header"));
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNonExistingVerb() {
+        request = new MockHttpServletRequest("NONSTANDARDVERB", "/nextcloud/plop");
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), "NONSTANDARDVERB worked");
+        response.setHeader("X-Test-Header", "NONSTANDARDVERB worked");
+        httpResponse = new MockHttpServletResponse();
+
+        proxy.handleRequest(request, httpResponse);
+
+    }
 }
