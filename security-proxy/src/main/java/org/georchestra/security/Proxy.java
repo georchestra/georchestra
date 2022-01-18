@@ -972,22 +972,6 @@ public class Proxy {
                 return heerb;
             }
 
-//            if (PropFindMethod.METHOD_NAME.equalsIgnoreCase(method)) {
-//                PropFindMethod pfm = new PropFindMethod(uri);
-//                int contentLength = request.getContentLength();
-//                ServletInputStream inputStream = request.getInputStream();
-//                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-//                pfm.setEntity(entity);
-//                return pfm;
-//            } else if (SearchMethod.METHOD_NAME.equalsIgnoreCase(method)) {
-//                SearchMethod sm = new SearchMethod(uri);
-//                int contentLength = request.getContentLength();
-//                ServletInputStream inputStream = request.getInputStream();
-//                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-//                sm.setEntity(entity);
-//                return sm;
-//            }
-
             HttpMethod meth = HttpMethod.resolve(method);
             if (meth == null) {
                 throw new IllegalArgumentException(method + " is not supported.");
