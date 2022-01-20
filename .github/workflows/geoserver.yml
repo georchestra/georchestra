@@ -5,6 +5,7 @@ env:
 
 name: "geoserver"
 on:
+  workflow_dispatch:
   push:
     paths:
       - "commons/**"
