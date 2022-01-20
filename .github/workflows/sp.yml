@@ -1,5 +1,6 @@
 name: "security-proxy"
 on:
+  workflow_dispatch:
   push:
     paths:
       - "commons/**"
