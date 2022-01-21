@@ -1,5 +1,6 @@
 name: "cas"
 on:
+  workflow_dispatch:
   push:
     paths:
       - "commons/**"

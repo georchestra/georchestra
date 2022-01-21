@@ -1,5 +1,6 @@
 name: "atlas"
 on:
+  workflow_dispatch:
   push:
     paths:
       - "commons/**"

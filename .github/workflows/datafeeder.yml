@@ -1,5 +1,6 @@
 name: "datafeeder"
 on:
+  workflow_dispatch:
   push:
     paths:
       - "commons/**"
