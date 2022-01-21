@@ -230,35 +230,6 @@ description: This role grants reviewer (publish) rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: 3ebc8f3f-a211-4a4d-996e-e1236c380bad
 
-# CKAN_SYSADMIN, roles, georchestra.org
-dn: cn=CKAN_SYSADMIN,ou=roles,dc=georchestra,dc=org
-objectClass: top
-objectClass: groupOfMembers
-objectClass: georchestraRole
-cn: CKAN_SYSADMIN
-description: This role grants full admin rights to CKAN
-member: uid=testadmin,ou=users,dc=georchestra,dc=org
-georchestraObjectIdentifier: fdff2189-2321-455f-b59c-e831fa14f084
-
-# CKAN_ADMIN, roles, georchestra.org
-dn: cn=CKAN_ADMIN,ou=roles,dc=georchestra,dc=org
-objectClass: top
-objectClass: groupOfMembers
-objectClass: georchestraRole
-cn: CKAN_ADMIN
-description: This role grants admin rights in CKAN, scoped to user's org
-georchestraObjectIdentifier: 7637a7bc-e540-4a5a-b828-dc2530540017
-
-# CKAN_EDITOR, roles, georchestra.org
-dn: cn=CKAN_EDITOR,ou=roles,dc=georchestra,dc=org
-objectClass: top
-objectClass: groupOfMembers
-objectClass: georchestraRole
-cn: CKAN_EDITOR
-description: This role grants metadata edit rights in CKAN, scoped to user's org
-member: uid=testeditor,ou=users,dc=georchestra,dc=org
-georchestraObjectIdentifier: 9354df17-ed78-42e2-8d5b-089bfbe9fd0c
-
 # REFERENT, roles, georchestra.org
 dn: cn=REFERENT,ou=roles,dc=georchestra,dc=org
 objectClass: top

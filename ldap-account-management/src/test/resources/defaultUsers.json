@@ -36,7 +36,6 @@
 		"username": "testeditor",
 		"roles": [
 			"GN_EDITOR",
-			"CKAN_EDITOR",
 			"USER"
 		],
 		"organization": "C2C",
@@ -74,7 +73,6 @@
 			"SUPERUSER",
 			"EXTRACTORAPP",
 			"GN_ADMIN",
-			"CKAN_SYSADMIN",
 			"USER",
 			"MAPSTORE_ADMIN",
 			"EMAILPROXY"
