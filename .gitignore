@@ -1,7 +1,6 @@
 **/target/
 */jsbuild/venv/
 */jsbuild/env/
-*/src/main/webapp/build/
 **/.project
 **/.classpath
 **/.settings

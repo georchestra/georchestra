@@ -246,7 +246,7 @@
         </executions>
         <configuration>
           <executable>jsbuild/${jsbuild.command}</executable>
-          <skip>false</skip>
+          <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
@@ -270,12 +270,6 @@
         <version>3.1.0</version>
         <configuration>
           <filesets>
-            <fileset>
-              <directory>${project.basedir}/src/main/webapp</directory>
-              <includes>
-                <include>build/**</include>
-              </includes>
-            </fileset>
             <fileset>
               <directory>jsbuild</directory>
               <includes>
