@@ -428,7 +428,9 @@ if(sec_roles != null) {
             if (a !== null) {
                 url = parent.window.location.href;
                 if (/\/cas\//.test(url)) {
-                    a.href = "/cas/login";
+                    a.href = "/?login";
+                } else if (/\/geoserver\/web\/\?0/.test(url)) {
+                    a.href = "/geoserver/web/?login";
                 } else {
                     // removing any existing anchor from URL first:
                     // see https://github.com/georchestra/georchestra/issues/1032
