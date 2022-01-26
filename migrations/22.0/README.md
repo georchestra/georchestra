@@ -2,10 +2,23 @@
 
 ## GeoNetwork 4
 
-### Redundant authentication panel
-_Georchestra_ handles the authentication of the user for the underlying _geonetwork 4_. New installs of _georchestra_ removes the authentication panel in the embedded _Geonetwork 4_ (see [#187](https://github.com/georchestra/geonetwork/pull/187)).
+### Link to external viewer
 
-For existing _Geonetwork 4_ installations, it can be done by unticking the checkbox in the `Admin console`->`User Interface`:
+To use MapStore as GeoNetwork's default viewer:
+ * open /geonetwork/srv/fre/admin.console#/settings/ui
+ * search for the "viewer" section
+ * check the "Use an external viewer" box
+ * update the "Viewer URL template" field to the following:
+```
+/mapstore/#?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]
+
+```
+
+### Redundant authentication panel
+
+geOrchestra_handles the authentication of the user for the underlying GeoNetwork 4. New installs of_geOrchestra remove the authentication panel in the embedded_GeoNetwork 4_(see [#187](https://github.com/georchestra/geonetwork/pull/187)).
+
+For existing _GeoNetwork 4 installations, it can be done by unticking the checkbox in the `Admin console`->`User Interface`:
 ```
 ☐ Authentication
 ```
@@ -126,7 +139,7 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f modify-geor-classes.ldif
 rm modify-geor-classes.ldif
 ```
 
-### Modifying the existing objects from the LDAP tree
+### Modifying existing objects from the LDAP tree
 
 The following commands will require the `uuid-runtime` debian package,
 which provides the `uuidgen` command to generate UUIDs.
