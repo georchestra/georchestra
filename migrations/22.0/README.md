@@ -1,6 +1,6 @@
-# From 20.X to 21.x
+# From 20.X to 22.x
 
-## Geonetwork 4
+## GeoNetwork 4
 
 ### Redundant authentication panel
 _Georchestra_ handles the authentication of the user for the underlying _geonetwork 4_. New installs of _georchestra_ removes the authentication panel in the embedded _Geonetwork 4_ (see [#187](https://github.com/georchestra/geonetwork/pull/187)).
@@ -164,6 +164,6 @@ for i in modify-*.ldif ; do ldapmodify -H ldap://localhost -x -w secret -Dcn=adm
 rm modify-*.ldif
 ```
 
-# CAS 6
+## CAS 6
 
 For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799).
