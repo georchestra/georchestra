@@ -80,12 +80,12 @@ jobs:
         docker push georchestra/console:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/20.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/console:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/20.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/console:${{ steps.version.outputs.VERSION }}
 
