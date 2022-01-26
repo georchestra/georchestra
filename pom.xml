@@ -43,7 +43,7 @@
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
     <gt.version>21.3</gt.version>
-    <guava.version>28.2-jre</guava.version>
+    <guava.version>31.0.1-jre</guava.version>
     <lombok.version>1.18.12</lombok.version>
     <postgres.version>42.2.10</postgres.version>
     <json.version>20180813</json.version>
