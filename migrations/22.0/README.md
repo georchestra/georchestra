@@ -5,7 +5,7 @@
 ### Link to external viewer
 
 To use MapStore as GeoNetwork's default viewer:
- * open /geonetwork/srv/fre/admin.console#/settings/ui
+ * open the `Admin console`->`User Interface` at /geonetwork/srv/fre/admin.console#/settings/ui
  * search for the "viewer" section
  * check the "Use an external viewer" box
  * update the "Viewer URL template" field to the following:
@@ -16,9 +16,9 @@ To use MapStore as GeoNetwork's default viewer:
 
 ### Redundant authentication panel
 
-geOrchestra_handles the authentication of the user for the underlying GeoNetwork 4. New installs of_geOrchestra remove the authentication panel in the embedded_GeoNetwork 4_(see [#187](https://github.com/georchestra/geonetwork/pull/187)).
+_geOrchestra_ already handles the authentication of the user for the underlying _GeoNetwork 4_. As a result, new installs of _geOrchestra_ should remove the authentication panel from the embedded _GeoNetwork 4_ (see [#187](https://github.com/georchestra/geonetwork/pull/187)).
 
-For existing _GeoNetwork 4 installations, it can be done by unticking the checkbox in the `Admin console`->`User Interface`:
+For existing _GeoNetwork 4_ installations, this can be done by unticking the "Authentication" checkbox from `Admin console`->`User Interface`:
 ```
 ☐ Authentication
 ```
