@@ -65,16 +65,6 @@
           <input ng-model="model.shadowExpire" class="form-control" id="shadowExpire" placeholder="{{'user.expire' | translate}}" datepicker ng-required="required.shadowExpire">
         </div>
       </div>
-      <div class="form-group form-group-sm" ng-class="{required: required.preferredLanguage}">
-        <label class="col-sm-4" for="contexts" translate>user.context</label>
-        <div class="col-sm-8">
-          <select class="form-control" id="contexts" ng-model="model.preferredLanguage"  ng-required="required.preferredLanguage">
-            <option value="" translate>user.lastcontext</option>
-            <option ng-if="model.$promise" value="{{context.wmc}}" ng-repeat="context in user.contexts">{{context.label}}</option>
-            <option ng-if="!model.$promise" value="{{context.wmc}}" ng-repeat="context in newUser.contexts">{{context.label}}</option>
-          </select>
-        </div>
-      </div>
 
     </div>
 
