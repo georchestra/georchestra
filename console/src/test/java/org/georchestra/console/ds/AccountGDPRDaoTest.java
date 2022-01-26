@@ -43,8 +43,8 @@ public class AccountGDPRDaoTest {
     private Timestamp ts1, ts2;
 
     public @Before void before() {
-        ldt1 = LocalDateTime.now();
-        ldt2 = LocalDateTime.now();
+        ldt1 = LocalDateTime.now().withNano(0);
+        ldt2 = LocalDateTime.now().withNano(0);
         ZoneId zoneId = ZoneId.systemDefault();
         ts1 = new Timestamp(ZonedDateTime.of(ldt1, zoneId).toInstant().toEpochMilli());
         ts2 = new Timestamp(ZonedDateTime.of(ldt2, zoneId).toInstant().toEpochMilli());
