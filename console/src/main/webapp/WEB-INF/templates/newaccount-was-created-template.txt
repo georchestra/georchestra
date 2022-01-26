@@ -1,7 +1,7 @@
 Dear {name},
 
 Your account on {publicUrl}/ has been successfully created !
-Visit {publicUrl}/cas/login to login with your identifier "{uid}" and your password.
+Visit {publicUrl}/console/ to login with your identifier "{uid}" and password.
 
 Have fun with geOrchestra,
 
