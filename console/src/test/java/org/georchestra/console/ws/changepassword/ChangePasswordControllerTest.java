@@ -94,7 +94,6 @@ public class ChangePasswordControllerTest {
     @Test
     public void changePasswordFormInvalid() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey12");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(true);
@@ -107,7 +106,6 @@ public class ChangePasswordControllerTest {
     @Test
     public void changePasswordSuccess() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(false);
@@ -125,7 +123,6 @@ public class ChangePasswordControllerTest {
     @Test(expected = DataServiceException.class)
     public void changePasswordDataServiceException() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(false);
@@ -136,7 +133,6 @@ public class ChangePasswordControllerTest {
 
     @Test
     public void changePasswordUidMismatch() throws Exception {
-        formBean.setUid("pmauduit1");
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
 
         String ret = ctrlToTest.changePassword(model, formBean, result);
@@ -146,7 +142,6 @@ public class ChangePasswordControllerTest {
 
     @Test
     public void changePasswordNotAuthenticated() throws Exception {
-        formBean.setUid("pmauduit");
 
         String ret = ctrlToTest.changePassword(model, formBean, result);
 
@@ -157,10 +152,8 @@ public class ChangePasswordControllerTest {
     public void changePasswordFormBean() {
         ChangePasswordFormBean tested = new ChangePasswordFormBean();
         tested.setConfirmPassword("monkey123");
-        tested.setUid("1");
         tested.setPassword("monkey123");
 
-        assertEquals("1", tested.getUid());
         assertEquals("monkey123", tested.getPassword());
         assertEquals("monkey123", tested.getConfirmPassword());
         assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123, password=monkey123]",

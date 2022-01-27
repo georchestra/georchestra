@@ -100,7 +100,6 @@ public class ChangePasswordFormController {
             }
 
             ChangePasswordFormBean formBean = new ChangePasswordFormBean();
-            formBean.setUid(uid.get());
             model.addAttribute(formBean);
             return "changePasswordForm";
         }
@@ -122,7 +121,7 @@ public class ChangePasswordFormController {
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
             throws DataServiceException {
         Optional<String> username = getUsername();
-        if(username.isPresent()) {
+        if (username.isPresent()) {
             String uid = username.get();
             if (isUserAuthenticatedBySASL(uid)) {
                 return "userManagedBySASL";

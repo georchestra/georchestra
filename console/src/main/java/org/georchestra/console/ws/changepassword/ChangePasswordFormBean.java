@@ -36,8 +36,7 @@ public class ChangePasswordFormBean implements Serializable {
 
     @Override
     public String toString() {
-        return "ChangePasswordFormBean [confirmPassword=" + confirmPassword + ", password=" + password
-                + "]";
+        return "ChangePasswordFormBean [confirmPassword=" + confirmPassword + ", password=" + password + "]";
     }
 
     public String getConfirmPassword() {
