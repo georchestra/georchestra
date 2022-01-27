@@ -1,7 +1,6 @@
 package org.georchestra.console.ws.changepassword;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -131,21 +130,18 @@ public class ChangePasswordControllerTest {
         ctrlToTest.changePassword(model, formBean, result);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void changePasswordUidMismatch() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-
+        formBean.setPassword("monkey123");
+        formBean.setConfirmPassword("monkey123");
         String ret = ctrlToTest.changePassword(model, formBean, result);
-
-        assertNull(ret);
     }
 
     @Test
     public void changePasswordNotAuthenticated() throws Exception {
-
         String ret = ctrlToTest.changePassword(model, formBean, result);
-
-        assertNull(ret);
+        assertEquals("forbidden", ret);
     }
 
     @Test
@@ -156,8 +152,7 @@ public class ChangePasswordControllerTest {
 
         assertEquals("monkey123", tested.getPassword());
         assertEquals("monkey123", tested.getConfirmPassword());
-        assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123, password=monkey123]",
-                tested.toString());
+        assertEquals("ChangePasswordFormBean [confirmPassword=monkey123, password=monkey123]", tested.toString());
     }
 
     private void userIsSpringSecurityAuthenticatedAndExistInLdap(String username) {

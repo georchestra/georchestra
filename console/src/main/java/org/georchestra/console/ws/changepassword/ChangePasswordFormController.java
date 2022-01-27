@@ -19,7 +19,6 @@
 
 package org.georchestra.console.ws.changepassword;
 
-import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
@@ -28,7 +27,6 @@ import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.PasswordType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -39,14 +37,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.Optional;
-
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 /**
  * This controller is responsible of manage the user interactions required for
@@ -152,8 +145,12 @@ public class ChangePasswordFormController {
     }
 
     private Optional<String> getUsername() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return Optional.of(user.getUsername());
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Optional.of(user.getUsername());
+        } catch (NullPointerException ex) {
+            return Optional.empty();
+        }
     }
 
     private boolean checkPermission(String uid) {
