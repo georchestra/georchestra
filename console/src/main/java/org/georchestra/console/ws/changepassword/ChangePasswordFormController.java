@@ -44,6 +44,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 /**
@@ -90,16 +92,19 @@ public class ChangePasswordFormController {
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
     public String setupForm(Model model) throws DataServiceException {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String uid = user.getUsername();
-        if (isUserAuthenticatedBySASL(uid)) {
-            return "userManagedBySASL";
-        }
+        Optional<String> uid = getUsername();
+        if (uid.isPresent()) {
 
-        ChangePasswordFormBean formBean = new ChangePasswordFormBean();
-        formBean.setUid(uid);
-        model.addAttribute(formBean);
-        return "changePasswordForm";
+            if (isUserAuthenticatedBySASL(uid.get())) {
+                return "userManagedBySASL";
+            }
+
+            ChangePasswordFormBean formBean = new ChangePasswordFormBean();
+            formBean.setUid(uid.get());
+            model.addAttribute(formBean);
+            return "changePasswordForm";
+        }
+        return "forbidden";
     }
 
     /**
@@ -116,35 +121,40 @@ public class ChangePasswordFormController {
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
             throws DataServiceException {
-        String uid = formBean.getUid();
-        // check if user
-        if (!checkPermission(uid)) {
-            return null;
-        }
-        if (isUserAuthenticatedBySASL(uid)) {
-            return "userManagedBySASL";
-        }
+        Optional<String> username = getUsername();
+        if(username.isPresent()) {
+            String uid = username.get();
+            if (isUserAuthenticatedBySASL(uid)) {
+                return "userManagedBySASL";
+            }
 
-        passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+            passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
-        if (result.hasErrors()) {
+            if (result.hasErrors()) {
+                return "changePasswordForm";
+            }
+
+            // change the user's password
+            String password = formBean.getPassword();
+            this.accountDao.changePassword(uid, password);
+            model.addAttribute("success", true);
+
+            // log that password was changed for this user
+            logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
+
             return "changePasswordForm";
         }
-
-        // change the user's password
-        String password = formBean.getPassword();
-        this.accountDao.changePassword(uid, password);
-        model.addAttribute("success", true);
-
-        // log that password was changed for this user
-        logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
-
-        return "changePasswordForm";
+        return "forbidden";
     }
 
     @ModelAttribute("changePasswordFormBean")
     public ChangePasswordFormBean getChangePasswordFormBean() {
         return new ChangePasswordFormBean();
+    }
+
+    private Optional<String> getUsername() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return Optional.of(user.getUsername());
     }
 
     private boolean checkPermission(String uid) {
