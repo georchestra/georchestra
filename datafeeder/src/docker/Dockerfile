@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM openjdk:11-jre
 
 # run as an unpriviledged OS user
 RUN groupadd -r -g 630 geo && \
