@@ -51,7 +51,6 @@
     <camel-extras.version>2.14.1</camel-extras.version>
     <mapfish.version>3.5.0</mapfish.version>
     <metrics.version>3.0.2</metrics.version>
-    <cas.version>4.0.0</cas.version>
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
@@ -493,21 +492,6 @@
         <artifactId>itextpdf</artifactId>
         <version>5.5.13.1</version>
       </dependency>
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-webapp-support</artifactId>
-        <version>${cas.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-support-ldap</artifactId>
-        <version>${cas.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-integration-memcached</artifactId>
-        <version>${cas.version}</version>
-      </dependency>
       <!-- REVISIT: are the following two the same but different versions? -->
       <dependency>
         <groupId>taglibs</groupId>
@@ -914,7 +898,6 @@
         </file>
       </activation>
       <modules>
-        <module>cas-server-webapp</module>
         <module>extractorapp</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
@@ -942,18 +925,6 @@
       <id>commons</id>
       <modules>
         <module>commons</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>cas-server-webapp</id>
-      <modules>
-        <module>cas-server-webapp</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>cas</id>
-      <modules>
-        <module>cas-server-webapp</module>
       </modules>
     </profile>
     <profile>

@@ -179,4 +179,6 @@ rm modify-*.ldif
 
 ## CAS 6
 
+Existing CAS webapp has been removed. The new CAS authentication for georchestra lives in its [own repository](https://github.com/georchestra/georchestra-cas-server).
+
 For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799).
