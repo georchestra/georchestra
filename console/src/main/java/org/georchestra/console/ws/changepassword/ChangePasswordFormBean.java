@@ -31,23 +31,12 @@ public class ChangePasswordFormBean implements Serializable {
      * 
      */
     private static final long serialVersionUID = -546015147230737054L;
-
-    private String uid;
     private String confirmPassword;
     private String password;
 
     @Override
     public String toString() {
-        return "ChangePasswordFormBean [uid=" + uid + ", confirmPassword=" + confirmPassword + ", password=" + password
-                + "]";
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
+        return "ChangePasswordFormBean [confirmPassword=" + confirmPassword + ", password=" + password + "]";
     }
 
     public String getConfirmPassword() {

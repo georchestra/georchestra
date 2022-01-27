@@ -37,8 +37,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+
+import java.util.Optional;
 
 /**
  * This controller is responsible of manage the user interactions required for
@@ -76,7 +77,6 @@ public class ChangePasswordFormController {
      * Initializes the {@link ChangePasswordFormBean} with the uid provided as
      * parameter. The changePasswordForm view is provided as result of this method.
      *
-     * @param uid   user id
      * @param model
      *
      * @return changePasswordForm view to display
@@ -84,19 +84,19 @@ public class ChangePasswordFormController {
      * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
-    public String setupForm(@RequestParam("uid") String uid, Model model) throws DataServiceException {
+    public String setupForm(Model model) throws DataServiceException {
+        Optional<String> uid = getUsername();
+        if (uid.isPresent()) {
 
-        if (!checkPermission(uid)) {
-            return "forbidden";
-        }
-        if (isUserAuthenticatedBySASL(uid)) {
-            return "userManagedBySASL";
-        }
+            if (isUserAuthenticatedBySASL(uid.get())) {
+                return "userManagedBySASL";
+            }
 
-        ChangePasswordFormBean formBean = new ChangePasswordFormBean();
-        formBean.setUid(uid);
-        model.addAttribute(formBean);
-        return "changePasswordForm";
+            ChangePasswordFormBean formBean = new ChangePasswordFormBean();
+            model.addAttribute(formBean);
+            return "changePasswordForm";
+        }
+        return "forbidden";
     }
 
     /**
@@ -113,35 +113,44 @@ public class ChangePasswordFormController {
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
             throws DataServiceException {
-        String uid = formBean.getUid();
-        // check if user
-        if (!checkPermission(uid)) {
-            return null;
-        }
-        if (isUserAuthenticatedBySASL(uid)) {
-            return "userManagedBySASL";
-        }
+        Optional<String> username = getUsername();
+        if (username.isPresent()) {
+            String uid = username.get();
+            if (isUserAuthenticatedBySASL(uid)) {
+                return "userManagedBySASL";
+            }
 
-        passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+            passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
-        if (result.hasErrors()) {
+            if (result.hasErrors()) {
+                return "changePasswordForm";
+            }
+
+            // change the user's password
+            String password = formBean.getPassword();
+            this.accountDao.changePassword(uid, password);
+            model.addAttribute("success", true);
+
+            // log that password was changed for this user
+            logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
+
             return "changePasswordForm";
         }
-
-        // change the user's password
-        String password = formBean.getPassword();
-        this.accountDao.changePassword(uid, password);
-        model.addAttribute("success", true);
-
-        // log that password was changed for this user
-        logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
-
-        return "changePasswordForm";
+        return "forbidden";
     }
 
     @ModelAttribute("changePasswordFormBean")
     public ChangePasswordFormBean getChangePasswordFormBean() {
         return new ChangePasswordFormBean();
+    }
+
+    private Optional<String> getUsername() {
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return Optional.of(user.getUsername());
+        } catch (NullPointerException ex) {
+            return Optional.empty();
+        }
     }
 
     private boolean checkPermission(String uid) {

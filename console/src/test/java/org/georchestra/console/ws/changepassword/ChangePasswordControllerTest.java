@@ -1,7 +1,6 @@
 package org.georchestra.console.ws.changepassword;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -84,29 +83,16 @@ public class ChangePasswordControllerTest {
         assertTrue(Arrays.asList(dataBinder.getAllowedFields()).contains("confirmPassword"));
     }
 
-    public void setupFormForbidden() throws Exception {
-        String ret = ctrlToTest.setupForm("notme", model);
-        assertEquals("forbidden", ret);
-    }
-
-    @Test
-    public void setupWrongUid() throws DataServiceException {
-        userIsSpringSecurityAuthenticatedAndExistInLdap("me");
-        String ret = ctrlToTest.setupForm("notme", model);
-        assertEquals("forbidden", ret);
-    }
-
     @Test
     public void setupForm() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("me");
-        String ret = ctrlToTest.setupForm("me", model);
+        String ret = ctrlToTest.setupForm(model);
         assertEquals("changePasswordForm", ret);
     }
 
     @Test
     public void changePasswordFormInvalid() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey12");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(true);
@@ -119,7 +105,6 @@ public class ChangePasswordControllerTest {
     @Test
     public void changePasswordSuccess() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(false);
@@ -137,7 +122,6 @@ public class ChangePasswordControllerTest {
     @Test(expected = DataServiceException.class)
     public void changePasswordDataServiceException() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setUid("pmauduit");
         formBean.setPassword("monkey123");
         formBean.setConfirmPassword("monkey123");
         when(result.hasErrors()).thenReturn(false);
@@ -146,37 +130,29 @@ public class ChangePasswordControllerTest {
         ctrlToTest.changePassword(model, formBean, result);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void changePasswordUidMismatch() throws Exception {
-        formBean.setUid("pmauduit1");
         userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-
+        formBean.setPassword("monkey123");
+        formBean.setConfirmPassword("monkey123");
         String ret = ctrlToTest.changePassword(model, formBean, result);
-
-        assertNull(ret);
     }
 
     @Test
     public void changePasswordNotAuthenticated() throws Exception {
-        formBean.setUid("pmauduit");
-
         String ret = ctrlToTest.changePassword(model, formBean, result);
-
-        assertNull(ret);
+        assertEquals("forbidden", ret);
     }
 
     @Test
     public void changePasswordFormBean() {
         ChangePasswordFormBean tested = new ChangePasswordFormBean();
         tested.setConfirmPassword("monkey123");
-        tested.setUid("1");
         tested.setPassword("monkey123");
 
-        assertEquals("1", tested.getUid());
         assertEquals("monkey123", tested.getPassword());
         assertEquals("monkey123", tested.getConfirmPassword());
-        assertEquals("ChangePasswordFormBean [uid=1, confirmPassword=monkey123, password=monkey123]",
-                tested.toString());
+        assertEquals("ChangePasswordFormBean [confirmPassword=monkey123, password=monkey123]", tested.toString());
     }
 
     private void userIsSpringSecurityAuthenticatedAndExistInLdap(String username) {

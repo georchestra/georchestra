@@ -139,7 +139,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
         <label class="col-lg-4 control-label"><s:message code="password.label"/></label>
         <div class="col-lg-8">
           <p class="form-control-static">
-            <a href='<c:out value="${publicContextPath}/account/changePassword?uid=${editUserDetailsFormBean.uid}" />'>
+            <a href='<c:out value="${publicContextPath}/account/changePassword" />'>
               <s:message code="editUserDetailsForm.changePassword.link"/>
             </a>
           </p>
