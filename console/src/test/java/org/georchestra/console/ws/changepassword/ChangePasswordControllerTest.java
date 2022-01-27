@@ -29,7 +29,6 @@ import org.mockito.Mockito;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +45,6 @@ public class ChangePasswordControllerTest {
     private Model model;
     private ChangePasswordFormBean formBean;
     private BindingResult result;
-    private MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Before
     public void setUp() {
@@ -86,24 +84,10 @@ public class ChangePasswordControllerTest {
         assertTrue(Arrays.asList(dataBinder.getAllowedFields()).contains("confirmPassword"));
     }
 
-//    public void setupFormForbidden() throws Exception {
-//        String ret = ctrlToTest.setupForm("notme", model);
-//        assertEquals("forbidden", ret);
-//    }
-
-    @Test
-    public void setupWrongUid() throws DataServiceException {
-        userIsSpringSecurityAuthenticatedAndExistInLdap("me");
-        request.addHeader("sec-username", "notme");
-        String ret = ctrlToTest.setupForm(request, model);
-        assertEquals("forbidden", ret);
-    }
-
     @Test
     public void setupForm() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("me");
-        request.addHeader("sec-username", "me");
-        String ret = ctrlToTest.setupForm(request, model);
+        String ret = ctrlToTest.setupForm(model);
         assertEquals("changePasswordForm", ret);
     }
 

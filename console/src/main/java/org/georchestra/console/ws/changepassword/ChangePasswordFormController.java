@@ -89,11 +89,9 @@ public class ChangePasswordFormController {
      * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, Model model) throws DataServiceException {
-        String uid = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-        if (!checkPermission(uid)) {
-            return "forbidden";
-        }
+    public String setupForm(Model model) throws DataServiceException {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = user.getUsername();
         if (isUserAuthenticatedBySASL(uid)) {
             return "userManagedBySASL";
         }
