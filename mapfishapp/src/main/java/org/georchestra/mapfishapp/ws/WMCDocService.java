@@ -193,6 +193,7 @@ public class WMCDocService extends A_DocService {
         try {
             factory.setXIncludeAware(false);
             factory.setExpandEntityReferences(false);
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 
             builder = factory.newDocumentBuilder();
 
