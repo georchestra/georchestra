@@ -21,23 +21,16 @@ jobs:
       uses: actions/checkout@v1
 
     - name: "Setting up Java"
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v2
       with:
-        java-version: '8.x'
+        java-version: '11'
+        cache: 'maven'
 
     - name: "Configuring Maven"
       run: |
           mkdir -p $HOME/.m2
           # revisit? can't resolve org.openapitools:openapi-generator-maven-plugin:jar:5.0.1 in artifactory-georchestra
           #cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
-
-    - name: "Maven repository caching"
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
 
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :datafeeder --also-make -P-all,datafeeder --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
