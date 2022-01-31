@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <name>LDAP users and groups management library</name>
   <properties>
-    <mapstruct.version>1.4.1.Final</mapstruct.version>
+    <mapstruct.version>1.4.2.Final</mapstruct.version>
   </properties>
   <dependencies>
     <!-- geOrchestra commons -->
