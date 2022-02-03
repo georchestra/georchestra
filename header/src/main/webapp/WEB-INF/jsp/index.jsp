@@ -289,7 +289,7 @@ if(sec_roles != null) {
             <li class="active"><a><fmt:message key="mapstore.home"/></a></li>
             </c:when>
             <c:otherwise>
-            <li><a href="/mapstore/#/home"><fmt:message key="mapstore.home"/></a></li>
+            <li><a href="/mapstore/#home"><fmt:message key="mapstore.home"/></a></li>
             </c:otherwise>
         </c:choose>
 
