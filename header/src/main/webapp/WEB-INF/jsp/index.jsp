@@ -285,6 +285,15 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
+            <c:when test='<%= active.equals("mapstore_home") %>'>
+            <li class="active"><a><fmt:message key="mapstore.home"/></a></li>
+            </c:when>
+            <c:otherwise>
+            <li><a href="/mapstore/#/home"><fmt:message key="mapstore.home"/></a></li>
+            </c:otherwise>
+        </c:choose>
+
+        <c:choose>
             <c:when test='<%= active.equals("geoserver") %>'>
             <li class="active"><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
             </c:when>
