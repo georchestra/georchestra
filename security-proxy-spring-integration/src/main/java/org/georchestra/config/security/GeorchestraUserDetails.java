@@ -194,7 +194,7 @@ public class GeorchestraUserDetails implements UserDetails {
         final String fullJsonUser = getHeader(headers, "sec-user");
         GeorchestraUser user;
         if (StringUtils.hasLength(fullJsonUser)) {
-            log.info("Decoding user from sec-user header");
+            log.debug("Decoding user from sec-user header");
             user = decodeUserFromJSON(fullJsonUser);
         } else {
             user = buildUserFromIndividualHeaders(headers);
