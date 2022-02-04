@@ -11,6 +11,7 @@ import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
+import org.hamcrest.text.IsEqualIgnoringCase;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -89,7 +90,8 @@ public class UsersIT {
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
                         .replace("psc", "C2C")));
 
-        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
+        support.perform(get("/private/users/" + newUserName))
+                .andExpect(jsonPath("$.org").value(new IsEqualIgnoringCase("C2C")))
                 .andExpect(jsonPath("$.uid").value(newUserName));
     }
 

@@ -6,25 +6,22 @@
     <artifactId>root</artifactId>
     <version>20.1-SNAPSHOT</version>
   </parent>
+  <groupId>org.georchestra</groupId>
   <artifactId>geoserver-root</artifactId>
+  <version>20.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
     <gs.version>2.18.3</gs.version>
     <gt.version>24.3</gt.version>
-    <geofence.version>3.4.6.1</geofence.version>
+    <geofence.version>3.5.0</geofence.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
     <jackson.version>2.10.5</jackson.version>
-    <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
-    <spring.version>5.1.16.RELEASE</spring.version>
-    <spring-security.version>5.1.11.RELEASE</spring-security.version>
+    <spring.version>5.1.20.RELEASE</spring.version>
+    <spring-security.version>5.1.13.RELEASE</spring-security.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
-<!--
-    <commons-beanutils.version>1.8.0</commons-beanutils.version>
-    <commons-digester.version>1.7</commons-digester.version>
--->
   </properties>
   <modules>
     <module>geoserver-submodule/src/main</module>
@@ -48,4 +45,55 @@
       </modules>
     </profile>
   </profiles>
+  <!-- forcing dependency versions for GeoServer
+       these come from a comparison with the released upstream GS version (single war) available on sourceforge -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>3.4.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>2.3.31</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>30.1-jre</version>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>1.1.119</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.janino</groupId>
+        <artifactId>janino</artifactId>
+        <version>3.0.8</version>
+      </dependency>
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>5.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna-platform</artifactId>
+        <version>5.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc</artifactId>
+        <version>3.34.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

@@ -888,7 +888,7 @@
                       </run>
                     </image>
                     <image>
-                      <name>georchestra/ldap</name>
+                      <name>georchestra/ldap:20.1.x</name>
                       <alias>ldap</alias>
                       <run>
                         <ports> <!-- expose the mapped port as the ldap_container.port maven property -->
