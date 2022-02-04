@@ -61,7 +61,9 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-
+        if (this.trustedProxies.isEmpty()) {
+            return null;
+        }
         try {
             if (this.trustedProxies.contains(InetAddress.getByName(request.getRemoteAddr()))) {
                 String username = request.getHeader(AUTH_HEADER);
