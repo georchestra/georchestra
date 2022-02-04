@@ -13,7 +13,7 @@ So, here are the steps:
 
  * install the dependencies:
 ```
-sudo apt install postgresql-11-postgis-2.5 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user libgdal-java postfix git
+sudo apt install postgresql-11-postgis-2.5 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user postfix git
 ```
  * Install Java8 from adoptopenJDK:
  ```
@@ -42,8 +42,6 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
    * one for proxy+cas,
    * an other one for GeoServer,
    * and a last one for the other webapps
-
- * install the [native libs](setup/native_libs.md)
 
  * [Deploy the webapps](setup/deploy_wars.md) into each tomcat instances
 
