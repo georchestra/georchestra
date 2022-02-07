@@ -259,7 +259,7 @@
       <dependency>
         <groupId>org.jsondoc</groupId>
         <artifactId>jsondoc-core</artifactId>
-        <version>1.2.11</version>
+        <version>1.2.23</version>
       </dependency>
       <dependency>
         <groupId>log4j</groupId>
