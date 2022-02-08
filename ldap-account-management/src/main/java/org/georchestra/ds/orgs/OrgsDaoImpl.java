@@ -58,8 +58,6 @@ import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.util.StringUtils;
 
-import lombok.Setter;
-
 /**
  * This class manage organization membership
  */
@@ -325,9 +323,11 @@ public class OrgsDaoImpl implements OrgsDao {
                 orgExtension.getAttributeMapper(true));
 
         Stream<Org> orgs = Stream.concat(active.stream(), pending.stream());
-        final Map<String, OrgExt> exts = this.findAllExt().collect(toMap(OrgExt::getId, identity()));
+        // Use lower-case id matching, as per
+        // https://github.com/georchestra/georchestra/issues/3626
+        final Map<String, OrgExt> exts = this.findAllExt().collect(toMap(ext -> ext.getId().toLowerCase(), identity()));
 
-        Stream<Org> all = orgs.map(o -> o.setOrgExt(exts.get(o.getId())));
+        Stream<Org> all = orgs.map(o -> o.setOrgExt(exts.get(o.getId().toLowerCase())));
         return all;
     }
 
