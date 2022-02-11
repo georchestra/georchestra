@@ -91,7 +91,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName.getMethodName(),
                 psqlPort, ldapPort));
         // pre-flight sanity check
-        assertNotNull(ldapTemplate.lookup("cn=admin"));
+        assertNotNull(ldapTemplate.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
