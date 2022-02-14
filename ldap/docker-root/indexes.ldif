@@ -1,8 +1,8 @@
-dn: olcDatabase={1}hdb,cn=config
+dn: olcDatabase={1}mdb,cn=config
 add: olcDbIndex
 olcDbIndex: mail eq,sub,subfinal
 
-dn: olcDatabase={1}hdb,cn=config
+dn: olcDatabase={1}mdb,cn=config
 changetype: modify
 delete: olcDbIndex
 olcDbIndex: cn,uid eq

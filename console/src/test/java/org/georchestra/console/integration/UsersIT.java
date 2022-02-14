@@ -77,7 +77,7 @@ public class UsersIT extends ConsoleIntegrationTest {
     public @Before void before() {
         this.createdUsers = new HashSet<>();
         // pre-flight sanity check
-        assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
+        assertNotNull(ldapTemplateSanityCheck.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 

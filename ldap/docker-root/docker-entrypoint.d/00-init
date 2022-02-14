@@ -40,7 +40,7 @@ if [[ ! -d /etc/ldap/slapd.d || "$SLAPD_FORCE_RECONFIGURE" == "true" ]]; then
         slapd slapd/password2 password $SLAPD_PASSWORD
         slapd shared/organization string $SLAPD_ORGANIZATION
         slapd slapd/domain string $SLAPD_DOMAIN
-        slapd slapd/backend select HDB
+        slapd slapd/backend select MDB
         slapd slapd/allow_ldap_v2 boolean false
         slapd slapd/purge_database boolean false
         slapd slapd/move_old_database boolean true
@@ -58,8 +58,11 @@ EOF
 
     base_string="BASE ${dc_string:1}"
 
-    sed -i "s/^#BASE.*/${base_string}/g" /etc/ldap/ldap.conf
-
+    if [ -f /etc/ldap/ldap.conf ] ; then
+      sed -i "s/^#BASE.*/${base_string}/g" /etc/ldap/ldap.conf
+    else
+        echo $base_string > /etc/ldap/ldap.conf
+    fi
     if [[ -n "$SLAPD_CONFIG_PASSWORD" ]]; then
         password_hash=`slappasswd -s "${SLAPD_CONFIG_PASSWORD}"`
 
