@@ -715,7 +715,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.2</version>
         </plugin>
         <plugin> <!-- plugin to run unit tests -->
           <groupId>org.apache.maven.plugins</groupId>
