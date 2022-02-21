@@ -17,7 +17,7 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
-    <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
+    <spring-boot.version>2.6.3</spring-boot.version>
 
     <gt.version>24.2</gt.version>
     <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
