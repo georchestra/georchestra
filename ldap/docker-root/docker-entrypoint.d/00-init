@@ -12,7 +12,7 @@ SLAPD_FORCE_RECONFIGURE="${SLAPD_FORCE_RECONFIGURE:-false}"
 
 first_run=true
 
-if [[ -f "/var/lib/ldap/DB_CONFIG" ]]; then
+if [[ -f "/var/lib/ldap/DB_CONFIG" || -f "/var/lib/ldap/data.mdb" ]]; then
     first_run=false
 fi
 
