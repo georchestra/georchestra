@@ -1,6 +1,6 @@
 # Setting up the middleware
 
-geOrchestra has been validated to run against Debian Buster, but this version of Debian does not officially include a Java 8 environment, which is the
+geOrchestra has been validated to run against Debian Buster, but this version of Debian does not officially include a Java 11 environment, which is the
 current version of Java supported by geOrchestra. This will then require to install it from the AdoptOpenJDK packages repository (see below).
 
 In this section, you will learn how to install and setup the foundations of your geOrchestra SDI, according to the recommended architecture:
@@ -13,23 +13,23 @@ So, here are the steps:
 
  * install the dependencies:
 ```
-sudo apt install postgresql-11-postgis-2.5 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user postfix git
+sudo apt install postgresql-13-postgis-3 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user postfix git
 ```
- * Install Java8 from adoptopenJDK:
+ * Install Java11 from adoptopenJDK:
  ```
 apt install -y software-properties-common gpg
 wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
 sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 apt update
-apt install adoptopenjdk-8-hotspot/buster
-update-java-alternatives -s adoptopenjdk-8-hotspot-amd64
+apt install adoptopenjdk-11-hotspot/bullseye
+update-java-alternatives -s adoptopenjdk-11-hotspot-amd64
  ```
 
 by default, `tomcat9` will try to find a JVM which follows the debian conventions, which is not the case of the AdoptOpenJDK packages. To make sure That
 the previously installed version is in use, we will have to modify the `/etc/default/tomcat9` file:
 
 ```
-JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 ```
 
  * [set up the application database](setup/postgresql.md)

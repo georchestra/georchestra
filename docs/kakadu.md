@@ -11,7 +11,7 @@ java.lang.UnsatisfiedLinkError: /mnt/geoserver_native_libs/libkdu_jni.so: /lib/x
 `GLIBC_2.27' not found (required by /mnt/geoserver_native_libs/libkdu_jni.so)
 ```
 
-For this reason we'll use the `openjdk:8-jdk` docker image to build the native kakadu libraries.
+For this reason we'll use the `openjdk:11-jdk` docker image to build the native kakadu libraries.
 
 Let's create a directory on the local machine with the uncompressed source files and mount it to a running container:
 

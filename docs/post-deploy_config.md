@@ -27,7 +27,7 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 
 ## Standalone GeoWebCache 
 
-For the standalone GeoWebCache, the proxy should be automatically configured (via [geowebcache.properties](https://github.com/georchestra/datadir/blob/18.06/geowebcache/geowebcache.properties)).
+For the standalone GeoWebCache, the proxy should be automatically configured (via [geowebcache.properties](https://github.com/georchestra/datadir/blob/22.0/geowebcache/geowebcache.properties)).
 
 ## GeoNetwork
 
@@ -55,4 +55,4 @@ In GeoFence, you should configure your geoserver instance with:
  * description = my geoserver instance
  * base url = http://georchestra.mydomain.org/geoserver
  * username = geoserver_privileged_user 
- * password = the LDAP password of the above user, which should be the same as [the one referenced in your datadir](https://github.com/georchestra/datadir/blob/18.06/README.md).
+ * password = the LDAP password of the above user, which should be the same as [the one referenced in your datadir](https://github.com/georchestra/datadir/blob/22.0/README.md).
