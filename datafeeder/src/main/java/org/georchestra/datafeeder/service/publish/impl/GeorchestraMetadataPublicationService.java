@@ -107,7 +107,9 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
             m.setKeywords(new ArrayList<>(publishing.getKeywords()));
         m.setCreationDate(publishing.getDatasetCreationDate());
         m.setLineage(publishing.getDatasetCreationProcessDescription());
-        m.setResourceType("series");
+
+        m.setResourceType(publishingConfiguration.getGeonetwork().getDefaultResourceType());
+
         m.getOnlineResources().add(wmsOnlineResource(d));
         m.getOnlineResources().add(wfsOnlineResource(d));
         m.getOnlineResources().add(downloadOnlineResource(d));
