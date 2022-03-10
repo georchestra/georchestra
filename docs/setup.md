@@ -45,9 +45,11 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 
  * [Deploy the webapps](setup/deploy_wars.md) into each tomcat instances
 
+ * If you are willing to deploy the Datafeeder, please [follow these notes](setup/datafeeder.md).
+
 ## Compatibility notes
 
-This guide assumes the OS is **Debian's latest stable** (Buster) and **Tomcat 9** is deployed.
+This guide assumes the OS is **Debian's latest stable** (Bullseye) and **Tomcat 9** is deployed.
 
 geOrchestra 20.0.x and 20.1.x have been tested with tomcat 9 on Debian 10 (Buster). This is the recommended setup as of today.
 
