@@ -33,6 +33,10 @@ jobs:
           # revisit? can't resolve org.openapitools:openapi-generator-maven-plugin:jar:5.0.1 in artifactory-georchestra
           #cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
+    - name: "Build Georchestra dependencies needed for GeoNetwork"
+      run: ./mvnw install -pl :security-proxy-spring-integration,testcontainers --also-make -P-all -T1C -ntp -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
+
+
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :datafeeder --also-make -P-all,datafeeder --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
       # note "-pl :datafeeder --also-make" builds only the project and its dependencies
