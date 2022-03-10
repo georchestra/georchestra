@@ -4,7 +4,7 @@ GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-fl
 BTAG=latest
 
 docker-pull-jetty:
-	docker pull jetty:9-jre8
+	docker pull jetty:9-jre11
 
 docker-build-ldap:
 	docker pull debian:buster

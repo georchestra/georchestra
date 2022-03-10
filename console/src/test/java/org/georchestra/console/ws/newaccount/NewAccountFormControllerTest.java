@@ -63,7 +63,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.net.ssl.*" })
+@PowerMockIgnore({ "javax.net.ssl.*", "jdk.internal.reflect.*" })
 @PrepareForTest({ ReCaptchaV2.class, URL.class, DataOutputStream.class })
 public class NewAccountFormControllerTest {
 

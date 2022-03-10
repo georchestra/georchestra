@@ -24,7 +24,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'temurin'
-        java-version: '8'
+        java-version: '11'
         cache: 'maven'
 
 # Could not transfer artifact org.springframework.boot:spring-boot-dependencies:pom:1.5.19.RELEASE from/to artifactory-georchestra
