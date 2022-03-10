@@ -220,9 +220,10 @@ Default template to apply MetadataRecordProperties.java properties to a record t
     </gco:CharacterString>
   </xsl:template>
 
-  <xsl:template match="//gmd:hierarchyLevel/gmd:MD_ScopeCode">
-    <gmd:MD_ScopeCode
-      codeList="http://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ScopeCode" codeListValue="series" />
+  <xsl:template match="gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue">
+    <xsl:attribute name="codeListValue">
+      <xsl:value-of select="$props//resourceType" />
+    </xsl:attribute>
   </xsl:template>
 
   <xsl:template
