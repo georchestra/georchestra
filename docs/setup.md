@@ -13,7 +13,7 @@ So, here are the steps:
 
  * install the dependencies:
 ```
-sudo apt install postgresql-14-postgis-3 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user postfix git
+sudo apt install postgresql-13-postgis-3 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user postfix git
 ```
  * Install Java11 from adoptopenJDK:
  ```
@@ -21,7 +21,7 @@ apt install -y software-properties-common gpg
 wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
 sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 apt update
-apt install adoptopenjdk-11-hotspot/buster
+apt install adoptopenjdk-11-hotspot/bullseye
 update-java-alternatives -s adoptopenjdk-11-hotspot-amd64
  ```
 
