@@ -35,7 +35,7 @@ In your `~/.m2/settings.xml`, add a mirror:
 
 You should install the required packages:
 ```
-sudo apt-get install python-virtualenv openjdk-8-jdk ant ant-optional
+sudo apt-get install python-virtualenv openjdk-11-jdk ant ant-optional
 ```
 
 ## Build the modules
