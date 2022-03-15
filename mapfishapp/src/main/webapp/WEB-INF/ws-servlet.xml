@@ -27,7 +27,10 @@
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?user=${pgsqlUser}&amp;password=${pgsqlPassword}"/>
+        <!-- $pgsqlDatabase may contain special PG parameters such as "georchestra?sslmode=require" . see default|mapfishapp.properties -->
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+        <property name="user" value="${pgsqlUser}" />
+        <property name="password" value="${pgsqlPassword}" />
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="2"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
