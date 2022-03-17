@@ -106,6 +106,21 @@ public class TemplateMapperTest {
 
     }
 
+    @Test
+    public void testApplyTemplateResourceType() {
+        final MetadataRecordProperties mdprops = new MetadataPropertiesTestSupport().createTestProps();
+        mdprops.setResourceType("dataset");
+        Supplier<String> recordSupplier = mapper.apply(mdprops);
+        assertNotNull(recordSupplier);
+        String record = recordSupplier.get();
+        assertNotNull(record);
+        log.info(record);
+        Document dom = parse(record);
+
+        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode/@codeListValue", mdprops.getResourceType());
+
+    }
+
     private Document parse(String record) {
         Document dom;
         try {

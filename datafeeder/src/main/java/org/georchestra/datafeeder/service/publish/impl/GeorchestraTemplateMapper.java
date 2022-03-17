@@ -56,7 +56,7 @@ public class GeorchestraTemplateMapper extends TemplateMapper {
         if (transformURI != null) {
             return transformURI;
         }
-        log.info("No metadata template provided in georchstra datadir, using default XSL transform");
+        log.info("No metadata template provided in georchestra datadir, using default XSL transform");
         return super.resolveTransformURI();
     }
 
