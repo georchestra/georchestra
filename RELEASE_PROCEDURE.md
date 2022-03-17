@@ -192,10 +192,10 @@ At the project beginning, the developers wanted to keep every parts of geOrchest
 this big monolithic repository made less sense. For example, across releases, some of the webapps were evolving fast, and some other did not move for a long time.
 What is the point of releasing the almost exact same version of an artifact if the code between 2 versions did not change significantly ?
 
-* When migrating to CAS6, the upstream procedure to customize our CAS instance has been followed, starting from the CAS overlay webapp project,
+*  When migrating to CAS6, the upstream procedure to customize our CAS instance has been followed, starting from the CAS overlay webapp project,
 which is not based on maven, but on gradle. While mixing both build systems is probably possible, it does not make it necessarily desirable.
 
-* `Mapstore2-georchestra`, the new viewer which aims to replace mapfishapp, has been developped separately by an other team than the core one taking care of geOrchestra.
+*  `Mapstore2-georchestra`, the new viewer which aims to replace mapfishapp, has been developped separately by an other team than the core one taking care of geOrchestra.
 Technically speaking, it made more sense to create a separate repository and give the team in charge of the development access to it, instead of the whole geOrchestra
 repository.
 
@@ -210,9 +210,9 @@ a branch so that an artifact can be generated.
 
 The CICD processes provide 3 main types of artifacts:
 
-* (generic) web archives (WAR) - from a self-hosted buildbot
-* debian packages - from a self hosted buildbot
-* docker images - via the Github Actions
+*  (generic) web archives (WAR) - from a self-hosted buildbot
+*  debian packages - from a self hosted buildbot
+*  docker images - via the Github Actions
 
 The generic WARS as well as the debian packages are built following a branch (master, 20.x, ...). The docker images are following the same rules,
 but are also creating an image for each tag (e.g. "releases"). The main difference here is that generic wars & debian packages do not have an artifact for tags / releases,
