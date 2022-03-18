@@ -1,0 +1,29 @@
+name: "datahub"
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+
+    - name: "Checking out"
+      uses: actions/checkout@v3
+      with:
+        repository: "geonetwork/geonetwork-ui"
+
+    - name: "npm install"
+      run: npm i
+
+    - name: "building the docker image"
+      run: node_modules/.bin/nx run datahub:docker-build --tag=georchestra/datahub
+
+    - name: "Login to docker-hub"
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+    - name: "Push the generated docker image"
+      run: docker push georchestra/datahub:latest
