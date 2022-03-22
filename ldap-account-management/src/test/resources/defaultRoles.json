@@ -92,7 +92,7 @@
 		"id": "ad243705-eeec-4d1c-aa28-abb631e23a65",
 		"name": "USER",
 		"description": "This role is required to log into geOrchestra",
-		"lastUpdated": "712b4da15da3614510052e2fe956ae10af74b792532bcd4f452c1ab924e10cf7",
+		"lastUpdated": "6e125ba6fafdecb6b9cd46c269f0db64e4e1c49315f9766c9cd82d768493bff0",
 		"members": [
 			"testuser",
 			"testeditor",
