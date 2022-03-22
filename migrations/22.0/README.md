@@ -13,7 +13,7 @@ Please refer to the [installation nodes](../../setup/geonetwork4.md) for install
 ### Link to external viewer
 
 To use MapStore as GeoNetwork's default viewer:
- * open the `Admin console`->`User Interface` at /geonetwork/srv/fre/admin.console#/settings/ui
+ * open the `Admin console`->`User Interface` at `/geonetwork/srv/fre/admin.console#/settings/ui`
  * search for the "viewer" section
  * check the "Use an external viewer" box
  * update the "Viewer URL template" field to the following:
@@ -46,13 +46,13 @@ UPDATE geonetwork.users SET authtype = '';
 The main modification made in this release was to:
 
 * introduce a new object class `georchestraRole` on the roles (branch `ou=roles`)
-* introduce on each object class from the georchestra custom schema a new
+* introduce on each object class from the _geOrchestra_ custom schema a new
   attribute `georchestraObjectIdentifier`.
 
 This new attribute should take a unique identifier in the form of a [uuid](https://en.wikipedia.org/wiki/Universally_unique_identifier).
 
-This change was motivated to be able to synchronize objects on GeoNetwork, and rely
- on a stable identifier between the LDAP and the database in a more reliable way.
+This change was motivated to be able to synchronize objects in GeoNetwork, and rely
+on a stable identifier between the LDAP and the database in a more reliable way.
 
 Below is a suggested modification procedure:
 
@@ -122,7 +122,7 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f add-geor-role-class.ldif
 rm add-geor-role-class.ldif
 ```
 
-# Adding the identifier to the 2 existing object classes
+### Adding the identifier to the 2 existing object classes
 
 ```bash
 cat <<EOF > modify-geor-classes.ldif
@@ -187,6 +187,6 @@ rm modify-*.ldif
 
 ## CAS 6
 
-Existing CAS webapp sources have been removed from this repository. The new CAS webapp sources for georchestra now live in their [own repository](https://github.com/georchestra/georchestra-cas-server).
+Existing CAS webapp sources have been removed from this repository. The new CAS webapp sources for georchestra now live in their [own one](https://github.com/georchestra/georchestra-cas-server).
 
 For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799) and [installation instructions](../../setup/cas6.md).
