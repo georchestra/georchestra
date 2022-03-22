@@ -50,23 +50,6 @@
 		"notes": null
 	},
 	{
-		"username": "testuseradmin",
-		"roles": [
-			"GN_USERADMIN",
-			"USER"
-		],
-		"organization": "PSC",
-		"id": "e75b336d-a9fc-4671-8002-e1a49c2ac123",
-		"lastUpdated": "4822e624d3cad3f5f4e03cd0067374cf2da872f387418abe5290358a26b34c37",
-		"firstName": "Test",
-		"lastName": "USERADMIN",
-		"email": "psc+testuseradmin@georchestra.org",
-		"postalAddress": null,
-		"telephoneNumber": null,
-		"title": null,
-		"notes": "Test user with UserAdmin GeoNetwork profile "
-	},
-	{
 		"username": "testadmin",
 		"roles": [
 			"ADMINISTRATOR",
