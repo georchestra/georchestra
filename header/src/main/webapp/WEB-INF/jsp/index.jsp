@@ -267,31 +267,23 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("mapfishapp") %>'>
+            <c:when test='<%= active.equals("mapstore") %>'>
             <li class="active"><a><fmt:message key="viewer"/></a></li>
             </c:when>
             <c:otherwise>
-            <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
+            <li><a href="/mapstore/#/"><fmt:message key="viewer"/></a></li>
             </c:otherwise>
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("mapstore") %>'>
-            <li class="active"><a><fmt:message key="mapstore"/></a></li>
+            <c:when test='<%= active.equals("mapstore.home") %>'>
+            <li class="active"><a><fmt:message key="maps"/></a></li>
             </c:when>
             <c:otherwise>
-            <li><a href="/mapstore/"><fmt:message key="mapstore"/></a></li>
+            <li><a href="/mapstore/#/home"><fmt:message key="maps"/></a></li>
             </c:otherwise>
         </c:choose>
 
-        <c:choose>
-            <c:when test='<%= active.equals("mapstore_home") %>'>
-            <li class="active"><a><fmt:message key="mapstore.home"/></a></li>
-            </c:when>
-            <c:otherwise>
-            <li><a href="/mapstore/#home"><fmt:message key="mapstore.home"/></a></li>
-            </c:otherwise>
-        </c:choose>
 
         <c:choose>
             <c:when test='<%= active.equals("geoserver") %>'>
