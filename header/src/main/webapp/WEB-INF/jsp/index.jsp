@@ -276,7 +276,7 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= active.equals("mapstore.home") %>'>
+            <c:when test='<%= active.equals("mapstore-home") %>'>
             <li class="active"><a><fmt:message key="maps"/></a></li>
             </c:when>
             <c:otherwise>
