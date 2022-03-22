@@ -2,6 +2,14 @@
 
 ## GeoNetwork 4
 
+### Software dependencies
+
+GeoNetwork 4 requires at least an Elasticsearch to function, as the indexes are
+now stored into such a server. A Kibana can also be installed, to provide a
+dashboard integrated to the GeoNetwork4 admin user interface.
+
+Please refer to the [installation nodes](../../setup/geonetwork4.md) for installation instructions.
+
 ### Link to external viewer
 
 To use MapStore as GeoNetwork's default viewer:
@@ -179,6 +187,6 @@ rm modify-*.ldif
 
 ## CAS 6
 
-Existing CAS webapp has been removed. The new CAS authentication for georchestra lives in its [own repository](https://github.com/georchestra/georchestra-cas-server).
+Existing CAS webapp sources have been removed from this repository. The new CAS webapp sources for georchestra now live in their [own repository](https://github.com/georchestra/georchestra-cas-server).
 
-For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799).
+For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799) and [installation instructions](../../setup/cas6.md).
