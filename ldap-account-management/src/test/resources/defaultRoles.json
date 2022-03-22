@@ -55,15 +55,6 @@
 		]
 	},
 	{
-		"id": "5fd23d51-0d68-4d60-98ab-59fb383ebe39",
-		"name": "GN_USERADMIN",
-		"description": "This role grants admin access to the user's GeoNetwork group",
-		"lastUpdated": "03db56d413ee6220212b0a6b5b47b217407d212a5bd2c3ef95f42b07db006aa3",
-		"members": [
-			"testuseradmin"
-		]
-	},
-	{
 		"id": "7ca8708f-8056-48d0-abff-0c34ed66328a",
 		"name": "MAPSTORE_ADMIN",
 		"description": "This role grants administrative access to MapStore2",
@@ -107,8 +98,7 @@
 			"testeditor",
 			"testreviewer",
 			"testadmin",
-			"testdelegatedadmin",
-			"testuseradmin"
-		]
+			"testdelegatedadmin"
+        ]
 	}
 ]
