@@ -352,10 +352,10 @@ if(sec_roles != null) {
                         <c:when test='<%= msadmin == true %>'>
                         <c:choose>
                             <c:when test='<%= active.equals("msadmin") %>'>
-                        <li class="active"><a><fmt:message key="mapstore"/></a></li>
+                        <li class="active"><a><fmt:message key="viewer"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="/mapstore/#/admin"><fmt:message key="mapstore"/></a></li>
+                        <li><a href="/mapstore/#/admin"><fmt:message key="viewer"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
