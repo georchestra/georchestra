@@ -15,7 +15,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>22.0-SNAPSHOT</version>
+  <version>22.0.0</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -59,7 +59,7 @@
     <log4j1.version>1.2.17</log4j1.version>
     <georchestra.version>${project.version}</georchestra.version>
     <server>generic</server>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>22.0</packageDatadirScmVersion>
   </properties>
   <mailingLists>
     <mailingList>
@@ -624,7 +624,7 @@
               <exportAntProperties>true</exportAntProperties>
               <target>
                 <condition property="project.packageVersion"
-                  value="99.master.${maven.build.timestamp}~${build.commit.id.abbrev}"
+                    value="${buid.closest.tag.name}"
                   else="${project.version}.${maven.build.timestamp}~${build.commit.id.abbrev}">
                   <matches string="${project.version}" pattern="SNAPSHOT$" />
                 </condition>
