@@ -47,6 +47,18 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 
  * If you are willing to deploy the Datafeeder, please [follow these notes](setup/datafeeder.md).
 
+## Notes about geOrchestra 22.0
+
+Some major updates come with this geOrchestra version, especially regading CAS and GeoNetwork,
+and a new webapp has been introduced, the _Datafeeder_.
+
+Please refer to these following setup notes:
+
+* [About CAS6](./setup/cas6.md)
+* [About Geonetwork4](./setup/geonetwork4.md)
+* [About the Datafeeder setup](./setup/datafeeder.md)
+
+
 ## Compatibility notes
 
 This guide assumes the OS is **Debian's latest stable** (Bullseye) and **Tomcat 9** is deployed.

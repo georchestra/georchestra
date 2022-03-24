@@ -1,8 +1,8 @@
 # Tomcat
 
-We need 3 tomcat instances:
- * one for the proxy and cas webapps
- * an other one for geoserver
+It is advised to use 3 different tomcat instances:
+ * one for the `proxy` and `cas` webapps
+ * an other one dedicated to the `geoserver` webapp
  * the last one for the other webapps
 
 ## Prerequisites
@@ -166,7 +166,7 @@ sudo systemctl daemon-reload
 In ```/etc/default/tomcat9-proxycas```, we will adapt the JAVA_HOME & JAVA_OPTS environment variables to suit our needs:
 
 ```
-JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 ```
 
 And later add these lines (change the ```STOREPASSWORD``` string):
@@ -309,7 +309,7 @@ sudo systemctl enable tomcat9-georchestra
 
 In ```/etc/default/tomcat9-georchestra```, we need to adapt the JAVA_HOME & JAVA_OPTS variables as well:
 ```
-JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 ```
 
 And later add these lines (change the ```STOREPASSWORD``` string):
@@ -501,7 +501,7 @@ motivations behind setting this parameter.
 
 In ```/etc/default/tomcat9-geoserver0```:
 ```
-JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 ```
 
 And later add these lines:
