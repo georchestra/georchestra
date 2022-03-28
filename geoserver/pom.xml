@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.georchestra</groupId>
   <artifactId>geoserver-root</artifactId>
-  <version>22.0.0</version>
+  <version>22.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
@@ -14,7 +14,7 @@
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
     <jackson.version>2.10.5</jackson.version>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>22.0</packageDatadirScmVersion>
     <server>generic</server>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
     <spring.version>5.1.20.RELEASE</spring.version>

@@ -9,7 +9,7 @@
 [submodule "geonetwork"]
 	path = geonetwork
 	url = https://github.com/georchestra/geonetwork.git
-	branch = georchestra-gn4-4.0.6
+	branch = georchestra-gn4-4.0.6-22.0.x
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = https://github.com/georchestra/styler.git
