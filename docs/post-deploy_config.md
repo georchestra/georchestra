@@ -43,6 +43,8 @@ Port                80 	￼
 Secure Port	    8443
 ```
 
+ * on `/geonetwork/srv/fre/admin.console#/settings/ui` check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to https://your.fqdn/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]
+
  * enable "XLINK RESOLVER"
  * enable INSPIRE + search panel
  * check "use Proxy" in case your connection to the internet is proxied
