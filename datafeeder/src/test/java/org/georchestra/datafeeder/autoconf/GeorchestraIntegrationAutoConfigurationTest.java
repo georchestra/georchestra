@@ -72,8 +72,7 @@ public class GeorchestraIntegrationAutoConfigurationTest {
 
     public @Test void testDefaultDotPropertiesFromGeorchestraDatadir() {
         Environment env = context.getEnvironment();
-        assertEquals("is default.properties loaded from src/test/resources/datadir?", "https",
-                env.getProperty("scheme"));
+
         assertEquals("is default.properties loaded from src/test/resources/datadir?", "georchestra.test.org",
                 env.getProperty("domainName"));
     }
