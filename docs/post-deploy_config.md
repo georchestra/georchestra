@@ -42,8 +42,8 @@ Host                georchestra.mydomain.org
 Port                80 	￼     
 Secure Port	    8443
 ```
-
- * on `/geonetwork/srv/fre/admin.console#/settings/ui` check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to https://your.fqdn/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]
+ * on `/geonetwork/srv/fre/admin.console#/settings` you should change the default UI from `default` to `georchestra`
+ * on `/geonetwork/srv/fre/admin.console#/settings/ui` check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]`
 
  * enable "XLINK RESOLVER"
  * enable INSPIRE + search panel
