@@ -50,7 +50,7 @@ Ext.define('Analytics.view.Viewport', {
                     region: 'center',
                     xtype: 'ogcuserslist'
                 },{
-                    title: tr('Organisms'),
+                    title: tr('Organisations'),
                     split: true,
                     region: 'east',
                     width: '25%',
