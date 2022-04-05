@@ -29,7 +29,7 @@ Ext.define('Analytics.view.OGCOrgs', {
                 dataIndex: 'org',
                 flex: 1, // will be resized
                 width: 700, // mandatory with ext 4.1 rc1 (should not be)
-                text: tr('Organism')
+                text: tr('Organisation')
             }, {
                 dataIndex: 'count',
                 flex: 0, // will not be resized
