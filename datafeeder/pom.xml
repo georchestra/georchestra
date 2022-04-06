@@ -121,7 +121,7 @@
         <artifactId>gt-shapefile</artifactId>
         <version>${gt.version}</version>
       </dependency>
-      <!-- 
+      <!--
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gt-geopkg</artifactId>
@@ -361,7 +361,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <!-- test scoped for spring boot's (1.5.19.RELEASE) TestRestTemplate pass request headers (sec-* headers ignored with 
+      <!-- test scoped for spring boot's (1.5.19.RELEASE) TestRestTemplate pass request headers (sec-* headers ignored with
         default java client) -->
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
@@ -547,9 +547,34 @@
   <profiles>
     <profile>
       <id>debianPackage</id>
+      <properties>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+      </properties>
       <build>
         <finalName>${project.artifactId}</finalName>
          <plugins>
+             <plugin>
+               <groupId>pl.project13.maven</groupId>
+               <artifactId>git-commit-id-plugin</artifactId>
+     	         <version>4.0.0</version>
+               <executions>
+                 <execution>
+                   <goals>
+                     <goal>revision</goal>
+                   </goals>
+                 </execution>
+               </executions>
+               <configuration>
+                 <prefix>build</prefix>
+                 <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                 <skipPoms>false</skipPoms>
+                 <verbose>false</verbose>
+                 <gitDescribe>
+                   <tags>true</tags>
+                 </gitDescribe>
+                 <injectIntoSysProperties>true</injectIntoSysProperties>
+               </configuration>
+             </plugin>
              <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-plugin</artifactId>
@@ -597,6 +622,23 @@
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.7</version>
                     <executions>
+                        <execution>
+                          <id>set-project-packageversion</id>
+                          <phase>package</phase>
+                          <goals>
+                            <goal>run</goal>
+                          </goals>
+                          <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <condition property="project.packageVersion"
+                                  value="${build.closest.tag.name}.${maven.build.timestamp}~${build.commit.id.abbrev}"
+                                  else="${project.version}.${maven.build.timestamp}~${build.commit.id.abbrev}">
+                                <matches string="${project.version}" pattern="SNAPSHOT$" />
+                              </condition>
+                            </target>
+                          </configuration>
+                        </execution>
                         <execution>
                             <id>remove-useless-directories</id>
                             <phase>package</phase>
