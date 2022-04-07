@@ -632,9 +632,9 @@
                             <exportAntProperties>true</exportAntProperties>
                             <target>
                                 <condition property="project.packageVersion"
-                                  value="99-master.${maven.build.timestamp}~${build.commit.id.abbrev}"
-                                  else="${project.version}.${maven.build.timestamp}~${build.commit.id.abbrev}">
-                                <matches string="${project.version}" pattern="SNAPSHOT$" />
+                                  value="${build.closest.tag.name}.${maven.build.timestamp}~${build.commit.id.abbrev}"
+                                  else="99.master.${maven.build.timestamp}~${build.commit.id.abbrev}">
+                                <matches string="${build.branch}" pattern="\d{2}\.\d\.x$" />
                               </condition>
                             </target>
                           </configuration>
