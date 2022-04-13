@@ -31,9 +31,9 @@ docker-build-geoserver: docker-pull-jetty
 
 docker-build-geoserver-geofence: docker-pull-jetty
 	cd geoserver; \
-	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
+	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -Pgeofence,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd webapp; \
-	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
+	mvn clean install docker:build -DdockerImageTags=geofence-${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-geowebcache: docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests -pl geowebcache-webapp

@@ -8,8 +8,8 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.18.3</gs.version>
-    <gt.version>24.3</gt.version>
+    <gs.version>2.18.6</gs.version>
+    <gt.version>24.6</gt.version>
     <geofence.version>3.5.0</geofence.version>
     <jetty.version>9.4.18.v20190429</jetty.version>
     <marlin.version>0.9.3</marlin.version>
@@ -17,7 +17,7 @@
     <packageDatadirScmVersion>22.0</packageDatadirScmVersion>
     <server>generic</server>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
-    <spring.version>5.1.20.RELEASE</spring.version>
+    <spring.version>5.2.20.RELEASE</spring.version>
     <spring-security.version>5.1.13.RELEASE</spring-security.version>
     <hibernate.version>3.6.9.Final</hibernate.version>
 <!--
@@ -54,6 +54,11 @@
       <url>https://repo.osgeo.org/repository/release/</url>
       <snapshots><enabled>false</enabled></snapshots>
       <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+      <id>geosolutions</id>
+      <name>geosolutions</name>
+      <url>http://maven.geo-solutions.it/</url>
     </repository>
   </repositories>
 </project>
