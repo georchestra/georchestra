@@ -1064,7 +1064,7 @@
       <!-- contains release (including third-party-dependences)                            -->
       <!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) -->
       <!-- geosolutions (http://maven.geo-solutions.it/)                                   -->
-      <snapshots><enabled>false</enabled></snapshots>
+      <snapshots><enabled>true</enabled></snapshots>
       <releases><enabled>true</enabled></releases>
     </repository>
     <repository>
