@@ -32,11 +32,7 @@
     <module>geoserver-submodule/src/web/core</module>
     <!-- this ones are not provided onto the osgeo m2 repo -->
     <module>geoserver-submodule/src/extension/wmts-multi-dimensional</module>
-    <module>geoserver-submodule/src/community/ogcapi/ogcapi-styles</module>
-    <module>geoserver-submodule/src/community/ogcapi/ogcapi-tiles</module>
-    <module>geoserver-submodule/src/community/ogcapi/ogcapi-images</module>
-    <module>geoserver-submodule/src/community/ogcapi/ogcapi-changeset</module>
-    <module>geoserver-submodule/src/community/ogcapi/ogcapi-tiled-features</module>
+    <module>geoserver-submodule/src/community/ogcapi</module>
     <module>webapp</module>
   </modules>
   <profiles>
