@@ -206,6 +206,10 @@ Historically Geonetwork and GeoServer have their own forks of the upstream repos
 Releasing a new version of geOrchestra when it comes to these new repositories is not very different though: the process is to also set a tag and/or create
 a branch so that an artifact can be generated.
 
+**To summarize, when releasing a patch release, do not forget to:**
+* Add a tag on top of the stable branch into georchestra/mapstore2-georchestra (as of today, the branch is the `2021.02.xx` one
+* if version is greater than 22.0.0.0, then a tag will also be needed onto georchestra/georchestra-cas-server in the appropriate branch (`22.0.x`)
+
 ### Packaging
 
 The CICD processes provide 3 main types of artifacts:
