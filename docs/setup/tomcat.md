@@ -549,16 +549,9 @@ JAVA_OPTS="$JAVA_OPTS \
 In case your connection to the internet needs to pass through a proxy, you should also add the ```-Dhttp.proxyHost=xxxx -Dhttp.proxyPort=xxxx``` options here.
 
 
-### Notes about the s3-geotiff module
+### Notes about the s3-geotiff and COG modules
 
-The `s3-geotiff` module which allows to optimally store geotiff files onto s3-compatible buckets is now included by default. If you plan
-to use its features in your GeoServer instance, you will also have to add the following JAVA_OPTS options:
-
-```
-JAVA_OPTS="$JAVA_OPTS \
-            -Ds3.caching.ehCacheConfig=/etc/georchestra/geoserver/s3-geotiff/s3-geotiff-ehcache.xml \
-            -Ds3.properties.location=/etc/georchestra/geoserver/s3-geotiff/s3.properties \"
-```
+The `s3-geotiff` module was removed from supported datastores and it was replaced by the `cog` (Cloud Optimized Geotiff) module.
 
 ### Note for geofence users
 

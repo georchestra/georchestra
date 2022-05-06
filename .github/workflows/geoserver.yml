@@ -1,7 +1,7 @@
 ---
 env:
   # The following variable should be set to the same value as in the Makefile at the root of the repository
-  GEOSERVER_EXTENSION_PROFILES: colormap,mbtiles,wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,authkey,mapstore2,mbstyle,ogcapi,web-resource,flatgeobuf,sldservice
+  GEOSERVER_EXTENSION_PROFILES: cog,colormap,mbtiles,wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,jp2k,authkey,mapstore2,mbstyle,ogcapi,web-resource,flatgeobuf,sldservice
 
 name: "geoserver"
 on:
@@ -29,16 +29,16 @@ jobs:
     - name: "Setting up Java"
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '8'
         distribution: 'adopt'
         cache: 'maven'
 
     - name: "Installing & checking formatting"
-      run: ./mvnw --no-transfer-progress -B -P-all,geoserver,geofence -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw --no-transfer-progress -B -P-all,community,geoserver,geofence -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
       working-directory: geoserver/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw -P-community --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra'

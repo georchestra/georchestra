@@ -936,33 +936,13 @@
       </dependencies>
     </profile>
     <profile>
-      <id>s3-geotiff</id>
+      <id>cog</id>
       <dependencies>
         <dependency>
           <groupId>org.geoserver.community</groupId>
-          <artifactId>gs-s3-geotiff</artifactId>
+          <artifactId>gs-cog</artifactId>
           <version>${gs.version}</version>
-          <!-- instead of excluding the buggy gt-s3-geotiff version here, leave it and let maven-war-plugin exclude it
-          from WEB-INF/lib, so that the transitive dependencies are still added -->
-          <!--
-          <exclusions>
-            <exclusion>
-              <groupId>org.geotools</groupId>
-              <artifactId>gt-s3-geotiff</artifactId>
-            </exclusion>
-          </exclusions>
-          -->
         </dependency>
-        <!-- include the patched gt-s3-geotiff with the fixed version, stored as part of the project because of GeoServer 2.15.x EOL -->
-        <!--
-        <dependency>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt-s3-geotiff</artifactId>
-          <version>18-SNAPSHOT</version>
-          <scope>system</scope>
-          <systemPath>${project.basedir}/../lib/${gs.version}/gt-s3-geotiff-18-SNAPSHOT.jar</systemPath>
-        </dependency>
-         -->
       </dependencies>
     </profile>
     <profile>

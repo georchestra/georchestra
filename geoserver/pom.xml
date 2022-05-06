@@ -30,9 +30,6 @@
     <module>geoserver-submodule/src/restconfig</module>
     <module>geoserver-submodule/src/gwc</module>
     <module>geoserver-submodule/src/web/core</module>
-    <!-- this ones are not provided onto the osgeo m2 repo -->
-    <module>geoserver-submodule/src/extension/wmts-multi-dimensional</module>
-    <module>geoserver-submodule/src/community/ogcapi</module>
     <module>webapp</module>
   </modules>
   <profiles>
@@ -44,9 +41,13 @@
       </modules>
     </profile>
     <profile>
-      <id>s3-geotiff</id>
+      <id>community</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
       <modules>
-        <module>geoserver-submodule/src/community/s3-geotiff</module>
+        <!-- this ones are not provided onto the osgeo m2 repo -->
+        <module>geoserver-submodule/src/extension/wmts-multi-dimensional</module>
+        <module>geoserver-submodule/src/community/ogcapi</module>
+        <module>geoserver-submodule/src/community/cog</module>
       </modules>
     </profile>
   </profiles>
