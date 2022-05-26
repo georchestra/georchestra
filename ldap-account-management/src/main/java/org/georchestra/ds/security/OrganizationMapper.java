@@ -20,6 +20,8 @@ package org.georchestra.ds.security;
 
 import static org.mapstruct.ReportingPolicy.ERROR;
 
+import java.util.UUID;
+
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.security.model.GeorchestraUserHasher;
 import org.georchestra.security.model.Organization;
@@ -28,8 +30,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", uses = UUIDMapper.class, unmappedTargetPolicy = ERROR)
-interface OrganizationMapper {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR)
+public interface OrganizationMapper {
 
     @Mapping(target = "id", source = "uniqueIdentifier")
     @Mapping(target = "shortName", source = "id")
@@ -54,5 +56,9 @@ interface OrganizationMapper {
     default void addLastUpdated(Org source, @MappingTarget Organization target) {
         String hash = GeorchestraUserHasher.createHash(target);
         target.setLastUpdated(hash);
+    }
+
+    default String map(UUID value) {
+        return value == null ? null : value.toString();
     }
 }

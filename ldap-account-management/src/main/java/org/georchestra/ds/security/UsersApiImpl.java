@@ -34,12 +34,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import lombok.Setter;
+
 @Service
 public class UsersApiImpl implements UsersApi {
 
-    private @Autowired UserRule userRule;
-    private @Autowired AccountDao accountsDao;
-    private @Autowired UserMapper mapper;
+    private @Autowired @Setter UserRule userRule;
+    private @Autowired @Setter AccountDao accountsDao;
+    private @Autowired @Setter UserMapper mapper;
 
     @Override
     public List<GeorchestraUser> findAll() {
