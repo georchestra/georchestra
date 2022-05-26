@@ -20,14 +20,16 @@ package org.georchestra.ds.security;
 
 import static org.mapstruct.ReportingPolicy.ERROR;
 
+import java.util.UUID;
+
 import org.georchestra.security.model.GeorchestraUserHasher;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
-interface RoleMapper {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR)
+public interface RoleMapper {
 
     @Mapping(target = "id", source = "uniqueIdentifier")
     @Mapping(target = "members", source = "userList")
@@ -39,5 +41,9 @@ interface RoleMapper {
             @MappingTarget org.georchestra.security.model.Role target) {
         String hash = GeorchestraUserHasher.createHash(target);
         target.setLastUpdated(hash);
+    }
+
+    default String map(UUID value) {
+        return value == null ? null : value.toString();
     }
 }

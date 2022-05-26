@@ -33,10 +33,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Predicates;
 
+import lombok.Setter;
+
 @Service
 public class RolesApiImpl implements RolesApi {
-    private @Autowired RoleDao roleDao;
-    private @Autowired RoleMapper roleMapper;
+    private @Autowired @Setter RoleDao roleDao;
+    private @Autowired @Setter RoleMapper roleMapper;
 
     @Override
     public Optional<Role> findByName(String name) {

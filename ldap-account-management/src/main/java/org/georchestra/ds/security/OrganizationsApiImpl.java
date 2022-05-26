@@ -32,11 +32,13 @@ import org.georchestra.security.model.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.Setter;
+
 @Service
 public class OrganizationsApiImpl implements OrganizationsApi {
 
-    private @Autowired OrgsDao orgsDao;
-    private @Autowired OrganizationMapper orgMapper;
+    private @Autowired @Setter OrgsDao orgsDao;
+    private @Autowired @Setter OrganizationMapper orgMapper;
 
     @Override
     public List<Organization> findAll() {

@@ -21,6 +21,7 @@ package org.georchestra.ds.security;
 import static org.mapstruct.ReportingPolicy.ERROR;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.georchestra.ds.DataServiceException;
@@ -36,10 +37,12 @@ import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR, uses = UUIDMapper.class)
-abstract class UserMapper {
+import lombok.Setter;
 
-    private @Autowired RoleDao roleDao;
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ERROR)
+public abstract class UserMapper {
+
+    private @Autowired @Setter RoleDao roleDao;
 
     @Mapping(target = "id", source = "uniqueIdentifier")
     @Mapping(target = "username", source = "uid")
@@ -51,6 +54,10 @@ abstract class UserMapper {
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "lastUpdated", ignore = true)
     protected abstract GeorchestraUser map(Account account);
+
+    String map(UUID value) {
+        return value == null ? null : value.toString();
+    }
 
     @AfterMapping
     protected void addRoles(Account source, @MappingTarget GeorchestraUser target) {
