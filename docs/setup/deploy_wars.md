@@ -25,9 +25,6 @@ mv /tmp/cas.war /var/lib/tomcat9-proxycas/webapps/
 wget -O /tmp/header.war https://packages.georchestra.org/wars-master/header-generic.war
 mv /tmp/header.war /var/lib/tomcat9-georchestra/webapps/
 
-wget -O /tmp/mapfishapp.war https://packages.georchestra.org/wars-master/mapfishapp-generic.war
-mv /tmp/mapfishapp.war /var/lib/tomcat9-georchestra/webapps/
-
 wget -O /tmp/geonetwork.war https://packages.georchestra.org/wars-master/geonetwork.war
 mv /tmp/geonetwork.war /var/lib/tomcat9-georchestra/webapps/
 

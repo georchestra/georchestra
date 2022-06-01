@@ -116,9 +116,6 @@ AddType application/vnd.ogc.context+xml .wmc
 ErrorDocument 502 /errors/50x.html
 ErrorDocument 503 /errors/50x.html
 
-# redirects onto the viewer by default
-RewriteRule ^/$ https://%{SERVER_NAME}/mapfishapp/ [R=301,L]
-
 ```
 
 * ```proxy.conf```: replace the ```http://my\.sdi\.org``` string with your server address in the following:

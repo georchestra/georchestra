@@ -117,7 +117,6 @@ angular.module('manager', [
   .constant('CONSOLE_BASE_PATH', '/console/')
   .constant('CONSOLE_PRIVATE_PATH', '/console/private/')
   .constant('CONSOLE_PUBLIC_PATH', '/console/public/')
-  .constant('VIEWER_SERVICES_PATH', '/mapfishapp/ws/')
   .constant('ANALYTICS_SERVICES_PATH', '/analytics/ws/')
   .config([
     '$componentLoaderProvider',

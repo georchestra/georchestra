@@ -195,7 +195,7 @@ What is the point of releasing the almost exact same version of an artifact if t
 *  When migrating to CAS6, the upstream procedure to customize our CAS instance has been followed, starting from the CAS overlay webapp project,
 which is not based on maven, but on gradle. While mixing both build systems is probably possible, it does not make it necessarily desirable.
 
-*  `Mapstore2-georchestra`, the new viewer which aims to replace mapfishapp, has been developped separately by an other team than the core one taking care of geOrchestra.
+*  `Mapstore2-georchestra`, the new viewer which replaces mapfishapp, has been developped separately by an other team than the core one taking care of geOrchestra.
 Technically speaking, it made more sense to create a separate repository and give the team in charge of the development access to it, instead of the whole geOrchestra
 repository.
 
