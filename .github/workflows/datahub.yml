@@ -6,6 +6,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
+    strategy:
+      matrix:
+        node-version: [ 16.15.0 ]
+
     steps:
 
     - name: "Checking out"
@@ -14,7 +19,7 @@ jobs:
         repository: "geonetwork/geonetwork-ui"
 
     - name: "npm install"
-      run: npm i
+      run: npm ci
 
     - name: "building the docker image"
       run: node_modules/.bin/nx run datahub:docker-build --tag=georchestra/datahub
