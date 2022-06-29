@@ -1474,5 +1474,28 @@
         </dependency>
       </dependencies>
     </profile>
+    
+    
+    <profile>
+      <id>log4j-logstash</id>
+      <dependencies>
+        <dependency>
+          <groupId>net.logstash.log4j</groupId>
+          <artifactId>jsonevent-layout</artifactId>
+          <version>1.7</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>sentry-log4j</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.sentry</groupId>
+          <artifactId>sentry-log4j</artifactId>
+          <version>1.7.30</version>
+        </dependency>
+      </dependencies>
+    </profile> 
+    
   </profiles>
 </project>
