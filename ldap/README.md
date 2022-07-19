@@ -63,3 +63,88 @@ Finally, it creates 4 organizations:
 Note that for each organization, two objects are created in the LDAP tree:
  * an `organization` object that contains the fields that describe the organization (`o`, `businessCategory`, `postalAddress`)
  * a `groupOfMembers` object that mainly contains one `member` entry for each of its members.
+
+
+## Adding objectClass georchestraUser on users
+
+In some corner cases, it can be necessary to manually add objectClass `georchestraUser` on some users.
+
+This can be done with this script:
+
+```bash
+cat <<EOF > add_geochestraUser.py
+#!/usr/bin/env python3
+
+import argparse
+import uuid
+import sys
+from collections import OrderedDict
+
+import ldif
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Generate patch for incomplete LDAP georchestra users.')
+    parser.add_argument(
+        'infile',
+        nargs='?',
+        type=argparse.FileType('rb'),
+        default=sys.stdin.buffer,
+        help="input ldif file",
+    )
+    parser.add_argument(
+        'outfile',
+        nargs='?',
+        type=argparse.FileType('wb'),
+        default=sys.stdout.buffer,
+        help="output ldif patch file",
+    )
+    args = parser.parse_args()
+
+    generate_patch(args.infile, args.outfile)
+
+
+def generate_patch(infile, outfile):
+    parser = ldif.LDIFParser(infile)
+    writer = ldif.LDIFWriter(outfile)
+
+    for dn, record in parser.parse():
+        if (
+            'inetOrgPerson' in record["objectClass"]
+            and not "georchestraUser" in record["objectClass"]
+        ):
+            sys.stdout.write(f"""
+dn: {dn}
+changetype: modify
+add: objectClass
+objectClass: georchestraUser
+-
+add: georchestraObjectIdentifier
+georchestraObjectIdentifier: {str(uuid.uuid4())}
+"""
+            )
+
+
+if __name__ == "__main__":
+    main()
+EOF
+```
+
+Which can be used like this:
+
+```bash
+python3 -m venv venv
+venv/bin/pip install ldif
+
+ldapsearch -x -LLL \
+   -H "ldap://ldap:389" \
+   -D "cn=admin,dc=georchestra,dc=org" \
+   -w "secret" \
+   -b "ou=users,dc=georchestra,dc=org" \
+   '(&(objectClass=inetOrgPerson)(!(objectClass=georchestraUser)))' \
+| venv/bin/python add_georchestraUser.py \
+| ldapmodify -x \
+   -H "ldap://ldap:389" \
+   -D "cn=admin,dc=georchestra,dc=org" \
+   -w "secret"
+```
