@@ -18,8 +18,7 @@ To use MapStore as GeoNetwork's default viewer:
  * check the "Use an external viewer" box
  * update the "Viewer URL template" field to the following:
 ```
-/mapstore/#?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]
-
+/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]
 ```
 
 ### Redundant authentication panel
