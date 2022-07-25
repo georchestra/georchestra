@@ -26,7 +26,7 @@
 
     <jersey-version>2.29.1</jersey-version>
 
-    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
+    <formatter-maven-plugin.version>2.20.0</formatter-maven-plugin.version>
     <fmt.skip>false</fmt.skip>
     <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
     <gs-rest-java-client.version>2.20-SNAPSHOT</gs-rest-java-client.version>
