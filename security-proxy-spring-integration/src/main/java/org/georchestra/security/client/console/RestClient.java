@@ -28,7 +28,7 @@ public class RestClient {
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
         httpRequestFactory.setConnectionRequestTimeout(3000);
         httpRequestFactory.setConnectTimeout(3000);
-        httpRequestFactory.setReadTimeout(6000);
+        httpRequestFactory.setReadTimeout(60000);
 
         this.restTemplate = new RestTemplate(httpRequestFactory);
         log.info("Created geOrchestra console app REST client for " + baseUri);
