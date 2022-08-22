@@ -45,7 +45,11 @@ Next:
  * Change "Resource identifier prefix" from "http://localhost:8080/geonetwork/srv/resources" to whatever suits better (eg: changing the fqdn)
 
 
-On `/geonetwork/srv/fre/admin.console#/settings/ui`, check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]`
+On `/geonetwork/srv/fre/admin.console#/settings/ui` :
+ * check the "viewer" box, 
+ * check the "external viewer" box, 
+ * change the viewer base URL to https://your.fqdn/mapstore/, 
+ * set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]`
 
 
 On `/geonetwork/srv/eng/admin.console#/classification` install INSPIRE themes thesaurus and any other relevant thesaurus.
