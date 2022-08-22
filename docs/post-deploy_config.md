@@ -7,7 +7,7 @@ These are mandatory configuration steps once geOrchestra has been deployed.
 ### Proxy base URL
 
 For GeoServer, the proxy base url can be set in the admin UI, via Settings > Global > Proxy URL.
-By default, it is set to "${X-Forwarded-Proto}://${X-Forwarded-Host}/geoserver" which should be OK.
+By default, it is set to `${X-Forwarded-Proto}://${X-Forwarded-Host}/geoserver` which should be OK.
 Depending on your reverse proxy setup, this might fail guessing the correct FQDN.
 
 In case the capabilities document (eg "/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities") fail to provide the correct FQDN at `/WMS_Capabilities/Capability/Request/GetCapabilities/DCPType/HTTP/Get/OnlineResource`, you should set the proxy base url to something like this: https://your.server.fqdn/geoserver (without a trailing slash).
