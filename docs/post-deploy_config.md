@@ -20,7 +20,7 @@ After saving the form, you should check in the WMS capabilities that the service
 By default, GeoServer supports more than 2000 spatial reference systems.  
 This is really a lot, but you're probably not interested in 99% of them, and they clutter your GetCapabilities documents.
 
-It's easy to restrict the list to the most useful ones: in the WMS and WCS admin pages, fill the "Limited SRS list" textarea with, eg:
+It's easy to restrict the list to the most useful ones: in the WMS and WCS admin pages, fill the "Limited SRS list" textarea with, eg for France:
 ```
 2154, 3857, 3942, 3943, 3944, 3945, 3946, 3947, 3948, 3949, 3950, 4171, 
 4258, 4326, 23030, 23031, 23032, 32630, 32631, 32632, 4171, 4271, 3758
@@ -30,20 +30,23 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 
 ## GeoNetwork
 
-On the  ```/geonetwork/srv/fre/admin.console#/settings``` page, you should:
+On the  ```/geonetwork/srv/fre/admin.console#/settings``` page, you should fill in the "Catalog description" and "Catalog server" sections.  
 
-* fill the "Site" and "Server" sections.  
-
-In the server section, fill the fields according to your setup, eg:
+In the server section:
 ```
-Preferred Protocol  HTTPS
+Preferred Protocol  https
 Host                georchestra.mydomain.org
 Port                443     
 ```
- * on `/geonetwork/srv/fre/admin.console#/settings` you should change the default UI from `default` to `georchestra`
- * on `/geonetwork/srv/fre/admin.console#/settings/ui` check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]`
 
- * enable "XLINK RESOLVER"
- * enable INSPIRE + search panel
- * check "use Proxy" in case your connection to the internet is proxied
- * set feedback email
+Next:
+ * Enable XLink resolution
+ * Enable INSPIRE
+ * Change "Resource identifier prefix" from "http://localhost:8080/geonetwork/srv/resources" to whatever suits better (eg: changing the fqdn)
+
+
+On `/geonetwork/srv/fre/admin.console#/settings/ui`, check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]`
+
+
+On `/geonetwork/srv/eng/admin.console#/classification` install INSPIRE themes thesaurus and any other relevant thesaurus.
+
