@@ -1,15 +1,17 @@
 # Post-deploy configuration
 
-This is a highly recommended reading !
+These are mandatory configuration steps once geOrchestra has been deployed.
 
 ## GeoServer
 
 ### Proxy base URL
 
 For GeoServer, the proxy base url can be set in the admin UI, via Settings > Global > Proxy URL.
-This is one of the first thing to do once your geoserver instance is deployed, or you won't be able to add local layers using our viewer.
+By default, it is set to "${X-Forwarded-Proto}://${X-Forwarded-Host}/geoserver" which should be OK.
+Depending on your reverse proxy setup, this might fail guessing the correct FQDN.
 
-The proxy base URL should be set to something like this: http(s)://your.server.fqdn/geoserver without a trailing slash.
+In case the capabilities document (eg "/geoserver/ows?service=wms&version=1.3.0&request=GetCapabilities") fail to provide the correct FQDN at `/WMS_Capabilities/Capability/Request/GetCapabilities/DCPType/HTTP/Get/OnlineResource`, you should set the proxy base url to something like this: https://your.server.fqdn/geoserver (without a trailing slash).
+
 After saving the form, you should check in the WMS capabilities that the service URLs are as expected.
 
 
@@ -25,22 +27,18 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 ```
 ... and don't forget to submit the form.
 
-## Standalone GeoWebCache 
-
-For the standalone GeoWebCache, the proxy should be automatically configured (via [geowebcache.properties](https://github.com/georchestra/datadir/blob/22.0/geowebcache/geowebcache.properties)).
 
 ## GeoNetwork
 
-On the  ```/geonetwork/srv/eng/config``` page, you should:
+On the  ```/geonetwork/srv/fre/admin.console#/settings``` page, you should:
 
 * fill the "Site" and "Server" sections.  
 
 In the server section, fill the fields according to your setup, eg:
 ```
-Preferred Protocol  HTTP
+Preferred Protocol  HTTPS
 Host                georchestra.mydomain.org
-Port                80 	￼     
-Secure Port	    8443
+Port                443     
 ```
  * on `/geonetwork/srv/fre/admin.console#/settings` you should change the default UI from `default` to `georchestra`
  * on `/geonetwork/srv/fre/admin.console#/settings/ui` check the "viewer" box, check the "external viewer" box, change the viewer base URL to https://your.fqdn/mapstore/, set the template URL to `/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]`
@@ -49,12 +47,3 @@ Secure Port	    8443
  * enable INSPIRE + search panel
  * check "use Proxy" in case your connection to the internet is proxied
  * set feedback email
-
-## GeoFence
-
-In GeoFence, you should configure your geoserver instance with:
- * instance name = default-gs
- * description = my geoserver instance
- * base url = http://georchestra.mydomain.org/geoserver
- * username = geoserver_privileged_user 
- * password = the LDAP password of the above user, which should be the same as [the one referenced in your datadir](https://github.com/georchestra/datadir/blob/22.0/README.md).
