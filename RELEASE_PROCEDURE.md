@@ -132,6 +132,7 @@ git commit -am "updated project version in pom.xml"
 geOrchestra 20.1.0 is now released, congrats !
 
 Do not forget to :
+ * update dependabot files (like https://github.com/georchestra/docker/blob/master/.github/dependabot.yml)
  * update https://packages.georchestra.org/
  * update the [website](http://www.georchestra.org/software.html)
  * [tweet](https://twitter.com/georchestra) !
