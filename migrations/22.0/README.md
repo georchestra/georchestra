@@ -102,25 +102,6 @@ ldapmodify -Y EXTERNAL -H ldapi:/// -f add-uuidattr.ldif
 rm add-uuidattr.ldif
 ```
 
-### Adding the "georchestraRole" objectClass to the schema
-
-```bash
-cat <<EOF > add-geor-role-class.ldif
-dn: cn={5}georchestra, cn=schema, cn=config
-changetype: modify
-add: olcObjectClasses
-olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
-   NAME 'georchestraRole'
-   DESC 'Uniquely identifiable georchestra role'
-   SUP top
-   AUXILIARY
-   MAY (georchestraObjectIdentifier))
-EOF
-
-ldapmodify -Y EXTERNAL -H ldapi:/// -f add-geor-role-class.ldif
-rm add-geor-role-class.ldif
-```
-
 ### Adding the identifier to the 2 existing object classes
 
 ```bash
@@ -144,6 +125,25 @@ EOF
 
 ldapmodify -Y EXTERNAL -H ldapi:/// -f modify-geor-classes.ldif
 rm modify-geor-classes.ldif
+```
+
+### Adding the "georchestraRole" objectClass to the schema
+
+```bash
+cat <<EOF > add-geor-role-class.ldif
+dn: cn={5}georchestra, cn=schema, cn=config
+changetype: modify
+add: olcObjectClasses
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
+   NAME 'georchestraRole'
+   DESC 'Uniquely identifiable georchestra role'
+   SUP top
+   AUXILIARY
+   MAY (georchestraObjectIdentifier))
+EOF
+
+ldapmodify -Y EXTERNAL -H ldapi:/// -f add-geor-role-class.ldif
+rm add-geor-role-class.ldif
 ```
 
 ### Modifying existing objects from the LDAP tree
