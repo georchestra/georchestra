@@ -61,6 +61,7 @@ import org.georchestra.ds.users.AccountFactory;
 import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.DuplicatedUidException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -123,6 +124,9 @@ public final class NewAccountFormController {
     protected Clock clock;
 
     private Validation validation;
+
+    @Value("${publicContextPath:/console}")
+    private String publicContextPath;
 
     @Autowired
     public NewAccountFormController(ReCaptchaParameters reCaptchaParameters, Validation validation) {
@@ -320,7 +324,9 @@ public final class NewAccountFormController {
 
         } catch (DuplicatedEmailException e) {
 
-            result.rejectValue("email", "email.error.exist", "there is a user with this e-mail");
+            result.rejectValue("email", "email.error.exist",
+                    new String[] { String.format("%s%s", publicContextPath, "/account/passwordRecovery") },
+                    "there is a user with this e-mail");
             return "createAccountForm";
 
         } catch (DuplicatedUidException e) {
