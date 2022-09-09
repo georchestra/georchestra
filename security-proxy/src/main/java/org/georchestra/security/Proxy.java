@@ -666,7 +666,11 @@ public class Proxy {
                     } catch (Exception e) {
                         logger.error("Unable to compute roles");
                     }
-                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org, roles));
+                    String user = authentication.getName();
+                    if (!user.equals("anonymousUser")) {
+                        user = user.toLowerCase();
+                    }
+                    statsLogger.info(OGCServiceMessageFormatter.format(user, sURL, org, roles));
 
                 }
 
