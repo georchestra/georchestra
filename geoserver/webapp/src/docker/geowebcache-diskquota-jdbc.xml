@@ -1,5 +1,0 @@
-<gwcJdbcConfiguration>
-  <dialect>PostgreSQL</dialect>
-  <JNDISource>jdbc/gwc</JNDISource>
-  <schema>geowebcache</schema>
-</gwcJdbcConfiguration>
