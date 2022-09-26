@@ -70,7 +70,7 @@ public class SecurityApiController {
      * <p>
      * This is the server-side counterpart of {@link UsersApi#findByUsername}
      */
-    @GetMapping(value = "/users/username/{name}")
+    @GetMapping(value = "/users/username/{name:.+}")
     public ResponseEntity<GeorchestraUser> findUserByUsername(@PathVariable("name") String name) {
         return toEntityOrNotFound(users.findByUsername(name));
     }
