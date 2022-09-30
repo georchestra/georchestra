@@ -47,14 +47,11 @@ docker-build-console: build-deps docker-pull-jetty
 docker-build-analytics: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl analytics
 
-docker-build-mapfishapp: build-deps docker-pull-jetty
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
-
 docker-build-datafeeder: build-deps
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,security-proxy,mapfishapp,header,console,analytics,atlas,datafeeder
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,security-proxy,header,console,analytics,atlas,datafeeder
 
 docker-build: docker-build-gn docker-build-geoserver docker-build-georchestra
 
@@ -98,7 +95,7 @@ deb-build-geowebcache: war-build-geowebcache
 	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver deb-build-geowebcache
-	mvn package deb:package -pl atlas,datafeeder,datafeeder-ui,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl atlas,datafeeder,datafeeder-ui,security-proxy,header,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:
