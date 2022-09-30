@@ -1,1 +1,0 @@
-Proj4js.defs["EPSG:4247"] = "+proj=longlat +ellps=intl +towgs84=-273.5,110.6,-357.9,0,0,0,0 +no_defs";

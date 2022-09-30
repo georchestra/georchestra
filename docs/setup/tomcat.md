@@ -358,15 +358,6 @@ JAVA_OPTS="$JAVA_OPTS \
 Note: You can also override every geonetwork sub-data-directories by modifying
 the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
 
-#### Viewer
-
-If the "mapfishapp" viewer application is deployed:
-```
-JAVA_OPTS="$JAVA_OPTS \
-               -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml \
-               -Dorg.geotools.referencing.forceXY=true"
-```
-
 #### Extractor
 
 If the extractor application is deployed:

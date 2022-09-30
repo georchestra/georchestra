@@ -10,12 +10,6 @@ Note 1: It is of course possible to store webapp-specific schemas in separate da
 
 Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below).
 
-## Viewer schema
-
-If **mapfishapp** is deployed:
-```
-psql -d georchestra -f postgresql/020-mapfishapp.sql
-```
 
 ## Console schema
 
@@ -65,7 +59,6 @@ example ```georchestra``` :
 ```
 wget https://raw.githubusercontent.com/georchestra/georchestra/master/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
-psql -d georchestra -c "SELECT change_owner('mapfishapp', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('console', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('extractorapp', 'georchestra');";
