@@ -1,4 +1,4 @@
-FROM jetty:9-jre11
+FROM jetty:9.4-jre11
 
 ENV XMS=1536M XMX=8G
 
@@ -8,10 +8,7 @@ COPY --chown=jetty:jetty . /
 
 USER root
 
-RUN echo "deb http://httpredir.debian.org/debian buster main contrib" > /etc/apt/sources.list \
-    && echo "deb http://security.debian.org/ buster/updates main contrib" >> /etc/apt/sources.list \
-    && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
-    && apt-get update \
+RUN apt-get update \
     && apt-get install -y ttf-mscorefonts-installer \
     && apt-get install -y wget \
     && apt-get clean \

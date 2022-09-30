@@ -1,4 +1,4 @@
-FROM jetty:9-jre11
+FROM jetty:9.4.46-jre11
 
 ENV XMS=1G XMX=2G
 
