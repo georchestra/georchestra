@@ -276,15 +276,17 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     private OnlineResource wmsOnlineResource(DatasetUploadState d) {
         String protocol = "OGC:WMS";
         String description = d.getPublishing().getTitle() + " - WMS";
-        String queryString = "SERVICE=WMS&REQUEST=GetCapabilities";
-        return onlineResource(d, protocol, description, queryString);
+        String queryString = "";
+        String layerName = d.getPublishing().getPublishedName();
+        return onlineResource(d, layerName, protocol, description, queryString);
     }
 
     private OnlineResource wfsOnlineResource(DatasetUploadState d) {
         String protocol = "OGC:WFS";
         String description = d.getPublishing().getTitle() + " - WFS";
-        String queryString = "SERVICE=WFS&REQUEST=GetCapabilities";
-        return onlineResource(d, protocol, description, queryString);
+        String queryString = "";
+        String layerName = fullyQualifiedLayerName(d.getPublishing());
+        return onlineResource(d, layerName, protocol, description, queryString);
     }
 
     private OnlineResource downloadOnlineResource(DatasetUploadState d) {
@@ -292,14 +294,13 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         String description = d.getPublishing().getTitle() + " - WWW";
         String layer = d.getPublishing().getPublishedName();
         String queryString = String.format("SERVICE=WFS&REQUEST=GetFeature&typename=%s&outputformat=shape-zip", layer);
-        return onlineResource(d, protocol, description, queryString);
+        return onlineResource(d, layer, protocol, description, queryString);
     }
 
-    private OnlineResource onlineResource(DatasetUploadState d, String protocol, String description,
-            String queryString) {
+    private OnlineResource onlineResource(DatasetUploadState d, String publishedName, String protocol,
+            String description, String queryString) {
         OnlineResource r = new OnlineResource();
         PublishSettings p = d.getPublishing();
-        String publishedName = p.getPublishedName();
         String workspace = p.getPublishedWorkspace();
 
         r.setName(publishedName);
@@ -320,5 +321,9 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         URI linkage = builder.build().toUri();
         r.setLinkage(linkage);
         return r;
+    }
+
+    private String fullyQualifiedLayerName(PublishSettings p) {
+        return String.format("%s:%s", p.getPublishedWorkspace(), p.getPublishedName());
     }
 }
