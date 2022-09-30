@@ -161,7 +161,7 @@ Create the release commit:
 cd georchestra
 git checkout 20.0.x
 git pull origin 20.0.x
-find ./ -name pom.xml -exec sed -i 's#<version>20.0-SNAPSHOT</version>#<version>20.0.2</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>20.0.2-SNAPSHOT</version>#<version>20.0.2</version>#' {} \;
 cd geonetwork
 git fetch origin
 git checkout 20.0.2
@@ -178,7 +178,7 @@ Then [create a new release](https://github.com/georchestra/georchestra/releases)
 
 Finally, revert the maven version back to SNAPSHOT:
 ```
-find ./ -name pom.xml -exec sed -i 's#<version>20.0.2</version>#<version>20.0-SNAPSHOT</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>20.0.2</version>#<version>20.0.3-SNAPSHOT</version>#' {} \;
 git add -p
 git commit -m "back to SNAPSHOT"
 git push origin 20.0.x
