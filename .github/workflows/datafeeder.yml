@@ -77,28 +77,36 @@ jobs:
       if: github.repository == 'georchestra/georchestra'
       run: ./mvnw -f datafeeder/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
 
-    - name: "Logging in docker.io"
+    - name: "Building docker image (frontend)"
+      if: github.repository == 'georchestra/georchestra'
+      run: ./mvnw -f datafeeder-ui/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
+
+    - name: "Logging in to docker.io"
       if: github.repository == 'georchestra/georchestra'
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
-    - name: "Pushing latest to docker.io"
+    - name: "Pushing latest images to docker.io"
       if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
       run: |
         docker tag georchestra/datafeeder:${{ steps.version.outputs.VERSION }} georchestra/datafeeder:latest
+        docker tag georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }} georchestra/datafeeder-frontend:latest
         docker push georchestra/datafeeder:latest
+        docker push georchestra/datafeeder-frontend:latest
 
-    - name: "Pushing release branch to docker.io"
+    - name: "Pushing release branch to docker.io (22.x series)"
       if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
-    - name: "Pushing release tag to docker.io"
+    - name: "Pushing release tag to docker.io (22.x series)"
       if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |
