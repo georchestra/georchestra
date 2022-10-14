@@ -62,12 +62,18 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
             public void handle(HttpExchange httpExchange) throws IOException {
                 final String query = httpExchange.getRequestURI().getQuery().toUpperCase();
                 serverWasCalled = true;
-                usesVersion1_0_0 &= query.contains("VERSION=1.0.0");
+                String requestBodyBuffer = new String(httpExchange.getRequestBody().readAllBytes());
+
+                usesVersion1_0_0 &= (query.contains("VERSION=1.0.0")
+                        || (requestBodyBuffer.toUpperCase().contains("SERVICE=\"WFS\" VERSION=\"1.0.0\"")));
+
                 if (query.contains("REQUEST=GETCAPABILITIES")) {
                     respondWith1_0_0CapabiltiesDocument(httpExchange);
-                } else if (query.contains("REQUEST=DESCRIBEFEATURETYPE")) {
+                } else if (query.contains("REQUEST=DESCRIBEFEATURETYPE")
+                        || (requestBodyBuffer.toUpperCase().contains("WFS:DESCRIBEFEATURETYPE"))) {
                     respondWith1_0_0DescribeFeatureDocument(httpExchange);
-                } else if (query.contains("REQUEST=GETFEATURE")) {
+                } else if (query.contains("REQUEST=GETFEATURE")
+                        || requestBodyBuffer.toUpperCase().contains("WFS:GETFEATURE")) {
                     respondWith1_0_0GetFeatureDocument(httpExchange);
                 } else {
                     sendError(httpExchange, 404, "Not a recognized request: " + httpExchange.getRequestURI());

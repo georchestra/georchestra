@@ -23,10 +23,10 @@ import javax.measure.Unit;
 import javax.measure.UnitConverter;
 import javax.measure.quantity.Length;
 
+import org.geotools.measure.Units;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import tec.uom.se.unit.Units;
 
 /**
  * Methods for calculating the ScaleDenominator

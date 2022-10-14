@@ -19,33 +19,6 @@
 
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.FORMAT;
-
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.ServiceConfigurationError;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +36,6 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.parameter.Parameter;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.matrix.XAffineTransform;
-import org.geotools.referencing.util.CRSUtilities;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.util.factory.GeoTools;
 import org.geotools.util.factory.Hints;
@@ -76,9 +48,23 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.List;
+import java.util.*;
+
+import static org.georchestra.extractorapp.ws.extractor.wcs.WcsParameters.FORMAT;
 
 /**
  * Reads coverages from a WCS.
@@ -676,10 +662,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     /*-------------------------  Unsupported methods  --------------------*/
-    @Override
-    public String[] listSubNames() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
-    }
 
     @Override
     public int getGridCoverageCount() {
@@ -690,10 +672,4 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     public ServiceInfo getInfo() {
         throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
     }
-
-    @Override
-    public String getCurrentSubname() {
-        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
-    }
-
 }
