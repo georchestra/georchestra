@@ -12,21 +12,20 @@ import java.io.OutputStream;
 
 /**
  * Controller which catch requests and returns the index.html file from the UI.
- * Regardless of the URL which is queried, we need to return the index.html file,
- * as the path will be interpreted client-side by the Javascript code.
+ * Regardless of the URL which is queried, we need to return the index.html
+ * file, as the path will be interpreted client-side by the Javascript code.
  * <p>
- * This is mainly the reason why we need a webapp here, in the Docker image which derives from Nginx, the same
- * feature is implemented using the following configuration:
+ * This is mainly the reason why we need a webapp here, in the Docker image
+ * which derives from Nginx, the same feature is implemented using the following
+ * configuration:
  * <p>
- * ```
- * location ~ "^/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}.*$" {
- * alias /usr/share/nginx/html/index.html;
- * add_header "content-type" "text/html";
- * }
- * ```
+ * ``` location ~
+ * "^/[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}.*$"
+ * { alias /usr/share/nginx/html/index.html; add_header "content-type"
+ * "text/html"; } ```
  *
- * Using spring may sound a bit overkill, and we could probably implement the same using a simpler webapp
- * (e.g. using urlrewrite).
+ * Using spring may sound a bit overkill, and we could probably implement the
+ * same using a simpler webapp (e.g. using urlrewrite).
  *
  */
 @Controller
@@ -42,6 +41,7 @@ public class CatchAllDatasetsController {
 
     /**
      * Returns the index.html whenever a url with the `/[uuid]` format is requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -52,7 +52,9 @@ public class CatchAllDatasetsController {
     }
 
     /**
-     * Returns the index.html whenever a url with the `/[uuid]/validation` format is requested.
+     * Returns the index.html whenever a url with the `/[uuid]/validation` format is
+     * requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -63,7 +65,9 @@ public class CatchAllDatasetsController {
     }
 
     /**
-     * Returns the index.html whenever a url with the `/[uuid]/step/[stepid]` format is requested.
+     * Returns the index.html whenever a url with the `/[uuid]/step/[stepid]` format
+     * is requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -74,7 +78,9 @@ public class CatchAllDatasetsController {
     }
 
     /**
-     * Returns the index.html whenever a url with the `/[uuid]/confirm` format is requested.
+     * Returns the index.html whenever a url with the `/[uuid]/confirm` format is
+     * requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -85,7 +91,9 @@ public class CatchAllDatasetsController {
     }
 
     /**
-     * Returns the index.html whenever a url with the `/[uuid]/publish` format is requested.
+     * Returns the index.html whenever a url with the `/[uuid]/publish` format is
+     * requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -96,7 +104,9 @@ public class CatchAllDatasetsController {
     }
 
     /**
-     * Returns the index.html whenever a url with the `/[uuid]/publishok` format is requested.
+     * Returns the index.html whenever a url with the `/[uuid]/publishok` format is
+     * requested.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -108,6 +118,7 @@ public class CatchAllDatasetsController {
 
     /**
      * Default entrypoint.
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -116,6 +127,5 @@ public class CatchAllDatasetsController {
     public void defaultRoot(HttpServletRequest request, HttpServletResponse response) throws IOException {
         serveIndexHtml(request, response);
     }
-
 
 }
