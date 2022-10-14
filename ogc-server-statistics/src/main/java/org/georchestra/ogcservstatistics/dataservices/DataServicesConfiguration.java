@@ -29,7 +29,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 /**
  * This Singleton maintains the configuration data required to access to the
  * database where the ogc services are logged.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -65,7 +65,7 @@ public final class DataServicesConfiguration {
 
     /**
      * A connection to database, make sure the client code closes it.
-     * 
+     *
      * @return {@link Connection}
      * @throws SQLException
      */

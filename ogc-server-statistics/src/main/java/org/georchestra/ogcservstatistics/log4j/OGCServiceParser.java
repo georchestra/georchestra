@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 /**
  * This parse recognizes an OGC service taking into account the syntax
  * convention implemented by {@link OGCServiceMessageFormatter}.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -141,10 +141,10 @@ public final class OGCServiceParser {
 
     /**
      * Parses the request string in order to extract service, layer, user, date
-     * 
+     *
      * @param message
      * @return list of logs
-     * 
+     *
      * @throws ParseException
      * @throws UnsupportedEncodingException
      */
@@ -232,9 +232,9 @@ public final class OGCServiceParser {
 
     /**
      * Parses the layer name
-     * 
+     *
      * @param request
-     * 
+     *
      * @return a list of layer names
      */
     private static List<String> parseLayer(final String request) {
@@ -261,7 +261,7 @@ public final class OGCServiceParser {
 
     /**
      * Index of the end of list of the layer names.
-     * 
+     *
      * @param layer
      * @return index
      */
@@ -284,9 +284,9 @@ public final class OGCServiceParser {
 
     /**
      * Extract the layer name from a list like layer1, layer2, ...., layerN
-     * 
+     *
      * @param strLayerList
-     * 
+     *
      * @return List of layers
      */
     private static List<String> buildLayerList(final String strLayerList) {

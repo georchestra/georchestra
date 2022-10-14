@@ -29,12 +29,12 @@ import java.util.Map;
 /**
  * Maintains the abstract behavior required to execute a SQL query. The subclass
  * must implement the methods:
- * 
+ *
  * <pre>
- * prepareStatement() 
+ * prepareStatement()
  * getRow()
  * </pre>
- * 
+ *
  * @author Mauricio Pazos
  */
 public abstract class AbstractQueryCommand extends AbstractDataCommand implements QueryCommand {
@@ -68,7 +68,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
     /**
      * This template method executes the sql statement specified in the
      * prepareStatement method.
-     * 
+     *
      * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
      */
     @Override
@@ -94,7 +94,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
 
     /**
      * The subclass must to define the sql statement to exectue
-     * 
+     *
      * @return {@link PreparedStatement}}
      * @throws SQLException
      */
@@ -102,7 +102,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
 
     /**
      * Assigns the values of fields present in the {@link ResultSet} to the Map.
-     * 
+     *
      * @param rs
      * @return a Map<fieldName, fieldValue>
      * @throws SQLException

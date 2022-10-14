@@ -38,7 +38,7 @@ import org.georchestra.ogcservstatistics.dataservices.RetrieveUserConnectionForL
 /**
  * This is a facade which provides a set of convenient methods to retrieve
  * statistic information about OGC Services.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -52,7 +52,7 @@ public final class OGCServiceStatistics {
 
     /**
      * The data required to configure must be specified in the log4j.properties file
-     * 
+     *
      * @param log4jPropertiesFile
      */
     public static void configure(final URL log4jPropertiesFile) {
@@ -65,9 +65,9 @@ public final class OGCServiceStatistics {
 
     /**
      * Lists all ogc services log
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
-     * 
+     *
      * @throws OGCServStatisticsException
      */
     public static List<Map<String, Object>> list() throws OGCServStatisticsException {
@@ -78,23 +78,23 @@ public final class OGCServiceStatistics {
 
     /**
      * For each user : list of layers and number of connections
-     * 
+     *
      * Returns a list of map with the following structure:
-     * 
+     *
      * <pre>
      * key: layer
      * value: aLayer
-     * 
+     *
      * key: user
      * value: aUser
-     * 
+     *
      * key: connections
      * value: aLong Value
      * </pre>
-     * 
+     *
      * @param year
      * @param month
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
      * @throws IllegalArgumentException, OGCServStatisticsException
      */
@@ -108,7 +108,7 @@ public final class OGCServiceStatistics {
 
     /**
      * For each user : list of layers and number of connections
-     * 
+     *
      * @param year
      * @return List of pairs (fieldName, fieldValue)
      * @throws IllegalArgumentException
@@ -124,25 +124,25 @@ public final class OGCServiceStatistics {
 
     /**
      * For each layer : list of users and number of connections
-     * 
+     *
      * <pre>
-     * 
+     *
      * key: user
      * value: aUser
-     * 
+     *
      * key: layer
      * value: aLayer
-     * 
+     *
      * key: connections
      * value: aLong Value
      * </pre>
-     * 
+     *
      * @param year
      * @param month
-     * 
-     * 
+     *
+     *
      * @return List of pairs (fieldName, fieldValue)
-     * 
+     *
      * @throws IllegalArgumentException, OGCServStatisticsException
      */
     public static List<Map<String, Object>> retrieveUserConnectionsForLayer(final int year, final int month)
@@ -154,7 +154,7 @@ public final class OGCServiceStatistics {
 
     /**
      * For each layer : list of users and number of connections
-     * 
+     *
      * @param year
      * @return List of pairs (fieldName, fieldValue)
      * @throws IllegalArgumentException
@@ -170,22 +170,22 @@ public final class OGCServiceStatistics {
     /**
      * List of the N most active users. Returns a list of map with the following
      * structure:
-     * 
+     *
      * <pre>
-     * 
+     *
      * key: user
      * value: aUser
-     * 
+     *
      * key: connections
      * value: aLong Value
      * </pre>
-     * 
+     *
      * @param year  year
      * @param month month
      * @param limit N user most active
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
-     * 
+     *
      * @throws IllegalArgumentException, OGCServStatisticsException
      */
     public static List<Map<String, Object>> retrieveMostActiveUsers(final int year, final int month, final int limit)
@@ -215,21 +215,21 @@ public final class OGCServiceStatistics {
     /**
      * List of the N most consulted layers on month Returns a list of map with the
      * following structure:
-     * 
+     *
      * <pre>
      * key: layer
      * value: aLayer
-     * 
+     *
      * key: connections
      * value: aLong Value
      * </pre>
-     * 
+     *
      * @param year  year
      * @param month month
      * @param limit the n most consulted
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
-     * 
+     *
      * @throws OGCServStatisticsException, IllegalArgumentException
      */
     public static List<Map<String, Object>> retrieveMostConsultedLayers(final int year, final int month,
@@ -246,7 +246,7 @@ public final class OGCServiceStatistics {
 
     /**
      * List of the N most consulted layers on the year
-     * 
+     *
      * @param year
      * @param limit
      * @return
@@ -267,10 +267,10 @@ public final class OGCServiceStatistics {
 
     /**
      * List of the N most consulted layers
-     * 
+     *
      * @param cmd
      * @param year
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
      * @throws OGCServStatisticsException, IllegalArgumentException
      */
@@ -287,7 +287,7 @@ public final class OGCServiceStatistics {
 
     /**
      * Executes the specified QueryCommand
-     * 
+     *
      * @param cmd
      * @param year
      * @param month
@@ -310,7 +310,7 @@ public final class OGCServiceStatistics {
 
     /**
      * Executes the specified QueryCommand filtering by Year and Month
-     * 
+     *
      * @param cmd
      * @param year
      * @param month
@@ -339,7 +339,7 @@ public final class OGCServiceStatistics {
 
     /**
      * Executes the specified QueryCommand filtering by Year
-     * 
+     *
      * @param cmd
      * @param year
      * @param limit
@@ -364,11 +364,11 @@ public final class OGCServiceStatistics {
 
     /**
      * Executes the specified QueryCommand
-     * 
+     *
      * @param cmd
-     * 
+     *
      * @return List of pairs (fieldName, fieldValue)
-     * 
+     *
      * @throws OGCServStatisticsException
      */
     private static List<Map<String, Object>> execute(QueryCommand cmd) throws OGCServStatisticsException {

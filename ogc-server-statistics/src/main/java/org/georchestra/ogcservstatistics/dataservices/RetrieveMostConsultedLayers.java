@@ -30,7 +30,7 @@ import java.util.Map;
 
 /**
  * List of the N most consulted layers
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -40,7 +40,7 @@ public final class RetrieveMostConsultedLayers extends AbstractQueryCommand {
 
     /**
      * builds the sql query taking into account if a month is or isn't specified.
-     * 
+     *
      * @return the sql statement
      */
     private String getSQLStatement() {

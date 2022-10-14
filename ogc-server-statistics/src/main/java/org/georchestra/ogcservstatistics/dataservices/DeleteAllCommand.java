@@ -26,7 +26,7 @@ import java.sql.Statement;
 
 /**
  * WARNING Removes all logs from the table ogc_services_log
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -34,7 +34,7 @@ public final class DeleteAllCommand extends AbstractDataCommand {
 
     /**
      * This method will execute a SQL Delete!
-     * 
+     *
      * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
      */
     @Override

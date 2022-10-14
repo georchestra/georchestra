@@ -31,7 +31,7 @@ public class OGCServStatisticsException extends Exception {
     private static final long serialVersionUID = -5109217524588114531L;
 
     /**
-     * 
+     *
      */
     public OGCServStatisticsException() {
         super();

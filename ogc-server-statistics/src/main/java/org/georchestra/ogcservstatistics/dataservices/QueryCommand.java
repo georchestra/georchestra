@@ -30,7 +30,7 @@ public interface QueryCommand extends DataCommand {
 
     /**
      * Results of query execution
-     * 
+     *
      * @return List of pairs fieldName, fieldValue.
      */
     public List<Map<String, Object>> getResult();
@@ -41,7 +41,7 @@ public interface QueryCommand extends DataCommand {
     public void setYear(int year);
 
     /**
-     * 
+     *
      * @param month optional parameter
      */
     public void setMonth(int month);

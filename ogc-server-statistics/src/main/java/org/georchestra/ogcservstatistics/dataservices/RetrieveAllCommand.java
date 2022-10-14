@@ -34,7 +34,7 @@ import java.util.Map;
 
 /**
  * Retrieve all records present in the ogc service table
- * 
+ *
  * @author Mauricio Pazos
  *
  */

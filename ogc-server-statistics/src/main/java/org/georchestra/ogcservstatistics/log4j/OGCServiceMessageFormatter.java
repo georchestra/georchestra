@@ -30,19 +30,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  * This class provides a set of helper methods which allow to format a message
  * that it can be recognized by the OGCServicesAppender.
  * <p>
  * The message format does have the following structure:
  * </p>
- * 
+ *
  * <pre>
- * 
+ *
  * userName | yyyy - MM - dd | ogcRequest
- * 
+ *
  * </pre>
- * 
+ *
  * @see format
  * @author Mauricio Pazos
  */
@@ -63,19 +63,19 @@ public class OGCServiceMessageFormatter {
 
     /**
      * Builds a formated string that can be recognized by the OGCServicesAppender.
-     * 
+     *
      * <pre>
      * Produced format:
-     * 
+     *
      * user|yyyy-MM-dd|request|roles
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param user
      * @param date
      * @param request
      * @param roles
-     * 
+     *
      * @return The ogcservice message
      */
     public static String format(final String user, final Date date, final String request, final String org,

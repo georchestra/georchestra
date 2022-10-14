@@ -49,7 +49,7 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * Additionally, and for backwards compatibility, the database URL and
  * connection credentials can be set on the {@code log4j.properties}
  * configuration as follows:
- * 
+ *
  * <pre>
  * <code>
  * log4j.rootLogger= INFO, OGCSERVICES
@@ -65,13 +65,13 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * Note: you could improve the performance increasing the <b>bufferSize</b>
  * value.
  * </p>
- * 
+ *
  * <p>
  * To load the configuration you should include the following code:
  * </p>
- * 
+ *
  * <pre>
- * 
+ *
  * static {
  *     final String file = "[install-dir]/log4j.properties";
  *     PropertyConfigurator.configure(file);
@@ -80,7 +80,7 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * <p>
  * To log a message you should use the following idiom:
  * </p>
- * 
+ *
  * <pre>
  * final Date time = calendar.getTime();
  * final String user = getUserName();
@@ -88,8 +88,8 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * String ogcServiceMessage = OGCServiceMessageFormatter.format(user, time, request);
  * LOGGER.info(ogcServiceMessage);
  * </pre>
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  */
 public class OGCServicesAppender extends AppenderSkeleton {
@@ -153,7 +153,7 @@ public class OGCServicesAppender extends AppenderSkeleton {
     /**
      * This hook method called after set all appender properties. In this case the
      * configuration is set.
-     * 
+     *
      */
     @Override
     public void activateOptions() {
@@ -167,10 +167,10 @@ public class OGCServicesAppender extends AppenderSkeleton {
 
     /**
      * Appends the OGC Service in the table.
-     * 
+     *
      * The string present in buffer is parsed, if it is an interesting OGC service
      * then extracts the data required to insert a row in the table.
-     * 
+     *
      * @implNote This method is called from inside the {@code synchronized} method
      *           {@link AppenderSkeleton#doAppend}, as it calls
      *           {@link OGCServiceParser#parseLog} and runs one

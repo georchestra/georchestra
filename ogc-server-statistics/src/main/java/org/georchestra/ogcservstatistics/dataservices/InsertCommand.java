@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Insert an ogc service log
- * 
+ *
  * @author Mauricio Pazos
  *
  */

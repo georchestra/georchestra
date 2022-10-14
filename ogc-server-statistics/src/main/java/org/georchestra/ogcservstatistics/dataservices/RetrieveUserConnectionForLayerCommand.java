@@ -31,8 +31,8 @@ import java.util.Map;
 
 /**
  * For each layer : list of users and number of connections
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -42,7 +42,7 @@ public final class RetrieveUserConnectionForLayerCommand extends AbstractQueryCo
 
     /**
      * builds the sql query taking into account if a month is or isn't specified
-     * 
+     *
      * @return the sql statement
      */
     private String getSQLStatement() {
@@ -84,9 +84,9 @@ public final class RetrieveUserConnectionForLayerCommand extends AbstractQueryCo
 
     /**
      * Assigns the result set values to the map
-     * 
+     *
      * @param rs
-     * 
+     *
      * @return pair user, connections
      */
     @Override

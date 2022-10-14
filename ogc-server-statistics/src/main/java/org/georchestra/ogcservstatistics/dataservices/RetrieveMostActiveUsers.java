@@ -30,8 +30,8 @@ import java.util.Map;
 
 /**
  * This command retrieves the list of the N most active users.
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -41,7 +41,7 @@ public final class RetrieveMostActiveUsers extends AbstractQueryCommand {
 
     /**
      * builds the sql query taking into account if a month is or isn't specified.
-     * 
+     *
      * @return the sql statement
      */
     private String getSQLStatement() {
