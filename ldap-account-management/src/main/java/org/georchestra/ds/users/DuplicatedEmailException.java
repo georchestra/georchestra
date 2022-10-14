@@ -22,7 +22,7 @@ package org.georchestra.ds.users;
 /**
  * Throws this exception if the e-mail field is present in an existent ldap
  * account.
- * 
+ *
  * @author Mauricio Pazos
  */
 public class DuplicatedEmailException extends Exception {

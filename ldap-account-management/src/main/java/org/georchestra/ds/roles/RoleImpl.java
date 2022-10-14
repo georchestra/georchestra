@@ -43,7 +43,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.console.dto.Role#getCommonName()
      */
     @Override
@@ -53,7 +53,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.console.dto.Role#setCommonName(java.lang.String)
      */
     @Override
@@ -63,7 +63,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.console.dto.Role#getMemberUid()
      */
     @Override
@@ -73,7 +73,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
      */
     @Override
@@ -90,7 +90,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
      */
     @Override
@@ -137,7 +137,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -150,7 +150,7 @@ class RoleImpl implements Role, Comparable<Role> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

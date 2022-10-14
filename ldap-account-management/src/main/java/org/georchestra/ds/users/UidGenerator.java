@@ -21,7 +21,7 @@ package org.georchestra.ds.users;
 
 /**
  * A number is added or increment as postfix.
- * 
+ *
  * @author Mauricio Pazos
  */
 public final class UidGenerator {

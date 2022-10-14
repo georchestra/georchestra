@@ -21,8 +21,8 @@ package org.georchestra.ds.roles;
 
 /**
  * This factory creates instance of {@link Role}.
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */

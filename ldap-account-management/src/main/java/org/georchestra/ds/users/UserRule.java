@@ -30,14 +30,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * 
+ *
  * Rules to valid whether the user is protected.
  * <p>
  * A protected user is only known by the system. Thus this class maintains the
  * list of the protected users, configured by the system administrator.
  * </p>
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -64,7 +64,7 @@ public class UserRule {
 
     /**
      * True if the uid is a protected user
-     * 
+     *
      * @param uid
      * @return
      */

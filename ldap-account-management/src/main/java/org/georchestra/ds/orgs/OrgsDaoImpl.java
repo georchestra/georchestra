@@ -366,7 +366,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     /**
      * Search organization with 'commonName' as distinguish name
-     * 
+     *
      * @param commonName distinguish name of organization for example : 'psc' to
      *                   retrieve 'cn=psc,ou=orgs,dc=georchestra,dc=org'
      * @return Org instance with specified DN
@@ -409,7 +409,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     /**
      * Search for organization extension with specified identifier
-     * 
+     *
      * @param cn distinguish name of organization for example : 'psc' to retrieve
      *           'o=psc,ou=orgs,dc=georchestra,dc=org'
      * @return OrgExt instance corresponding to extended attributes

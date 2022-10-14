@@ -30,15 +30,15 @@ import lombok.NonNull;
 
 /**
  * Defines the operations to maintain the set of account.
- * 
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 public interface AccountDao {
 
     /**
      * Checks if the uid exist.
-     * 
+     *
      * @param uid
      * @return true if the uid exist, false in other case.
      * @throws DataServiceException
@@ -77,7 +77,7 @@ public interface AccountDao {
 
     /**
      * Returns all accounts that accomplish the provided filter.
-     * 
+     *
      * @param uidFilter
      * @return List of {@link Account}
      * @throws DataServiceException
@@ -88,7 +88,7 @@ public interface AccountDao {
 
     /**
      * Creates a new account
-     * 
+     *
      * @param account
      * @throws DataServiceException
      * @throws DuplicatedEmailException
@@ -98,7 +98,7 @@ public interface AccountDao {
 
     /**
      * Updates the user account
-     * 
+     *
      * @param account
      * @throws DataServiceException
      * @throws DuplicatedEmailException
@@ -121,7 +121,7 @@ public interface AccountDao {
 
     /**
      * Changes the user password
-     * 
+     *
      * @param uid
      * @param password
      * @throws DataServiceException
@@ -132,11 +132,11 @@ public interface AccountDao {
 
     /**
      * Returns the account that contains the uid provided as parameter.
-     * 
+     *
      * @param uid
-     * 
+     *
      * @return {@link Account}
-     * 
+     *
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
@@ -145,7 +145,7 @@ public interface AccountDao {
     /**
      * Find an {@link Account} by {@link Account#getUniqueIdentifier()
      * uniqueIdentifier}
-     * 
+     *
      * @return the Account with {@link Account#getUniqueIdentifier()
      *         uniqueIdentifier == id}
      * @throws NameNotFoundException if no such account is found
@@ -155,11 +155,11 @@ public interface AccountDao {
 
     /**
      * Generates a new Id based on the uid provided as parameter.
-     * 
+     *
      * @param uid
-     * 
+     *
      * @return a new uid
-     * 
+     *
      */
     String generateUid(String uid);
 

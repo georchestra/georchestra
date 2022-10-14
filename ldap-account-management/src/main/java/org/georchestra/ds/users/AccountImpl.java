@@ -449,7 +449,7 @@ public class AccountImpl implements Serializable, Account {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

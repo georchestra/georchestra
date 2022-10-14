@@ -45,7 +45,7 @@ public interface RoleDao {
 
     /**
      * Returns all roles. Each roles will contains its list of users.
-     * 
+     *
      * @return list of {@link Role}
      */
     List<Role> findAll() throws DataServiceException;
@@ -56,7 +56,7 @@ public interface RoleDao {
 
     /**
      * Deletes the user from the role
-     * 
+     *
      * @param roleName
      * @param uid
      * @throws DataServiceException
@@ -67,9 +67,9 @@ public interface RoleDao {
 
     /**
      * Adds the role
-     * 
+     *
      * @param role
-     * 
+     *
      * @throws DataServiceException
      * @throws DuplicatedCommonNameException if the role es present in the LDAP
      *                                       store
@@ -78,7 +78,7 @@ public interface RoleDao {
 
     /**
      * Removes the role
-     * 
+     *
      * @param commonName
      * @throws DataServiceException
      * @throws NameNotFoundException
@@ -87,20 +87,20 @@ public interface RoleDao {
 
     /**
      * Search the role based on the common name (cn)
-     * 
+     *
      * @param commonName
      * @return {@link Role}
-     * 
+     *
      * @throws NameNotFoundException
      */
     Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
 
     /**
      * Modifies the roles fields in the store
-     * 
+     *
      * @param roleName
      * @param modified
-     * 
+     *
      */
     void update(String roleName, Role modified)
             throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;

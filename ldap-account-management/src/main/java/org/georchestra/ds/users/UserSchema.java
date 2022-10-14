@@ -22,7 +22,7 @@ package org.georchestra.ds.users;
 /**
  * Defines the name of the user fields. They are consistent with the LDAP
  * specification.
- * 
+ *
  * @author Mauricio Pazos
  *
  */

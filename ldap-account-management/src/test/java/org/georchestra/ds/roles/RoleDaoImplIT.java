@@ -57,7 +57,7 @@ public class RoleDaoImplIT {
      * Georchestra use to keep only objectClass that _it_ needed. This test add a
      * new objectClass that is _not_ needed by georchestra and look if add/update
      * method destroys it.
-     * 
+     *
      * @throws Exception should not raise exception.
      */
     @Test

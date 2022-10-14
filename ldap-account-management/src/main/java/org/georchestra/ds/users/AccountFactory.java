@@ -23,12 +23,12 @@ import java.util.UUID;
 
 /**
  * Account factory.
- * 
+ *
  * <p>
  * This factory provide the convenient account object (data transfer object)
  * used by this application.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -43,7 +43,7 @@ public class AccountFactory {
 
     /**
      * Brief data
-     * 
+     *
      * @param uid
      * @param password
      * @param firstName
@@ -72,7 +72,7 @@ public class AccountFactory {
 
     /**
      * Creates an account object with all data.
-     * 
+     *
      * @param uuid                       optional {@link UUID}
      * @param userid
      * @param cn                         full name

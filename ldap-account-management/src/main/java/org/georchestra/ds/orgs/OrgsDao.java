@@ -47,7 +47,7 @@ public interface OrgsDao {
 
     /**
      * Search organization with 'commonName' as distinguish name
-     * 
+     *
      * @param commonName distinguish name of organization for example : 'psc' to
      *                   retrieve 'cn=psc,ou=orgs,dc=georchestra,dc=org'
      * @return Org instance with specified DN

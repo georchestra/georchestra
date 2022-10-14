@@ -21,7 +21,7 @@ package org.georchestra.ds;
 
 /**
  * Throws if the common name is present in the LDAP.
- * 
+ *
  * @author Mauricio Pazos
  *
  */

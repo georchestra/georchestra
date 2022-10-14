@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This class represents a Role stored in the LDAP tree.
- * 
+ *
  * @author Mauricio Pazos
  */
 public interface Role {
@@ -53,7 +53,7 @@ public interface Role {
 
     /**
      * Users of this role
-     * 
+     *
      * @return the list of user
      */
     @JsonProperty("users")
@@ -63,7 +63,7 @@ public interface Role {
 
     /**
      * adds a user to this role
-     * 
+     *
      * @param userUid a user dn
      */
     void addUser(String userUid);

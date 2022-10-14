@@ -22,7 +22,7 @@ package org.georchestra.ds.roles;
 /**
  * Defines the name of the role's fields. They are consistent with the LDAP
  * specification.
- * 
+ *
  * @author Mauricio Pazos
  *
  */

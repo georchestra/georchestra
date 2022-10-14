@@ -34,7 +34,7 @@ import lombok.ToString;
 
 /**
  * Represents a geOrchestra Organization unit.
- * 
+ *
  * @implNote as an implementation detail, non standard LDAP organization
  *           properties are delegated to an {@link OrgExt} instance variable.
  */

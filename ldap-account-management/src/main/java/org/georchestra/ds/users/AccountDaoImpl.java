@@ -255,9 +255,9 @@ public class AccountDaoImpl implements AccountDao {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws DataServiceException
-     * 
+     *
      * @implNote look up is performed by LDAP attribute
      *           {@code georchestraObjectIdentifier}
      */
