@@ -39,7 +39,7 @@ public abstract class HeaderProvider {
      * Called by
      * {@link HeadersManagementStrategy#configureRequestHeaders(HttpServletRequest, HttpRequestBase)}
      * to allow extra headers to be added to the copied headers.
-     * 
+     *
      * @param originalRequest   request being proxified
      * @param targetServiceName service name as defined in
      *                          {@code targets-mappings.properties}

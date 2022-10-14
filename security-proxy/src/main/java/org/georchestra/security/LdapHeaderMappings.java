@@ -68,17 +68,17 @@ import lombok.Value;
  * <h2>Embedded headers:</h2> Regardless of the contents of the
  * {@link #loadFrom(Map) configuration map}, the following "embedded" headers
  * are guaranteed to be sent:
- * 
+ *
  * <pre>
  * {@code
  * sec-org=org.cn
  * sec-orgname=org.o
  * }
  * </pre>
- * 
+ *
  * <h2>Sample config:</h2> The following is an example of a {@code .properties}
  * file containing such mappings:
- * 
+ *
  * <pre>
  * {@code
  * sec-email=mail
@@ -95,7 +95,7 @@ import lombok.Value;
  * datafeeder.sec-org-notes:base64:org.seeAlso.knowledgeInformation
  * }
  * </pre>
- * 
+ *
  * Note how the mappings specific to the {@code datafeeder} service override the
  * embedded header {@code sec-orgname}, and the configured default headers
  * {@code sec-firstname} and {@code sec-lastname}, to send their values in
@@ -104,7 +104,7 @@ import lombok.Value;
  * {@code datafeeder} service.
  * <p>
  * The following are all the valid LDAP properties that can be configured:
- * 
+ *
  * <h2>Authenticated user LDAP attributes:</h2>
  * <ul>
  * <li>uid='testadmin'
@@ -150,7 +150,7 @@ import lombok.Value;
  * <p>
  * Note that mapping some attributes is forbidden and not listed above, such as
  * {@code userPassword}.
- * 
+ *
  * @since 21.0
  */
 public class LdapHeaderMappings {
@@ -231,7 +231,7 @@ public class LdapHeaderMappings {
     Map<String, HeaderMappings> serviceMappings = new HashMap<>();
 
     /**
-     * 
+     *
      * @param rawMappings
      * @throws IllegalArgumentException if some target property is not recognizable
      *                                  or its usage is forbidden (e.g. a password

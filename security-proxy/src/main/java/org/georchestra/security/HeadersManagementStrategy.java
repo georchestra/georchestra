@@ -80,7 +80,7 @@ public class HeadersManagementStrategy {
     /**
      * Copies the request headers from the original request to the proxy request. It
      * may modify the headers slightly
-     * 
+     *
      * @param localProxy        true if the request targets a security-proxyfied
      *                          webapp (e.g. mapfishapp, ...), false otherwise
      * @param targetServiceName
@@ -222,13 +222,13 @@ public class HeadersManagementStrategy {
 
     /**
      * Handles the 'Cookie' header coming from the client.
-     * 
+     *
      * This code gets all the possible values for the cookie sent by the browser,
      * and reconstructs a new one composed of every key=value except the JSESSIONID.
      * The reason is that the JSESSIONID sent by the browser could be different from
      * the one the SP is using to reach the proxified webapp. So we will inject the
      * expected JSESSIONID later on.
-     * 
+     *
      * Note: we shall usually receive only one cookie header, but the HTTP specs
      * allows to send the same header key with different values multiple times,
      * hence the 'while' loop.
@@ -340,12 +340,12 @@ public class HeadersManagementStrategy {
 
     /**
      * Manages the "Set-Cookie" headers coming from security-proxified webapps.
-     * 
+     *
      * If the cookie is a JSESSIONID, then we need to keep it into a map stored into
      * the current user's session, but not transmit it to the client, as there is
      * probably already a sessionid between the client and the SP. It will be reused
      * for later requests to the same proxified webapp.
-     * 
+     *
      * In the other cases, it is probably safe to transmit it to the client, but we
      * force the path to the currently proxified webapp.
      *
@@ -414,7 +414,7 @@ public class HeadersManagementStrategy {
     /**
      * Stores the JSESSION hashes in a Map, and saves it to the current user's
      * session. If the Map does not exist, it is initialized.
-     * 
+     *
      * The map is saved under the key "JSESSIONID" of the session's attributes, and
      * the cookies are indexed with the path to the proxified webapps (as seen by
      * the SP, not by the client).

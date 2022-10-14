@@ -32,7 +32,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * Filters out sec-username when not from trusted hosts
- * 
+ *
  * @author jeichar
  */
 public class SecurityRequestHeaderFilter implements HeaderFilter {

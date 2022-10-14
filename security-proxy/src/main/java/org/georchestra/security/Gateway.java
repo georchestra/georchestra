@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * This is a work around to the fact that spring does not yet support the
  * gateway parameter.
- * 
+ *
  * <p>
  * In summary the way this works is proxy will call use this class if the
  * requested url is <em>gateway</em>. When this class gets called it returns the
@@ -42,7 +42,7 @@ import org.apache.commons.io.IOUtils;
  * then the proxy will get the login information and the user is forwarded to
  * the final destination (as provided by url parameter)
  * </p>
- * 
+ *
  * @author jeichar
  */
 public class Gateway {

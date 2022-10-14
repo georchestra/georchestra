@@ -23,7 +23,7 @@ import java.net.URL;
 
 /**
  * Accepts all requests
- * 
+ *
  * @author jeichar
  */
 public class AcceptAllRequests implements FilterRequestsStrategy {

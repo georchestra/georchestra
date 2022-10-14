@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 
+ *
  * @see ProxyTrustAnotherProxy
  */
 public class TrustedProxyRequestHeaderProvider extends HeaderProvider {

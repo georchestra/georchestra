@@ -40,18 +40,18 @@ import lombok.Setter;
  * Individual service names for which to add the {@code sec-user} request header
  * must be configured as {@code <service-name>.send-json-sec-user=true}. For
  * example:
- * 
+ *
  * <pre>
  * <code>
  * geonetwork.send-json-sec-user=true
- * datafeeder.send-json-sec-user=true 
+ * datafeeder.send-json-sec-user=true
  * </code>
  * </pre>
- * 
+ *
  * If this header provider is enabled globally, though, it can be disabled for
  * any specific service by setting the service specific config property to
  * {@code false}, as in {@code <service-name>.send-json-sec-user=false}.
- * 
+ *
  * @see UserOrganizationJSONRequestHeaderProvider
  */
 public class UserDetailsJSONRequestHeaderProvider extends JSONRequestHeaderProvider {

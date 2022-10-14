@@ -96,14 +96,14 @@ abstract class JSONRequestHeaderProvider extends HeaderProvider {
      * Individual service names for which to add the {@link #headerName} request
      * header. Must be configured in {@code headers-mapping.properties} as
      * {@code <service-name>.<}{@link #configProperty}{@code>=true} , for example:
-     * 
+     *
      * <pre>
      * <code>
      * geonetwork.send-json-sec-user=true
-     * datafeeder.send-json-sec-user=true 
+     * datafeeder.send-json-sec-user=true
      * </code>
      * </pre>
-     * 
+     *
      * If {@link #configProperty}{@code  = "send-json-sec-user"}.
      */
     private Map<String, Boolean> enabledServices = Collections.singletonMap(GLOBAL_KEY, Boolean.FALSE);

@@ -91,7 +91,7 @@ import lombok.NonNull;
  * {@code analytics.sec-firstname=givenName}.
  * <p>
  * For more information {@link LdapHeaderMappings}
- * 
+ *
  * @author jeichar
  * @see SecurityRequestHeaderProvider
  */
