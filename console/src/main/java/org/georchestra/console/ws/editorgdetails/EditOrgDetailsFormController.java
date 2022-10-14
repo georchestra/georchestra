@@ -153,7 +153,7 @@ public class EditOrgDetailsFormController {
     /**
      * Method to compare attributes and create log for each attributes if attribute
      * changes
-     * 
+     *
      * @param org      organization to update
      * @param formBean EditOrgDetailsFormBean to get information about user input
      * @param logo     MultipartFile spring to treat a picture as logo

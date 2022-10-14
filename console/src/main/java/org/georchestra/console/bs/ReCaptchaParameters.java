@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Required;
 
 /**
  * ReCaptchaParameters attribute
- * 
- * 
+ *
+ *
  * @author Sylvain Lesage
  *
  */

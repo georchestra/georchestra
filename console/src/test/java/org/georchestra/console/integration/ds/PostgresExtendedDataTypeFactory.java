@@ -21,7 +21,7 @@ import com.google.common.base.Splitter;
  * handles array(text) data types, so table columns for roles can be tested.
  * <p>
  * Usage:
- * 
+ *
  * <pre>
  * <code>
  * &#64;DBUnit(dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)

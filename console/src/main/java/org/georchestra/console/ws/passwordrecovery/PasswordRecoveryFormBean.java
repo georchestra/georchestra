@@ -24,7 +24,7 @@ import java.io.Serializable;
 public class PasswordRecoveryFormBean implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7773803527246666406L;
 

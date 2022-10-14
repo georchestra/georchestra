@@ -30,8 +30,8 @@ import org.json.JSONObject;
 
 /**
  * Utility class which contains useful method to prepare the http response.
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -65,7 +65,7 @@ final public class ResponseUtil {
 
     /**
      * Build the success message
-     * 
+     *
      * @return success message
      */
     public static String buildSuccessMessage() {

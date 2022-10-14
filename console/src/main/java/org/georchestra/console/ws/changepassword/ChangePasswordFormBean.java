@@ -28,7 +28,7 @@ import java.io.Serializable;
 public class ChangePasswordFormBean implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -546015147230737054L;
     private String confirmPassword;

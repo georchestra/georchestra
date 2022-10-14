@@ -94,7 +94,7 @@ public class Validation {
 
     /**
      * Return a set of required fields for user creation or update
-     * 
+     *
      * @return a Set that contains all required fields for user forms.
      */
     public Set<String> getRequiredUserFields() {
@@ -103,7 +103,7 @@ public class Validation {
 
     /**
      * Return a set of required fields for organization creation or update
-     * 
+     *
      * @return a Set that contains all required fields for organization forms.
      */
     public Set<String> getRequiredOrgFields() {
@@ -112,7 +112,7 @@ public class Validation {
 
     /**
      * Return true if specified field is required for user creation or update
-     * 
+     *
      * @param field field to check requirement
      * @return true id 'field' is required for user forms
      */
@@ -123,7 +123,7 @@ public class Validation {
     /**
      * Return true if specified field is required for organization creation or
      * update
-     * 
+     *
      * @param field field to check requirement
      * @return true id 'field' is required for organization forms
      */

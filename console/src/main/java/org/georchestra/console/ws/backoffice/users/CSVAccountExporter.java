@@ -164,7 +164,7 @@ public class CSVAccountExporter {
      * The commons-csv format used to generate the CSV exports, explicitly using
      * {@link QuoteMode#MINIMAL MINIMAL} quote mode so the delimiters are added only
      * if needed.
-     * 
+     *
      * @see CSVFormat#RFC4180
      */
     static final CSVFormat FORMAT = CSVFormat.RFC4180.withHeader(headerNames()).withQuoteMode(QuoteMode.MINIMAL);

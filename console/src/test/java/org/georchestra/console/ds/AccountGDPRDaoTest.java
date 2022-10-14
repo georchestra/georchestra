@@ -32,7 +32,7 @@ import org.locationtech.jts.io.WKTReader;
 import org.mockito.stubbing.OngoingStubbing;
 
 /**
- * 
+ *
  * Test suite for {@link AccountGDPRDao}, runs quickly and verifies the mapping
  * of {@code ResultSet} records to the data structures used to export user data.
  * See {@link AccountGDPRDaoIT} for integration tests

@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Command to search a row, in the user_token table, by uid.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -42,7 +42,7 @@ class QueryByUidCommand extends org.georchestra.lib.sqlcommand.AbstractQueryComm
 
     /**
      * builds the sql query
-     * 
+     *
      * @return the sql statement
      */
     private String getSQLStatement() {

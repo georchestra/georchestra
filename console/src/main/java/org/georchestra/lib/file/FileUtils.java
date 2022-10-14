@@ -44,7 +44,7 @@ import java.util.zip.ZipOutputStream;
  * Note : this utility class was copied from extractorapp, the specific
  * functions where removed
  * </p>
- * 
+ *
  * @author jeichar
  */
 public final class FileUtils {

@@ -104,7 +104,7 @@ public class GDPRAccountWorker {
      * Once the returned resource has been dealt with, {@link #dispose(Resource)}
      * shall be called in order to clean up any temporary content it may be holding
      * up.
-     * 
+     *
      * @throws DataServiceException
      * @throws NameNotFoundException
      * @throws IOException

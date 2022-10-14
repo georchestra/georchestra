@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Maintains the abstract behavior required to execute a SQL query. The subclass
  * must implement the methods:
- * 
+ *
  * <pre>
  * {@link AbstractQueryCommand#prepareStatement()}
  * {@link AbstractQueryCommand#getRow(ResultSet)}
@@ -78,7 +78,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand {
 
     /**
      * Assigns the values of fields present in the {@link ResultSet} to the Map.
-     * 
+     *
      * @param rs
      * @return a Map<fieldName, fieldValue>
      * @throws SQLException

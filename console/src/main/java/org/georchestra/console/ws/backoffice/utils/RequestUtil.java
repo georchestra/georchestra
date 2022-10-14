@@ -52,7 +52,7 @@ public class RequestUtil {
 
     /**
      * Returns the boolean value associated to the fieldName.
-     * 
+     *
      * @param json
      * @param fieldName
      *

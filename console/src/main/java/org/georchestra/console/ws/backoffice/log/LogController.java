@@ -68,7 +68,7 @@ public class LogController {
 
     /**
      * Returns array of logs using json syntax.
-     * 
+     *
      * <pre>
      *     {"logs": [
      *		{

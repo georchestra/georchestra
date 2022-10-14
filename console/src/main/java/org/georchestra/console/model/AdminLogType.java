@@ -22,7 +22,7 @@ package org.georchestra.console.model;
 public enum AdminLogType {
     /**
      * Initial events logs types Aborted since 10/2019
-     * 
+     *
      * Databases table with logs before 10/2019 search the code witch correspond to
      * this old type. Keep this types to retrieve old logs and avoid server error.
      */
@@ -31,7 +31,7 @@ public enum AdminLogType {
 
     /**
      * New events logs types insert since 10/2019
-     * 
+     *
      * Added to get more informations about logs and used to identify the real
      * modification for each action
      */

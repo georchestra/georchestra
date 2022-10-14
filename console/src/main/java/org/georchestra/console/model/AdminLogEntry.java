@@ -78,7 +78,7 @@ public class AdminLogEntry {
 
     /**
      * Constructor
-     * 
+     *
      * @param admin   String that realized action
      * @param target  String user concerned by this action
      * @param type    AdminLogType to identify action

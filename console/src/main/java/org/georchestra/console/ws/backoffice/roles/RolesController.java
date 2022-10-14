@@ -231,7 +231,7 @@ public class RolesController {
      *   "description": "Description for the role"
      *   }
      * </pre>
-     * 
+     *
      * <pre>
      * <b>Response</b>
      *
@@ -283,7 +283,7 @@ public class RolesController {
      * Deletes the role.
      *
      * The request format is:
-     * 
+     *
      * <pre>
      * [BASE_MAPPING]/roles/{cn}
      *
@@ -333,7 +333,7 @@ public class RolesController {
      * The fields that are not present in the parameters will remain untouched in
      * the LDAP store.
      * </p>
-     * 
+     *
      * <pre>
      * The request format is:
      * [BASE_MAPPING]/roles/{cn}
@@ -347,7 +347,7 @@ public class RolesController {
      * <p>
      * Example:
      * </p>
-     * 
+     *
      * <pre>
      * <b>Request</b>
      * [BASE_MAPPING]/roles/users
@@ -573,7 +573,7 @@ public class RolesController {
 
     /**
      * Method used for testing convenience.
-     * 
+     *
      * @param gd
      */
     public void setRoleDao(RoleDao gd) {
@@ -582,7 +582,7 @@ public class RolesController {
 
     /**
      * Method used for testing convenience.
-     * 
+     *
      * @param ad
      */
     public void setAccountDao(AccountDao ad) {

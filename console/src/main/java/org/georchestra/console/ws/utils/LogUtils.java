@@ -37,7 +37,7 @@ public class LogUtils {
 
     /**
      * Create log to save and display.
-     * 
+     *
      * @target String to identify org's
      * @type type AdminLogType of log event
      * @param values String that represent changed attributes
@@ -78,7 +78,7 @@ public class LogUtils {
     /**
      * Return JSONObject from informations to be save as log detail into database.
      * This allow to modify details before create log.
-     * 
+     *
      * @param attributeName String
      * @param oldValue      String
      * @param newValue      String
@@ -96,7 +96,7 @@ public class LogUtils {
 
     /**
      * Full creation by log details creation and log creation directly.
-     * 
+     *
      * @param target        String
      * @param attributeName String
      * @param oldValue      String
@@ -115,7 +115,7 @@ public class LogUtils {
 
     /**
      * Parse a list of accounts to log when a role was added to a user
-     * 
+     *
      * @param roleId String role uid
      * @param users  List<Account>
      * @param admin  String as user's uid that realized modification
@@ -135,7 +135,7 @@ public class LogUtils {
     /**
      * Parse a list of roles to log when a role was added to a user. This methods
      * identify custom and system roles
-     * 
+     *
      * @param roles  String role as uid
      * @param users  List<Account>
      * @param admin  String as user's uid that realized modification
@@ -165,7 +165,7 @@ public class LogUtils {
 
     /**
      * Parse a list of roles to log for each users if a role was added or removed
-     * 
+     *
      * @param roles  String role uid
      * @param users  List<Account>
      * @param admin  String as user's uid that realized modification
@@ -184,7 +184,7 @@ public class LogUtils {
 
     /**
      * Log org update found in json object.
-     * 
+     *
      * @param org  Org instance to update
      * @param json Json document to take information from
      * @throws JSONException If something went wrong during information extraction
@@ -262,7 +262,7 @@ public class LogUtils {
     /**
      * Compare each attributes between original and modified account Log changed as
      * JSON For each modification from body request
-     * 
+     *
      * @param modified Account
      * @param original Account before change
      */

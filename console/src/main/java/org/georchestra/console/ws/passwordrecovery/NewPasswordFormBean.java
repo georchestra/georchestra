@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 /**
  * Maintains the new password typed by the user.
- * 
+ *
  * @author Mauricio Pazos
  */
 public class NewPasswordFormBean implements Serializable {

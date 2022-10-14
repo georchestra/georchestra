@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
  * Base integration tests class to set up and tear down testcontainers for
  * {@link GeorchestraLdapContainer ldap} and {@link GeorchestraDatabaseContainer
  * database}.
- * 
+ *
  */
 public class ConsoleIntegrationTest {
 

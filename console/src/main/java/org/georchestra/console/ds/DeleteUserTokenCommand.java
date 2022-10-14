@@ -27,7 +27,7 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
 
 /**
  * Deletes the user_token association.
- * 
+ *
  * @author Mauricio Pazos
  *
  */

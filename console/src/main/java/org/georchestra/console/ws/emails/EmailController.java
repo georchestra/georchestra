@@ -221,7 +221,7 @@ public class EmailController {
 
     /**
      * This service can be used to test email sending
-     * 
+     *
      * @param recipient login of recipient
      * @return Html page to test email sending
      */
@@ -238,7 +238,7 @@ public class EmailController {
 
     /**
      * List available attachments in database
-     * 
+     *
      * @return JSON object containing all attachments available in database
      * @throws JSONException if there is error when encoding to JSON
      */
@@ -261,7 +261,7 @@ public class EmailController {
 
     /**
      * Generate a list of template found in database
-     * 
+     *
      * @return JSON object containing all templates found in database
      * @throws JSONException if templates cannot be encoded to JSON
      */
@@ -367,7 +367,7 @@ public class EmailController {
 
     /**
      * Checks 'subject' of request against configuration
-     * 
+     *
      * @param payload JSONObject to search subject in
      */
     private void checkSubject(JSONObject payload) throws JSONException {
@@ -384,7 +384,7 @@ public class EmailController {
 
     /**
      * Checks 'body' of request against configuration
-     * 
+     *
      * @param payload JSONObject to search body in
      */
     private void checkBody(JSONObject payload) throws JSONException {
@@ -402,7 +402,7 @@ public class EmailController {
 
     /**
      * Checks recipients of request against configuration
-     * 
+     *
      * @param to  array of recipients for 'to' field
      * @param cc  array of recipients for 'cc' field
      * @param bcc array of recipients for 'bcc' field
@@ -448,7 +448,7 @@ public class EmailController {
 
     /**
      * Return EMail addresses in JSON array to a String
-     * 
+     *
      * @param field   field name under which EMails are store in payload
      * @param payload JsonObject to search EMails addresses
      * @return

@@ -33,7 +33,7 @@ public class AreaController {
     /**
      * serve a json file put in the datadir or redirect to a url if AreaUrl in the
      * config is set to a url.
-     * 
+     *
      * @return json or rediurect to the resource if area is an URL
      * @throws IOException
      */

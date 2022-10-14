@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Searches the user_token association which matches with the provided token.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -43,7 +43,7 @@ final class QueryByTokenCommand extends org.georchestra.lib.sqlcommand.AbstractQ
 
     /**
      * builds the sql query
-     * 
+     *
      * @return the sql statement
      */
     private String getSQLStatement() {

@@ -25,13 +25,13 @@ import java.sql.SQLException;
 
 /**
  * Executes Insert, Update and Delete SQL command.
- * 
+ *
  * <p>
  * The subclass must provide the sql command to execute. To do that the
  * {@link AbstractUpdateCommand#prepareStatement()} method
  * </p>
- * 
- * 
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -39,7 +39,7 @@ public abstract class AbstractUpdateCommand extends AbstractDataCommand {
 
     /**
      * Execute the sql insert to add the new row (uid, token, timestamp)
-     * 
+     *
      * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
      */
     @Override
@@ -69,7 +69,7 @@ public abstract class AbstractUpdateCommand extends AbstractDataCommand {
 
     /**
      * The subclass should provide a method to prepare Insert, Update or Delete
-     * 
+     *
      * @return {@link PreparedStatement}
      * @throws SQLException
      */

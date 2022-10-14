@@ -21,7 +21,7 @@ package org.georchestra.console.ds;
 
 /**
  * Provide information about the database schema
- * 
+ *
  * @author Mauricio Pazos
  *
  */

@@ -207,7 +207,7 @@ public class RolesControllerTest {
 
     /**
      * General case for creating role.
-     * 
+     *
      * @throws Exception
      */
     @Test

@@ -42,10 +42,10 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * A junit {@link Rule} that can be {@code @Autowired} into integration tests,
  * validates the ldap and database external resources and sets up a mock MVC.
- * 
+ *
  * <p>
  * Usage:
- * 
+ *
  * <pre>
  * <code>
  * {@literal @}RunWith(SpringRunner.class)
@@ -53,7 +53,7 @@ import org.springframework.web.context.WebApplicationContext;
  * {@literal @}ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
  * public class ExampleIT {
  *      public {@literal @}Rule {@literal @}Autowired IntegrationTestSupport support;
- * 
+ *
  *      public {@literal @}Test void testFoo(){
  *          support.perform(MockMvcRequestBuilders.get("/foo"))
  *                 .andExpect(status().isOk())//
