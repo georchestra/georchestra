@@ -82,7 +82,10 @@ spring:
   profiles: georchestra
   jpa.database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   jpa.hibernate.ddl-auto: update
-  jackson.default-property-inclusion: non-null
+  jackson:
+    default-property-inclusion: non-null
+    serialization:
+      indent-output: true
   batch:
     job.enabled: false #disable automatically running configured jobs at startup time
     initialize-schema: always

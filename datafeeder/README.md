@@ -132,7 +132,15 @@ Then `datafeeder` should start and run at `http://localhost:8080/datafeeder/`
 
 ## Manual testing
 
-The `/import/upload` endpoint receives a number of files, identifies which ones are geospatial datasets, starts up an asynchronous analysis process, and returns the initial job state where to get the job identifier as a UUID.
+The following is a simple step by step guide to do manual testing with `curl`.
+
+For a more complete API description, consult the [api.yaml](api.yaml) OpenAPI 3 definition.
+
+You can also access the Swagger UI by browsing to [http://localhost:8080/datafeeder](http://localhost:8080/datafeeder).
+
+### Upload dataset
+
+The `/datafeeder/upload` endpoint receives a number of files, identifies which ones are geospatial datasets, starts up an asynchronous analysis process, and returns the initial job state where to get the job identifier as a UUID.
 
 For example, given a shapefile:
 
@@ -146,64 +154,349 @@ ne_10m_admin_0_countries.shp
 Launch the upload and analysis process with:
 
 ```bash
-curl -H 'sec-org: test org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -H 'sec-proxy: true' \
- 'http://localhost:8080/import/upload' \
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' \
+ -X POST \
+ http://localhost:8080/datafeeder/upload \
  -F filename=@ne_10m_admin_0_countries.shp \
  -F filename=@ne_10m_admin_0_countries.dbf \
  -F filename=@ne_10m_admin_0_countries.shx \
  -F filename=@ne_10m_admin_0_countries.prj
  
-{"jobId":"37bb3abe-69ce-40cc-be44-24a05aace203","progress":0.0,"status":"PENDING","error":null,"datasets":[]}
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0"
+    }
+  },
+  "jobId" : "d1a62676-0de3-4b9d-a0f2-9a691f197cf0",
+  "progress" : 0.0,
+  "status" : "PENDING",
+  "datasets" : [ ]
+}
 ```
+
+#### Poll updload status
 
 Then poll the job status with the returned `jobId`:
 
 ```bash
-curl -H 'sec-username: testadmin' -H 'sec-roles: ROLE_USER;ROLE_ADMINISTRATOR' -H 'sec-proxy: true' \
- 'http://localhost:8080/import/upload/37bb3abe-69ce-40cc-be44-24a05aace203'
-
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' \\
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0
 {
-   "datasets" : [
-      {
-         "encoding" : "ISO-8859-1",
-         "error" : null,
-         "featureCount" : 255,
-         "name" : "ne_10m_admin_0_countries",
-         "nativeBounds" : {
-            "crs" : {
-               "srs" : "EPSG:4326",
-               "wkt" : "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\", 6378137.0, 298.257223563]], PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]"
-            },
-            "maxx" : 180,
-            "maxy" : 83.6341006530001,
-            "minx" : -180,
-            "miny" : -89.9999999999999
-         },
-        "sampleGeometryWKT" : "MULTIPOLYGON (((117.70360790395524 4.163414542001791, .....",
-        "sampleProperties" : [
-            {
-               "name" : "NAME_CIAWF",
-               "type" : "String",
-               "value" : "Indonesia"
-            },
-            {
-               "name" : "ADM0_DIF",
-               "type" : "Integer",
-               "value" : "0"
-            },
-            {
-               "name" : "NAME_JA",
-               "type" : "String",
-               "value" : "Ã£Â<82>Â¤Ã£Â<83>Â³Ã£Â<83>Â<89>Ã£Â<83>Â<8d>Ã£Â<82>Â·Ã£Â<82>Â¢"
-            },...
-      }
-   ]
- }
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0"
+    }
+  },
+  "jobId" : "d1a62676-0de3-4b9d-a0f2-9a691f197cf0",
+  "progress" : 1.0,
+  "status" : "DONE",
+  "datasets" : [ {
+    "name" : "ne_10m_admin_0_countries",
+    "status" : "DONE",
+    "featureCount" : 258,
+    "nativeBounds" : {
+      "crs" : {
+        "srs" : "EPSG:4326",
+        "wkt" : "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\", 6378137.0, 298.257223563]], PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]"
+      },
+      "minx" : -179.99999999999991,
+      "maxx" : 180.0,
+      "miny" : -89.99999999999994,
+      "maxy" : 83.63410065300008
+    },
+    "encoding" : "ISO-8859-1"
+  } ]
+}
 ```
 
-> Note the default shapefile "encoding", `ISO-8859-1`, is not appropriate for the values (the sample property NAME_JA is messed up)
+#### Query dataset bounds
 
-In the future we could also include the (non standard) code-page shapefile sidecar file (in this case it would be `ne_10m_admin_0_countries.cpg`) for automatic recognison of a non-default character encoding for the `.dbf` file; and/or change the dataset's encoding through the API. The `.cpg` file contains `UTF-8`, with which `NAME_JA` should return `{"name": "NAME_JA", "value": "インドネシア"}` instead.
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR'  http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/ne_10m_admin_0_countries/bounds
+{
+  "crs" : {
+    "srs" : "EPSG:4326",
+    "wkt" : "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\", 6378137.0, 298.257223563]], PRIMEM[\"Greenwich\", 0.0], UNIT[\"degree\", 0.017453292519943295], AXIS[\"Longitude\", EAST], AXIS[\"Latitude\", NORTH]]"
+  },
+  "minx" : -179.99999999999991,
+  "maxx" : 180.0,
+  "miny" : -89.99999999999994,
+  "maxy" : 83.63410065300008
+```
+
+#### Query sample features
+
+Use a `GET` request on `/datafeeder/updload/{id}/{typeName}/sampleFeature` to get a sample GeoJSON feature from an uploaded dataset:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR'  \
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/ne_10m_admin_0_countries/sampleFeature
+{
+    "type": "Feature",
+    "crs": {
+        "type": "name",
+        "properties": {"name": "EPSG:4326"}
+    },
+    "bbox": [95.01270592500003,-10.922621351999908,140.97762699400005,5.910101630000042],
+    "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+            [[[117.7036,4.1634], ...,[127.1304,4.7744]]]
+        ]
+    },
+    "properties": {
+        "featurecla": "Admin-0 country",
+        "scalerank": 0,
+        "LABELRANK": 2,
+        "NAME_AR": "Ø¥Ù\u0086Ø¯Ù\u0088Ù\u0086Ù\u008AØ³Ù\u008AØ§",
+        "NAME_BN": "à¦\u0087à¦¨à§\u008Dà¦¦à§\u008Bà¦¨à§\u0087à¦¶à¦¿à¦¯à¦¼à¦¾",
+        "NAME_DE": "Indonesien",
+        "NAME_EN": "Indonesia",
+        "NAME_ES": "Indonesia",
+        "NAME_FA": "Ø§Ù\u0086Ø¯Ù\u0088Ù\u0086Ø²Û\u008C",
+        "NAME_FR": "IndonÃ©sie",
+        "NAME_EL": "Î\u0099Î½Î´Î¿Î½Î·Ï\u0083Î¯Î±",
+        "NAME_HE": "×\u0090×\u0099× ×\u0093×\u0095× ×\u0096×\u0099×\u0094",
+        "NAME_HI": "à¤\u0087à¤\u0082à¤¡à¥\u008Bà¤¨à¥\u0087à¤¶à¤¿à¤¯à¤¾",
+        "NAME_HU": "IndonÃ©zia",
+        "NAME_ID": "Indonesia",
+        "NAME_IT": "Indonesia",
+        "NAME_JA": "ã\u0082¤ã\u0083³ã\u0083\u0089ã\u0083\u008Dã\u0082·ã\u0082¢",
+        "NAME_KO": "ì\u009D¸ë\u008F\u0084ë\u0084¤ì\u008B\u009Cì\u0095\u0084",
+        "NAME_NL": "IndonesiÃ«",
+        "NAME_PL": "Indonezja",
+        "NAME_PT": "IndonÃ©sia",
+        "NAME_RU": "Ð\u0098Ð½Ð´Ð¾Ð½ÐµÐ·Ð¸Ñ\u008F",
+        "NAME_SV": "Indonesien",
+        "NAME_TR": "Endonezya",
+        "NAME_UK": "Ð\u0086Ð½Ð´Ð¾Ð½ÐµÐ·Ñ\u0096Ñ\u008F",
+        "NAME_UR": "Ø§Ù\u0086Ú\u0088Ù\u0088Ù\u0086Û\u008CØ´Û\u008CØ§",
+        "NAME_VI": "Indonesia",
+        "NAME_ZH": "å\u008D°åº¦å°¼è¥¿äº\u009A",
+        "NAME_ZHT": "å\u008D°åº¦å°¼è¥¿äº\u009E"
+    },
+    "id": "ne_10m_admin_0_countries.1"
+}
+```
+
+Note the default shapefile "encoding", **`ISO-8859-1`**, is not appropriate for the values (the sample property NAME_JA is messed up).
+The above query can receive an `encoding` query parameter to indicate how to interpret the shapefile's alphanumeric data:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR'  \
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/ne_10m_admin_0_countries/sampleFeature?encoding=UTF-8
+{
+    "type": "Feature",
+    "crs": {
+        "type": "name",
+        "properties": {"name": "EPSG:4326"}
+    },
+    "bbox": [95.01270592500003,-10.922621351999908,140.97762699400005,5.910101630000042],
+    "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+            [[[117.7036,4.1634], ...,[127.1304,4.7744]]]
+        ]
+    },
+    "properties": {
+        "featurecla": "Admin-0 country",
+        "scalerank": 0,
+        "LABELRANK": 2,
+      "NAME_AR" : "إندونيسيا",
+      "NAME_BN" : "ইন্দোনেশিয়া",
+      "NAME_CIAWF" : "Indonesia",
+      "NAME_DE" : "Indonesien",
+      "NAME_EL" : "Ινδονησία",
+      "NAME_EN" : "Indonesia",
+      "NAME_ES" : "Indonesia",
+      "NAME_FA" : "اندونزی",
+      "NAME_FR" : "Indonésie",
+      "NAME_HE" : "אינדונזיה",
+      "NAME_HI" : "इंडोनेशिया",
+      "NAME_HU" : "Indonézia",
+      "NAME_ID" : "Indonesia",
+      "NAME_IT" : "Indonesia",
+      "NAME_JA" : "インドネシア",
+      "NAME_KO" : "인도네시아",
+      "NAME_LEN" : 9,
+      "NAME_LONG" : "Indonesia",
+      "NAME_NL" : "Indonesië",
+      "NAME_PL" : "Indonezja",
+      "NAME_PT" : "Indonésia",
+      "NAME_RU" : "Индонезия",
+      "NAME_SORT" : "Indonesia",
+      "NAME_SV" : "Indonesien",
+      "NAME_TR" : "Endonezya",
+      "NAME_UK" : "Індонезія",
+      "NAME_UR" : "انڈونیشیا",
+      "NAME_VI" : "Indonesia",
+      "NAME_ZH" : "印度尼西亚",
+      "NAME_ZHT" : "印度尼西亞"
+    },
+    "id": "ne_10m_admin_0_countries.1"
+}
+```
+
+### Publish uploaded dataset
+
+Launching the dataset publishing process and querying/polling its status is performed through
+the `/datafeeder/update/{jobId}/publish` endpoint.
+
+#### Query/poll publishing process status
+
+At any point you can query the publishing status with a `GET` request. For example:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' \
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish
+
+{
+   "_links" : {
+      "self" : {
+         "href" : "http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish"
+      }
+   },
+   "datasets" : [
+      {
+         "nativeName" : "ne_10m_admin_0_countries",
+         "progress" : 0,
+         "progressStep" : "SKIPPED",
+         "publish" : false,
+         "status" : "PENDING"
+      }
+   ],
+   "jobId" : "d1a62676-0de3-4b9d-a0f2-9a691f197cf0",
+   "progress" : 0,
+   "status" : "PENDING"
+}
+```
+
+After upload, the publish status will be `PENDING`, as in the sample response above.
+
+#### Launch the publishing process
+
+To launch the publishing process, you'll need to `POST` to that same URL with a JSON request
+body that matches the `DatasetPublishRequest` defined in the [api.yaml](api.yaml) OpenAPI 3 spec, for example:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' \
+ -X POST -H "Content-Type: application/json" \
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish \
+ -d '{
+  "datasets": [
+    {    
+      "encoding": "UTF-8",    
+      "metadata": {    
+        "title": "Include dataset title for the metadata record",    
+        "abstract": "Include some dataset description to be used on the metadata record",    
+        "creationDate": "2022-10-14",    
+        "creationProcessDescription": "",    
+        "scale": 25000,    
+        "tags": [    
+          "tag1", "tag2"    
+        ]    
+      },    
+      "nativeName": "ne_10m_admin_0_countries",    
+      "publishedName": "ne_10m_admin_0_countries",    
+      "srs": "EPSG:4326",    
+      "srs_reproject": false    
+    }    
+  ]    
+}'
+
+```
+
+Where the only mandatory fields are:
+
+* `datasets[].nativeName`
+* `datasets[].metadata.title`
+* `datasets[].medatada.abstract`
+
+Once the publishing process is launched, poll its status. If the process hasn't completed, it'll return a `"status": "RUNNING"` (or `"SCHEDULED"`).
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' \
+ http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish
+
+{
+   "_links" : {
+      "self" : {
+         "href" : "http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish"
+      }
+   },
+   "datasets" : [
+      {
+         "nativeName" : "ne_10m_admin_0_countries",
+         "progress" : 0,
+         "progressStep" : "SCHEDULED",
+         "publish" : true,
+         "publishedName" : "ne_10m_admin_0_countries",
+         "status" : "PENDING",
+         "title" : "Include dataset title for the metadata record"
+      }
+   ],
+   "jobId" : "d1a62676-0de3-4b9d-a0f2-9a691f197cf0",
+   "progress" : 0,
+   "status" : "RUNNING"
+}
+```
+
+Once the process finishes, the complete state will be returned:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR'  http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish
+{
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/datafeeder/upload/d1a62676-0de3-4b9d-a0f2-9a691f197cf0/publish"
+    }
+  },
+  "jobId" : "d1a62676-0de3-4b9d-a0f2-9a691f197cf0",
+  "progress" : 1.0,
+  "status" : "DONE",
+  "datasets" : [ {
+    "_links" : {
+      "service" : [ {
+        "href" : "https://georchestra.mydomain.org/geoserver/test/wms?",
+        "title" : "Web Map Service entry point where the layer is published",
+        "name" : "WMS"
+      }, {
+        "href" : "https://georchestra.mydomain.org/geoserver/test/wfs?",
+        "title" : "Web Feature Service entry point where the layer is published",
+        "name" : "WFS"
+      } ],
+      "preview" : {
+        "href" : "https://georchestra.mydomain.org/geoserver/test/wms/reflect?LAYERS=ne_10m_admin_0_countries&width=800&format=application/openlayers",
+        "title" : "OpenLayers preview page for the layer published in GeoServer",
+        "type" : "application/openlayers",
+        "name" : "openlayers"
+      },
+      "describedBy" : [ {
+        "href" : "https://georchestra.mydomain.org/geonetwork/srv/api/0.1/records/ab798d02-684f-4874-a2d8-8be14bfbb718/formatters/xml",
+        "title" : "Metadata record XML representation",
+        "type" : "application/xml",
+        "name" : "metadata"
+      }, {
+        "href" : "https://georchestra.mydomain.org/geonetwork/srv/eng/catalog.search#/metadata/ab798d02-684f-4874-a2d8-8be14bfbb718",
+        "title" : "Metadata record web page",
+        "type" : "text/html",
+        "name" : "metadata"
+      } ]
+    },
+    "nativeName" : "ne_10m_admin_0_countries",
+    "publishedWorkspace" : "test",
+    "publishedName" : "ne_10m_admin_0_countries",
+    "metadataRecordId" : "ab798d02-684f-4874-a2d8-8be14bfbb718",
+    "title" : "Include dataset title for the metadata record",
+    "status" : "DONE",
+    "publish" : true,
+    "progress" : 1.0,
+    "progressStep" : "COMPLETED"
+  } ]
+}
+```
+
 
 # Developer's corner
 
