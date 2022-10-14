@@ -77,7 +77,7 @@ final class TaskDescriptor {
 
     /**
      * Constructor for copy
-     * 
+     *
      * @param toCopy
      */
     public TaskDescriptor(ExecutionMetadata toCopy) {

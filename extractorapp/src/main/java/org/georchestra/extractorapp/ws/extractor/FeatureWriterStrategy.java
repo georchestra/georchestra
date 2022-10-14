@@ -28,7 +28,7 @@ import java.util.List;
  * The class that implements this interface are responsible of writing a set of
  * features in a given format.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -36,7 +36,7 @@ interface FeatureWriterStrategy {
 
     /**
      * Generates a files that maintain the vector data correspondent to a layer
-     * 
+     *
      * @return the generated files
      * @throws IOException
      */

@@ -31,7 +31,7 @@ import org.json.JSONWriter;
 
 /**
  * Maintains the The response data for the getTaskQueue operation.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -51,13 +51,13 @@ final class ExtractorGetTaskQueueResponse {
     /**
      * Returns the tasks as a json object. The tasks are added to a json object
      * where each task object is made from a {@link ExecutionMetadata}
-     * 
+     *
      * <pre>
-     * 
+     *
      * <b>JSON format:</b> {"tasks":[ {"uuid":"value", "priority":value,"status":value,...}, ...]}
-     * 
+     *
      * </pre>
-     * 
+     *
      * @return the list of task as a json array
      * @throws JSONException
      */

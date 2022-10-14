@@ -39,14 +39,14 @@ public enum FileFormat {
 
     /**
      * Returns the OGR driver for this format
-     * 
+     *
      * @return the driver
      */
     public abstract String getDriver();
 
     /**
      * Returns the options related with the indicated file format.
-     * 
+     *
      * @return the options for the file format
      */
     public String[] getFormatOptions() {

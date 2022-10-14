@@ -30,7 +30,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 /**
  * This abstract class defines the template strategy required to write different
  * sort of vector files.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -43,7 +43,7 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
 
     /**
      * Sets the strategy parameters
-     * 
+     *
      * @param basedir  output base folder
      * @param features the input set of features to write
      */

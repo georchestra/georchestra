@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Extracts Coverages from WCS
- * 
+ *
  * @author jeichar
  */
 public class WcsExtractor {
@@ -108,10 +108,10 @@ public class WcsExtractor {
 
     /**
      * Creates a directory where the layer is extracted.
-     * 
+     *
      * @param request
      * @return directory that contains the layers
-     * 
+     *
      * @throws IOException
      * @throws TransformException
      * @throws FactoryException

@@ -39,7 +39,7 @@ import org.apache.http.impl.client.HttpClients;
 
 /**
  * This class is responsible to maintain the metadata values in a file.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -51,7 +51,7 @@ final class MetadataEntity {
 
     /**
      * a new instance of {@link MetadataEntity}.
-     * 
+     *
      * @param cswRequest where the metadata is available
      */
     private MetadataEntity(CSWRequest cswRequest) {
@@ -62,7 +62,7 @@ final class MetadataEntity {
     /**
      * Crates a new instance of {@link MetadataEntity}. Its values will be retrieved
      * from the Catalog service specified in the request parameter.
-     * 
+     *
      * @param cswRequest where the metadata is available
      */
     public static MetadataEntity create(final CSWRequest cswRequest) {
@@ -73,9 +73,9 @@ final class MetadataEntity {
 
     /**
      * Stores the metadata retrieved from CSW using the request value.
-     * 
+     *
      * @param fileName file name where the metadata must be saved.
-     * 
+     *
      * @throws IOException
      */
     public void save(final String fileName) throws IOException {

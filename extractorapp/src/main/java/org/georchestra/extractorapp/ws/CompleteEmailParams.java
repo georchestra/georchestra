@@ -21,7 +21,7 @@ package org.georchestra.extractorapp.ws;
 
 /**
  * Default params with the recipients and message
- * 
+ *
  * @author jeichar
  */
 public class CompleteEmailParams extends EmailDefaultParams {
@@ -32,7 +32,7 @@ public class CompleteEmailParams extends EmailDefaultParams {
 
     /**
      * Copies the defaults to the new object (defaults are not modified)
-     * 
+     *
      * @param defaults
      */
     public CompleteEmailParams(EmailDefaultParams defaults, String[] recipients, String subject, String message) {

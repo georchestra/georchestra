@@ -42,7 +42,7 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 
     /**
      * New instance of {@link OGRFeatureWriter}
-     * 
+     *
      * @param basedir  output folder
      * @param features input the set of Features to write
      */

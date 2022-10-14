@@ -25,10 +25,10 @@ import java.net.URL;
 
 /**
  * Request for CSW.
- * 
+ *
  * This class is responsibe to build the request required by the metadata
  * catalog (CSW).
- * 
+ *
  * @author Mauricio Pazos
  *
  */

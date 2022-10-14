@@ -25,7 +25,7 @@ import java.net.InetAddress;
 /**
  * The common parameters for sending emails. This class can be frozen if it is a
  * defaults class so that it cannot be changed after original configuration.
- * 
+ *
  * @author jeichar
  */
 public class EmailDefaultParams {
@@ -45,7 +45,7 @@ public class EmailDefaultParams {
 
     /**
      * Copy constructor
-     * 
+     *
      * @param defaults the defaults to copy into this object
      */
     protected EmailDefaultParams(EmailDefaultParams defaults) {
@@ -63,9 +63,9 @@ public class EmailDefaultParams {
      * Signals that the values for this object are set and may not be changed. This
      * is to ensure that when the defaults are set by Spring that later no one will
      * change them programatically.
-     * 
+     *
      * The defaults should only be set via spring configuration.
-     * 
+     *
      * Freeze will be called by the class that has the parameter set by spring.
      */
     public void freeze() {

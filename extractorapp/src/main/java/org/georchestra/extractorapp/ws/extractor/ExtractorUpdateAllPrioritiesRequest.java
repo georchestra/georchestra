@@ -51,7 +51,7 @@ final class ExtractorUpdateAllPrioritiesRequest {
     }
 
     /**
-     * 
+     *
      * @param postUuidList format {["uuid1", "uuid2", ....]}
      * @return
      * @throws JSONException

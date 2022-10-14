@@ -398,7 +398,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 
     /**
      * concatenate all the params into a string separated by the provided string
-     * 
+     *
      * @param resolveFormat
      * @throws IOException
      */

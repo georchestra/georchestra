@@ -26,7 +26,7 @@ package org.georchestra.extractorapp.ws.extractor;
 public final class InvalidPriorityException extends Exception {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7978534855413002713L;
 

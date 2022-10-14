@@ -31,11 +31,11 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Create {@link WcsCoverageReader}s
- * 
+ *
  * See {@link Format} for details, and don't be fooled by the deprecated
  * non-sense. that is a consequence of working with Martin. There are no
  * replacements for this API so we have to sue them.
- * 
+ *
  * @author jeichar
  */
 public class WcsFormat extends AbstractGridFormat {

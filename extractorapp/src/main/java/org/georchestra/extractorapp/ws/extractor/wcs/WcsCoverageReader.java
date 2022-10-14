@@ -398,7 +398,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     /**
      * Write an image file from an inputstream. Used when we want to write image
      * from the wcs get coverage server response stream
-     * 
+     *
      * @param file
      * @param in
      * @throws IOException
@@ -430,7 +430,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
 
     /**
      * Write world image extensions : TFW, PRJ
-     * 
+     *
      * @param request
      * @param file
      * @param in

@@ -31,14 +31,14 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * ParameterObjects defined that can be used for configuring read requests with
  * {@link GridCoverageReader}. This class contains all the parameters that
  * possible
- * 
+ *
  * This should not need to be used directory, instead the
  * {@link WcsReaderRequest} class should be used as it can translate to and from
  * these parameters in a easier way.
- * 
+ *
  * Read the description parameter of the parameters for documentation on what
  * they do.
- * 
+ *
  * @author jeichar
  */
 class WcsParameters {

@@ -215,7 +215,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
     // ----------------- support methods ----------------- //
     /**
      * Protected to allow unit test to override
-     * 
+     *
      * @throws AssertionError
      * @throws IOException
      */
@@ -325,7 +325,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
     /**
      * Creates a directory which contains the extracted layers
-     * 
+     *
      * @param request
      * @param requestBaseDir
      *

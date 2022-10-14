@@ -25,7 +25,7 @@ import org.json.JSONTokener;
 
 /**
  * Utility method to manage JSON object
- * 
+ *
  * @author Mauricio Pazos
  *
  */

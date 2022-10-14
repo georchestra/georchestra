@@ -22,7 +22,7 @@ package org.georchestra.extractorapp.ws;
 /**
  * The exception that represents something bad occurred in system but should be
  * handled at a higher level
- * 
+ *
  * @author jeichar
  */
 public class ExtractorException extends RuntimeException {

@@ -59,17 +59,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * getParameters can be passed to a
  * {@link WcsCoverageReader#read(org.opengis.parameter.GeneralParameterValue[])}
  * method
- * 
+ *
  * test server :
  * http://gws2.pcigeomatics.com/wcs1.0.0/wcs?SERVICE=wcs&VERSION=1.0.0&REQUEST=GetCoverage&COVERAGE=demo/wcs_l7_ms.pix&CRS=EPSG:4326&BBOX=-117.88341239280106,33.707704191028995,-117.65485697866967,33.89850474983795&WIDTH=700&HEIGHT=700&FORMAT=GeoTIFF
- * 
+ *
  * Use {@link WcsReaderRequestFactory} to create instances of
  * {@link WcsReaderRequestFactory}
- * 
+ *
  * TODO When reading images you need to pass in the parameters for the type of
  * coverage requested. So if you are reading a geotiff you may need geotiff
  * specific parameters for both reading and writing
- * 
+ *
  * @author jeichar
  */
 public class WcsReaderRequest {
@@ -84,7 +84,7 @@ public class WcsReaderRequest {
 
     /*
      * Not required for geOrchestra
-     * 
+     *
      * public final String timeStart, timeEnd; public final int resx, resy; public
      * final _responseCrs;
      */
@@ -99,7 +99,7 @@ public class WcsReaderRequest {
     /**
      * Use {@link WcsReaderRequestFactory} to create instances of
      * {@link WcsReaderRequestFactory}
-     * 
+     *
      * @param version         WCS version to use. Can use {@link #DEFAULT_VERSION}
      * @param coverage        the layer/coverage name of the coverage to access
      * @param bbox            the bbox of the desired area in the coverage

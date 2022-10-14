@@ -31,7 +31,7 @@ public abstract class AbstractTestWithServer {
 
     /**
      * Add any contexts to the server that are needed for all tests.
-     * 
+     *
      * @param server the server.
      */
     protected abstract void configureContext(HttpServer server);

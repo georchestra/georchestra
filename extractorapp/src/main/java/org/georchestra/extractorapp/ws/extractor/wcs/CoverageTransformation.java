@@ -34,7 +34,7 @@ import org.opengis.referencing.FactoryException;
 /**
  * Class to assist in reading a coverage from a file and transforming the file
  * in some way
- * 
+ *
  * @author jeichar
  *
  * @param <T> The resulting object from the transformation
@@ -43,10 +43,10 @@ import org.opengis.referencing.FactoryException;
 abstract class CoverageTransformation<T> {
     /**
      * Entry point for performing a transformation
-     * 
+     *
      * @param in        the file to read the coverage from
      * @param transform the transformation to apply
-     * 
+     *
      * @return result from the transform object
      */
     public static <T> T perform(File in, CoverageTransformation<T> transform) throws IOException {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.extractorapp.ws.extractor;
 

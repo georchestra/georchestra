@@ -41,13 +41,13 @@ import java.util.regex.Pattern;
 
 /**
  * Extracts the metadata document
- * 
+ *
  * <p>
  * It is responsible of request the metadata associated to a layer the from
  * Catalog Service and saves it in the temporal directory which will be used to
  * build the zip file.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -63,7 +63,7 @@ public class CSWExtractor {
 
     /**
      * CSWExtractor
-     * 
+     *
      * @param layerDirectory directory that contains the extracted layer
      * @param adminUserName
      * @param adminPassword
@@ -80,11 +80,11 @@ public class CSWExtractor {
 
     /**
      * checks the permissions to access to the CSW
-     * 
+     *
      * @param request
      * @param username request user name
      * @param roles
-     * 
+     *
      * @throws IOException
      */
     public void checkPermission(ExtractorLayerRequest request, String username, String roles) throws IOException {

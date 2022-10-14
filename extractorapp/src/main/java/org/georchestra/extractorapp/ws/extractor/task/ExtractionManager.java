@@ -90,7 +90,7 @@ public class ExtractionManager {
 
     /**
      * Submits the task taking into account the task priorities.
-     * 
+     *
      * @param extractor instance of extractor to be submit in queue
      */
     public synchronized void submit(ExtractionTask extractor) {
@@ -104,7 +104,7 @@ public class ExtractionManager {
 
     /**
      * Updates the priority if the task is in waiting status.
-     * 
+     *
      * @param id          identification of required id
      * @param newPriority
      */
@@ -128,11 +128,11 @@ public class ExtractionManager {
 //			this.readyTaskQueue.remove(foundTask);
 //
 //			foundTask.executionMetadata.setPriority(newPriority);
-//			
+//
 //			this.readyTaskQueue.offer(foundTask);
 
 // XXX the commented lines where replaced by de following, looks like the ClassCastException was solved. Requires more test.
-// the following code throws a ClassCastException: java.util.concurrent.FutureTask cannot be cast to java.lang.Comparable			
+// the following code throws a ClassCastException: java.util.concurrent.FutureTask cannot be cast to java.lang.Comparable
             foundTask.executionMetadata.setPriority(newPriority);
             ExtractionTask taskCloned = new ExtractionTask(foundTask);
 
@@ -156,7 +156,7 @@ public class ExtractionManager {
      * Will set priorities of all tasks to MEDIUM and re-add all waiting tasks back
      * to the queue in the order of the uuids in newOrder. If a uuid is not the
      * newOrder it will be deleted from the queue.
-     * 
+     *
      * @param newOrder a list of the task's uuids
      */
     public synchronized void updateAllPriorities(final List<String> newOrder) {
@@ -190,7 +190,7 @@ public class ExtractionManager {
 
     /**
      * Remove the task if it has got the waiting status
-     * 
+     *
      * @param uuid
      */
     public synchronized void removeTask(String uuid) {
@@ -230,7 +230,7 @@ public class ExtractionManager {
     /**
      * Search the task with the indeed uuid in the ready and paused tasks. The
      * search is done between the waiting, paused tasks
-     * 
+     *
      * @param uuid identifier of task to find
      * @return the {@link ExtractionTask} it exists, null in other case.
      */
@@ -266,7 +266,7 @@ public class ExtractionManager {
 
     /**
      * Changes the task's status
-     * 
+     *
      * @param id        Task's identifier
      * @param newStatus the new status
      */
@@ -292,7 +292,7 @@ public class ExtractionManager {
 
     /**
      * If the task is in Waiting or Paused State it can be canceled
-     * 
+     *
      * @param id task's identifier
      */
     private void cancelTask(final String id) {
@@ -319,7 +319,7 @@ public class ExtractionManager {
 
     /**
      * Cancel the process
-     * 
+     *
      * @param task
      */
     private synchronized boolean cancelProcess(final ExtractionTask task) {
@@ -332,7 +332,7 @@ public class ExtractionManager {
 
     /**
      * Moves the task to the paused queue if it is in waiting status.
-     * 
+     *
      * @param id task's identifier
      */
     private synchronized void pauseTask(final String id) {
@@ -355,11 +355,11 @@ public class ExtractionManager {
 //		foundTask.executionMetadata.getFuture().cancel(true);
 //		this.executor.remove(foundTask);
 //        this.readyTaskQueue.remove(foundTask);
-//        
+//
 //        foundTask.executionMetadata.setPaused();
 //        this.pausedTasks.put(id, foundTask);
-//        
-//XXX Replaced by the following sentences:        
+//
+//XXX Replaced by the following sentences:
         foundTask.executionMetadata.setPaused();
         ExtractionTask taskCloned = new ExtractionTask(foundTask);
 
@@ -374,7 +374,7 @@ public class ExtractionManager {
 
     /**
      * Moves a paused task to the ready task queue
-     * 
+     *
      * @param id
      */
     private synchronized void resumeTask(final String id) {

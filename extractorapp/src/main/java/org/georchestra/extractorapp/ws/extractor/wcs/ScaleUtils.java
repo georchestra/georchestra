@@ -30,7 +30,7 @@ import tec.uom.se.unit.Units;
 
 /**
  * Methods for calculating the ScaleDenominator
- * 
+ *
  * @author jesse
  */
 final class ScaleUtils {
@@ -60,7 +60,7 @@ final class ScaleUtils {
 
     /**
      * Determines if the crs is a lat/long crs (has angular units)
-     * 
+     *
      * @return true if the crs is a latlong crs (has angular units)
      */
     public static boolean isLatLong(CoordinateReferenceSystem crs) {

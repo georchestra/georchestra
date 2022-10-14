@@ -183,11 +183,11 @@ public class ExtractorController implements ServletContextAware {
     /**
      * Analyzes the changes required in the task described in the parameter. This
      * method supposes that only one change is done in one call.
-     * 
+     *
      * <pre>
      * Expected uri: /extractor/task/{uuid}
      * </pre>
-     * 
+     *
      * Spring 2.5 has not got @PathVariable, thus this method was defined as "/*" to
      * match uuid. The task id is retrieved from json object maintained in the
      * request content.
@@ -229,7 +229,7 @@ public class ExtractorController implements ServletContextAware {
 
     /**
      * Finds the task with the indeed uuid
-     * 
+     *
      * @param id the task id
      * @return the task id
      * @throws TaskNotFoundException

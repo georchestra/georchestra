@@ -37,7 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Creates the a file that contains a bounding box geometry related with the
  * extracted features.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -53,7 +53,7 @@ public class BBoxWriter {
 
     /**
      * New instance of BBoxWriter
-     * 
+     *
      * @param bbox         the bbox used to create the polygon
      * @param baseDir      where the file is created
      * @param requestedCRS CRS used to project the polygon associated to the bbox
@@ -70,9 +70,9 @@ public class BBoxWriter {
 
     /**
      * Writes the bbox files in the required format
-     * 
+     *
      * @return the set of {@link File} created
-     * 
+     *
      * @throws IOException
      */
     public List<File> generateFiles() throws IOException {
@@ -94,7 +94,7 @@ public class BBoxWriter {
 
     /**
      * Creates the feature type for the bbox feature
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -116,7 +116,7 @@ public class BBoxWriter {
 
     /**
      * Creates a feature with the polygon
-     * 
+     *
      * @param geom
      * @param type
      * @return {@link SimpleFeature}
@@ -134,7 +134,7 @@ public class BBoxWriter {
     /**
      * Creates a polygon or multipolygon geometry using the bbox as reference. The
      * new polygon will be in the target crs.
-     * 
+     *
      * @param envelope
      * @param geomClass required geometry
      * @param epsgCode

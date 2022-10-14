@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Encapsulates all the parameters of an extractor request for one layer
- * 
+ *
  * @author jeichar
  */
 public class ExtractorLayerRequest {
@@ -95,7 +95,7 @@ public class ExtractorLayerRequest {
 
     /**
      * Convert the _url to a capabilities url
-     * 
+     *
      * @param service the type of service to access
      * @param version the version of the ows
      */
@@ -135,7 +135,7 @@ public class ExtractorLayerRequest {
     /** --------------- Factory methods ------------------ */
     /**
      * Create a list of requests from jsonData. One per layer requested
-     * 
+     *
      * @param jsonData
      */
     public static List<ExtractorLayerRequest> parseJson(String jsonData)

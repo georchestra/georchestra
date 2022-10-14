@@ -40,7 +40,7 @@ import org.georchestra.extractorapp.ws.ExtractorException;
 
 /**
  * Common file operations
- * 
+ *
  * @author jeichar
  */
 public final class FileUtils {
@@ -239,7 +239,7 @@ public final class FileUtils {
 
     /**
      * Get the file extension.
-     * 
+     *
      * @param file the file
      */
     public static String extension(File file) {

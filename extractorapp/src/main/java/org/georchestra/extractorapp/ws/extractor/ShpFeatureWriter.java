@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.extractorapp.ws.extractor;
 
@@ -15,7 +15,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 
 /**
  * This class implements the shape file writing strategy
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -23,7 +23,7 @@ final class ShpFeatureWriter extends FileFeatureWriter {
 
     /**
      * New instance of {@link OGRFeatureWriter}
-     * 
+     *
      * @param basedir  output folder
      * @param features input the set of Features to write
      */

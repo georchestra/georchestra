@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 /**
  * Encapsulates the parameters required the priority of a task
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -44,7 +44,7 @@ class ExtractorUpdatePriorityRequest {
 
     /**
      * Makes a new instance of {@link ExtractorUpdatePriorityRequest}
-     * 
+     *
      * @param jsonData a {"uuid":value, "priority": value}
      * @return {@link ExtractorUpdatePriorityRequest}
      * @throws JSONException
@@ -65,7 +65,7 @@ class ExtractorUpdatePriorityRequest {
 
     /**
      * New instance of {@link ExtractorUpdatePriorityRequest}
-     * 
+     *
      * @param uuid
      * @param intPriority it should be one of the enumerated values defined in
      *                    {@link ExecutionPriority}}

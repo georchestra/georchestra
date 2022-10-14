@@ -66,7 +66,7 @@ public final class XmlUtils {
 
     /**
      * Namespace so that the xpath can get the data out of the wcs documents
-     * 
+     *
      * @author jeichar
      */
     static class OgcNamespaceContext implements NamespaceContext {
