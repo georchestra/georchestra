@@ -32,10 +32,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/applicationContext.xml")
 public class PreAuthFilterIT {
 
-    @Autowired private PreAuthFilter preAuthFilter;
+    @Autowired
+    private PreAuthFilter preAuthFilter;
 
     @BeforeClass
-    public static void before() {}
+    public static void before() {
+    }
 
     @Test
     public void testDoFilter() throws Exception {
@@ -66,8 +68,7 @@ public class PreAuthFilterIT {
 
         assertEquals(username, preAuthToken.getPrincipal());
         assertEquals(2, preAuthToken.getAuthorities().size());
-        List<GrantedAuthority> authorities =
-                preAuthToken.getAuthorities().stream().collect(Collectors.toList());
+        List<GrantedAuthority> authorities = preAuthToken.getAuthorities().stream().collect(Collectors.toList());
         assertEquals(roleAdmin, authorities.get(0).getAuthority());
         assertEquals(roleOther, authorities.get(1).getAuthority());
     }

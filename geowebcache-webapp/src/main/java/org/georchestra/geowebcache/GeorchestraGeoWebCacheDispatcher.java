@@ -40,8 +40,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 
 /** @author Jesse on 4/25/2014. */
-public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
-        implements InitializingBean {
+public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher implements InitializingBean {
 
     private final TileLayerDispatcher tileLayerDispatcher;
     private final GridSetBroker gridSetBroker;
@@ -50,44 +49,20 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
     private String headerUrl;
     private String headerHeight;
 
-    private String georHeaderInclude =
-            "<html>"
-                    + "  <head>"
-                    + "    <title>GeoWebCache - @instanceName@</title>"
-                    + "    <style type=\"text/css\">"
-                    + "      body, td {"
-                    + "        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
-                    + "        font-size: 0.85em;"
-                    + "        vertical-align: top;"
-                    + "      }"
-                    + "      a#logo {"
-                    + "        display:none;"
-                    + "      }"
-                    + "    </style>"
-                    + "  </head>"
-                    + "  <body>"
-                    + "    <!-- geOrchestra header -->"
-                    + "    <div id=\"go_head\">"
-                    + "      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
-                    + "    </div>"
-                    + "    <!-- end of geOrchestra header -->";
+    private String georHeaderInclude = "<html>" + "  <head>" + "    <title>GeoWebCache - @instanceName@</title>"
+            + "    <style type=\"text/css\">" + "      body, td {"
+            + "        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
+            + "        font-size: 0.85em;" + "        vertical-align: top;" + "      }" + "      a#logo {"
+            + "        display:none;" + "      }" + "    </style>" + "  </head>" + "  <body>"
+            + "    <!-- geOrchestra header -->" + "    <div id=\"go_head\">"
+            + "      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
+            + "    </div>" + "    <!-- end of geOrchestra header -->";
 
     /** Should be invoked through Spring. */
-    public GeorchestraGeoWebCacheDispatcher(
-            TileLayerDispatcher tileLayerDispatcher,
-            GridSetBroker gridSetBroker,
-            StorageBroker storageBroker,
-            BlobStoreAggregator blobStoreAggregator,
-            ServerConfiguration mainConfiguration,
-            RuntimeStats runtimeStats)
-            throws IOException {
-        super(
-                tileLayerDispatcher,
-                gridSetBroker,
-                storageBroker,
-                blobStoreAggregator,
-                mainConfiguration,
-                runtimeStats);
+    public GeorchestraGeoWebCacheDispatcher(TileLayerDispatcher tileLayerDispatcher, GridSetBroker gridSetBroker,
+            StorageBroker storageBroker, BlobStoreAggregator blobStoreAggregator, ServerConfiguration mainConfiguration,
+            RuntimeStats runtimeStats) throws IOException {
+        super(tileLayerDispatcher, gridSetBroker, storageBroker, blobStoreAggregator, mainConfiguration, runtimeStats);
         this.tileLayerDispatcher = tileLayerDispatcher;
         this.gridSetBroker = gridSetBroker;
     }
@@ -115,20 +90,17 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         logger.warn("handling " + request.getRequestURI());
 
         // Break the request into components, {type, service name}
         String[] requestComps = null;
         try {
-            String normalizedURI =
-                    request.getRequestURI().replaceFirst(request.getContextPath(), "");
+            String normalizedURI = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 
             if (getServletPrefix() != null) {
-                normalizedURI =
-                        normalizedURI.replaceFirst(
-                                getServletPrefix(), ""); // getRequestURI().replaceFirst(request
+                normalizedURI = normalizedURI.replaceFirst(getServletPrefix(), ""); // getRequestURI().replaceFirst(request
                 // .getContextPath()+,
                 // "");
             }
@@ -138,10 +110,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
             // superclass will handle this case as well
         }
 
-        if (requestComps == null
-                || requestComps[0].equalsIgnoreCase(TYPE_HOME)
-                || requestComps[0].equalsIgnoreCase(TYPE_DEMO)
-                || requestComps[0].equalsIgnoreCase(TYPE_DEMO + "s")) {
+        if (requestComps == null || requestComps[0].equalsIgnoreCase(TYPE_HOME)
+                || requestComps[0].equalsIgnoreCase(TYPE_DEMO) || requestComps[0].equalsIgnoreCase(TYPE_DEMO + "s")) {
             handleDemoRequest(requestComps, request, response);
         } else {
             return super.handleRequestInternal(request, response);
@@ -150,53 +120,47 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
         return null;
     }
 
-    private void handleDemoRequest(
-            String[] requestComps, HttpServletRequest request, HttpServletResponse response)
+    private void handleDemoRequest(String[] requestComps, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            final HttpServletResponse httpServletResponse =
-                    new HttpServletResponseWrapper(response) {
+            final HttpServletResponse httpServletResponse = new HttpServletResponseWrapper(response) {
+                @Override
+                public ServletOutputStream getOutputStream() throws IOException {
+                    return new ServletOutputStream() {
+
                         @Override
-                        public ServletOutputStream getOutputStream() throws IOException {
-                            return new ServletOutputStream() {
+                        public void write(int b) throws IOException {
+                            out.write(b);
+                        }
 
-                                @Override
-                                public void write(int b) throws IOException {
-                                    out.write(b);
-                                }
+                        @Override
+                        public void write(byte[] b) throws IOException {
+                            out.write(b);
+                        }
 
-                                @Override
-                                public void write(byte[] b) throws IOException {
-                                    out.write(b);
-                                }
+                        @Override
+                        public void write(byte[] b, int off, int len) throws IOException {
+                            out.write(b, off, len);
+                        }
 
-                                @Override
-                                public void write(byte[] b, int off, int len) throws IOException {
-                                    out.write(b, off, len);
-                                }
+                        @Override
+                        public boolean isReady() {
+                            return true;
+                        }
 
-                                @Override
-                                public boolean isReady() {
-                                    return true;
-                                }
-
-                                @Override
-                                public void setWriteListener(WriteListener writeListener) {
-                                    throw new UnsupportedOperationException(
-                                            "setWriteListener not implemented, call not expected");
-                                }
-                            };
+                        @Override
+                        public void setWriteListener(WriteListener writeListener) {
+                            throw new UnsupportedOperationException(
+                                    "setWriteListener not implemented, call not expected");
                         }
                     };
+                }
+            };
             if (requestComps == null || requestComps[0].equalsIgnoreCase(TYPE_HOME)) {
                 super.handleRequestInternal(request, httpServletResponse);
             } else {
-                Demo.makeMap(
-                        this.tileLayerDispatcher,
-                        this.gridSetBroker,
-                        requestComps[1],
-                        request,
+                Demo.makeMap(this.tileLayerDispatcher, this.gridSetBroker, requestComps[1], request,
                         httpServletResponse);
             }
         } finally {

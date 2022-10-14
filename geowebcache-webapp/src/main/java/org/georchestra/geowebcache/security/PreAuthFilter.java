@@ -46,8 +46,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.google.common.base.Strings;
 
 /**
- * A filter that checks the headers of the request and determines if the user is already logged in,
- * and therefore the credentials the user is permitted.
+ * A filter that checks the headers of the request and determines if the user is
+ * already logged in, and therefore the credentials the user is permitted.
  *
  * @author Jesse on 4/24/2014.
  */
@@ -75,15 +75,11 @@ public class PreAuthFilter implements Filter {
                 context.setAuthentication(authentication);
 
                 logger.warn(
-                        "Populated SecurityContextHolder with pre-auth token: '"
-                                + context.getAuthentication()
-                                + "'");
+                        "Populated SecurityContextHolder with pre-auth token: '" + context.getAuthentication() + "'");
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug(
-                            "Populated SecurityContextHolder with pre-auth token: '"
-                                    + context.getAuthentication()
-                                    + "'");
+                    logger.debug("Populated SecurityContextHolder with pre-auth token: '" + context.getAuthentication()
+                            + "'");
                 }
             } else {
                 logger.warn("SecurityContextHolder not populated with pre-auth token");
@@ -99,15 +95,12 @@ public class PreAuthFilter implements Filter {
     private Authentication createAuthentication(HttpServletRequest httpServletRequest) {
         final String username = SecurityHeaders.decode(httpServletRequest.getHeader(SEC_USERNAME));
         final String rolesString = SecurityHeaders.decode(httpServletRequest.getHeader(SEC_ROLES));
-        Set<String> roles =
-                Strings.isNullOrEmpty(rolesString)
-                        ? Collections.emptySet()
-                        : Pattern.compile(";")
-                                .splitAsStream(rolesString)
-                                .collect(Collectors.toSet());
+        Set<String> roles = Strings.isNullOrEmpty(rolesString) ? Collections.emptySet()
+                : Pattern.compile(";").splitAsStream(rolesString).collect(Collectors.toSet());
         return new PreAuthToken(username, roles);
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+    }
 }

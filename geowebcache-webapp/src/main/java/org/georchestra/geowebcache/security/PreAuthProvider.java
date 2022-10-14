@@ -26,7 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 /**
- * A provider that accepts {@link org.georchestra.geowebcache.security.PreAuthToken} authentication
+ * A provider that accepts
+ * {@link org.georchestra.geowebcache.security.PreAuthToken} authentication
  * objects.
  *
  * @author Jesse on 4/24/2014.
@@ -40,8 +41,7 @@ public class PreAuthProvider implements AuthenticationProvider {
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         logger.warn("Authenticating " + authentication);
         if (authentication instanceof PreAuthToken) {
             PreAuthToken authToken = (PreAuthToken) authentication;
