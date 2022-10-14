@@ -3,11 +3,13 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".github/workflows/datafeeder.yml"
       - "commons/**"
       - "security-proxy-spring-integration/**"
       - "datafeeder/**"
   pull_request:
     paths:
+      - ".github/workflows/datafeeder.yml"
       - "commons/**"
       - "security-proxy-spring-integration/**"
       - "datafeeder/**"
