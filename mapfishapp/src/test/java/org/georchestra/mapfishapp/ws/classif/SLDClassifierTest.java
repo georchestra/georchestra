@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -40,6 +41,7 @@ public class SLDClassifierTest {
     }
 
     @Test
+    @Ignore("mfapp EOL & layer does not exist anymore on geobretagne")
     public void testChoropleths() throws Exception {
 
         // build JSON request
@@ -67,6 +69,7 @@ public class SLDClassifierTest {
     }
 
     @Test
+    @Ignore("mfapp EOL & layer does not exist anymore on geobretagne")
     public void testSymbols() throws Exception {
 
         // build JSON request
@@ -92,6 +95,7 @@ public class SLDClassifierTest {
     }
 
     @Test
+    @Ignore("mfapp EOL & layer does not exist anymore on geobretagne")
     public void testUniqueValues() throws Exception {
 
         // build JSON request
