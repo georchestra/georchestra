@@ -15,7 +15,7 @@ import org.opengis.filter.PropertyIsEqualTo;
 
 /**
  * Tests DiscreteFilterFactory
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */

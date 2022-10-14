@@ -163,7 +163,7 @@ public abstract class A_DocService {
 
     /**
      * Store the given data
-     * 
+     *
      * @param data     raw data to be stored
      * @param username the current user name or empty string if anonymous (correct
      *                 ?)
@@ -222,7 +222,7 @@ public abstract class A_DocService {
     /**
      * Load the file corresponding to the file name in the service. Content can be
      * accessed via getContent, name via getName, and MIME type via getMIMEType
-     * 
+     *
      * @param fileName file name
      * @throws DocServiceException
      */
@@ -249,7 +249,7 @@ public abstract class A_DocService {
     /**
      * Return a JSON array with decriptions of all files for specified standard.
      * Descriptions may include some specific fields based on standard.
-     * 
+     *
      * @param username username to filter geodoc.
      * @return a JSON array with following keys : hash, created_at, last_access,
      *         access_count and maybe other keys based on standard
@@ -323,7 +323,7 @@ public abstract class A_DocService {
 
     /**
      * Get the MIME type
-     * 
+     *
      * @return String MIME type
      */
     public String getMIMEType() {
@@ -332,7 +332,7 @@ public abstract class A_DocService {
 
     /**
      * Get the file content. Should be called once loadFile has been called.
-     * 
+     *
      * @return String file content
      */
     public String getContent() {
@@ -345,7 +345,7 @@ public abstract class A_DocService {
     /**
      * Get the file name (contains file extension). Should be called once loadFile
      * has been called.
-     * 
+     *
      * @return String file name
      */
     public String getName() {
@@ -363,7 +363,7 @@ public abstract class A_DocService {
     /**
      * Must be override to take actions before the data are saved. <br />
      * Examples: valid data format or integrity, interpret or transform data.
-     * 
+     *
      * @throws DocServiceException
      */
     protected void preSave() throws DocServiceException {
@@ -372,7 +372,7 @@ public abstract class A_DocService {
     /**
      * Must be override to take actions once the file is load in memory <br />
      * Examples: parse the file to get the real file name
-     * 
+     *
      * @throws DocServiceException
      */
     protected void postLoad() throws DocServiceException {
@@ -381,7 +381,7 @@ public abstract class A_DocService {
     /**
      * Provide a method to its subclasses to determine if their content is valid
      * based on a xsd schema
-     * 
+     *
      * @param schemaURL
      * @return true: valid; false: not valid. No use to expect this return value. If
      *         the document is not valid a DocServiceException is thrown
@@ -419,7 +419,7 @@ public abstract class A_DocService {
      * This method will extracts specific fields from geodoc and return a JSON
      * object with only those fields. This JSON will be merged with the one
      * extracted by listFiles() method. This method should be overrided.
-     * 
+     *
      * @param rawDoc stream connected to geodoc
      * @return a JSON object containing only fields dedicated to this geodoc
      *         standard
@@ -436,7 +436,7 @@ public abstract class A_DocService {
 
     /**
      * Returns a md5 hash from a given string
-     * 
+     *
      * @param text input string
      * @return md5 hash
      */
@@ -464,7 +464,7 @@ public abstract class A_DocService {
 
     /**
      * Check that data exists in db under provided hash
-     * 
+     *
      * @param fileName eg geodoc1694e3cc580768d5125816b574915e97.wmc or
      *                 geodoc\d{19}.wmc
      * @return true: exists, false: not exists
@@ -517,7 +517,7 @@ public abstract class A_DocService {
 
     /**
      * Get file content of the given file stored in DIR_PATH
-     * 
+     *
      * @param fileName file name
      * @return file content
      */

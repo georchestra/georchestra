@@ -30,7 +30,7 @@ import org.opengis.filter.FilterFactory2;
  * Provides Filter objects from continuous values. These SLD filters corresponds
  * to the PropertyIsBetween tags from the SLD specifications. It can be
  * therefore added to any Rule.
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -115,7 +115,7 @@ public class ContinuousFilterFactory implements I_FilterFactory {
      * Classifies values given the number of classes. The intervals found by this
      * classification will be used to generate Filter objects. <br />
      * For n classes, there are n {@link Interval} objects
-     * 
+     *
      * @param values       values to classify
      * @param classCount   number of classes
      * @param propertyName property name corresponding to the WFS request
@@ -139,7 +139,7 @@ public class ContinuousFilterFactory implements I_FilterFactory {
      * Execute Quantile classification on the values. Store computed intervals for
      * further use. <br />
      * Values that are the same MUST belong to the same class
-     * 
+     *
      * @param values     values to classify
      * @param classCount number of classes
      */
@@ -191,7 +191,7 @@ public class ContinuousFilterFactory implements I_FilterFactory {
 
     /**
      * Gets the interpolated boundaries
-     * 
+     *
      * @return List of interpolated boundaries
      */
     public ArrayList<Interval> getIntervals() {

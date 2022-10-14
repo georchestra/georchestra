@@ -174,7 +174,7 @@ public class AddonController implements ServletContextAware {
 
     /**
      * Get the addon path if the georchestra.datadir is available.
-     * 
+     *
      * @return the addon path as a string if datadir is activated, else returns
      *         null.
      */
@@ -192,7 +192,7 @@ public class AddonController implements ServletContextAware {
     /**
      * Get the official path to the addons, i.e. the ones that are provided in the
      * webapp.
-     * 
+     *
      * @return the path to the addons directory in the webapp.
      */
     private String getMfappOfficialAddonsPath() {
@@ -298,7 +298,7 @@ public class AddonController implements ServletContextAware {
 
     /**
      * Setter for georchestraConfiguration, used only for testing.
-     * 
+     *
      * @param gc
      */
     public void setGeorchestraConfiguration(GeorchestraConfiguration gc) {

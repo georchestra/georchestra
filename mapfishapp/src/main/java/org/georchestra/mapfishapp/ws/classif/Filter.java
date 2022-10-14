@@ -21,7 +21,7 @@ package org.georchestra.mapfishapp.ws.classif;
 
 /**
  * A filter wrapper class.
- * 
+ *
  * @author eric.lemoine@camptocamp.com
  */
 public class Filter {
@@ -31,7 +31,7 @@ public class Filter {
 
     /**
      * Create a filter wrapping an OpenGIS filter.<br />
-     * 
+     *
      * @param _filter The OpenGIS filter.
      * @param _name   The filter name.
      */
@@ -42,7 +42,7 @@ public class Filter {
 
     /**
      * Get the filter name.
-     * 
+     *
      * @return The filter name.
      */
     public String getName() {
@@ -51,7 +51,7 @@ public class Filter {
 
     /**
      * Get the GIS filter.
-     * 
+     *
      * @return The GIS filter.
      */
     public org.opengis.filter.Filter getGISFilter() {

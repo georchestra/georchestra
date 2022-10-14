@@ -92,7 +92,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Transform the features from 4326 to 2154
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -166,7 +166,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Tests gml projected no reprojected
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -185,7 +185,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Tests gml projected using EPSG:4326
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -206,7 +206,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Tests gml projected using EPSG:3857
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -228,7 +228,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Tests gml projected using EPSG:2154
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -373,7 +373,7 @@ public class GeotoolsFeatureReaderTest {
     /**
      * Test method for
      * {@link org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader#getFormatList()}.
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -454,7 +454,7 @@ public class GeotoolsFeatureReaderTest {
 
     /**
      * Returns path+fileName
-     * 
+     *
      * @param fileName
      * @return path+fileName
      * @throws Exception

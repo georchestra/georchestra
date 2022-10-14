@@ -31,7 +31,7 @@ import org.geotools.styling.Symbolizer;
 
 /**
  * Stores and provides PointSymbolizer objects
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -138,7 +138,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
      * All symbol sizes are interpolated between minSize and maxSize. <br />
      * minSize is guaranteed, then same interval between values at the expense of
      * the maxSize (only round values allowed: sizes in pixels)
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param minSize    Minimum symbol size
      * @param maxSize    Maximum symbol size
@@ -154,7 +154,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
      * given a number of classes. Those colors will be used to create
      * PointSymbolizer objects accessible via the
      * {@link PointSymbolizerFactory#iterator()}
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param firstColor First color to start the interpolation
      * @param lastColor  Last color to end the interpolation
@@ -169,7 +169,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
      * Sets colors used to create Symbolizer objects accessible then via
      * {@link PointSymbolizerFactory#iterator()} <br />
      * Useful to assign colors when classification is made with unique values.
-     * 
+     *
      * @param colorMapID known color map id (color map is a set of predefined
      *                   colors)
      * @param size       number of colors wanted (if color map is too small, random
@@ -192,7 +192,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Change symbols color. Default: Color.RED
-     * 
+     *
      * @param color New Symbol color
      */
     public void setColor(final Color color) {
@@ -201,7 +201,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Change symbols size. Default: 1
-     * 
+     *
      * @param size New Symbol size
      */
     public void setSize(final double size) {
@@ -210,7 +210,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Change symbols opacity. Default: 1.0
-     * 
+     *
      * @param opacity Value between 0 and 1.0
      * @throws IllegalArgumentException If forbidden value
      */
@@ -223,7 +223,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Change symbols shape. Default: StyleBuilder.MARK_CIRCLE
-     * 
+     *
      * @param knownSymbol Must be one of the StyleBuilder MARK constants
      * @throws IllegalArgumentException If forbidden value
      */
@@ -236,7 +236,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Get interpolated sizes
-     * 
+     *
      * @return List of sizes (in pixels)
      */
     public ArrayList<Integer> getSizes() {
@@ -249,7 +249,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
      * <br />
      * or get colors from palette if created with
      * {@link PointSymbolizerFactory#PointSymbolizerFactory(int, int)}
-     * 
+     *
      * @return list of Color
      */
     public ArrayList<Color> getColors() {
@@ -259,7 +259,7 @@ public class PointSymbolizerFactory implements I_SymbolizerFactory {
     /**
      * Determines if requested symbol is a symbol shape name known by the OGC SLD
      * specifications
-     * 
+     *
      * @param knownSymbol
      * @return
      */

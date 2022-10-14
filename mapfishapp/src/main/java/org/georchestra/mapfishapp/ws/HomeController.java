@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Main controller that display the extractor home page
- * 
+ *
  * @author bruno.binet@camptocamp.com
  */
 
@@ -43,7 +43,7 @@ public class HomeController extends AbstractController {
 
     /**
      * POST entry point.
-     * 
+     *
      * @param request  . Must contains information from the layers and services to
      *                 be extracted
      * @param response .
@@ -62,7 +62,7 @@ public class HomeController extends AbstractController {
 
     /**
      * GET entry point.
-     * 
+     *
      * @param request  .
      * @param response .
      * @return

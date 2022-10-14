@@ -30,7 +30,7 @@ public class SymbolizerUtils {
      * given a number of classes. Those colors will be used to create
      * PolygonSymbolizer objects accessible via the
      * {@link PolygonSymbolizerFactory#iterator()}
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param firstColor First color to start the interpolation
      * @param lastColor  Last color to end the interpolation
@@ -62,7 +62,7 @@ public class SymbolizerUtils {
      * All symbol sizes are interpolated between minSize and maxSize. <br />
      * minSize is guaranteed, then same interval between values at the expense of
      * the maxSize (only round values allowed: sizes in pixels)
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param minSize    Minimum symbol size
      * @param maxSize    Maximum symbol size
@@ -103,7 +103,7 @@ public class SymbolizerUtils {
      * Sets colors used to create Symbolizer objects accessible then via
      * {@link PolygonSymbolizerFactory#iterator()} <br />
      * Useful to assign colors when classification is made with unique values.
-     * 
+     *
      * @param colorMapID known color map id (color map is a set of predefined
      *                   colors)
      * @param size       number of colors wanted (if color map is too small, random
@@ -126,7 +126,7 @@ public class SymbolizerUtils {
 
     /**
      * Get a predefined palette
-     * 
+     *
      * @param id palette id
      * @return <code>ArrayList<Color></code> or IllegalArgumentException if not
      *         found
@@ -185,7 +185,7 @@ public class SymbolizerUtils {
 
     /**
      * Gets random RGB color
-     * 
+     *
      * @return Color, random color
      */
     private static Color getRandomColor() {

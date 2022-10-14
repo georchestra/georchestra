@@ -23,7 +23,7 @@ package org.georchestra.mapfishapp.ws;
  * This exception should be used to send specific HTTP error to client. <br />
  * It is strongly tied with HTTP codes from
  * {@link javax.servlet.http.HttpServletResponse}
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -35,7 +35,7 @@ public class DocServiceException extends Exception {
 
     /**
      * Constructor
-     * 
+     *
      * @param message String Exception message
      * @param code    HTTP error code. Can be retrieved from HttpServletResponse
      */
@@ -46,7 +46,7 @@ public class DocServiceException extends Exception {
 
     /**
      * Get error code
-     * 
+     *
      * @return int error code
      */
     public int getErrorCode() {

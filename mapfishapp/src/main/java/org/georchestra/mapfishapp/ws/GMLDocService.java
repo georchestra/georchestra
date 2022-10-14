@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 
 /**
  * This service handles the storage and the loading of a GML file
- * 
+ *
  * @author yoann buch - yoann.buch@gmail.com
  *
  */
@@ -39,7 +39,7 @@ public class GMLDocService extends A_DocService {
 
     /**
      * Called before saving the content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override
@@ -49,7 +49,7 @@ public class GMLDocService extends A_DocService {
 
     /**
      * Called right after the loading of the file content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override

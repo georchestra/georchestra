@@ -29,7 +29,7 @@ import org.opengis.filter.FilterFactory2;
  * Provides Filter objects from discrete values. These SLD filters corresponds
  * to the PropertyIsEqualTo tags from the SLD specifications. It can be
  * therefore added to any Rule.
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -79,7 +79,7 @@ public class DiscreteFilterFactory implements I_FilterFactory {
     /**
      * Creates Filters objects from the given values. Those objects are then
      * accessible via {@link DiscreteFilterFactory#iterator()}
-     * 
+     *
      * @param values       one value = one filter
      * @param propertyName property name on which the WFS request is made
      */

@@ -33,7 +33,7 @@ import org.json.JSONTokener;
 
 /**
  * Command used to encapsulate a classification request.
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -81,7 +81,7 @@ public class ClassifierCommand {
 
     /**
      * Create command from a String.
-     * 
+     *
      * @param jsonRequest This string must be in JSON format
      * @throws DocServiceException When client request is not valid
      */
@@ -97,7 +97,7 @@ public class ClassifierCommand {
 
     /**
      * Create command from a JSONObject
-     * 
+     *
      * @param jsonRequest JSONObject, the request
      * @throws DocServiceException When request is not valid
      */
@@ -108,7 +108,7 @@ public class ClassifierCommand {
     /**
      * Interpret the request in JSON. Check JSON format, required fields and store
      * them in member attributes.
-     * 
+     *
      * @param jsonRequest JSONObject, the request
      * @throws DocServiceException When request is not valid
      */
@@ -170,7 +170,7 @@ public class ClassifierCommand {
 
     /**
      * Determine if the type requested by the user is known
-     * 
+     *
      * @param type type requested by the customer
      * @return true: known; false: unknown, consider the command corrupted
      * @throws DocServiceException
@@ -190,7 +190,7 @@ public class ClassifierCommand {
 
     /**
      * Determine if the type requested by the user is known
-     * 
+     *
      * @param type type requested by the customer
      * @return true: known; false: unknown, consider the command corrupted
      * @throws DocServiceException
@@ -210,7 +210,7 @@ public class ClassifierCommand {
 
     /**
      * Get the URL of the WFS
-     * 
+     *
      * @return URL
      */
     public URL getWFSUrl() {
@@ -220,7 +220,7 @@ public class ClassifierCommand {
     /**
      * Get the name of the feature type. A feature type is one element from the list
      * of the WFS method GetCapabilities.
-     * 
+     *
      * @return String feature type name
      */
     public String getFeatureTypeName() {
@@ -230,7 +230,7 @@ public class ClassifierCommand {
     /**
      * Get the name of the property. The WFS method: GetFeature returns a collection
      * of features. In each features there is a list of properties or attributes.
-     * 
+     *
      * @return property name
      */
     public String getPropertyName() {
@@ -239,7 +239,7 @@ public class ClassifierCommand {
 
     /**
      * Get the classification type
-     * 
+     *
      * @return E_Type, classification type
      */
     public E_ClassifType getClassifType() {
@@ -248,7 +248,7 @@ public class ClassifierCommand {
 
     /**
      * Get the symbol type
-     * 
+     *
      * @return E_SymbolType, symbol type
      */
     public E_SymbolType getSymbolType() {
@@ -258,7 +258,7 @@ public class ClassifierCommand {
     /**
      * Get the first color of the interpolation. Should only be used when Command
      * was filled with CHOROPLETHS type.
-     * 
+     *
      * @return String Color HEX
      */
     public Color getFirstColor() {
@@ -271,7 +271,7 @@ public class ClassifierCommand {
     /**
      * Get the last color of the interpolation. Should only be used when Command was
      * filled with CHOROPLETHS type.
-     * 
+     *
      * @return String Color HEX
      */
     public Color getLastColor() {
@@ -284,7 +284,7 @@ public class ClassifierCommand {
     /**
      * Get the start size of the interpolation. Should only be used when Command was
      * filled with PROP_SYMBOLS type.
-     * 
+     *
      * @return size in pixel
      */
     public int getMinSize() {
@@ -297,7 +297,7 @@ public class ClassifierCommand {
     /**
      * Get the end size of the interpolation. Should only be used when Command was
      * filled with PROP_SYMBOLS type.
-     * 
+     *
      * @return size in pixel
      */
     public int getMaxSize() {
@@ -310,7 +310,7 @@ public class ClassifierCommand {
     /**
      * Get the number of classes. Should only be used when Command was filled with
      * anything but UNIQUE_VALUES type.
-     * 
+     *
      * @return classes count
      */
     public int getClassCount() {
@@ -324,7 +324,7 @@ public class ClassifierCommand {
      * Get the palette id. Should only be used when Command was filled with
      * PROP_SYMBOLS type. <br />
      * This id corresponds to a specific palette known on server side.
-     * 
+     *
      * @return palette id.
      */
     public int getPaletteID() {

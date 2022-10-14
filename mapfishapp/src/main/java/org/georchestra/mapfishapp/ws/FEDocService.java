@@ -40,7 +40,7 @@ public class FEDocService extends A_DocService {
 
     /**
      * Called before saving the content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override
@@ -50,7 +50,7 @@ public class FEDocService extends A_DocService {
 
     /**
      * Called right after the loading of the file content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override

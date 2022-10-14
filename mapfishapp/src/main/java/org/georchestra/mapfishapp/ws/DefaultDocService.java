@@ -27,7 +27,7 @@ import javax.sql.DataSource;
  * the job. It is useful for creating new doc services that do not need specific
  * behaviors and it also prevent the multiplication of classes that inherits
  * from {@link A_DocService}.
- * 
+ *
  * @author yoann.buch@gmail.com
  */
 
@@ -36,7 +36,7 @@ public class DefaultDocService extends A_DocService {
     /**
      * This constructor is set private. It forces user to use
      * {@link DefaultDocService#DefaultDocService(String, String)}
-     * 
+     *
      * @param tempDir
      */
     @SuppressWarnings("unused")
@@ -47,7 +47,7 @@ public class DefaultDocService extends A_DocService {
     /**
      * Creates a new Doc Service using all the features of its abstract base class
      * {@link A_DocService}
-     * 
+     *
      * @param fileExtension
      * @param MIMEType
      * @param tempDir

@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Test ClassifierCommand.
- * 
+ *
  * @see org.georchestra.mapfishapp.ws.classif.ClassifierCommand
  * @author yoann buch - yoann.buch@gmail.com
  */
@@ -21,7 +21,7 @@ public class ClassifierCommandTest {
 
     /**
      * Verifies correctness of the construction step - CHOROPLETHS type
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -53,7 +53,7 @@ public class ClassifierCommandTest {
 
     /**
      * Verifies correctness of the construction step - UNIQUE VALUES type
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -82,7 +82,7 @@ public class ClassifierCommandTest {
 
     /**
      * Verifies correctness of the construction step - PROP SYMBOLS type
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -115,7 +115,7 @@ public class ClassifierCommandTest {
 
     /**
      * Checks exception when no parameters are provided
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = DocServiceException.class)
@@ -128,7 +128,7 @@ public class ClassifierCommandTest {
 
     /**
      * Checks exception when an unknown classification type is provided
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = DocServiceException.class)
@@ -148,7 +148,7 @@ public class ClassifierCommandTest {
 
     /**
      * Checks exception malformed URL
-     * 
+     *
      * @throws Exception
      */
     @Test(expected = DocServiceException.class)

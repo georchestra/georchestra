@@ -16,7 +16,7 @@ import org.opengis.filter.PropertyIsBetween;
 
 /**
  * Tests ContinuousFilterFactory
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */

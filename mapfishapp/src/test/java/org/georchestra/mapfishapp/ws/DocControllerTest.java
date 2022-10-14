@@ -26,7 +26,7 @@ import org.springframework.util.ReflectionUtils;
  * - WMCDocService <br />
  * - CSVDocService <br />
  * - SLDDocService <br />
- * 
+ *
  * @author yoann buch - yoann.buch@gmail.com
  *
  */
@@ -82,7 +82,7 @@ public class DocControllerTest {
      * Test a complete scenario. User sends .wmc file via POST and gets back the
      * generated file path. Then user asks via GET to get back the file stored on
      * the server
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -123,7 +123,7 @@ public class DocControllerTest {
      * Test a complete scenario. User send JSON data via POST and gets back the
      * generated csv file name. Then user asks via GET to get back the csv file
      * stored on the server
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -165,7 +165,7 @@ public class DocControllerTest {
      * Test a complete scenario. User sends sld file content via POST and gets back
      * the generated file path. Then user asks via GET to get back the sld file
      * stored on the server
-     * 
+     *
      * @throws Exception
      */
     @Test

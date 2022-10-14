@@ -31,7 +31,7 @@
  * {@link org.georchestra.mapfishapp.ws.classif.ContinuousFilterFactory} are
  * used for filtering purpose (SLD filters) <br />
  * <br />
- * 
+ *
  * @author yoann.buch@gmail.com
  */
 package org.georchestra.mapfishapp.ws.classif;

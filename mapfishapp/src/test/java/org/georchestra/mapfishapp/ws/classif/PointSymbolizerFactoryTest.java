@@ -18,7 +18,7 @@ import org.opengis.style.GraphicalSymbol;
 
 /**
  * Test PointSymbolizerFactory
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */

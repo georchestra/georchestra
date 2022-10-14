@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 /**
  * This service handles the storage and the loading of a KML file on a temporary
  * directory.
- * 
+ *
  * @author yoann buch - yoann.buch@gmail.com
  *
  */
@@ -40,7 +40,7 @@ public class KMLDocService extends A_DocService {
 
     /**
      * Called before saving the content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override
@@ -50,7 +50,7 @@ public class KMLDocService extends A_DocService {
 
     /**
      * Called right after the loading of the file content
-     * 
+     *
      * @throws DocServiceException
      */
     @Override

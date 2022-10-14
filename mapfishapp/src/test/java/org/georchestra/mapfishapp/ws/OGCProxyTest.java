@@ -18,7 +18,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * Test OGCProxy
- * 
+ *
  * @author yoann buch - yoann.buch@gmail.com
  *
  */
@@ -67,7 +67,7 @@ public class OGCProxyTest {
 
     /**
      * Test a known distant web service
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -100,7 +100,7 @@ public class OGCProxyTest {
 
     /**
      * Test a known web service. Does not test the content considering the size
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -198,7 +198,7 @@ public class OGCProxyTest {
 
     /**
      * Test reject from proxy when it filters on host.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -238,7 +238,7 @@ public class OGCProxyTest {
 
     /**
      * Test reject from proxy when protocol is omitted
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -261,7 +261,7 @@ public class OGCProxyTest {
 
     /**
      * Test reject from proxy when protocol is not http
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -284,7 +284,7 @@ public class OGCProxyTest {
 
     /**
      * Test the method defining if one host is part of the allowed ones
-     * 
+     *
      * @return String: Valid final host according to the proxy's filtration policy
      */
     private String provideValidFinalHost() {
@@ -300,7 +300,7 @@ public class OGCProxyTest {
 
     /**
      * Test the method determining if a content type is valid
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -312,7 +312,7 @@ public class OGCProxyTest {
 
     /**
      * Helps testIsContentTypeValid
-     * 
+     *
      * @return
      */
     private boolean areContentTypeAllValid() {
@@ -329,7 +329,7 @@ public class OGCProxyTest {
     /**
      * Test method copying headers (except Host) sent by client to distant host
      * request
-     * 
+     *
      * @throws Exception
      */
     @Test

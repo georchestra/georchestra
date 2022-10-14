@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -26,11 +26,11 @@ import org.opengis.feature.simple.SimpleFeature;
 
 /**
  * Unit Test for {@link UpLoadFileManagement}
- * 
+ *
  * Test the geotools implementation {@link GeotoolsFeatureReader}.
- * 
+ *
  * @author Mauricio Pazos
- * 
+ *
  */
 public class UpLoadFileManagementGTImplTest {
 
@@ -44,7 +44,7 @@ public class UpLoadFileManagementGTImplTest {
      * Test method for
      * {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}
      * .
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -67,7 +67,7 @@ public class UpLoadFileManagementGTImplTest {
 
     /**
      * Tests the coordinates order.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -86,7 +86,7 @@ public class UpLoadFileManagementGTImplTest {
      * <p>
      * The retrieved features aren't reprojected. They will be in the base srs.
      * </p>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -169,7 +169,7 @@ public class UpLoadFileManagementGTImplTest {
 
     /**
      * Tests the coordinates order.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -185,7 +185,7 @@ public class UpLoadFileManagementGTImplTest {
 
     /**
      * Read features no reprojected
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -200,7 +200,7 @@ public class UpLoadFileManagementGTImplTest {
 
     /**
      * Tests the coordinates order.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -217,7 +217,7 @@ public class UpLoadFileManagementGTImplTest {
     /**
      * Tests the coordinates order. The input layer is projected in epsg:4326, the
      * result is reprojected to epsg:3857.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -234,7 +234,7 @@ public class UpLoadFileManagementGTImplTest {
     /**
      * Assert that the feature in json syntax contains its coordinate in the order
      * x, y.
-     * 
+     *
      * @param x
      * @param y
      * @param json
@@ -271,7 +271,7 @@ public class UpLoadFileManagementGTImplTest {
      * Sets the bridge {@link AbstractFeatureGeoFileReader} with the
      * {@link GeotoolsFeatureReader} implementation, then retrieves the file as Json
      * collection. The return value will be null if the file is empty.
-     * 
+     *
      * @param fileName
      * @param epsg
      * @return
@@ -306,7 +306,7 @@ public class UpLoadFileManagementGTImplTest {
 
     /**
      * Returns path+fileName
-     * 
+     *
      * @param fileName
      * @return
      * @throws Exception

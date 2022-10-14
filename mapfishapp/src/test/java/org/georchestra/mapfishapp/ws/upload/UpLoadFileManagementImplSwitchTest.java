@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -16,7 +16,7 @@ public class UpLoadFileManagementImplSwitchTest {
     /**
      * Tests that the implemantation created provides the minimum set of geoFile
      * formats
-     * 
+     *
      * Test method for
      * {@link org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement#getFormatList()}.
      */
@@ -48,7 +48,7 @@ public class UpLoadFileManagementImplSwitchTest {
 
     /**
      * minimum format set is the geotools implementation
-     * 
+     *
      * @return Minimum format
      */
     private FileFormat[] getMinimumFormatSet() {

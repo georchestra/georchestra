@@ -88,7 +88,7 @@ public class OGCProxy {
 
     /**
      * Method POST used for instrumentation (tests) convenience
-     * 
+     *
      * @param request
      * @param response
      * @param sURL
@@ -101,7 +101,7 @@ public class OGCProxy {
 
     /**
      * Method Get used for instrumentation (tests) convenience
-     * 
+     *
      * @param request
      * @param response
      * @param sURL
@@ -114,7 +114,7 @@ public class OGCProxy {
 
     /**
      * Proxy entry point. Accessible via GET.
-     * 
+     *
      * @param request.        Must contains a "url" parameter pointing to the remote
      *                        host
      * @param response.       Contains in its content response from remote host
@@ -129,7 +129,7 @@ public class OGCProxy {
 
     /**
      * Proxy entry point. Accessible via POST.
-     * 
+     *
      * @param request.        Must contains a "url" parameter pointing to the remote
      *                        host
      * @param response.       Contains in its content response from remote host
@@ -341,7 +341,7 @@ public class OGCProxy {
 
     /**
      * Extract the encoding from a string which is the header node of an xml file
-     * 
+     *
      * @param header String that should contain the encoding attribute and its value
      * @return the charset. null if not found
      */
@@ -368,7 +368,7 @@ public class OGCProxy {
     /**
      * Gets the encoding of the content sent by the remote host: extracts the
      * content-encoding header
-     * 
+     *
      * @param headerFields headers of the HttpURLConnection
      * @return null if not exists otherwise name of the encoding (gzip, deflate...)
      */
@@ -392,7 +392,7 @@ public class OGCProxy {
 
     /**
      * Copy headers from the connection to the response
-     * 
+     *
      * @param response   to copy headers in
      * @param uc         contains headers to copy
      * @param ignoreList list of headers that mustn't be copied
@@ -428,7 +428,7 @@ public class OGCProxy {
 
     /**
      * Helper function to detect if a specific header is in a given ignore list
-     * 
+     *
      * @param headerName
      * @param ignoreList
      * @return true: in, false: not in
@@ -447,7 +447,7 @@ public class OGCProxy {
     /**
      * Copy client's headers in the request to send to the final host Trick the host
      * by hiding the proxy indirection and keep useful headers information
-     * 
+     *
      * @param request
      * @param uc.     Contains now headers from client request except Host
      */
@@ -466,7 +466,7 @@ public class OGCProxy {
 
     /**
      * Check if a particular host can be requested
-     * 
+     *
      * @param host - host name
      * @return true: allowed; false: not allowed
      */
@@ -527,7 +527,7 @@ public class OGCProxy {
 
     /**
      * Check if the content type is accepted by the proxy
-     * 
+     *
      * @param contentType
      * @return true: valid; false: not valid
      */

@@ -29,7 +29,7 @@ import org.geotools.styling.Symbolizer;
 
 /**
  * Stores and provides PolygonSymbolizer objects
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
@@ -79,7 +79,7 @@ public class PolygonSymbolizerFactory implements I_SymbolizerFactory {
      * given a number of classes. Those colors will be used to create
      * PolygonSymbolizer objects accessible via the
      * {@link PolygonSymbolizerFactory#iterator()}
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param firstColor First color to start the interpolation
      * @param lastColor  Last color to end the interpolation
@@ -94,7 +94,7 @@ public class PolygonSymbolizerFactory implements I_SymbolizerFactory {
      * Sets colors used to create Symbolizer objects accessible then via
      * {@link PolygonSymbolizerFactory#iterator()} <br />
      * Useful to assign colors when classification is made with unique values.
-     * 
+     *
      * @param colorMapID known color map id (color map is a set of predefined
      *                   colors)
      * @param size       number of colors wanted (if color map is too small, random
@@ -123,7 +123,7 @@ public class PolygonSymbolizerFactory implements I_SymbolizerFactory {
      * <br />
      * or get colors from palette if created with
      * {@link PolygonSymbolizerFactory#PolygonSymbolizerFactory(int, int)}
-     * 
+     *
      * @return list of Color
      */
     public ArrayList<Color> getColors() {

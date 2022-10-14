@@ -14,7 +14,7 @@ import org.junit.Test;
 
 /**
  * Tests DiscreteFilterFactory
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */

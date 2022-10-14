@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -12,7 +12,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Mock Reader for testing support
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -20,7 +20,7 @@ public final class MockReader implements FeatureGeoFileReader {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.mapfishapp.ws.upload.FeatureFileReaderImplementor#
      * getFeatureCollection(java.io.File,
      * org.georchestra.mapfishapp.ws.upload.FileFormat)
@@ -32,7 +32,7 @@ public final class MockReader implements FeatureGeoFileReader {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.mapfishapp.ws.upload.FeatureFileReaderImplementor#
      * getFeatureCollection(java.io.File,
      * org.georchestra.mapfishapp.ws.upload.FileFormat,
@@ -53,7 +53,7 @@ public final class MockReader implements FeatureGeoFileReader {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.georchestra.mapfishapp.ws.upload.FeatureFileReaderImplementor#
      * getFormatList()
      */

@@ -29,7 +29,7 @@
  * registered in {@link org.georchestra.mapfishapp.ws.DocController} to provides
  * RESTful entry points. <br />
  * <br />
- * 
+ *
  * @author yoann.buch@gmail.com
  */
 package org.georchestra.mapfishapp.ws;

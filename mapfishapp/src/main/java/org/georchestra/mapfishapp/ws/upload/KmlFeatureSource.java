@@ -78,7 +78,7 @@ import com.google.common.io.Closeables;
  *
  *
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -181,7 +181,7 @@ class KmlFeatureSource {
      * <p>
      * Note: only Filter.INCLUDE is implemented
      * </p>
-     * 
+     *
      * @param query
      * @return {@link ListFeatureCollection }
      */

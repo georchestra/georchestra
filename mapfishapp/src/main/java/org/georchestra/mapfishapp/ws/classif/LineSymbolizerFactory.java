@@ -113,7 +113,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
      * Interpolates colors between an interval sets by firstColor and lastColor
      * given a number of classes. Those colors will be used to create LineSymbolizer
      * objects accessible via the {@link LineSymbolizerFactory#iterator()}
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param firstColor First color to start the interpolation
      * @param lastColor  Last color to end the interpolation
@@ -128,7 +128,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
      * Sets colors used to create Symbolizer objects accessible then via
      * {@link LineSymbolizerFactory#iterator()} <br />
      * Useful to assign colors when classification is made with unique values.
-     * 
+     *
      * @param colorMapID known color map id (color map is a set of predefined
      *                   colors)
      * @param size       number of colors wanted (if color map is too small, random
@@ -148,7 +148,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
      * All line widths are interpolated between minSize and maxSize. <br />
      * minSize is guaranteed, then same interval between values at the expense of
      * the maxSize (only round values allowed: sizes in pixels)
-     * 
+     *
      * @param classCount Number of classes (classification context)
      * @param minSize    Minimum symbol size
      * @param maxSize    Maximum symbol size
@@ -171,7 +171,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Change line color. Default: Color.RED
-     * 
+     *
      * @param color New line color
      */
     public void setColor(final Color color) {
@@ -180,7 +180,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
 
     /**
      * Get interpolated sizes
-     * 
+     *
      * @return List of sizes (in pixels)
      */
     public ArrayList<Integer> getSizes() {
@@ -192,7 +192,7 @@ public class LineSymbolizerFactory implements I_SymbolizerFactory {
      * {@link LineSymbolizerFactory#LineSymbolizerFactory(int, Color, Color)} <br />
      * or get colors from palette if created with
      * {@link LineSymbolizerFactory#LineSymbolizerFactory(int, int)}
-     * 
+     *
      * @return list of Color
      */
     public ArrayList<Color> getColors() {

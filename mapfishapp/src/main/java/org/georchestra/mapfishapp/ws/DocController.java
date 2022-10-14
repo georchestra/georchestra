@@ -200,7 +200,7 @@ public class DocController {
     /**
      * POST WMC entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the wmc file
      * @param response contains the url path to get back the file:
      *                 WMC_URL/{filename}
@@ -213,7 +213,7 @@ public class DocController {
     /**
      * GET WMC entry point. Retrieve the right file previously stored corresponding
      * to the REST argument. <br />
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 WMC_URL/{filename}
      * @param response contains the file content
@@ -225,7 +225,7 @@ public class DocController {
 
     /**
      * Get a list of WMC stored by connected user
-     * 
+     *
      * @param request  used to retrieve connected user
      * @param response contains a list of WMC doc created by current user
      */
@@ -237,7 +237,7 @@ public class DocController {
     /**
      * DELETE WMC entry point. Delete wmc from DB corresponding to the REST
      * argument. <br />
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 WMC_URL/{filename}
      * @param response empty
@@ -254,7 +254,7 @@ public class DocController {
     /**
      * POST KML entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the file in the JSON format
      * @param response contains the url path to get back the file in CSV:
      *                 KML_URL/{filename}
@@ -267,7 +267,7 @@ public class DocController {
     /**
      * GET KML entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 KML_URL/{filename}
      * @param response contains the file content
@@ -284,7 +284,7 @@ public class DocController {
     /**
      * POST GML entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the file in the JSON format
      * @param response contains the url path to get back the file in CSV:
      *                 GML_URL/{filename}
@@ -297,7 +297,7 @@ public class DocController {
     /**
      * GET GML entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 GML_URL/{filename}
      * @param response contains the file content
@@ -314,7 +314,7 @@ public class DocController {
     /**
      * POST FE entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the file in the JSON format
      * @param response contains the url path to get back the file in CSV:
      *                 FE_URL/{filename}
@@ -327,7 +327,7 @@ public class DocController {
     /**
      * GET FE entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 FE_URL/{filename}
      * @param response contains the file content
@@ -344,7 +344,7 @@ public class DocController {
     /**
      * POST WKT entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the file in the JSON format
      * @param response contains the url path to get back the file in CSV:
      *                 WKT_URL/{filename}
@@ -357,7 +357,7 @@ public class DocController {
     /**
      * GET WKT entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 WKT_URL/{filename}
      * @param response contains the file content
@@ -374,7 +374,7 @@ public class DocController {
     /**
      * POST CSV entry point. Store the body of the request POST (or file by upload)
      * in a temporary file.
-     * 
+     *
      * @param request  contains in its body the file in the JSON format
      * @param response contains the url path to get back the file in CSV:
      *                 CSV_URL/{filename}
@@ -387,7 +387,7 @@ public class DocController {
     /**
      * GET CSV entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  no parameter. The parameter has to be provided REST style:
      *                 CSV_URL/{filename}
      * @param response contains the file content
@@ -404,7 +404,7 @@ public class DocController {
 
     /**
      * POST SLD entry point. Create and store a SLD file.
-     * 
+     *
      * @param request  Can contains an SLD file (POST body or upload) or a JSON
      *                 request to build a classification SLD (this request must
      *                 fulfill the ClassifierCommand syntax).
@@ -430,7 +430,7 @@ public class DocController {
     /**
      * GET SLD entry point. Retrieve the right file previously stored corresponding
      * to the REST argument.
-     * 
+     *
      * @param request  o parameter. The parameter has to be provided REST style:
      *                 SLD_URL/{filename}
      * @param response contains the file content
@@ -473,7 +473,7 @@ public class DocController {
      * Store a file sent by the client. 2 modes: <br />
      * - content is stored in POST Body - file can be sent by upload. Take into
      * account only one file
-     * 
+     *
      * @param docService Any service implementing A_DocService
      * @param request    request contains in its body the file
      * @param response   response contains the url path to get back the file:
@@ -587,7 +587,7 @@ public class DocController {
 
     /**
      * Generate a list of geodoc filtered by standard
-     * 
+     *
      * @param docService Any service implementing A_DocService
      * @param request    used to retrieve current username
      * @param response   contains a list of docs description in JSON. Format depends
@@ -607,7 +607,7 @@ public class DocController {
     /**
      * Delete a geodoc based on filename. This method also check that current user
      * is owner of geodoc.
-     * 
+     *
      * @param docService Any service implementing A_DocService
      * @param request    used to retrieve current username and filename
      * @param response   {"success" : true} if successfully deleted
@@ -637,7 +637,7 @@ public class DocController {
     /**
      * Try to get the filename argument from the URI. Method will be simplified with
      * Spring 3.0
-     * 
+     *
      * @param uri URI of the request
      * @return null: no filename found. Otherwise file name.
      */
@@ -657,7 +657,7 @@ public class DocController {
 
     /**
      * Extract the content of a POST request
-     * 
+     *
      * @param request POST request
      * @return content of request
      */
@@ -681,7 +681,7 @@ public class DocController {
 
     /**
      * Send HTTP error to the given client represented by the response object
-     * 
+     *
      * @param response represent the client output point
      * @param status   HTTP error code
      * @param message  optional message to be sent to client
