@@ -33,10 +33,6 @@ jobs:
           # revisit? can't resolve org.openapitools:openapi-generator-maven-plugin:jar:5.0.1 in artifactory-georchestra
           #cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
-    - name: "Build Georchestra dependencies needed for GeoNetwork"
-      run: ./mvnw install -pl :security-proxy-spring-integration,testcontainers --also-make -P-all -T1C -ntp -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
-
-
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :datafeeder --also-make -P-all,datafeeder --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
       # note "-pl :datafeeder --also-make" builds only the project and its dependencies
@@ -48,21 +44,6 @@ jobs:
     - name: "Pull required docker images for integration testing"
       working-directory: datafeeder/
       run: docker-compose pull -q
-
-    - name: "Build required docker images (ldap, database)"
-      run: |
-        docker build -t georchestra/ldap:latest ./ldap
-        docker build -t georchestra/database:latest ./postgresql
-
-    - name: "Build required docker image (geonetwork)"
-      run: |
-        git submodule update --init --recursive --depth 1 geonetwork/
-        cd geonetwork && ../mvnw install -T1C -ntp -DskipTests
-        cd web && ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=latest -ntp -DskipTests
-
-    - name: "Build required docker image (console)"
-      run: |
-        ./mvnw -pl :console -am clean install docker:build -P-all,console,docker -DdockerImageName=georchestra/console:latest -DskipTests -ntp -Dskip.npm -Dfmt.skip
 
     - name: "Running Integration Tests"
       working-directory: datafeeder/
