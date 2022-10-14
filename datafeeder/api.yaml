@@ -425,7 +425,8 @@ components:
           description: Metadata title for the dataset
         abstract:
           type: string
-          description: Metadata abtract text for the dataset 
+          description: Metadata abtract text for the dataset
+          maxLength: 4096
         tags:
           type: array
           description: metadata keyworkds for the dataset
@@ -444,6 +445,7 @@ components:
         creationProcessDescription:
           type: string
           description: textual description of dataset lineage
+          maxLength: 4096
 
     DatasetPublishRequest:
       type: object

@@ -61,7 +61,7 @@ datafeeder:
       baseNamespaceURI: ${publicUrl}/import
 
 feign:
-  okhttp.enabled: true
+  okhttp.enabled: false
   httpclient.enabled: false 
   client:
     config:
@@ -72,11 +72,11 @@ feign:
 
 logging:
   level:
-    root: INFO
-    feign: INFO
-    org.georchestra.datafeeder: INFO
-    org.geoserver.openapi: INFO
-    org.geoserver.restconfig: INFO
+    root: warn
+    feign: info
+    org.georchestra.datafeeder: warn
+    org.geoserver.openapi: warn
+    org.geoserver.restconfig: warn
 ---
 spring:
   profiles: georchestra
@@ -143,12 +143,12 @@ datafeeder:
     geoserver:
       api-url: http://localhost:18080/geoserver/rest
       public-url: https://georchestra.mydomain.org/geoserver
-      log-requests: true
+      log-requests: false
       baseNamespaceURI: ${publicUrl}/import
     geonetwork:
       api-url: http://localhost:28080/geonetwork
       public-url: https://georchestra.mydomain.org/geonetwork
-      log-requests: true
+      log-requests: false
     backend:
       local:
         dbtype: postgis
@@ -167,13 +167,5 @@ datafeeder:
         user: georchestra
         passwd: georchestra
 
-feign.client.config.default.loggerLevel: full # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
-
-logging:
-  level:
-    root: info
-    '[feign]': info
-    '[org.georchestra.datafeeder]': info
-    '[org.georchestra.config.security]': info
-    '[org.georchestra.config.security.GeorchestraSecurityProxyAuthenticationFilter]': info #mute GeorchestraSecurityProxyAuthenticationFilter superclass a bit
-    '[org.geoserver.openapi]': info
+feign.client.config.default.loggerLevel: basic # one of none|basic|headers|full. Only activated if 'logging.level.feign: DEBUG'
+logging.level.org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver: error
