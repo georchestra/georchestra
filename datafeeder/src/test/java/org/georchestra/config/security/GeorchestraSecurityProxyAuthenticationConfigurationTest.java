@@ -63,7 +63,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * Test suite for {@link GeorchestraSecurityProxyAuthenticationConfiguration},
  * which shall be enabled through the {@code georchestra} spring profile
- * 
+ *
  * @see SecurityTestController
  */
 @SpringBootTest(classes = DataFeederApiConfiguration.class, webEnvironment = WebEnvironment.RANDOM_PORT)

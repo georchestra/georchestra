@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * Tasklet to copy Datasets into the configured target data store (usually a
  * PostGIS database).
- * 
+ *
  */
 public class DataImportTasklet implements Tasklet {
 

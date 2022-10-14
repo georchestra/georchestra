@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 
+ *
  * Spring-batch configuration for the data publishing workflow.
  *
  */

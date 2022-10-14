@@ -47,7 +47,7 @@ public class GeoNetworkRemoteService {
     /**
      * <p>
      * Sample request:
-     * 
+     *
      * <pre>
      * <code>
     curl -v 'http://localhost:28080/geonetwork/srv/api/0.1/records?metadataType=METADATA&recursiveSearch=false&assignToCatalog=false&uuidProcessing=NOTHING&rejectIfInvalid=false&transformWith=_none_' \
@@ -65,7 +65,7 @@ public class GeoNetworkRemoteService {
      * </pre>
      * <p>
      * Sample response:
-     * 
+     *
      * <pre>
      * <code>
      * {
@@ -97,11 +97,11 @@ public class GeoNetworkRemoteService {
      * }
      * </code>
      * </pre>
-     * 
+     *
      * Response headers:
-     * 
+     *
      * <pre>
-     *  
+     *
      * <code>
      * content-security-policy: frame-ancestors 'none'
      * content-type: application/json
@@ -110,7 +110,7 @@ public class GeoNetworkRemoteService {
      * x-frame-options: DENY
      * </code>
      * </pre>
-     * 
+     *
      * @return
      */
     public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString,

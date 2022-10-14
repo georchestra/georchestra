@@ -50,7 +50,7 @@ import lombok.Setter;
  * creates one {@link JobStatus#PENDING PENDING} state
  * {@link DatasetUploadState} for each dataset, and saves the
  * {@link DataUploadJob}.
- * 
+ *
  * @see DataUploadAnalysisService#initialize
  */
 @Component

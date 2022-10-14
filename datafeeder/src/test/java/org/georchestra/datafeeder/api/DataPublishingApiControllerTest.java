@@ -214,7 +214,7 @@ public class DataPublishingApiControllerTest {
     }
 
     /**
-     * 
+     *
      */
     @WithMockUser(username = "testuser", roles = "USER")
     public @Test void testPublish_Request_encoding() {

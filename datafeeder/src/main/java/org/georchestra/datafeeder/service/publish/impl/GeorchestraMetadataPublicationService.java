@@ -220,7 +220,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 //	organisationName = sec-orgname
 //	adress = postalAddress from LDAP (to be discussed)
 //	email = sec-email
-//	linkage = labeledURI from LDAP 
+//	linkage = labeledURI from LDAP
 //	protocol = URL
 //	name = sec-orgname
 //	as in https://geobretagne.fr/geonetwork/srv/api/records/633f2882-2a90-4f98-9739-472a72d31b64/formatters/xml"
@@ -250,10 +250,10 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         return individualName;
     }
 
-//	"computed from LDAP / sec-* headers 
-//	individualName = sec-firstname + ' ' + sec-lastname 
+//	"computed from LDAP / sec-* headers
+//	individualName = sec-firstname + ' ' + sec-lastname
 //	organisationName = sec-orgname
-//	adress = postalAddress from LDAP (to be discussed) 
+//	adress = postalAddress from LDAP (to be discussed)
 //	email = sec-email"
     private ContactInfo datasetResponsibleParty(@NonNull UserInfo user) {
         Organization org = user.getOrganization();

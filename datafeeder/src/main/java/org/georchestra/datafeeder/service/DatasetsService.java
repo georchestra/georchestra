@@ -125,7 +125,7 @@ public class DatasetsService {
     }
 
     /**
-     * 
+     *
      * @param path              location of file to get dataset bounds from
      * @param typeName          name of the dataset to get bounds from, that belongs
      *                          to the file
@@ -196,7 +196,7 @@ public class DatasetsService {
     }
 
     /**
-     * 
+     *
      * @param path              location of file to get the sample dataset feature
      *                          from
      * @param typeName          name of the dataset to get the sample feature from,

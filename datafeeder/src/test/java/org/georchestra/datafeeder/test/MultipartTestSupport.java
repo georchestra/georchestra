@@ -91,7 +91,7 @@ public class MultipartTestSupport extends ExternalResource {
     /**
      * Loads {@code fileNames} from
      * {@code src/test/resources/org/geotools/test-data/datafeeder/}
-     * 
+     *
      * @param fileNames file names to load relative to
      *                  {@code src/test/resources/org/geotools/test-data/datafeeder/}
      */

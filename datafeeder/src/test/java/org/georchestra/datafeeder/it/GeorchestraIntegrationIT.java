@@ -187,7 +187,7 @@ public class GeorchestraIntegrationIT {
      * verifies the expected coordinate reference system settings based on the
      * recognized CRS from {@code .prj} file (if present), the one requested in the
      * publish request, and what's been actually published as in GeoServer.
-     * 
+     *
      * @param testFile                   the file to load from
      *                                   {@code src/test/resources/org/geotools/datafeeder/}
      * @param loadPrj                    whether to include the file's {@code .prj}

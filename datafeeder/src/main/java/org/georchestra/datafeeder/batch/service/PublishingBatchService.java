@@ -129,7 +129,7 @@ public class PublishingBatchService {
     }
 
     /**
-     * 
+     *
      * @param jobId
      */
     @Transactional

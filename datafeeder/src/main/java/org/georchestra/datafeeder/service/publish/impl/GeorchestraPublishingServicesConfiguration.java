@@ -51,7 +51,7 @@ import lombok.extern.slf4j.Slf4j;
  * Configuration providing strategy beans to publish uploaded datasets to
  * Georchetra's GeoServer and Geonetwork service instances, using a PostGIS
  * database as data back-end.
- * 
+ *
  * @see DataFeederConfigurationProperties
  */
 @Configuration

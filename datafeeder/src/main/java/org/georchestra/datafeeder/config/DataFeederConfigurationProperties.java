@@ -148,12 +148,12 @@ public @Data class DataFeederConfigurationProperties {
 
     /**
      * Loads a resource from a configuration property.
-     * 
+     *
      * @param uri            the resource URI, can be a file or a remote URL
      * @param configPropName the config property name, used for logging and
      *                       exception throwing
      * @return the contents of the resource
-     * 
+     *
      * @throws IllegalArgumentException if the resource can't be loaded for any
      *                                  reason
      */

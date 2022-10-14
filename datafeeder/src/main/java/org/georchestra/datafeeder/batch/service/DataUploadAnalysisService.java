@@ -71,7 +71,7 @@ public class DataUploadAnalysisService {
      * Data upload analysis process step 0: creates a {@link DataUploadJob} with
      * {@link JobStatus#PENDING PENDING} status for the {@link UploadPackage} with
      * the given id.
-     * 
+     *
      * @throws IllegalArgumentException if no {@link UploadPackage} exists for the
      *                                  given {@code jobId}
      * @throws IllegalStateException    if some {@link IOException} happens loading
@@ -108,7 +108,7 @@ public class DataUploadAnalysisService {
      * dataset found on each uploaded file. For example, some uploaded files like
      * shapefiles, have a single dataset, but some other, like a geopackage, may
      * contain more than one dataset.
-     * 
+     *
      * @throws IllegalArgumentException if no {@link UploadPackage} or
      *                                  {@link DataUploadJob} exists for the given
      *                                  {@code jobId}

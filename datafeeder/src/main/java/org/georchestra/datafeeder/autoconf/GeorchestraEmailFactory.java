@@ -64,7 +64,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * Variables on a message template are specified using
  * <code>${variable-name}</code> notation, like in the following example:
- * 
+ *
  * <pre>
  * <code>
  * to: ${user.email}
@@ -74,12 +74,12 @@ import lombok.extern.slf4j.Slf4j;
  * from: Georchestra Importer Application
  * subject:
  * body:
- * 
- * Dear ${user.name}, 
+ *
+ * Dear ${user.name},
  * ....
  * </code>
  * </pre>
- * 
+ *
  * The following variables are resolved against the job's user, dataset, or
  * publishing attributes:
  * <ul>
@@ -216,7 +216,7 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
     /**
      * Builds up a {@link MailMessage} out of a full message string like the
      * following, where all variable substiturions have already been resolved:
-     * 
+     *
      * <pre>
      * <code>
      * to: user1@test.com,user2@test.com
@@ -226,8 +226,8 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
      * from: Georchestra Importer Application
      * subject: fully resolved subject line
      * body:
-     * 
-     * Dear John Doe, 
+     *
+     * Dear John Doe,
      * ....
      * </code>
      * </pre>
@@ -275,7 +275,7 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
 
     /**
      * Resolves template variables from a message template like the following:
-     * 
+     *
      * <pre>
      * <code>
      * to: ${user.email}
@@ -285,12 +285,12 @@ public class GeorchestraEmailFactory implements DatafeederEmailFactory {
      * from: Georchestra Importer Application
      * subject:
      * body:
-     * 
-     * Dear ${user.name}, 
+     *
+     * Dear ${user.name},
      * ....
      * </code>
      * </pre>
-     * 
+     *
      * The following variables are resolved against the job's user, dataset, or
      * publishing attributes:
      * <ul>

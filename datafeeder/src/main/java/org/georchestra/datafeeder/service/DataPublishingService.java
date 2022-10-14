@@ -89,7 +89,7 @@ public class DataPublishingService {
     }
 
     /**
-     * 
+     *
      * @param nativeCRS  the datasets native CRS as identified from the upload, may
      *                   be {@code null}
      * @param requestSRS the EPSG code string requested through the dataset publish

@@ -115,7 +115,7 @@ public class GeorchestraConfiguration {
     /**
      * This method generate GEOR_custom.js used in Mapfishapp, Extractorapp and
      * Analytics.
-     * 
+     *
      * @param request
      * @param response
      * @throws Exception

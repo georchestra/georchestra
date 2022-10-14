@@ -92,7 +92,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
     /**
      * Creates a Schema in the PostgreSQL database. The schema is defined in the
      * connection parameters under the key
-     * 
+     *
      * @link{PostgisNGDataStoreFactory.SCHEMA.key}.
      * @param connectionParams
      * @throws SQLException
