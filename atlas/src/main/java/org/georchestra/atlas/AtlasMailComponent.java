@@ -76,7 +76,7 @@ public class AtlasMailComponent {
     /**
      * Loads the default template e-mail for finished jobs and replaces the
      * variables nested into it with the appropriate values.
-     * 
+     *
      * The e-mail is supposed to be UTF-8 encoded.
      *
      * @param job AltlasJob to format.
