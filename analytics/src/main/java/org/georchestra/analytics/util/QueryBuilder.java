@@ -20,16 +20,16 @@ import java.util.regex.Pattern;
  * parameter name in braces : {\w+}
  *
  * Example :
- * 
+ *
  * <pre>
  * <code>
  * String sql = "SELECT * FROM users WHERE group_name = {group} LIMIT {count}";
  * Map<String, Object> sqlValues = new HashMap<String, Object>();
  * sqlValues.put("group", "admin"); sqlValues.put("count", 100);
  *
- * QueryBuilder builder = new QueryBuilder(); 
+ * QueryBuilder builder = new QueryBuilder();
  * String rawSql = builder.generateQuery(sql, sqlValues);
- * Statement st = ... 
+ * Statement st = ...
  * ResultSet res = st.executeQuery(rawSql);
  * </code>
  * </pre>

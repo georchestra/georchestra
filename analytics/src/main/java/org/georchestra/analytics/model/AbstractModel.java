@@ -127,7 +127,7 @@ public class AbstractModel {
      * Generic statistics data access. Gets all statistics of a type, filtered by
      * date, ordered and sampled (offset, limit). The ResultSet is parsed and all
      * data are inserted in a JSON object actually returned.
-     * 
+     *
      * @param filter
      * @return JSON object containing all results
      * @throws SQLException

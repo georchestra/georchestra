@@ -59,7 +59,7 @@ public class Utf8ResourceBundle {
         }
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.ResourceBundle#getKeys()
          */
 
@@ -68,7 +68,7 @@ public class Utf8ResourceBundle {
         }
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
          */
 

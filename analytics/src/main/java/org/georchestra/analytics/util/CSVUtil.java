@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 /**
  * Static Class providing utilities concerning CSV format
- * 
+ *
  * @author fgravin
  *
  */
@@ -40,7 +40,7 @@ public class CSVUtil {
     /**
      * Format a JSON Object to a CSV String. All sub objects of the field
      * "RES_FIELD" are parsed and format to the CSV
-     * 
+     *
      * @param obj
      * @return CSV String
      * @throws JSONException

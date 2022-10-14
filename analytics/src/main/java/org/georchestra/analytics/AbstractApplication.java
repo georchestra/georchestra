@@ -36,7 +36,7 @@ import org.json.JSONObject;
 
 /**
  * Abstract class for all controllers from the webapp Analytics.
- * 
+ *
  * @author fgravin
  *
  */
@@ -99,7 +99,7 @@ public abstract class AbstractApplication {
     /**
      * Check the month and year parameters and fill the class attributes. Return
      * false if one's missing or bad formatted
-     * 
+     *
      * @param request
      * @return
      */
