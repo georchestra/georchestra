@@ -18,6 +18,7 @@
  */
 package org.georchestra.datafeeder.it;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -73,6 +74,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest(classes = { //
         DataFeederApplicationConfiguration.class, //
@@ -84,6 +86,7 @@ import lombok.NonNull;
 @EnableAutoConfiguration
 @RunWith(SpringRunner.class)
 @ActiveProfiles(value = { "georchestra", "it" })
+@Slf4j
 public class GeorchestraIntegrationIT {
 
     public @Rule MultipartTestSupport multipartSupport = new MultipartTestSupport();
@@ -131,11 +134,84 @@ public class GeorchestraIntegrationIT {
         assertNotEquals(dataset1.getPublishedName(), dataset1_1.getPublishedName());
     }
 
+    /**
+     * Verify {@link DatasetMetadata#getAbstract()} and
+     * {@link DatasetMetadata#getCreationProcessDescription()} accept long strings
+     */
+    public @Test void testPublish_long_abstract_and_genealogy_strings() {
+        final int maxLength = 4096;
+        final String abstractText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."//
+                .repeat(100).substring(0, maxLength);
+        assertThat(abstractText.length()).isEqualTo(maxLength);
+
+        final List<MockMultipartFile> files = multipartSupport.loadDatafeederTestShapefile("states_4326");
+        UploadJobStatus upload = uploadAndWaitForSuccess(files);
+        UUID jobId = upload.getJobId();
+        DatasetUploadStatus dataset = upload.getDatasets().get(0);
+
+        PublishRequest publishRequest = createPublishRequest(dataset);
+        DatasetPublishRequest datasetPublishRequest = publishRequest.getDatasets().get(0);
+
+        DatasetMetadata datasetMetadata = datasetPublishRequest.getMetadata();
+        datasetMetadata.setAbstract(abstractText);
+        datasetMetadata.setCreationProcessDescription(abstractText);
+
+        final PublishJobStatus publishResponse = publishAndWaitForSuccess(jobId, publishRequest);
+        assertThat(publishResponse.getStatus()).isEqualTo(PublishStatusEnum.DONE);
+    }
+
+    /**
+     * Verify {@link DatasetMetadata#getAbstract()} and
+     * {@link DatasetMetadata#getCreationProcessDescription()} length limit defined
+     * in the {@literal api.yaml} is respected.
+     */
+    public @Test void testPublish_abstract_and_genealogy_length_validation() {
+        final int expectedMaxLength = 4096;
+
+        final String veryLongText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."//
+                .repeat(100).substring(0, 1 + expectedMaxLength);
+
+        assertThat(veryLongText.length()).isGreaterThan(expectedMaxLength);
+
+        final List<MockMultipartFile> files = multipartSupport.loadDatafeederTestShapefile("states_4326");
+        UploadJobStatus upload = uploadAndWaitForSuccess(files);
+        UUID jobId = upload.getJobId();
+        DatasetUploadStatus dataset = upload.getDatasets().get(0);
+
+        PublishRequest publishRequest = createPublishRequest(dataset);
+        DatasetPublishRequest datasetPublishRequest = publishRequest.getDatasets().get(0);
+
+        DatasetMetadata datasetMetadata = datasetPublishRequest.getMetadata();
+        datasetMetadata.setAbstract(veryLongText);
+
+        HttpHeaders headers = authHeaders();
+        headers.add(HttpHeaders.ACCEPT, "application/json");
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        HttpEntity<PublishRequest> requestEntity = new HttpEntity<>(publishRequest, headers);
+
+        TestRestTemplate template = testSupport.getTemplate();
+        String url = buildUrl("/upload/{jobId}/publish");
+        ResponseEntity<String> response = template.exchange(url, HttpMethod.POST, requestEntity, String.class, jobId);
+        String body = response.getBody();
+        log.info(body);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(body).contains("Validation failed");
+
+        datasetMetadata.setAbstract(veryLongText.substring(0, expectedMaxLength));
+        datasetMetadata.setCreationProcessDescription(veryLongText);
+        response = template.exchange(url, HttpMethod.POST, requestEntity, String.class, jobId);
+
+        body = response.getBody();
+        log.info(body);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(body).contains("Validation failed");
+    }
+
     private PublishJobStatus uploadAndPublish(final List<MockMultipartFile> files) {
         UploadJobStatus upload = uploadAndWaitForSuccess(files);
         UUID jobId = upload.getJobId();
         DatasetUploadStatus dataset = upload.getDatasets().get(0);
-        PublishRequest publishRequest = publishRequest(dataset);
+        PublishRequest publishRequest = createPublishRequest(dataset);
         final PublishJobStatus publishResponse = publishAndWaitForSuccess(jobId, publishRequest);
         return publishResponse;
     }
@@ -234,7 +310,7 @@ public class GeorchestraIntegrationIT {
         // recognized native EPSG code.
         // The publish process shall fail if no native SRS is present and no force SRS
         // is included in the publish request
-        PublishRequest publishRequest = publishRequest(dataset);
+        PublishRequest publishRequest = createPublishRequest(dataset);
         publishRequest.getDatasets().get(0).setSrs(publishRequestSRS);
 
         final PublishJobStatus publishResponse = publishAndWaitForSuccess(jobId, publishRequest);
@@ -268,7 +344,7 @@ public class GeorchestraIntegrationIT {
         return featureType;
     }
 
-    private PublishRequest publishRequest(@NonNull DatasetUploadStatus dataset) {
+    private PublishRequest createPublishRequest(@NonNull DatasetUploadStatus dataset) {
 
         DatasetPublishRequest item = new DatasetPublishRequest();
         DatasetMetadata metadata = new DatasetMetadata();
