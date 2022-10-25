@@ -3,22 +3,27 @@ package org.georchestra.security;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
@@ -27,14 +32,16 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 
 public class ProxyTest {
     private Proxy proxy;
     private BasicHttpResponse response;
     private boolean executed = true;
+    private HttpRequestBase builtRequest;
     private MockHttpServletRequest request;
     private MockHttpServletResponse httpResponse;
 
@@ -50,6 +57,13 @@ public class ProxyTest {
                     HttpRequestBase proxyingRequest) throws IOException {
                 executed = true;
                 return response;
+            }
+
+            protected @Override HttpRequestBase makeRequest(HttpServletRequest request, String sURL)
+                    throws IOException {
+                HttpRequestBase req = super.makeRequest(request, sURL);
+                builtRequest = req;
+                return req;
             }
         };
         DataSource ogcStatsDataSource = Mockito.mock(DataSource.class);
@@ -142,16 +156,13 @@ public class ProxyTest {
     @Test
     public void testBuildUri() throws Exception {
         Proxy proxy = new Proxy();
-        Method m = ReflectionUtils.findMethod(Proxy.class, "buildUri", URL.class);
-        m.setAccessible(true);
 
-        URI ret = (URI) ReflectionUtils.invokeMethod(m, proxy,
-                new URL("https://dev.pigma.org/geonetwork/srv/fre/xml.keyword.get?"
-                        + "thesaurus=local.theme.pigma&id=http://ids.pigma.org/themes%23Eau&multiple=false&transformation=to-iso19139-keyword"));
+        URI ret = proxy.buildUri("https://dev.pigma.org/geonetwork/srv/fre/xml.keyword.get?"
+                + "thesaurus=local.theme.pigma&id=http://ids.pigma.org/themes%23Eau&multiple=false&transformation=to-iso19139-keyword");
         assertTrue(ret.toString().contains("id=http://ids.pigma.org/themes%23Eau"));
 
-        ret = (URI) ReflectionUtils.invokeMethod(m, proxy,
-                new URL("https://sdi.georchestra.org/console/account/recover?email=psc%2Btestuser%40georchestra.org"));
+        ret = proxy
+                .buildUri("https://sdi.georchestra.org/console/account/recover?email=psc%2Btestuser%40georchestra.org");
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
 
         // defunct URLs:
@@ -159,8 +170,8 @@ public class ProxyTest {
         // SP will re-encode %3A to %253A
         // see
         // https://github.com/georchestra/georchestra/issues/2020#issuecomment-402449307
-        ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL(
-                "http://localhost:8080/geonetwork/srv/api/0.1/standards/iso19139/codelists/gmd%3ADS_InitiativeTypeCode"));
+        ret = proxy.buildUri(
+                "http://localhost:8080/geonetwork/srv/api/0.1/standards/iso19139/codelists/gmd%3ADS_InitiativeTypeCode");
         assertTrue(!ret.toString().contains("%253ADS"));
     }
 
@@ -274,6 +285,49 @@ public class ProxyTest {
             assertEquals(HttpStatus.OK.value(), httpResponse.getStatus());
             assertEquals(e.toString() + " worked", httpResponse.getHeader("X-Test-Header"));
         }
+    }
+
+    @Test
+    public void testRequestEntityVerbs() throws Exception {
+        testRequestEntity(RequestMethod.POST);
+        testRequestEntity(RequestMethod.PUT);
+        testRequestEntity(RequestMethod.PATCH);
+    }
+
+    private void testRequestEntity(RequestMethod method) throws Exception {
+        executed = false;
+        builtRequest = null;
+
+        final String rawRequestBody = "{\"payload\": \"test\"}";
+        final String rawResponseBody = "{\"response\": \"success\"}";
+
+        request = new MockHttpServletRequest(method.toString(), "/extractorapp/home");
+        request.setContentType("application/json");
+        request.setContent(rawRequestBody.getBytes(StandardCharsets.UTF_8));
+
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), method.toString() + " worked");
+        response.setHeader("Content-Type", "application/json");
+        response.setEntity(
+                new ByteArrayEntity(rawResponseBody.getBytes(StandardCharsets.UTF_8), ContentType.APPLICATION_JSON));
+
+        httpResponse = new MockHttpServletResponse();
+
+        proxy.handleRequest(request, httpResponse);
+        assertTrue(executed);
+        assertNotNull(builtRequest);
+
+        assertEquals(HttpStatus.OK.value(), httpResponse.getStatus());
+        assertEquals("application/json", httpResponse.getHeader("Content-Type"));
+        String content = httpResponse.getContentAsString();
+        assertEquals(rawResponseBody, content);
+
+        assertTrue(builtRequest instanceof HttpEntityEnclosingRequestBase);
+        HttpEntityEnclosingRequestBase tr = (HttpEntityEnclosingRequestBase) builtRequest;
+        HttpEntity entity = tr.getEntity();
+        assertNotNull(entity);
+        assertTrue(entity.getContentLength() > 0);
+        byte[] responseArray = ByteStreams.toByteArray(entity.getContent());
+        assertEquals(rawRequestBody, new String(responseArray));
     }
 
     @Test
