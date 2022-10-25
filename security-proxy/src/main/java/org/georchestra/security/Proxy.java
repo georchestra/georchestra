@@ -49,10 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -927,141 +930,127 @@ public class Proxy {
         }
     }
 
-    private URI buildUri(URL url) throws URISyntaxException {
-        // Let URI constructor encode Path part
-        // Don't use query part because URI constructor will try to double-encode it
-        // (query part is already encoded in sURL)
-        URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), null,
-                url.getRef());
-
-        // Reconstruct URL with encoded path from URI class and others parameters from
-        // URL class
-        StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
-
-        if (url.getPort() != -1)
-            rawUrl.append(":" + String.valueOf(url.getPort()));
-
-        rawUrl.append(uri.getPath()); // Do not URL-encode, and take the request
-        // as it originally comes instead of doing extra-encoding.
-
-        if (url.getQuery() != null)
-            rawUrl.append("?" + url.getQuery()); // Use already encoded query part
-
-        return new URI(rawUrl.toString());
-    }
-
-    private HttpRequestBase makeRequest(HttpServletRequest request, String sURL) throws IOException {
-        HttpRequestBase targetRequest;
+    URI buildUri(String sURL) throws IOException {
         try {
             URL url = new URL(sURL);
-            URI uri = buildUri(url);
-            String method = request.getMethod();
+            // Let URI constructor encode Path part
+            // Don't use query part because URI constructor will try to double-encode it
+            // (query part is already encoded in sURL)
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), null,
+                    url.getRef());
 
-            // handles webdav specific verbs
-            String[] webdavVerb = { "COPY", "LOCK", "UNLOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK",
-                    "REPORT", "SEARCH" };
-            boolean isWebdav = Arrays.stream(webdavVerb).anyMatch(x -> x.equalsIgnoreCase(method));
-            if (isWebdav) {
-                HttpEntityEnclosingRequestBase heerb = new HttpEntityEnclosingRequestBase() {
-                    @Override
-                    public String getMethod() {
-                        return method.toUpperCase();
-                    }
-                };
-                heerb.setURI(uri);
-                int contentLength = request.getContentLength();
-                ServletInputStream inputStream = request.getInputStream();
-                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-                heerb.setEntity(entity);
-                return heerb;
-            }
+            // Reconstruct URL with encoded path from URI class and others parameters from
+            // URL class
+            StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
 
-            HttpMethod meth = HttpMethod.resolve(method);
-            if (meth == null) {
-                throw new IllegalArgumentException(method + " is not supported.");
-            }
+            if (url.getPort() != -1)
+                rawUrl.append(":" + String.valueOf(url.getPort()));
 
-            switch (meth) {
-            case GET: {
-                logger.debug("New request is: " + sURL + "\nRequest is GET");
+            rawUrl.append(uri.getPath()); // Do not URL-encode, and take the request
+            // as it originally comes instead of doing extra-encoding.
 
-                HttpGet get = new HttpGet(uri);
-                targetRequest = get;
-                break;
-            }
-            case POST: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
-                HttpPost post = new HttpPost(uri);
+            if (url.getQuery() != null)
+                rawUrl.append("?" + url.getQuery()); // Use already encoded query part
 
-                int contentLength = request.getContentLength();
-                ServletInputStream inputStream = request.getInputStream();
-                HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
-                post.setEntity(entity);
-                targetRequest = post;
-                break;
-            }
-            case TRACE: {
-                logger.debug("New request is: " + sURL + "\nRequest is TRACE");
-
-                HttpTrace post = new HttpTrace(uri);
-
-                targetRequest = post;
-                break;
-            }
-            case OPTIONS: {
-                logger.debug("New request is: " + sURL + "\nRequest is OPTIONS");
-
-                HttpOptions post = new HttpOptions(uri);
-
-                targetRequest = post;
-                break;
-            }
-            case HEAD: {
-                logger.debug("New request is: " + sURL + "\nRequest is HEAD");
-
-                HttpHead post = new HttpHead(uri);
-
-                targetRequest = post;
-                break;
-            }
-            case PUT: {
-                logger.debug("New request is: " + sURL + "\nRequest is PUT");
-
-                HttpPut put = new HttpPut(uri);
-
-                put.setEntity(new InputStreamEntity(request.getInputStream(), request.getContentLength()));
-
-                targetRequest = put;
-                break;
-            }
-            case DELETE: {
-                logger.debug("New request is: " + sURL + "\nRequest is DELETE");
-
-                HttpDelete delete = new HttpDelete(uri);
-
-                targetRequest = delete;
-                break;
-            }
-            case PATCH: {
-                logger.debug("New request is: " + sURL + "\nRequest is PATCH");
-
-                HttpPatch patch = new HttpPatch(uri);
-
-                targetRequest = patch;
-                break;
-            }
-            default: {
-                String msg = meth + " not yet supported";
-                logger.error(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            }
+            return new URI(rawUrl.toString());
         } catch (URISyntaxException e) {
             logger.error("ERROR creating URI from " + sURL, e);
             throw new IOException(e);
         }
 
+    }
+
+    protected HttpRequestBase makeRequest(HttpServletRequest request, String sURL) throws IOException {
+        final URI targetURL = buildUri(sURL);
+        final String method = request.getMethod().toUpperCase();
+        final HttpRequestBase targetRequest;
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("New request is: " + sURL + "\nRequest is " + method);
+        }
+
+        if (isWebDavVerb(method)) {
+            targetRequest = makeWebDavRequest(request, targetURL, method);
+        } else {
+            targetRequest = makeHttpRequest(request, targetURL, method);
+        }
+
+        if (targetRequest instanceof HttpEntityEnclosingRequestBase) {
+            HttpEntityEnclosingRequestBase entityRequest = (HttpEntityEnclosingRequestBase) targetRequest;
+            int contentLength = request.getContentLength();
+            ServletInputStream inputStream = request.getInputStream();
+            HttpEntity entity = new InputStreamEntity(inputStream, contentLength);
+            entityRequest.setEntity(entity);
+        }
         return targetRequest;
+    }
+
+    private HttpRequestBase makeHttpRequest(HttpServletRequest request, URI targetURL, String method) {
+
+        final HttpMethod meth = HttpMethod.resolve(method);
+        if (meth == null) {
+            throw new IllegalArgumentException(method + " is not supported.");
+        }
+
+        switch (meth) {
+        case GET: {
+            return new HttpGet(targetURL);
+        }
+        case POST: {
+            return new HttpPost(targetURL);
+        }
+        case TRACE: {
+            return new HttpTrace(targetURL);
+        }
+        case OPTIONS: {
+            return new HttpOptions(targetURL);
+        }
+        case HEAD: {
+            return new HttpHead(targetURL);
+        }
+        case PUT: {
+            return new HttpPut(targetURL);
+        }
+        case DELETE: {
+            return new HttpDelete(targetURL);
+        }
+        case PATCH: {
+            return new HttpPatch(targetURL);
+        }
+        default: {
+            String msg = meth + " not yet supported";
+            logger.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        }
+    }
+
+    private static final Set<String> WEBDAV_VERBS = Stream
+            .of("COPY", "LOCK", "UNLOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK", "REPORT", "SEARCH")
+            .collect(Collectors.toSet());
+
+    private boolean isWebDavVerb(String method) {
+        // handles webdav specific verbs
+        return WEBDAV_VERBS.contains(method);
+    }
+
+    private WebDAVRequest makeWebDavRequest(HttpServletRequest request, URI uri, String method) {
+        return new WebDAVRequest(method, uri);
+    }
+
+    private static class WebDAVRequest extends HttpEntityEnclosingRequestBase {
+
+        private final String method;
+
+        public WebDAVRequest(String method, final URI uri) {
+            this.method = method;
+            setURI(uri);
+        }
+
+        @Override
+        public String getMethod() {
+            return method;
+        }
     }
 
     protected String[] filter(String[] one) {
