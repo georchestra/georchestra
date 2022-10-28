@@ -59,34 +59,34 @@ jobs:
       run: ../../mvnw verify -ntp -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Build GeoNetwork docker image"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         cd geonetwork/web
         ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geonetwork:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geonetwork:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geonetwork:${{ steps.version.outputs.VERSION }}

@@ -41,30 +41,30 @@ jobs:
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image with native security"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       working-directory: geoserver/webapp
       run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-log4j,${{ env.GEOSERVER_EXTENSION_PROFILES }} -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }} -DskipTests
 
 
     - name: "Building docker image with geofence"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       working-directory: geoserver/webapp
       run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,${{ env.GEOSERVER_EXTENSION_PROFILES }},geofence,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker tag georchestra/geoserver:${{ steps.version.outputs.VERSION }} georchestra/geoserver:latest
         docker tag georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence georchestra/geoserver:geofence
@@ -72,13 +72,13 @@ jobs:
         docker push georchestra/geoserver:geofence
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
