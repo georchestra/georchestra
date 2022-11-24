@@ -9,20 +9,32 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -31,10 +43,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * @author Jesse on 4/24/2014.
  */
 public class HeadersManagementStrategyTest {
+
+    public @Rule TemporaryFolder tmpDatadir = new TemporaryFolder();
 
     /**
      * Show that by default the headers are removed
@@ -190,11 +206,142 @@ public class HeadersManagementStrategyTest {
         // The other custom cookie should be rewritten so that the path corresponds
         // to the "visible" path configured in the SP's targets-mappings.properties
         // file.
-        String setCookieReceived = (String) response.getHeaderValue(HeaderNames.SET_COOKIE_ID);
+        Cookie cookieReceived = response.getCookie("custom_key");
+        assertNotNull(cookieReceived);
+        assertEquals("custom_value", cookieReceived.getValue());
         // The other cookie should be rewritten before being sent to the client
         // with the actual path (here: /console)
-        assertTrue("Unexpected Set-Cookie header in the actual response",
-                setCookieReceived.equals("custom_key=custom_value;Path=/console"));
+        assertEquals("/console", cookieReceived.getPath());
     }
 
+    /**
+     * Verify the list of {@link CookieAffinity} config objects is loaded from
+     * <code>${georchestra.datadir}/security-proxy/cookie-mappings.json</code>
+     */
+    @Test
+    public void testResponseCookieAffinityConfigLoading() throws IOException {
+        File root = this.tmpDatadir.getRoot();
+        File contextDataDir = this.tmpDatadir.newFolder("security-proxy");
+
+        System.setProperty("georchestra.datadir", root.getAbsolutePath());
+        GeorchestraConfiguration georconfig = new GeorchestraConfiguration("security-proxy");
+        assertTrue(georconfig.activated());
+
+        HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
+        // force the @Autowired assignment on GeorchestraConfig
+        headerManagement.setGeorchestraConfig(georconfig);
+        // force the @PostConstruct call on initConfig(), there's no
+        // cookie-mappings.json file
+        headerManagement.initConfig();
+
+        List<CookieAffinity> parsedConfigs = headerManagement.getCookieAffinityConfig();
+        assertNotNull(parsedConfigs);
+        assertTrue(parsedConfigs.isEmpty());
+
+        List<CookieAffinity> configs = List.of(
+                new CookieAffinity().setName("XSRF-TOKEN").setFrom("/geonetwork").setTo("/datahub"),
+                new CookieAffinity().setName("XSRF-TOKEN").setFrom("/geonetwork").setTo("/console"));
+        new ObjectMapper().writeValue(new File(contextDataDir, "cookie-mappings.json"), configs);
+
+        // force the @PostConstruct call on initConfig(), there is a
+        // cookie-mappings.json file
+        headerManagement.initConfig();
+        parsedConfigs = headerManagement.getCookieAffinityConfig();
+        assertEquals(configs, parsedConfigs);
+        System.clearProperty("georchestra.datadir");
+    }
+
+    @Test
+    public void testResponseCookieAffinityMapping() throws IOException {
+        final List<CookieAffinity> configs = List.of(
+                new CookieAffinity().setName("XSRF-TOKEN").setFrom("/geonetwork").setTo("/datahub"),
+                new CookieAffinity().setName("custom-cookie").setFrom("/console").setTo("/atlas"));
+
+        final HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
+        headerManagement.setCookieAffinity(configs);
+
+        String gnCookie1 = "XSRF-TOKEN=abc;Path=/geonetwork";
+        String gnCookie2 = "custom-cookie=def;Path=/geonetwork";
+
+        HttpSession session = new MockHttpSession();
+        Header setGnCookie1 = new BasicHeader(HeaderNames.SET_COOKIE_ID, gnCookie1);
+        Header setGnCookie2 = new BasicHeader(HeaderNames.SET_COOKIE_ID, gnCookie2);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        headerManagement.handleResponseCookies("/geonetwork/srv/api", response,
+                new Header[] { setGnCookie1, setGnCookie2 }, session);
+
+        ComparableCookie xsrfOrig = new ComparableCookie("XSRF-TOKEN", "abc");
+        xsrfOrig.setPath("/geonetwork");
+        xsrfOrig.setVersion(0);
+
+        ComparableCookie xsrfAffinity = (ComparableCookie) xsrfOrig.clone();
+        xsrfAffinity.setPath("/datahub");
+
+        ComparableCookie customOrig = new ComparableCookie("custom-cookie", "def");
+        customOrig.setPath("/geonetwork");
+        customOrig.setVersion(0);
+
+        ComparableCookie customAffinity = (ComparableCookie) xsrfOrig.clone();
+        customAffinity.setPath("/geonetwork");
+
+        Set<ComparableCookie> expected = Set.of(xsrfOrig, xsrfAffinity, customOrig);
+        Set<ComparableCookie> actual = Arrays.stream(response.getCookies()).map(this::toHttpCookie)
+                .collect(Collectors.toSet());
+
+        assertEquals(expected, actual);
+    }
+
+    @SuppressWarnings("serial")
+    private static class ComparableCookie extends Cookie {
+
+        public ComparableCookie(String name, String value) {
+            super(name, value);
+        }
+
+        public @Override boolean equals(Object obj) {
+            if (!(obj instanceof ComparableCookie)) {
+                return false;
+            }
+            ComparableCookie other = (ComparableCookie) obj;
+
+            // One http cookie equals to another cookie (RFC 2965 sec. 3.3.3) if:
+            // 1. they come from same domain (case-insensitive),
+            // 2. have same name (case-insensitive),
+            // 3. and have same path (case-sensitive).
+            return getName().equalsIgnoreCase(other.getName())
+                    && (getDomain() == null ? "" : getDomain())
+                            .equalsIgnoreCase((other.getDomain() == null ? "" : other.getDomain()))
+                    && Objects.equals(getPath(), other.getPath()) && Objects.equals(getValue(), other.getValue());
+        }
+
+        public @Override int hashCode() {
+            return Objects.hash(getName(), getDomain(), getPath());
+        }
+
+        public @Override String toString() {
+            return String.format("%s=%s;Path=%s;Domain=%s", getName(), getValue(), getPath(), getDomain());
+        }
+    }
+
+    /**
+     * Helper method to use {@link ComparableCookie} instead of {@link Cookie}
+     * because the former implements equals() and hashCode() while the later doesn't
+     *
+     * @param cookie
+     * @return
+     */
+    private ComparableCookie toHttpCookie(javax.servlet.http.Cookie cookie) {
+        ComparableCookie c = new ComparableCookie(cookie.getName(), cookie.getValue());
+        c.setComment(cookie.getComment());
+        if (cookie.getDomain() != null)
+            c.setDomain(cookie.getDomain());
+        c.setHttpOnly(cookie.isHttpOnly());
+        c.setMaxAge(cookie.getMaxAge());
+        c.setPath(cookie.getPath());
+        c.setSecure(cookie.getSecure());
+        c.setVersion(cookie.getVersion());
+        return c;
+    }
 }

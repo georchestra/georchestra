@@ -31,16 +31,26 @@ import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpCookie;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -49,11 +59,19 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * A strategy for copying headers from the request to the proxied request and
@@ -73,8 +91,39 @@ public class HeadersManagementStrategy {
     private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
     private String forcedReferer = null;
 
+    @VisibleForTesting
+    @Getter(value = AccessLevel.PACKAGE)
+    private List<CookieAffinity> cookieAffinityConfig = Collections.emptyList();
+
+    @VisibleForTesting
+    @Setter(value = AccessLevel.PACKAGE)
+    private @Autowired GeorchestraConfiguration georchestraConfig;
+
     public HeadersManagementStrategy() {
         filters.add(new SecurityRequestHeaderFilter());
+    }
+
+    @PostConstruct
+    void initConfig() throws IOException {
+        if (georchestraConfig.activated()) {
+            Path cookieAffinityFile = Paths.get(georchestraConfig.getContextDataDir()).resolve("cookie-mappings.json");
+            if (Files.isRegularFile(cookieAffinityFile)) {
+                logger.info("Loading Cookie Affinity configuration from " + cookieAffinityFile);
+                try (InputStream in = Files.newInputStream(cookieAffinityFile)) {
+                    CookieAffinity[] configs = new ObjectMapper().readValue(in, CookieAffinity[].class);
+                    setCookieAffinity(Arrays.asList(configs));
+                }
+            } else {
+                logger.info("File {} does not exist, not loading cookie affinity configuration");
+            }
+        }
+    }
+
+    public void setCookieAffinity(List<CookieAffinity> config) {
+        this.cookieAffinityConfig = config == null ? Collections.emptyList()
+                : config.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        logger.info("Configured cookie affinity mappings: "
+                + this.cookieAffinityConfig.stream().map(CookieAffinity::toString).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -361,53 +410,81 @@ public class HeadersManagementStrategy {
     @VisibleForTesting
     public void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers,
             HttpSession session) {
-        String overridenPath = null;
-        try {
-            overridenPath = originalRequestURI.split("/")[1];
-        } catch (Exception e) {
+        final String overridenPath;
+        {
+            String[] split = originalRequestURI.split("/", 3);
+            overridenPath = split.length > 1 ? split[1] : null;
         }
-        for (Header header : headers) {
-            logger.debug("Parsing header: \"{}\"", header.toString());
-            List<HttpCookie> currentCookies = HttpCookie.parse(header.getValue());
-            // Normally, we should be only interested in the first element of the list.
-            if (currentCookies.isEmpty()) {
-                continue;
-            }
-            HttpCookie currentCookie = currentCookies.get(0);
-            // if the cookie is a JSESSIONID, we need to store it in the session map,
-            // but do not transmit it to the client, as it could disrupt the current
-            // session between the user and the SP (if no path set, for instance).
-            if (currentCookie.getName().equalsIgnoreCase(HeaderNames.JSESSION_ID)) {
-                // Do not store the JSESSIONID in session if no path is provided
-                // Note: by default, Java webapps seem to limit to their own scope.
-                if (currentCookie.getPath() != null) {
-                    logger.debug("Storing the JSESSIONID into session for path {}", currentCookie.getPath());
-                    storeJsessionHeader(session, currentCookie.getPath(), currentCookie.toString());
-                }
-            }
-            // Else, it has to be transmitted to the client
-            else {
-                String actualHeaderValue = header.getValue().trim();
-                // if path is not set on the cookie and the overridden path does not point to /
-                if (currentCookie.getPath() == null) {
-                    if (overridenPath != null) {
-                        logger.debug("Current cookie has not path set, forcing it to {}", overridenPath);
-                        if (actualHeaderValue.endsWith(";")) {
-                            actualHeaderValue.concat("Path=/" + overridenPath + ";");
-                        } else {
-                            actualHeaderValue.concat(";Path=/" + overridenPath + ";");
-                        }
+
+        Arrays.stream(headers)//
+                .peek(header -> logger.debug("Parsing header: '{}'", header.toString()))//
+                .map(Header::getValue)//
+                .map(HttpCookie::parse)//
+                .filter(cookies -> !cookies.isEmpty())//
+                // Normally, we should be only interested in the first element of the list.
+                .map(cookies -> cookies.get(0))//
+                .forEach(cookie -> {
+                    if (cookie.getName().equalsIgnoreCase(HeaderNames.JSESSION_ID)) {
+                        this.handleJSessionID(cookie, session);
+                    } else {
+                        this.handleResponseCookie(cookie, overridenPath, finalResponse);
                     }
-                }
-                // a path is already set on the cookie, but we make sure to limit its scope
-                // to the current proxified webapp
-                else {
-                    logger.debug("Current cookie {} has a path set to {}, forcing it to {}", currentCookie.getName(),
-                            currentCookie.getPath(), overridenPath);
-                    actualHeaderValue = actualHeaderValue.replaceAll("Path=[^;$]+", "Path=/" + overridenPath);
-                }
-                finalResponse.addHeader(HeaderNames.SET_COOKIE_ID, actualHeaderValue);
-            }
+                });
+    }
+
+    private void handleResponseCookie(final HttpCookie cookie, final @Nullable String overridenPath,
+            final HttpServletResponse finalResponse) {
+
+        final String targetPath;
+        if (null == overridenPath) {
+            targetPath = "/";
+        } else {
+            targetPath = (overridenPath.startsWith("/") ? "" : "/") + overridenPath;
+        }
+
+        Cookie responseCookie = new Cookie(cookie.getName(), cookie.getValue());
+        if (null != cookie.getDomain())
+            responseCookie.setDomain(cookie.getDomain());
+        responseCookie.setHttpOnly(responseCookie.isHttpOnly());
+        responseCookie.setSecure(cookie.getSecure());
+        responseCookie.setVersion(cookie.getVersion());
+        responseCookie.setMaxAge(responseCookie.getMaxAge());
+        responseCookie.setComment(cookie.getComment());
+        responseCookie.setPath(targetPath);
+
+        // if path is not set on the cookie and the overridden path does not point to /
+        if (cookie.getPath() == null) {
+            logger.debug("Current cookie has not path set, forcing it to {}", targetPath);
+        } else {
+            // a path is already set on the cookie, but we make sure to limit its scope
+            // to the current proxified webapp
+            logger.debug("Current cookie {} has a path set to {}, forcing it to {}", cookie.getName(), cookie.getPath(),
+                    targetPath);
+        }
+        finalResponse.addCookie(responseCookie);
+
+        this.cookieAffinityConfig.stream()//
+                .filter(config -> targetPath.equals(config.getFrom())
+                        && responseCookie.getName().equalsIgnoreCase(config.getName()))//
+                .forEach(affinityConfig -> {
+                    Cookie affinityPathCookie = (Cookie) responseCookie.clone();
+                    affinityPathCookie.setPath(affinityConfig.getTo());
+                    logger.debug("Adding " + affinityConfig);
+                    finalResponse.addCookie(affinityPathCookie);
+                });
+
+    }
+
+    private void handleJSessionID(@NonNull HttpCookie jSessionId, HttpSession session) {
+        // if the cookie is a JSESSIONID, we need to store it in the session map,
+        // but do not transmit it to the client, as it could disrupt the current
+        // session between the user and the SP (if no path set, for instance).
+
+        // Do not store the JSESSIONID in session if no path is provided
+        // Note: by default, Java webapps seem to limit to their own scope.
+        if (jSessionId.getPath() != null) {
+            logger.debug("Storing the JSESSIONID into session for path {}", jSessionId.getPath());
+            storeJsessionHeader(session, jSessionId.getPath(), jSessionId.toString());
         }
     }
 

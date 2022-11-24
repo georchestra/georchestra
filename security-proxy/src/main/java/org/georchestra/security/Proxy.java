@@ -125,6 +125,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import lombok.NonNull;
+
 /**
  * This proxy provides an indirect access to a remote host to retrieve data.
  * Useful to overcome security constraints on client side.
