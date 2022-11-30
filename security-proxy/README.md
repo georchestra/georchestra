@@ -70,6 +70,41 @@ Logout entrypoint is `/logout`.
 Password recovery form is available from `/console/account/passwordRecovery`.
 Account creation form can be found at `/console/account/new`.
 
+
+#### Cookie Affinity Mapping
+
+Sometimes, cookies sent by one backing service need to be readable by another.
+The Security-Proxy will set a cookie path to all backend service cookies to match the service base path (for example,
+all cookies sent by the `console` application will have their path set to `/console`.
+This makes it impossible for other applications to read them.
+A clear case is when the `datahub` application, under the `/datahub` context path, needs access to the
+GeoNetwork `XSRF-TOKEN` issued cookie.
+
+**Cookie Affinity Mapping** allows to duplicate cookies set to one path with another path. For the example above,
+we need to make it so the GeoNetwork `XSRF-TOKEN` cookie is sent twice to the client, once with `Path=/geonetwork`
+and once with `Path=/datahub`.
+
+To this end, the file `<datadir>/security-proxy/cookie-mappings.json` can be used to configure such
+cookie affinity. It shall contain an array of objects like the following:
+
+```json
+[
+	{
+		"name": "XSRF-TOKEN",
+		"from": "/geonetwork",
+		"to": "/datahub"
+	},
+	{
+		"name": "my-custom-cookie",
+		"from": "/console",
+		"to": "/analytics"
+	},
+]
+```
+
+The `name` property indicates the cookie name, the `from` property indicates from which original path the cookie
+will be duplicated, and the `to` property which path to duplicate the cookie with.
+
 ## SP-trust-SP feature
 
 This feature is rather confidential, since it involves two SP instances, while a standard geOrchestra only requires one. It may prove useful in some corner cases.
