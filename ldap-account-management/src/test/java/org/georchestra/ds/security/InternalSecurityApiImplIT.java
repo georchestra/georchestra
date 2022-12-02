@@ -96,12 +96,12 @@ public class InternalSecurityApiImplIT {
         return Collections.unmodifiableList(readValues);
     }
 
-    public @Test void usersApi_FindAll() {
+    public @Test void usersApiFindAll() {
         Map<String, GeorchestraUser> actual = toMap(users.findAll(), GeorchestraUser::getId);
         assertEquals(expectedUsers, actual);
     }
 
-    public @Test void usersApi_FindById() {
+    public @Test void usersApiFindById() {
         expectedUsers.values().forEach(user -> {
             Optional<GeorchestraUser> found = users.findById(user.getId());
             assertTrue(found.isPresent());
@@ -109,7 +109,7 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void usersApi_FindByUsername() {
+    public @Test void usersApiFindByUsername() {
         expectedUsers.values().forEach(expected -> {
             Optional<GeorchestraUser> found = users.findByUsername(expected.getUsername());
             assertTrue(found.isPresent());
@@ -117,12 +117,12 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void organizationsApi_FindAll() {
+    public @Test void organizationsApiFindAll() {
         Map<String, Organization> actual = toMap(orgs.findAll(), Organization::getId);
         assertEquals(expectedOrganizations, actual);
     }
 
-    public @Test void organizationsApi_FindById() {
+    public @Test void organizationsApiFindById() {
         expectedOrganizations.values().forEach(expected -> {
             Optional<Organization> found = orgs.findById(expected.getId());
             assertTrue(found.isPresent());
@@ -130,7 +130,7 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void organizationsApi_FindByShortName() {
+    public @Test void organizationsApiFindByShortName() {
         expectedOrganizations.values().forEach(expected -> {
             Optional<Organization> found = orgs.findByShortName(expected.getShortName());
             assertTrue(found.isPresent());
@@ -138,23 +138,23 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void organizationsApi_GetLogo() throws NoSuchAlgorithmException {
+    public @Test void organizationsApiGetLogo() throws NoSuchAlgorithmException {
         byte[] logo = orgs.getLogo("bddf474d-125d-4b18-92bd-bd8ebb6699a9").get();
         byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
         assertArrayEquals(new byte[] { -81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61 },
                 md5);
     }
 
-    public @Test void organizationsApi_GetLogoNoLogo() {
+    public @Test void organizationsApiGetLogoNoLogo() {
         assertFalse(orgs.getLogo("8c1ef87a-73fc-4d79-80cb-ba4ff7102cca").isPresent());
     }
 
-    public @Test void rolesApi_FindAll() {
+    public @Test void rolesApiFindAll() {
         Map<String, Role> actual = toMap(roles.findAll(), Role::getId);
         assertEquals(expectedRoles, actual);
     }
 
-    public @Test void rolesApi_FindByName() {
+    public @Test void rolesApiFindByName() {
         expectedRoles.values().forEach(role -> {
             Optional<Role> found = roles.findByName(role.getName());
             assertTrue(found.isPresent());
