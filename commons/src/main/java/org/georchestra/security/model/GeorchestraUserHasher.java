@@ -51,9 +51,9 @@ public class GeorchestraUserHasher {
         return hexHash;
     }
 
-    public static String createHash(Organization organization) {
+    public static String createHash(Organization organization, int logoSize) {
         Hasher hasher = Hashing.sha256().newHasher();
-        hashOrg(organization, hasher);
+        hashOrg(organization, logoSize, hasher);
         String hexHash = hasher.hash().toString();
         return hexHash;
     }
@@ -68,7 +68,7 @@ public class GeorchestraUserHasher {
         return hexHash;
     }
 
-    private static void hashOrg(Organization org, Hasher hasher) {
+    private static void hashOrg(Organization org, int logoSize, Hasher hasher) {
         hasher.putUnencodedChars("org");
         if (null != org) {
             hasher.putUnencodedChars(nonNull(org.getId()));
@@ -79,6 +79,7 @@ public class GeorchestraUserHasher {
             hasher.putUnencodedChars(nonNull(org.getDescription()));
             hasher.putUnencodedChars(nonNull(org.getLinkage()));
             hasher.putUnencodedChars(nonNull(org.getNotes()));
+            hasher.putUnencodedChars(logoSize > 0 ? Integer.toString(logoSize) : "");
             hashList(org.getMembers(), hasher);
         }
     }

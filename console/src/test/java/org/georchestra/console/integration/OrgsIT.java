@@ -20,6 +20,7 @@ package org.georchestra.console.integration;
 
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -173,13 +174,22 @@ public class OrgsIT extends ConsoleIntegrationTest {
     public @Test void deleteLogo() throws Exception {
         String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
-
+        StringCaptor uuidCaptor = new StringCaptor();
+        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.uuid").value(uuidCaptor));
+        StringCaptor withLogolastUpdatedCaptor = new StringCaptor();
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue()))
+                .andExpect(jsonPath("$.lastUpdated").value(withLogolastUpdatedCaptor));
         String payloadWithEmptyDesc = Pattern.compile("\"logo\": \".*\"").matcher(
                 support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
                 .replaceAll("\"logo\": \"\"");
+
         support.perform(put("/private/orgs/" + orgName).content(payloadWithEmptyDesc));
 
         support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""));
+        StringCaptor withoutLogolastUpdatedCaptor = new StringCaptor();
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue()))
+                .andExpect(jsonPath("$.lastUpdated").value(withoutLogolastUpdatedCaptor));
+        assertNotEquals(withLogolastUpdatedCaptor.getValue(), withoutLogolastUpdatedCaptor.getValue());
     }
 
     private ResultActions create(String name) throws Exception {
