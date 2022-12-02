@@ -20,6 +20,8 @@ package org.georchestra.ds.security;
 
 import static com.google.common.base.Predicates.not;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +64,16 @@ public class OrganizationsApiImpl implements OrganizationsApi {
         return Optional.ofNullable(orgsDao.findByCommonName(shortName))//
                 .filter(not(Org::isPending))//
                 .map(orgMapper::map);
+    }
+
+    @Override
+    public Optional<byte[]> getLogo(String id) {
+        UUID uuid = UUID.fromString(id);
+        byte[] base64encoded = orgsDao.findById(uuid).getLogo().getBytes(StandardCharsets.UTF_8);
+        if (base64encoded.length == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(Base64.getMimeDecoder().decode(base64encoded));
     }
 
 }

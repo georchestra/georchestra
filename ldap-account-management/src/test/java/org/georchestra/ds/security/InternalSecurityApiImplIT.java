@@ -18,11 +18,15 @@
  */
 package org.georchestra.ds.security;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +136,16 @@ public class InternalSecurityApiImplIT {
             assertTrue(found.isPresent());
             assertEquals(found.get(), expected);
         });
+    }
+
+    public @Test void organizationsApi_GetLogo() throws NoSuchAlgorithmException {
+        byte[] logo = orgs.getLogo("bddf474d-125d-4b18-92bd-bd8ebb6699a9").get();
+        byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
+        assertArrayEquals(new byte[] {-81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61}, md5);
+    }
+
+    public @Test void organizationsApi_GetLogoNoLogo() {
+        assertFalse(orgs.getLogo("8c1ef87a-73fc-4d79-80cb-ba4ff7102cca").isPresent());
     }
 
     public @Test void rolesApi_FindAll() {
