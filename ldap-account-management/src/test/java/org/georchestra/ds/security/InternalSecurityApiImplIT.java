@@ -92,12 +92,12 @@ public class InternalSecurityApiImplIT {
         return Collections.unmodifiableList(readValues);
     }
 
-    public @Test void testUsersApi_FindAll() throws Exception {
+    public @Test void testUsersApi_FindAll() {
         Map<String, GeorchestraUser> actual = toMap(users.findAll(), GeorchestraUser::getId);
         assertEquals(expectedUsers, actual);
     }
 
-    public @Test void testUsersApi_FindById() throws Exception {
+    public @Test void testUsersApi_FindById() {
         expectedUsers.values().forEach(user -> {
             Optional<GeorchestraUser> found = users.findById(user.getId());
             assertTrue(found.isPresent());
@@ -105,7 +105,7 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void testUsersApi_FindByUsername() throws Exception {
+    public @Test void testUsersApi_FindByUsername() {
         expectedUsers.values().forEach(expected -> {
             Optional<GeorchestraUser> found = users.findByUsername(expected.getUsername());
             assertTrue(found.isPresent());
@@ -113,12 +113,12 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void testOrganizationsApi_FindAll() throws Exception {
+    public @Test void testOrganizationsApi_FindAll() {
         Map<String, Organization> actual = toMap(orgs.findAll(), Organization::getId);
         assertEquals(expectedOrganizations, actual);
     }
 
-    public @Test void testOrganizationsApi_FindById() throws Exception {
+    public @Test void testOrganizationsApi_FindById() {
         expectedOrganizations.values().forEach(expected -> {
             Optional<Organization> found = orgs.findById(expected.getId());
             assertTrue(found.isPresent());
@@ -126,7 +126,7 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void testOrganizationsApi_FindByShortName() throws Exception {
+    public @Test void testOrganizationsApi_FindByShortName() {
         expectedOrganizations.values().forEach(expected -> {
             Optional<Organization> found = orgs.findByShortName(expected.getShortName());
             assertTrue(found.isPresent());
@@ -134,12 +134,12 @@ public class InternalSecurityApiImplIT {
         });
     }
 
-    public @Test void testRolesApi_FindAll() throws Exception {
+    public @Test void testRolesApi_FindAll() {
         Map<String, Role> actual = toMap(roles.findAll(), Role::getId);
         assertEquals(expectedRoles, actual);
     }
 
-    public @Test void testRolesApi_FindByName() throws Exception {
+    public @Test void testRolesApi_FindByName() {
         expectedRoles.values().forEach(role -> {
             Optional<Role> found = roles.findByName(role.getName());
             assertTrue(found.isPresent());
