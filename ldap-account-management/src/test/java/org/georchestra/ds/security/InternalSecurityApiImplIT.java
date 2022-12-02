@@ -141,7 +141,8 @@ public class InternalSecurityApiImplIT {
     public @Test void organizationsApi_GetLogo() throws NoSuchAlgorithmException {
         byte[] logo = orgs.getLogo("bddf474d-125d-4b18-92bd-bd8ebb6699a9").get();
         byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
-        assertArrayEquals(new byte[] {-81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61}, md5);
+        assertArrayEquals(new byte[] { -81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61 },
+                md5);
     }
 
     public @Test void organizationsApi_GetLogoNoLogo() {
