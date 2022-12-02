@@ -19,6 +19,7 @@
 package org.georchestra.console.integration;
 
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.junit.Assert.assertArrayEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -27,10 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.CustomMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,11 +118,25 @@ public class OrgsIT extends ConsoleIntegrationTest {
 
         create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
 
+        final String[] uuidCaptor = new String[1];
         support.perform(get("/private/orgs/" + orgName))
                 .andExpect(jsonPath("$.logo").value(stringContainsInOrder(
                         Arrays.asList("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0jHAcJCw8aLCgf",
                                 "cH35r5o8W/EvV9Xc/bLp4bfP7jT4jhY1/wCmg7n3P4YrlhjtXfDCfzz+R2wwv88j7TtL+2nXNldW",
-                                "BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))));
+                                "BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))))
+                .andExpect(jsonPath("$.uuid").value(new CustomMatcher<Object>("") {
+                    @Override
+                    public boolean matches(Object o) {
+                        uuidCaptor[0] = o.toString();
+                        return true;
+                    }
+                }));
+
+        byte[] logo = support.perform(get("/internal/organizations/id/" + uuidCaptor[0] + "/logo")).andReturn()
+                .getResponse().getContentAsByteArray();
+        byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
+        assertArrayEquals(new byte[] { -81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61 },
+                md5);
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
