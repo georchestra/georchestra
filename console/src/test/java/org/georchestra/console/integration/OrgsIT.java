@@ -118,21 +118,15 @@ public class OrgsIT extends ConsoleIntegrationTest {
 
         create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
 
-        final String[] uuidCaptor = new String[1];
+        StringCaptor uuidCaptor = new StringCaptor();
         support.perform(get("/private/orgs/" + orgName))
                 .andExpect(jsonPath("$.logo").value(stringContainsInOrder(
                         Arrays.asList("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0jHAcJCw8aLCgf",
                                 "cH35r5o8W/EvV9Xc/bLp4bfP7jT4jhY1/wCmg7n3P4YrlhjtXfDCfzz+R2wwv88j7TtL+2nXNldW",
                                 "BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))))
-                .andExpect(jsonPath("$.uuid").value(new CustomMatcher<Object>("") {
-                    @Override
-                    public boolean matches(Object o) {
-                        uuidCaptor[0] = o.toString();
-                        return true;
-                    }
-                }));
+                .andExpect(jsonPath("$.uuid").value(uuidCaptor));
 
-        byte[] logo = support.perform(get("/internal/organizations/id/" + uuidCaptor[0] + "/logo")).andReturn()
+        byte[] logo = support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue() + "/logo")).andReturn()
                 .getResponse().getContentAsByteArray();
         byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
         assertArrayEquals(new byte[] { -81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61 },
@@ -197,4 +191,22 @@ public class OrgsIT extends ConsoleIntegrationTest {
                 .content(support.readResourceToString(payloadResourcePath).replace("{shortName}", name)));
     }
 
+    private static class StringCaptor extends CustomMatcher {
+
+        private String value;
+
+        public StringCaptor() {
+            super("");
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            value = o.toString();
+            return true;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }
