@@ -137,7 +137,6 @@ public class SecurityApiController {
         if (found.isPresent()) {
             return ResponseEntity.ok(found.get());
         }
-        return ResponseEntity.notFound().build();
-
+        return ResponseEntity.ok().build();
     }
 }

@@ -69,7 +69,11 @@ public class OrganizationsApiImpl implements OrganizationsApi {
     @Override
     public Optional<byte[]> getLogo(String id) {
         UUID uuid = UUID.fromString(id);
-        byte[] base64encoded = orgsDao.findById(uuid).getLogo().getBytes(StandardCharsets.UTF_8);
+        Org org = orgsDao.findById(uuid);
+        if (org == null) {
+            return Optional.empty();
+        }
+        byte[] base64encoded = org.getLogo().getBytes(StandardCharsets.UTF_8);
         if (base64encoded.length == 0) {
             return Optional.empty();
         }

@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -45,6 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RunWith(SpringRunner.class)
@@ -140,7 +142,13 @@ public class OrgsIT extends ConsoleIntegrationTest {
 
         create(orgName);
 
-        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""));
+        StringCaptor uuidCaptor = new StringCaptor();
+        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""))
+                .andExpect(jsonPath("$.uuid").value(uuidCaptor));
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue() + "/logo")).andExpect(status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().isEmpty());
+        support.perform(get("/internal/organizations/id/" + UUID.randomUUID() + "/logo")).andExpect(status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().isEmpty());
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
