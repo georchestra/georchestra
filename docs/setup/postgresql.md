@@ -83,13 +83,9 @@ psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 
 ## GeoNetwork schema
 
-If **geonetwork** is to be deployed, you need to create a dedicated user and schema:
+If **geonetwork** is to be deployed, you need to create a dedicated schema:
 ```
-createuser -SDRI geonetwork
-psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'georchestra';"
-psql -d georchestra -c "CREATE SCHEMA AUTHORIZATION geonetwork;"
-psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');"
-psql -d georchestra -c "GRANT geonetwork TO georchestra;"
+psql -d georchestra -c "CREATE SCHEMA geonetwork;"
 ```
 
 ## Cleanup maintenance function
