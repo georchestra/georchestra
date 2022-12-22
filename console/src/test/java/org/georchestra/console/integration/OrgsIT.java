@@ -19,6 +19,8 @@
 package org.georchestra.console.integration;
 
 import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -27,10 +29,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.CustomMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RunWith(SpringRunner.class)
@@ -115,11 +121,19 @@ public class OrgsIT extends ConsoleIntegrationTest {
 
         create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
 
+        StringCaptor uuidCaptor = new StringCaptor();
         support.perform(get("/private/orgs/" + orgName))
                 .andExpect(jsonPath("$.logo").value(stringContainsInOrder(
                         Arrays.asList("/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0jHAcJCw8aLCgf",
                                 "cH35r5o8W/EvV9Xc/bLp4bfP7jT4jhY1/wCmg7n3P4YrlhjtXfDCfzz+R2wwv88j7TtL+2nXNldW",
-                                "BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))));
+                                "BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))))
+                .andExpect(jsonPath("$.uuid").value(uuidCaptor));
+
+        byte[] logo = support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue() + "/logo")).andReturn()
+                .getResponse().getContentAsByteArray();
+        byte[] md5 = MessageDigest.getInstance("MD5").digest(logo);
+        assertArrayEquals(new byte[] { -81, 25, 73, -126, -100, -125, 2, 34, 45, -47, 60, -40, -123, -105, 107, 61 },
+                md5);
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
@@ -128,7 +142,13 @@ public class OrgsIT extends ConsoleIntegrationTest {
 
         create(orgName);
 
-        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""));
+        StringCaptor uuidCaptor = new StringCaptor();
+        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""))
+                .andExpect(jsonPath("$.uuid").value(uuidCaptor));
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue() + "/logo")).andExpect(status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().isEmpty());
+        support.perform(get("/internal/organizations/id/" + UUID.randomUUID() + "/logo")).andExpect(status().isOk())
+                .andExpect(result -> result.getResponse().getContentAsString().isEmpty());
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
@@ -162,13 +182,22 @@ public class OrgsIT extends ConsoleIntegrationTest {
     public @Test void deleteLogo() throws Exception {
         String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
-
+        StringCaptor uuidCaptor = new StringCaptor();
+        support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.uuid").value(uuidCaptor));
+        StringCaptor withLogolastUpdatedCaptor = new StringCaptor();
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue()))
+                .andExpect(jsonPath("$.lastUpdated").value(withLogolastUpdatedCaptor));
         String payloadWithEmptyDesc = Pattern.compile("\"logo\": \".*\"").matcher(
                 support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
                 .replaceAll("\"logo\": \"\"");
+
         support.perform(put("/private/orgs/" + orgName).content(payloadWithEmptyDesc));
 
         support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.logo").value(""));
+        StringCaptor withoutLogolastUpdatedCaptor = new StringCaptor();
+        support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue()))
+                .andExpect(jsonPath("$.lastUpdated").value(withoutLogolastUpdatedCaptor));
+        assertNotEquals(withLogolastUpdatedCaptor.getValue(), withoutLogolastUpdatedCaptor.getValue());
     }
 
     private ResultActions create(String name) throws Exception {
@@ -180,4 +209,22 @@ public class OrgsIT extends ConsoleIntegrationTest {
                 .content(support.readResourceToString(payloadResourcePath).replace("{shortName}", name)));
     }
 
+    private static class StringCaptor extends CustomMatcher {
+
+        private String value;
+
+        public StringCaptor() {
+            super("");
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            value = o.toString();
+            return true;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 }

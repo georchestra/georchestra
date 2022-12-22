@@ -54,4 +54,9 @@ public class GeorchestraConsoleOrganizationsApiImpl implements OrganizationsApi 
         return client.get("/console/internal/organizations/shortname/{name}", Organization.class, shortName);
     }
 
+    @Override
+    public Optional<byte[]> getLogo(String id) {
+        return client.get("/console/internal/organizations/id/{id}/logo", byte[].class, id);
+    }
+
 }

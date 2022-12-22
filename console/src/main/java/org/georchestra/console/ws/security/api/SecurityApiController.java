@@ -107,6 +107,11 @@ public class SecurityApiController {
         return toEntityOrNotFound(this.orgs.findByShortName(name));
     }
 
+    @GetMapping(value = "/organizations/id/{id}/logo", produces = "application/octet-stream")
+    public ResponseEntity<byte[]> getOrganizationLogo(@PathVariable("id") String id) {
+        return toEntityOrNotFound(this.orgs.getLogo(id));
+    }
+
     /**
      * Return a list of available roles as a json array
      * <p>
@@ -132,7 +137,6 @@ public class SecurityApiController {
         if (found.isPresent()) {
             return ResponseEntity.ok(found.get());
         }
-        return ResponseEntity.notFound().build();
-
+        return ResponseEntity.ok().build();
     }
 }

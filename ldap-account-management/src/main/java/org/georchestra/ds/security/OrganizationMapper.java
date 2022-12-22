@@ -54,7 +54,7 @@ public interface OrganizationMapper {
 
     @AfterMapping
     default void addLastUpdated(Org source, @MappingTarget Organization target) {
-        String hash = GeorchestraUserHasher.createHash(target);
+        String hash = GeorchestraUserHasher.createHash(target, source.getLogo().length());
         target.setLastUpdated(hash);
     }
 
