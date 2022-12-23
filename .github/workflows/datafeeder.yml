@@ -69,27 +69,27 @@ jobs:
       run: ../mvnw verify -P-all,datafeeder -DskipITs=false -DskipTests -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: ./mvnw -f datafeeder/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
 
     - name: "Building docker image (frontend)"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: ./mvnw -f datafeeder-ui/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in to docker.io"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest images to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker tag georchestra/datafeeder:${{ steps.version.outputs.VERSION }} georchestra/datafeeder:latest
         docker tag georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }} georchestra/datafeeder-frontend:latest
@@ -97,13 +97,13 @@ jobs:
         docker push georchestra/datafeeder-frontend:latest
 
     - name: "Pushing release branch to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}

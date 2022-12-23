@@ -40,34 +40,34 @@ jobs:
       run: ./mvnw verify -pl mapfishapp -P-all,mapfishapp -ntp -Dfmt.skip -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: ./mvnw clean package -pl mapfishapp docker:build -ntp -P-all,mapfishapp,docker,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
-      if: github.repository == 'georchestra/georchestra'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker tag georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} georchestra/mapfishapp:latest
         docker push georchestra/mapfishapp:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
 
