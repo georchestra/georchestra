@@ -56,7 +56,7 @@ public class DatasetUploadState {
     @ManyToOne(fetch = FetchType.EAGER)
     private DataUploadJob job;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String absolutePath;
 
     @Column(nullable = false)

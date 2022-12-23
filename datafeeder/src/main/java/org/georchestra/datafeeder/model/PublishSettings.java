@@ -29,6 +29,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 
 import lombok.Data;
 
@@ -59,10 +60,11 @@ public class PublishSettings {
     @Column(name = "md_record_id")
     private String metadataRecordId;
 
-    @Column(name = "md_title")
+    @Column(name = "md_title", length = 512)
     private String title;
 
     @Column(name = "md_abstract")
+    @Lob
     private String Abstract;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -76,6 +78,7 @@ public class PublishSettings {
     private Integer scale;
 
     @Column(name = "md_creation_process_desc")
+    @Lob
     private String datasetCreationProcessDescription;
 
     @Embedded

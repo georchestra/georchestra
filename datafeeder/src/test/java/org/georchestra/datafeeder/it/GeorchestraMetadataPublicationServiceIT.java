@@ -149,7 +149,7 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         final String publishedRecord = geonetwork.getRecordById(createdMdId);
         assertNotNull(publishedRecord);
-        log.info("published record returned from GN: {}", publishedRecord);
+        log.debug("published record returned from GN: {}", publishedRecord);
 
         Document dom;
         try {
