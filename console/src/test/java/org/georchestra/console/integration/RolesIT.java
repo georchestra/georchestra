@@ -25,11 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
@@ -52,7 +47,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT extends ConsoleIntegrationTest {
     private static Logger LOGGER = Logger.getLogger(RolesIT.class);
-    private static DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
     public @Rule @Autowired IntegrationTestSupport support;
 
@@ -170,9 +164,9 @@ public class RolesIT extends ConsoleIntegrationTest {
             String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
             String userName3 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 
-            createUser(userName1, true); // temporary and expired
-            createUser(userName2, false); // temporary but still valid
-            createUser(userName3); // no expiry date defined
+            support.createUser(userName1, true); // temporary and expired
+            support.createUser(userName2, false); // temporary but still valid
+            support.createUser(userName3); // no expiry date defined
 
             getAll().andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/json"))
                     .andExpect(jsonPath("$.[?(@.cn=='TEMPORARY')].users.*", containsInAnyOrder(userName2, userName1)))
@@ -181,23 +175,5 @@ public class RolesIT extends ConsoleIntegrationTest {
         } finally {
             deleteQuiet();
         }
-    }
-
-    private void createUser(String userName) throws Exception {
-        support.perform(
-                post("/private/users").content(support.readResourceToString("/testData/createUserPayload.json")));
-    }
-
-    private void createUser(String userName, boolean expired) throws Exception {
-        GregorianCalendar date = new GregorianCalendar();
-        if (expired) {
-            date.add(Calendar.YEAR, -10);
-        } else {
-            date.add(Calendar.YEAR, 10);
-        }
-        String dateAsString = DATE_FORMATTER.format(date.getTime());
-        support.perform(post("/private/users")
-                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)
-                        .replaceAll("\"shadowExpire\": null,", String.format("\"shadowExpire\": %s,", dateAsString))));
     }
 }

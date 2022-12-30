@@ -4,7 +4,6 @@ import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSE
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -13,18 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -69,33 +63,20 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     private MockMvc mockMvc;
 
-    private Set<String> createdUsers;
-
     public static @BeforeClass void init() {
     }
 
     public @Before void before() {
-        this.createdUsers = new HashSet<>();
         // pre-flight sanity check
         assertNotNull(ldapTemplateSanityCheck.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
-
-    public @After void cleanUp() {
-        for (String user : new HashSet<>(createdUsers)) {
-            try {
-                deleteUser(user);
-            } catch (Exception e) {
-                LogFactory.getLog(getClass()).error("Error deleting " + user, e);
-            }
-        }
     }
 
     @WithMockRandomUidUser
     public @Test void changeOrgAndUid() throws Exception {
         String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-        createUser(userName);
+        support.createUser(userName);
 
         support.perform(put("/private/users/" + userName)
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
@@ -109,7 +90,7 @@ public class UsersIT extends ConsoleIntegrationTest {
     public @Test void userDetail() throws Exception {
         String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
                 .getUsername();
-        createUser(userName);
+        support.createUser(userName);
 
         support.perform(get("/account/userdetails").header(SEC_USERNAME, userName)).andExpect(status().isOk());
     }
@@ -118,7 +99,7 @@ public class UsersIT extends ConsoleIntegrationTest {
     public @Test void users() throws Exception {
         String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
                 .getUsername();
-        createUser(userName);
+        support.createUser(userName);
 
         support.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
                 .andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
@@ -128,8 +109,8 @@ public class UsersIT extends ConsoleIntegrationTest {
     public @Test void updateUsers() throws Exception {
         String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-        createUser(userName1);
-        createUser(userName2);
+        support.createUser(userName1);
+        support.createUser(userName2);
         String role1Name = createRole();
         String role2Name = createRole();
         String role3Name = createRole();
@@ -147,17 +128,6 @@ public class UsersIT extends ConsoleIntegrationTest {
         support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
         support.perform(get("/private/roles/" + role2Name)).andDo(print()).andExpect(jsonPath("$.users").isEmpty());
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
-    }
-
-    private void createUser(String userName) throws Exception {
-        support.perform(post("/private/users")
-                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
-        this.createdUsers.add(userName);
-    }
-
-    private ResultActions deleteUser(String userName) throws Exception {
-        this.createdUsers.remove(userName);
-        return support.perform(delete("/private/users/" + userName));
     }
 
     private ResultActions getProfile() throws Exception {
@@ -183,7 +153,7 @@ public class UsersIT extends ConsoleIntegrationTest {
     @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws Exception {
 
-        createUser("user1");
+        support.createUser("user1");
 
         Authentication auth = Mockito.mock(Authentication.class);
         Mockito.when(auth.getName()).thenReturn("user1");
@@ -207,9 +177,9 @@ public class UsersIT extends ConsoleIntegrationTest {
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
     @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
     public @Test void testDeleteUserAsSuperAdminDoesNotDeleteGDPRAccountRecords() throws Exception {
-        createUser("user1");
+        support.createUser("user1");
 
-        deleteUser("user1")//
+        support.deleteUser("user1")//
                 .andExpect(status().isOk());
 
         Account account = new AccountImpl();
