@@ -17,6 +17,7 @@
     <roo.version>1.1.5.RELEASE</roo.version>
     <context.name>${project.artifactId}</context.name>
     <json.version>20210307</json.version>
+    <gt.version>27.2</gt.version>
   </properties>
   <dependencies>
     <!-- geOrchestra libraries -->
@@ -30,6 +31,35 @@
       <artifactId>georchestra-ldap-account-management</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geojson-store</artifactId>
+      <version>${gt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-hsql</artifactId>
+      <version>${gt.version}</version>
+    </dependency>
+  	<dependency>
+  	  <!-- upgrade version to match gt-geojson-store's expected one -->
+  	  <groupId>com.fasterxml.jackson.core</groupId>
+  	  <artifactId>jackson-core</artifactId>
+  	  <version>2.13.2</version>
+  	</dependency>
+  	<dependency>
+  	  <!-- upgrade version to match gt-geojson-store's expected one -->
+  	  <groupId>com.fasterxml.jackson.core</groupId>
+  	  <artifactId>jackson-databind</artifactId>
+  	  <version>2.13.4.1</version>
+  	</dependency>
+  	<dependency>
+  	  <!-- upgrade version to match gt-geojson-store's expected one -->
+  	  <groupId>com.fasterxml.jackson.core</groupId>
+  	  <artifactId>jackson-annotations</artifactId>
+  	  <version>2.13.2</version>
+  	</dependency>
+
     <!--Dependency for swagger 2 -->
     <dependency>
       <groupId>io.springfox</groupId>
@@ -240,10 +270,6 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
 
     <!-- commons -->
     <dependency>
@@ -336,11 +362,6 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.locationtech.jts</groupId>
-      <artifactId>jts-core</artifactId>
-      <version>1.16.1</version>
     </dependency>
     <dependency>
       <groupId>org.zeroturnaround</groupId>

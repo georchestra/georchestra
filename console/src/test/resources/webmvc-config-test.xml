@@ -289,4 +289,9 @@
   
   <bean id="logUtils" class="org.georchestra.console.ws.utils.LogUtils"/>
 
+  <bean id="areasService" class="org.georchestra.console.bs.areas.AreasService" init-method="initialize">
+    <constructor-arg ref="orgsDao"/>
+    <constructor-arg ref="georchestraConfiguration"/>
+    <constructor-arg value="${AreasUrl:cities.geojson}"/>
+  </bean>
 </beans>

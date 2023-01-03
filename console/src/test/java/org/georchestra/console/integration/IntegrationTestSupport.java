@@ -19,10 +19,18 @@
 package org.georchestra.console.integration;
 
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -77,6 +85,8 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     private TestName testName = new TestName();
 
+    private Set<String> createdUsers;
+
     @Autowired
     private WebApplicationContext wac;
 
@@ -87,7 +97,8 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         return super.apply(base, description);
     }
 
-    protected @Override void before() {
+    public @Override void before() {
+        this.createdUsers = new HashSet<>();
         LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName.getMethodName(),
                 psqlPort, ldapPort));
         // pre-flight sanity check
@@ -95,8 +106,14 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
-    protected @Override void after() {
-
+    public @Override void after() {
+        for (String user : new HashSet<>(createdUsers)) {
+            try {
+                deleteUser(user);
+            } catch (Exception e) {
+                LogFactory.getLog(getClass()).error("Error deleting " + user, e);
+            }
+        }
     }
 
     public int ldapPort() {
@@ -127,5 +144,30 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         java.net.URL url = this.getClass().getResource(name);
         java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
         return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
+    }
+
+    public ResultActions createUser(String userName) throws Exception {
+        ResultActions perform = perform(post("/private/users")
+                .content(readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+        this.createdUsers.add(userName);
+        return perform;
+    }
+
+    public ResultActions createUser(String userName, boolean expired) throws Exception {
+        GregorianCalendar date = new GregorianCalendar();
+        if (expired) {
+            date.add(Calendar.YEAR, -10);
+        } else {
+            date.add(Calendar.YEAR, 10);
+        }
+        String dateAsString = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
+        return perform(post("/private/users")
+                .content(readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)
+                        .replaceAll("\"shadowExpire\": null,", String.format("\"shadowExpire\": %s,", dateAsString))));
+    }
+
+    public ResultActions deleteUser(String userName) throws Exception {
+        this.createdUsers.remove(userName);
+        return perform(delete("/private/users/" + userName));
     }
 }
