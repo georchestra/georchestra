@@ -19,76 +19,16 @@
 
 package org.georchestra.security;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
-import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolException;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
@@ -121,11 +61,30 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.io.*;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import lombok.NonNull;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
+import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 /**
  * This proxy provides an indirect access to a remote host to retrieve data.
@@ -370,7 +329,8 @@ public class Proxy {
      * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
-    @RequestMapping(value = "/**", params = { "!login" })
+    @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
+            TRACE })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
