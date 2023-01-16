@@ -548,18 +548,6 @@ JAVA_OPTS="$JAVA_OPTS \
 
 In case your connection to the internet needs to pass through a proxy, you should also add the ```-Dhttp.proxyHost=xxxx -Dhttp.proxyPort=xxxx``` options here.
 
-
-### Notes about the s3-geotiff module
-
-The `s3-geotiff` module which allows to optimally store geotiff files onto s3-compatible buckets is now included by default. If you plan
-to use its features in your GeoServer instance, you will also have to add the following JAVA_OPTS options:
-
-```
-JAVA_OPTS="$JAVA_OPTS \
-            -Ds3.caching.ehCacheConfig=/etc/georchestra/geoserver/s3-geotiff/s3-geotiff-ehcache.xml \
-            -Ds3.properties.location=/etc/georchestra/geoserver/s3-geotiff/s3.properties \"
-```
-
 ### Note for geofence users
 
 If geofence is activated in our geoserver, one will require some specific environment variables set. in the `/etc/default/tomcat9-geoserver0` file, consider adding:
