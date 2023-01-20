@@ -80,7 +80,7 @@ class LoggerController {
         // message
         if (l.type === 'EMAIL_SENT') { l.title = 'msg.sent' }
         // attributs
-        if (l.type.indexOf('_ATTRIBUTE_CHANGED') >= 0) {
+        if (l.type.indexOf('_ATTRIBUTE_CHANGED') >= 0 && l.changed) {
           l.title = (l.changed.field === 'cities')
             ? this.getCitiesLog(l)
             : this.getAttrLog(l)
@@ -94,7 +94,7 @@ class LoggerController {
           const i18nType = this.i18n[l.type.split('_')[0].toLowerCase()]
           // action added or removed
           const i18nAction = this.i18n[l.type.split('_').slice(1, 3).join('').toLowerCase()]
-          l.title = `${i18nType} ${l.changed.field} ${i18nAction} ${l.target}`
+          l.title = `${i18nType} ${l.changed?.field} ${i18nAction} ${l.target}`
         }
         // get icon name
         let iconName = ''

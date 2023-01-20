@@ -261,6 +261,7 @@
   "logs.roleremoved"      : "vom Benutzer entfernt",
   "logs.emailrecoverysent": "E-Mail zur Passwortwiederherstellung gesendet",
   "logs.rolecreated"      : "Rolle erstellt",
+  "logs.noresults"        : "FIXME: No logs matching current filters",
   "analytics.title"       : "Statistiken",
   "analytics.all"         : "Alle",
   "analytics.requests"    : "Anzahl der Anfragen",
