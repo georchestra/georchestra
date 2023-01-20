@@ -261,6 +261,7 @@
   "logs.roleremoved"      : "a été enlevé de l'utilisateur",
   "logs.emailrecoverysent": "Email de récupération du mot de passe envoyé",
   "logs.rolecreated"      : "Role créé",
+  "logs.noresults"        : "Pas de logs pour les filtres sélectionnés",
   "analytics.title"       : "Statistiques",
   "analytics.all"         : "Tout le monde",
   "analytics.requests"    : "Nombre de requêtes",

@@ -261,6 +261,7 @@
   "logs.roleremoved"      : "removed from this user",
   "logs.emailrecoverysent": "Password recovery email sent",
   "logs.rolecreated"      : "Role created",
+  "logs.noresults"        : "No logs matching current filters",
   "analytics.title"       : "Analytics",
   "analytics.all"         : "Everyone",
   "analytics.requests"    : "Number of requests",
