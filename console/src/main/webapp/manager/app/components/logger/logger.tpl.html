@@ -98,6 +98,11 @@
             </span>
           </td>
         </tr>
+        <tr ng-if="(logger.logs | logs: logger.type:logger.admin:logger.target:logger.date).length === 0">
+          <td colspan="4" class="empty">
+            {{'logs.noresults' | translate}}
+          </td>
+        </tr>
     </tbody>
     </table>
 
