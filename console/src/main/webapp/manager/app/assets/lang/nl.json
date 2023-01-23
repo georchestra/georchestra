@@ -261,7 +261,7 @@
   "logs.roleremoved"      : "removed from this user",
   "logs.emailrecoverysent": "Password recovery email sent",
   "logs.rolecreated"      : "Role created",
-  "logs.noresults"        : "FIXME: No logs matching current filters",
+  "logs.noresults"        : "Geen invoer voor geselecteerde filters",
   "analytics.title"       : "Statistieken",
   "analytics.all"         : "Iedereen",
   "analytics.requests"    : "Aantal queries",
