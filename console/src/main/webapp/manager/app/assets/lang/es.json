@@ -261,7 +261,7 @@
   "logs.roleremoved"      : "eliminado del usuario",
   "logs.emailrecoverysent": "Correo electrónico de recuperación de contraseña enviado",
   "logs.rolecreated"      : "Rol creado",
-  "logs.noresults"        : "FIXME: No logs matching current filters",
+  "logs.noresults"        : "No hay entradas para los filtros seleccionados",
   "analytics.title"       : "Estadísticas",
   "analytics.all"         : "Todo el mundo",
   "analytics.requests"    : "Número de consultas",
