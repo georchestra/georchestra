@@ -130,6 +130,10 @@ public class AccountImpl implements Serializable, Account {
     @JsonSerialize(using = ToStringSerializer.class)
     private LocalDate privacyPolicyAgreementDate;
 
+    @JsonProperty(UserSchema.LASTLOGIN_KEY)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDate lastLogin;
+
     @JsonProperty(UserSchema.MANAGER_KEY)
     private String manager;
 
@@ -164,9 +168,10 @@ public class AccountImpl implements Serializable, Account {
                 + physicalDeliveryOfficeName + '\'' + ", street='" + street + '\'' + ", locality='" + locality + '\''
                 + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\'' + ", roomNumber='" + roomNumber
                 + '\'' + ", stateOrProvince='" + stateOrProvince + '\'' + ", homePostalAddress='" + homePostalAddress
-                + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", privacyPolicyAgreementDate='"
-                + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\'' + ", note='" + note + '\''
-                + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "', saslUser='" + saslUser + "'}";
+                + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", lastLogin='" + lastLogin + '\''
+                + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
+                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
+                + "', saslUser='" + saslUser + "'}";
     }
 
     @Override
@@ -399,6 +404,16 @@ public class AccountImpl implements Serializable, Account {
     }
 
     @Override
+    public void setLastLogin(LocalDate lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    @Override
+    public LocalDate getLastLogin() {
+        return this.lastLogin;
+    }
+
+    @Override
     public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) {
         this.privacyPolicyAgreementDate = privacyPolicyAgreementDate;
     }
@@ -484,6 +499,7 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(stateOrProvince, account.stateOrProvince)
                 && Objects.equals(homePostalAddress, account.homePostalAddress)
                 && Objects.equals(shadowExpire, account.shadowExpire) && Objects.equals(note, account.note)
+                && Objects.equals(lastLogin, account.lastLogin)
                 && Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate)
                 && Objects.equals(manager, account.manager) && Objects.equals(context, account.context)
                 && Objects.equals(org, account.org) && Arrays.equals(sshKeys, account.sshKeys);

@@ -141,6 +141,10 @@ public interface Account extends Comparable<Account> {
 
     Date getShadowExpire();
 
+    void setLastLogin(LocalDate lastLogin);
+
+    LocalDate getLastLogin();
+
     void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate);
 
     LocalDate getPrivacyPolicyAgreementDate();

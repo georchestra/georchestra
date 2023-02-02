@@ -173,6 +173,7 @@ public class AccountFactory {
         a.setStateOrProvince(o.getStateOrProvince());
         a.setHomePostalAddress(o.getHomePostalAddress());
         a.setPrivacyPolicyAgreementDate(o.getPrivacyPolicyAgreementDate());
+        a.setLastLogin(o.getLastLogin());
         a.setManager(o.getManager());
         a.setShadowExpire(o.getShadowExpire());
         a.setContext(o.getContext());

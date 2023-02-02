@@ -60,6 +60,8 @@
   "user.fax"              : "Fax",
   "user.title"            : "Job title",
   "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
+  "user.lastLogin"        : "Last connection",
+  "user.lastLoginUnknown" : "Unknown",
   "user.warning"          : "Warning, this action is irreversible — ",
   "user.pendingmsg"       : "Pending user ",
   "user.expiredmsg"       : "Expired user since",
