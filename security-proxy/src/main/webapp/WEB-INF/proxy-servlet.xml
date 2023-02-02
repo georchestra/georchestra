@@ -13,6 +13,8 @@
 
     <context:annotation-config/>
 
+    <bean class="org.georchestra.security.RemovePreflightHandlerMapping" />
+
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/"/>
         <property name="suffix" value=".jsp"/>
