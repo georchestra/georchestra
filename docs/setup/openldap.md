@@ -46,7 +46,7 @@ This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, whic
 ## groupOfMembers objectClass
 
 Groups in geOrchestra are instances of groupOfMembers objects, which allows empty groups (contrary to groupOfNames, which were used in previous geOrchestra releases).
-This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the [groupofmembers.ldif](../../ldap/groupofmembers.ldif) file:
+This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the [groupofmembers.ldif](../../ldap/docker-root/groupofmembers.ldif) file:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
@@ -73,7 +73,7 @@ The overlay ldif files should match the expected database number in OpenLDAP, an
 ### The "memberof" overlay
 
 The `memberof` overlay is required to check if a user is a member of a given group.
-Use the [memberof.ldif](../../ldap/memberof.ldif) file to add the module and configure the overlay.
+Use the [memberof.ldif](../../ldap/docker-root/memberof.ldif) file to add the module and configure the overlay.
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
@@ -82,7 +82,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
 ### The "lastbind" overlay
 
 The `lastbind` overlay is required to record last user connection to the platform. It also depends on the `ppolicy` overlay.
-Use the [lastbind.ldif](../../ldap/lastbind.ldif) file to add the modules and configure the overlay.
+Use the [lastbind.ldif](../../ldap/docker-root/lastbind.ldif) file to add the modules and configure the overlay.
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f lastbind.ldif
@@ -90,7 +90,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f lastbind.ldif
 
 ## Add "sshPublicKey" objectClass
 
-The [openssh.ldif](../../ldap/openssh.ldif) file optionally creates the "sshPublicKey" objectClass, which is interesting to store `sshPublicKey` in the LDAP:
+The [openssh.ldif](../../ldap/docker-root/openssh.ldif) file optionally creates the "sshPublicKey" objectClass, which is interesting to store `sshPublicKey` in the LDAP:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
@@ -98,7 +98,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
 
 ## Add the "georchestra-specific" LDAP schemas
 
-The required [georchestraSchema.ldif](../../ldap/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
+The required [georchestraSchema.ldif](../../ldap/docker-root/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
@@ -107,7 +107,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
 
 ## geOrchestra users and groups
 
-The [georchestra.ldif](../../ldap/georchestra.ldif) file creates the default geOrchestra users & groups:
+The [georchestra.ldif](../../ldap/docker-root/georchestra.ldif) file creates the default geOrchestra users & groups:
 
 ```
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
