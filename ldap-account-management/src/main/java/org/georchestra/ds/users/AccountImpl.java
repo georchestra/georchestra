@@ -127,6 +127,10 @@ public class AccountImpl implements Serializable, Account {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date shadowExpire;
 
+    @JsonProperty(UserSchema.CREATIONDATE_KEY)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDateTime creationDate;
+
     @JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
     @JsonSerialize(using = ToStringSerializer.class)
     private LocalDate privacyPolicyAgreementDate;
@@ -170,9 +174,9 @@ public class AccountImpl implements Serializable, Account {
                 + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\'' + ", roomNumber='" + roomNumber
                 + '\'' + ", stateOrProvince='" + stateOrProvince + '\'' + ", homePostalAddress='" + homePostalAddress
                 + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", lastLogin='" + lastLogin + '\''
-                + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
-                + "', saslUser='" + saslUser + "'}";
+                + ", creationDate='" + creationDate + '\'' + ", privacyPolicyAgreementDate='"
+                + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\'' + ", note='" + note + '\''
+                + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "', saslUser='" + saslUser + "'}";
     }
 
     @Override
@@ -412,6 +416,16 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public LocalDateTime getLastLogin() {
         return this.lastLogin;
+    }
+
+    @Override
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public LocalDateTime getCreationDate() {
+        return this.creationDate;
     }
 
     @Override

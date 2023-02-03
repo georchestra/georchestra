@@ -484,6 +484,11 @@ public class AccountDaoImpl implements AccountDao {
         else
             setAccountField(context, UserSchema.LASTLOGIN_KEY, null);
 
+        if (account.getCreationDate() != null)
+            setAccountField(context, UserSchema.CREATIONDATE_KEY, String.valueOf(account.getCreationDate()));
+        else
+            setAccountField(context, UserSchema.CREATIONDATE_KEY, null);
+
         // georchestraUser attributes
         if (account.getPrivacyPolicyAgreementDate() != null)
             setAccountField(context, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY,
@@ -581,6 +586,11 @@ public class AccountDaoImpl implements AccountDao {
             if (rawLastLogin != null) {
                 LocalDateTime lastLogin = LocalDateTime.from(fmt.parse(rawLastLogin));
                 account.setLastLogin(lastLogin);
+            }
+            String rawCreationDate = context.getStringAttribute(UserSchema.CREATIONDATE_KEY);
+            if (rawCreationDate != null) {
+                LocalDateTime creationDate = LocalDateTime.from(fmt.parse(rawCreationDate));
+                account.setCreationDate(creationDate);
             }
 
             // The privacy policy agreement date is stored in the LDAP as epoch day (days

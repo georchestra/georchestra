@@ -116,7 +116,13 @@
           <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" ng-required="required.uid" ng-pattern="/^[a-z][a-z0-9_\\\\.\\\\-]*$/i">
         </div>
       </div>
-      <div class="form-group form-group-sm" ng-class="{required: required.lastLogin}">
+      <div class="form-group form-group-sm">
+        <label class="col-sm-4" for="creationDate" translate>user.creationDate</label>
+        <div class="col-sm-8">
+          <input ng-model="model.createTimestamp" class="form-control" id="creationDate" disabled placeholder="{{'user.lastLoginUnknown' | translate}}">
+        </div>
+      </div>
+      <div class="form-group form-group-sm">
         <label class="col-sm-4" for="lastLogin" translate>user.lastLogin</label>
         <div class="col-sm-8">
           <input ng-model="model.authTimestamp" class="form-control" id="lastLogin" disabled placeholder="{{'user.lastLoginUnknown' | translate}}">
