@@ -53,7 +53,7 @@ public interface UserSchema {
     public static final String USER_PASSWORD_KEY = "userPassword";
     public static final String REGISTERED_ADDRESS_KEY = "registeredAddress";
     public static final String SHADOW_EXPIRE_KEY = "shadowExpire";
-    public static final String LASTLOGIN_KEY = "lastLogin";
+    public static final String LASTLOGIN_KEY = "authTimestamp";
     public static final String PRIVACY_POLICY_AGREEMENT_DATE_KEY = "privacyPolicyAgreementDate";
     public static final String MANAGER_KEY = "manager";
     public static final String CONTEXT_KEY = "preferredLanguage";
