@@ -22,6 +22,8 @@ package org.georchestra.ds.users;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -478,8 +480,7 @@ public class AccountDaoImpl implements AccountDao {
             setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, null);
 
         if (account.getLastLogin() != null)
-            setAccountField(context, UserSchema.LASTLOGIN_KEY,
-                    String.valueOf(account.getLastLogin().toEpochDay()));
+            setAccountField(context, UserSchema.LASTLOGIN_KEY, String.valueOf(account.getLastLogin()));
         else
             setAccountField(context, UserSchema.LASTLOGIN_KEY, null);
 
@@ -576,9 +577,10 @@ public class AccountDaoImpl implements AccountDao {
             }
 
             String rawLastLogin = context.getStringAttribute(UserSchema.LASTLOGIN_KEY);
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssz");
             if (rawLastLogin != null) {
-                Long lastLogin = Long.parseLong(rawLastLogin);
-                account.setLastLogin(LocalDate.ofEpochDay(lastLogin));
+                LocalDateTime lastLogin = LocalDateTime.from(fmt.parse(rawLastLogin));
+                account.setLastLogin(lastLogin);
             }
 
             // The privacy policy agreement date is stored in the LDAP as epoch day (days

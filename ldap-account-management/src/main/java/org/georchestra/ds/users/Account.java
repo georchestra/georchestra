@@ -20,6 +20,7 @@
 package org.georchestra.ds.users;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -141,9 +142,9 @@ public interface Account extends Comparable<Account> {
 
     Date getShadowExpire();
 
-    void setLastLogin(LocalDate lastLogin);
+    void setLastLogin(LocalDateTime lastLogin);
 
-    LocalDate getLastLogin();
+    LocalDateTime getLastLogin();
 
     void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate);
 
