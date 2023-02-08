@@ -89,7 +89,7 @@ jobs:
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy -pl :datafeeder -P-all,datafeeder
+      run: ./mvnw deploy -pl :datafeeder -P-all,datafeeder -DskipTests -ntp -Dfmt.skip=true
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}

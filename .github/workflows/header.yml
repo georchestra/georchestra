@@ -27,7 +27,7 @@ jobs:
         server-id: geOrchestra-artifactory
         server-username: ARTIFACTORY_USERNAME_REF
         server-password: ARTIFACTORY_TOKEN_REF
-        
+
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,header -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
@@ -69,7 +69,7 @@ jobs:
         docker push georchestra/header:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy --no-transfer-progress -B -P-all,header
+      run: ./mvnw deploy --no-transfer-progress -B -P-all,header -DskipTests
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}

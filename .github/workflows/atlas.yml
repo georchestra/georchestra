@@ -69,7 +69,7 @@ jobs:
         docker push georchestra/atlas:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy --no-transfer-progress -B -P-all,atlas
+      run: ./mvnw deploy --no-transfer-progress -B -P-all,atlas -DskipTests
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}

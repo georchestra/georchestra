@@ -69,7 +69,7 @@ jobs:
         docker push georchestra/extractorapp:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy --no-transfer-progress -B -P-all,extractorapp
+      run: ./mvnw deploy --no-transfer-progress -B -P-all,extractorapp -DskipTests
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
