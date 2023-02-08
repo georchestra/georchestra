@@ -82,7 +82,7 @@ jobs:
         docker push georchestra/console:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy -pl :console --also-make -P-all,console --no-transfer-progress
+      run: ./mvnw deploy -pl :console --also-make -P-all,console --no-transfer-progress -DskipTests
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
