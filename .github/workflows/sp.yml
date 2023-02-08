@@ -27,11 +27,6 @@ jobs:
         distribution: 'adopt'
         cache: 'maven'
 
-    - name: "Configuring Maven"
-      run: |
-          mkdir -p $HOME/.m2
-          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
-
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :security-proxy --also-make -P-all,security-proxy -DskipTests --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
       # note "-pl :security-proxy --also-make" builds only the project and its dependencies
@@ -72,6 +67,13 @@ jobs:
       if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/security-proxy:${{ steps.version.outputs.VERSION }}
+
+    - name: "Publish war in artifactory"
+      run:  ./mvnw deploy -pl :security-proxy
+      continue-on-error: true
+      env:
+        ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
+        ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |

@@ -29,12 +29,6 @@ jobs:
         distribution: 'adopt'
         cache: 'maven'
 
-    - name: "Configuring Maven"
-      run: |
-          mkdir -p $HOME/.m2
-          # revisit? can't resolve org.openapitools:openapi-generator-maven-plugin:jar:5.0.1 in artifactory-georchestra
-          #cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
-
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :datafeeder --also-make -P-all,datafeeder --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
       # note "-pl :datafeeder --also-make" builds only the project and its dependencies
@@ -90,6 +84,13 @@ jobs:
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
+
+    - name: "Publish war in artifactory"
+      run: ./mvnw deploy -pl :datafeeder -P-all,datafeeder
+      continue-on-error: true
+      env:
+        ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
+        ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |

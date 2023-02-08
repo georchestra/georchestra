@@ -28,9 +28,9 @@
       <url>file:///tmp/georchestra-generated-site/</url>
     </site>
     <repository>
-      <id>github</id>
-      <name>Github geOrchestra Maven repository</name>
-      <url>https://maven.pkg.github.com/georchestra/georchestra</url>
+      <id>geOrchestra-artifactory</id>
+      <name>geOrchestra Maven repository</name>
+      <url>https://artifactory.georchestra.org/artifactory/georchestra/</url>
     </repository>
   </distributionManagement>
   <properties>
@@ -1052,7 +1052,13 @@
       <snapshots>
         <enabled>true</enabled>
         <checksumPolicy>ignore</checksumPolicy>
+        <updatePolicy>always</updatePolicy>
       </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+        <updatePolicy>always</updatePolicy>
+      </releases>
       <id>georchestra</id>
       <url>https://artifactory.georchestra.org/artifactory/maven</url>
     </repository>

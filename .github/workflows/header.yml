@@ -25,11 +25,6 @@ jobs:
         distribution: 'adopt'
         cache: 'maven'
 
-    - name: "Configuring Maven"
-      run: |
-          mkdir -p $HOME/.m2
-          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
-
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,header -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
@@ -69,6 +64,13 @@ jobs:
       if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/header:${{ steps.version.outputs.VERSION }}
+
+    - name: "Publish war in artifactory"
+      run: ./mvnw deploy --no-transfer-progress -B -P-all,header
+      continue-on-error: true
+      env:
+        ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
+        ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |
