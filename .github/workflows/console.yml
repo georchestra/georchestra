@@ -30,6 +30,9 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
         cache: 'maven'
+        server-id: geOrchestra-artifactory
+        server-username: ARTIFACTORY_USERNAME_REF
+        server-password: ARTIFACTORY_TOKEN_REF
 
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :console --also-make -P-all,console --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests

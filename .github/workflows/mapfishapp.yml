@@ -26,6 +26,9 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
         cache: 'maven'
+        server-id: geOrchestra-artifactory
+        server-username: ARTIFACTORY_USERNAME_REF
+        server-password: ARTIFACTORY_TOKEN_REF
 
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl mapfishapp -am -ntp -B -P-all,mapfishapp -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests

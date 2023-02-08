@@ -26,6 +26,9 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: 'maven'
+        server-id: geOrchestra-artifactory
+        server-username: ARTIFACTORY_USERNAME_REF
+        server-password: ARTIFACTORY_TOKEN_REF
 
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl :security-proxy --also-make -P-all,security-proxy -DskipTests --no-transfer-progress -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
