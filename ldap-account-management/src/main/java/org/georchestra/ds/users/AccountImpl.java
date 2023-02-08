@@ -21,7 +21,6 @@ package org.georchestra.ds.users;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -129,7 +128,7 @@ public class AccountImpl implements Serializable, Account {
 
     @JsonProperty(UserSchema.CREATIONDATE_KEY)
     @JsonSerialize(using = ToStringSerializer.class)
-    private LocalDateTime creationDate;
+    private LocalDate creationDate;
 
     @JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -137,7 +136,7 @@ public class AccountImpl implements Serializable, Account {
 
     @JsonProperty(UserSchema.LASTLOGIN_KEY)
     @JsonSerialize(using = ToStringSerializer.class)
-    private LocalDateTime lastLogin;
+    private LocalDate lastLogin;
 
     @JsonProperty(UserSchema.MANAGER_KEY)
     private String manager;
@@ -409,22 +408,22 @@ public class AccountImpl implements Serializable, Account {
     }
 
     @Override
-    public void setLastLogin(LocalDateTime lastLogin) {
+    public void setLastLogin(LocalDate lastLogin) {
         this.lastLogin = lastLogin;
     }
 
     @Override
-    public LocalDateTime getLastLogin() {
+    public LocalDate getLastLogin() {
         return this.lastLogin;
     }
 
     @Override
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 
     @Override
-    public LocalDateTime getCreationDate() {
+    public LocalDate getCreationDate() {
         return this.creationDate;
     }
 

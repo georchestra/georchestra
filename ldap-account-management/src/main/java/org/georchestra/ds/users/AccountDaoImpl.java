@@ -22,7 +22,6 @@ package org.georchestra.ds.users;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
@@ -584,12 +583,12 @@ public class AccountDaoImpl implements AccountDao {
             String rawLastLogin = context.getStringAttribute(UserSchema.LASTLOGIN_KEY);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssz");
             if (rawLastLogin != null) {
-                LocalDateTime lastLogin = LocalDateTime.from(fmt.parse(rawLastLogin));
+                LocalDate lastLogin = LocalDate.from(fmt.parse(rawLastLogin));
                 account.setLastLogin(lastLogin);
             }
             String rawCreationDate = context.getStringAttribute(UserSchema.CREATIONDATE_KEY);
             if (rawCreationDate != null) {
-                LocalDateTime creationDate = LocalDateTime.from(fmt.parse(rawCreationDate));
+                LocalDate creationDate = LocalDate.from(fmt.parse(rawCreationDate));
                 account.setCreationDate(creationDate);
             }
 
