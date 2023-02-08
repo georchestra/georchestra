@@ -42,13 +42,13 @@
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-        <property name="baseUrl" value="${atlas.baseUrl:${scheme:https}://${domainName}/atlas}"/>
+        <property name="baseUrl" value="${atlas.baseUrl:https://${domainName}/atlas}"/>
     </bean>
 
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent">
-        <property name="georBaseUrl" value="${atlas.baseUrl:${scheme:https}://${domainName}/atlas}" />
+        <property name="georBaseUrl" value="${atlas.baseUrl:https://${domainName}/atlas}" />
         <property name="emailFrom" value="${atlas.emailFrom:${administratorEmail}}" />
         <property name="emailSubject" value="${atlas.emailSubject:[${instanceName}] Your Atlas request}" />
     </bean>

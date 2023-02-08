@@ -27,7 +27,7 @@
     </bean>
 
     <bean id="proxy" class="org.georchestra.security.Proxy">
-          <property name="publicUrl" value="${scheme:https}://${domainName}"/>
+          <property name="publicUrl" value="https://${domainName}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           <property name="entityEnclosedOrEmptyResponseTimeout" value="${entityEnclosedOrEmptyResponseTimeout:20}" />
@@ -74,7 +74,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${scheme:https}://${domainName}/"/>
+        <property name="referer" value="https://${domainName}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
