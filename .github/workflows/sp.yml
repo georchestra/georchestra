@@ -72,7 +72,7 @@ jobs:
         docker push georchestra/security-proxy:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run:  ./mvnw deploy -pl :security-proxy
+      run:  ./mvnw deploy -pl :security-proxy -DskipTests
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
