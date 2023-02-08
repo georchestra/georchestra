@@ -11,4 +11,4 @@ objectClass: olcOverlayConfig
 objectClass: olcConfig
 objectClass: top
 olcOverlay: lastbind
-olcLastBindPrecision: 3600
+olcLastBindPrecision: 14400
