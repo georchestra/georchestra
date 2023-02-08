@@ -126,9 +126,17 @@ public class AccountImpl implements Serializable, Account {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date shadowExpire;
 
+    @JsonProperty(UserSchema.CREATIONDATE_KEY)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDate creationDate;
+
     @JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
     @JsonSerialize(using = ToStringSerializer.class)
     private LocalDate privacyPolicyAgreementDate;
+
+    @JsonProperty(UserSchema.LASTLOGIN_KEY)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDate lastLogin;
 
     @JsonProperty(UserSchema.MANAGER_KEY)
     private String manager;
@@ -164,7 +172,8 @@ public class AccountImpl implements Serializable, Account {
                 + physicalDeliveryOfficeName + '\'' + ", street='" + street + '\'' + ", locality='" + locality + '\''
                 + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\'' + ", roomNumber='" + roomNumber
                 + '\'' + ", stateOrProvince='" + stateOrProvince + '\'' + ", homePostalAddress='" + homePostalAddress
-                + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", privacyPolicyAgreementDate='"
+                + '\'' + ", shadowExpire='" + shadowExpire + '\'' + ", lastLogin='" + lastLogin + '\''
+                + ", creationDate='" + creationDate + '\'' + ", privacyPolicyAgreementDate='"
                 + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\'' + ", note='" + note + '\''
                 + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "', saslUser='" + saslUser + "'}";
     }
@@ -399,6 +408,26 @@ public class AccountImpl implements Serializable, Account {
     }
 
     @Override
+    public void setLastLogin(LocalDate lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    @Override
+    public LocalDate getLastLogin() {
+        return this.lastLogin;
+    }
+
+    @Override
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public LocalDate getCreationDate() {
+        return this.creationDate;
+    }
+
+    @Override
     public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) {
         this.privacyPolicyAgreementDate = privacyPolicyAgreementDate;
     }
@@ -484,6 +513,7 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(stateOrProvince, account.stateOrProvince)
                 && Objects.equals(homePostalAddress, account.homePostalAddress)
                 && Objects.equals(shadowExpire, account.shadowExpire) && Objects.equals(note, account.note)
+                && Objects.equals(lastLogin, account.lastLogin)
                 && Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate)
                 && Objects.equals(manager, account.manager) && Objects.equals(context, account.context)
                 && Objects.equals(org, account.org) && Arrays.equals(sshKeys, account.sshKeys);

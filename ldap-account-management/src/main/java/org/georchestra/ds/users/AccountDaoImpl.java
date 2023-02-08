@@ -22,6 +22,7 @@ package org.georchestra.ds.users;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -477,6 +478,16 @@ public class AccountDaoImpl implements AccountDao {
         else
             setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, null);
 
+        if (account.getLastLogin() != null)
+            setAccountField(context, UserSchema.LASTLOGIN_KEY, String.valueOf(account.getLastLogin()));
+        else
+            setAccountField(context, UserSchema.LASTLOGIN_KEY, null);
+
+        if (account.getCreationDate() != null)
+            setAccountField(context, UserSchema.CREATIONDATE_KEY, String.valueOf(account.getCreationDate()));
+        else
+            setAccountField(context, UserSchema.CREATIONDATE_KEY, null);
+
         // georchestraUser attributes
         if (account.getPrivacyPolicyAgreementDate() != null)
             setAccountField(context, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY,
@@ -567,6 +578,18 @@ public class AccountDaoImpl implements AccountDao {
                 Long shadowExpire = Long.parseLong(rawShadowExpire);
                 shadowExpire *= 1000; // Convert to milliseconds
                 account.setShadowExpire(new Date(shadowExpire));
+            }
+
+            String rawLastLogin = context.getStringAttribute(UserSchema.LASTLOGIN_KEY);
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssz");
+            if (rawLastLogin != null) {
+                LocalDate lastLogin = LocalDate.from(fmt.parse(rawLastLogin));
+                account.setLastLogin(lastLogin);
+            }
+            String rawCreationDate = context.getStringAttribute(UserSchema.CREATIONDATE_KEY);
+            if (rawCreationDate != null) {
+                LocalDate creationDate = LocalDate.from(fmt.parse(rawCreationDate));
+                account.setCreationDate(creationDate);
             }
 
             // The privacy policy agreement date is stored in the LDAP as epoch day (days

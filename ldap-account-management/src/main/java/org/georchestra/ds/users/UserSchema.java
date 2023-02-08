@@ -53,6 +53,8 @@ public interface UserSchema {
     public static final String USER_PASSWORD_KEY = "userPassword";
     public static final String REGISTERED_ADDRESS_KEY = "registeredAddress";
     public static final String SHADOW_EXPIRE_KEY = "shadowExpire";
+    public static final String LASTLOGIN_KEY = "authTimestamp";
+    public static final String CREATIONDATE_KEY = "createTimestamp";
     public static final String PRIVACY_POLICY_AGREEMENT_DATE_KEY = "privacyPolicyAgreementDate";
     public static final String MANAGER_KEY = "manager";
     public static final String CONTEXT_KEY = "preferredLanguage";
@@ -69,7 +71,7 @@ public interface UserSchema {
             STREET_KEY, HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY,
             POSTAL_ADDRESS_KEY, POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY,
             MOBILE_KEY, ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
-            REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, PRIVACY_POLICY_AGREEMENT_DATE_KEY, MANAGER_KEY, CONTEXT_KEY,
-            MEMBER_OF, SSH_KEY, NOTE_KEY, PENDING };
+            REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, LASTLOGIN_KEY, CREATIONDATE_KEY,
+            PRIVACY_POLICY_AGREEMENT_DATE_KEY, MANAGER_KEY, CONTEXT_KEY, MEMBER_OF, SSH_KEY, NOTE_KEY, PENDING };
 
 }
