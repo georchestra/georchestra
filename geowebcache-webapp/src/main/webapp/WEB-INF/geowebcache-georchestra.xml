@@ -50,7 +50,7 @@
 
   <!-- Override gwcURLMangler defined in core-context.xml -->
   <bean id="gwcURLMangler" class="org.georchestra.geowebcache.GeorchestraURLMangler">
-    <constructor-arg value="${publicUrl:${scheme:https}://${domainName}}" />
+    <constructor-arg value="${publicUrl:https://${domainName}}" />
     <constructor-arg value="${contextPath:/geowebcache}" />
   </bean>
 
