@@ -297,7 +297,13 @@
     <constructor-arg value="console"/>
   </bean>
 
-  <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils"/>
+  <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils">
+    <property value="${password.minimumLength:8}" name="minimumLength"/>
+    <property value="${password.requireLowers:false}" name="requireLowers"/>
+    <property value="${password.requireUppers:false}" name="requireUppers"/>
+    <property value="${password.requireDigits:false}" name="requireDigits"/>
+    <property value="${password.requireSpecials:false}" name="requireSpecials"/>
+  </bean>
 
   <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
     <property name="favorPathExtension" value="false" />

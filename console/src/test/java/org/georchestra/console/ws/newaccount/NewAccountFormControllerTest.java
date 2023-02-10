@@ -385,8 +385,8 @@ public class NewAccountFormControllerTest {
         formBean.setSurname("testmaster");
         formBean.setEmail("test@localhost.com");
         formBean.setUid("a123123-21465456-3434");
-        formBean.setConfirmPassword("testtest");
-        formBean.setPassword("testtest");
+        formBean.setConfirmPassword("TestTestTest123!");
+        formBean.setPassword("TestTestTest123!");
         formBean.setRecaptcha_response_field("success");
         formBean.setPrivacyPolicyAgreed(true);
         mockRecaptchaSucess();
