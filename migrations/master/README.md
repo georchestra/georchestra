@@ -1,5 +1,9 @@
 # From 22.X to master
 
+## GeoNetwork 4.0 to 4.2 migration notes
+
+TBD
+
 ## Geoserver
 
 In Docker context we've set new java option GEOWEBCACHE_CONFIG_DIR to /mnt/geoserver_datadir/gwc.
