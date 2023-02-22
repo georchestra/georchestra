@@ -4,7 +4,7 @@ DOCKER-COMPOSE-BIN=docker-compose
 all: docker-build
 
 docker-pull:
-	docker pull debian:buster
+	docker pull debian:bullseye
 
 docker-build: docker-pull
 	$(DOCKER-COMPOSE-BIN) build
