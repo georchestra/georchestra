@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>22.0.6</version>
+    <version>22.0.7-SNAPSHOT</version>
   </parent>
   <artifactId>header</artifactId>
   <packaging>war</packaging>
