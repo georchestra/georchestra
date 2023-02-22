@@ -9,7 +9,6 @@
   </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
-  <version>22.0.5-SNAPSHOT</version>
 
   <packaging>jar</packaging>
   <name>geOrchestra GeoWebCache Web Application</name>
