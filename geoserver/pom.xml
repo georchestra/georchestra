@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>20.1-SNAPSHOT</version>
+    <version>20.1.8</version>
   </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>geoserver-root</artifactId>
-  <version>20.1-SNAPSHOT</version>
+  <version>20.1.8</version>
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
