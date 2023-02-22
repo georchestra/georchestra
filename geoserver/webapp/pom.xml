@@ -1255,6 +1255,9 @@
             <configuration>
               <imageName>${dockerImageName}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
+              <buildArgs>
+                  <GS_VERSION>${gs.version}</GS_VERSION>
+              </buildArgs>
               <resources>
                 <resource>
                   <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
