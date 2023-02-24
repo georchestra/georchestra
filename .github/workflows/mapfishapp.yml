@@ -26,12 +26,9 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
         cache: 'maven'
-
-# Could not transfer artifact org.springframework.boot:spring-boot-dependencies:pom:1.5.19.RELEASE from/to artifactory-georchestra
-#    - name: "Configuring Maven"
-#      run: |
-#          mkdir -p $HOME/.m2
-#          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
+        server-id: geOrchestra-artifactory
+        server-username: ARTIFACTORY_USERNAME_REF
+        server-password: ARTIFACTORY_TOKEN_REF
 
     - name: "Installing & checking formatting"
       run: ./mvnw install -pl mapfishapp -am -ntp -B -P-all,mapfishapp -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none -DskipTests
@@ -70,6 +67,13 @@ jobs:
       if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
+
+    - name: "Publish war in artifactory"
+      run: ./mvnw deploy -pl mapfishapp -P-all,mapfishapp -DskipTests
+      continue-on-error: true
+      env:
+        ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
+        ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
       run: |
