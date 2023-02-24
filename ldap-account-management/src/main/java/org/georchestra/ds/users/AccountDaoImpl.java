@@ -21,7 +21,9 @@ package org.georchestra.ds.users;
 
 import static java.util.stream.Collectors.toList;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
@@ -80,6 +82,8 @@ public class AccountDaoImpl implements AccountDao {
     private String basePath;
     private String orgSearchBaseDN;
     private String pendingOrgSearchBaseDN;
+
+    private final DateTimeFormatter ldapTimestampFmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssX");
 
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate) {
@@ -477,16 +481,6 @@ public class AccountDaoImpl implements AccountDao {
                     String.valueOf(account.getShadowExpire().getTime() / 1000));
         else
             setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, null);
-
-        if (account.getLastLogin() != null)
-            setAccountField(context, UserSchema.LASTLOGIN_KEY, String.valueOf(account.getLastLogin()));
-        else
-            setAccountField(context, UserSchema.LASTLOGIN_KEY, null);
-
-        if (account.getCreationDate() != null)
-            setAccountField(context, UserSchema.CREATIONDATE_KEY, String.valueOf(account.getCreationDate()));
-        else
-            setAccountField(context, UserSchema.CREATIONDATE_KEY, null);
 
         // georchestraUser attributes
         if (account.getPrivacyPolicyAgreementDate() != null)

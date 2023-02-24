@@ -35,6 +35,7 @@ if [ ! -f /etc/ldap/slapd.d/initialized ]; then
     echo "Populating LDAP tree..."
     ldapadd -Y EXTERNAL -H ldapi:/// -f /georchestraSchema.ldif
     ldapadd -Y EXTERNAL -H ldapi:/// -f /memberof.ldif
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /lastbind.ldif
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /georchestra.ldif";
     else
