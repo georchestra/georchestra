@@ -21,4 +21,4 @@
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
-	branch = 2.20.4-georchestra
+	branch = 2.22.2-georchestra
