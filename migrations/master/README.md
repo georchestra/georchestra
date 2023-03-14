@@ -1,8 +1,26 @@
-# From 22.X to master
+# From 22.x to master
 
 ## GeoNetwork 4.0 to 4.2 migration notes
 
 TBD
+
+### Virtual CSWs and subportals
+
+The new GeoNetwork version dropped support for what was called "virtual CSW" (basically
+a CSW endpoint filtered by a custom Lucene query on the index), in favor of the "subportals".
+
+You will find in this directory a python script named `migrate-virtual-csw-to-subportals.py`,
+which can be used as a base to convert virtual CSWs to subportals.
+
+To ensure backward compatibility with previously expected CSW endpoints, you will have to rewrite the
+URLs into your webserver configuration as follows:
+
+```
+from:
+/geonetwork/srv/(.*)/csw-(.*)
+to:
+/geonetwork/csw-$2/$1/csw
+```
 
 ## Geoserver
 
