@@ -10,7 +10,7 @@ ENV RUN_AS_GID 101
 
 ENV SLAPD_DOMAIN georchestra.org
 ENV SLAPD_PASSWORD secret
-ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh
+ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh,ppolicy
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
