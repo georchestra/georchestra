@@ -10,6 +10,7 @@ ENV RUN_AS_GID 101
 
 ENV SLAPD_DOMAIN georchestra.org
 ENV SLAPD_PASSWORD secret
+ENV SLAPD_ADDITIONAL_SCHEMAS ppolicy
 ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh,ppolicy
 
 RUN apt-get update && \
