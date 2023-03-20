@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -217,5 +218,24 @@ public class OrgsDaoImplIT {
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
         assertTrue("Expected 6 cities", org.getCities().size() == 6);
+    }
+
+    @Test
+    public void testOrgAttributeMapperRemovingAllCities() {
+        Org ncOrg = new Org();
+        ncOrg.setId("ncorg");
+        ncOrg.setName("ncorg");
+        ncOrg.setShortName("no cities org");
+        ncOrg.setCities(Lists.newArrayList("Paris"));
+        ncOrg.setOrgType("Non Profit");
+        dao.insert(ncOrg);
+        ncOrg = dao.findByCommonName(ncOrg.getId());
+        ncOrg.setCities(List.of());
+
+        dao.update(ncOrg);
+
+        Org updated = dao.findByCommonName(ncOrg.getId());
+        assertEquals(ncOrg, updated);
+        assertEquals(0, updated.getCities().size());
     }
 }
