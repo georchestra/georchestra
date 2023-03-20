@@ -300,15 +300,15 @@ public class ProxyTest {
     }
 
     @Test
-    public void testUserDetails() throws Exception {
+    public void testWhoami() throws Exception {
         Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymousUser",
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        final String rawResponseBody = "{\"roles\":[\"ROLE_ANONYMOUS\"],\"username\":\"anonymousUser\"}";
+        final String rawResponseBody = "{\"GeorchestraUser\":{\"roles\":[\"ROLE_ANONYMOUS\"],\"username\":\"anonymousUser\"}}";
 
-        request = new MockHttpServletRequest(RequestMethod.GET.toString(), "/userdetails");
-        String content = proxy.getUserDetails(request);
+        request = new MockHttpServletRequest(RequestMethod.GET.toString(), "/whoami");
+        String content = proxy.whoami(request);
 
         assertEquals(rawResponseBody, content);
     }

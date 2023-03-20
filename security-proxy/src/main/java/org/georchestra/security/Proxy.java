@@ -356,9 +356,9 @@ public class Proxy {
      * Entry point available for non security-proxified webapps to get information
      * about current user.
      */
-    @RequestMapping(value = "/userdetails", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String getUserDetails(HttpServletRequest request) {
+    public String whoami(HttpServletRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();
 
@@ -367,11 +367,13 @@ public class Proxy {
                 JSONArray::put, // processing each element
                 JSONArray::put // confluence 2 accumulators in parallel execution
         ));
+        JSONObject user = new JSONObject();
+        user.put("username", authName);
+        user.put("roles", roles);
 
-        JSONObject details = new JSONObject();
-        details.put("username", authName);
-        details.put("roles", roles);
-        return details.toString();
+        JSONObject ret = new JSONObject();
+        ret.put("GeorchestraUser", user);
+        return ret.toString();
     }
 
     /**
