@@ -24,15 +24,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,12 +157,20 @@ public class OrgsDaoImpl implements OrgsDao {
                 List<String> descriptions = new ArrayList<>();
                 int maxFieldSize = 1000;
 
-                for (String city : org.getCities()) {
-                    if (buffer.length() > maxFieldSize) {
-                        descriptions.add(buffer.substring(1));
-                        buffer = new StringBuilder();
+                // special case where cities is empty
+                if (org.getCities().size() == 0) {
+                    Object[] values = context.getObjectAttributes("description");
+                    if (values != null) {
+                        Arrays.asList(values).stream().forEach(v -> context.removeAttributeValue("description", v));
                     }
-                    buffer.append("," + city);
+                } else {
+                    for (String city : org.getCities()) {
+                        if (buffer.length() > maxFieldSize) {
+                            descriptions.add(buffer.substring(1));
+                            buffer = new StringBuilder();
+                        }
+                        buffer.append("," + city);
+                    }
                 }
                 if (buffer.length() > 0)
                     descriptions.add(buffer.substring(1));
