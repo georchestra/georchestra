@@ -8,6 +8,5 @@ public @Data @Builder class DeletedUserDataInfo {
     private @NonNull String account;
     private Integer metadata;
     private Integer extractor;
-    private Integer geodocs;
     private Integer ogcStats;
 }

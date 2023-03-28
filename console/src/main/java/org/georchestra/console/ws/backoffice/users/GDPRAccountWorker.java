@@ -30,7 +30,6 @@ import org.apache.commons.io.FileUtils;
 import org.georchestra.console.ds.AccountGDPRDao;
 import org.georchestra.console.ds.AccountGDPRDao.DeletedRecords;
 import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
-import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.ds.DataServiceException;
@@ -77,7 +76,6 @@ public class GDPRAccountWorker {
         private String accountId;
         private int metadataRecords;
         private int extractorRecords;
-        private int geodocsRecords;
         private int ogcStatsRecords;
     }
 
@@ -90,7 +88,6 @@ public class GDPRAccountWorker {
                 .accountId(recs.getAccountId())//
                 .metadataRecords(recs.getMetadataRecords())//
                 .extractorRecords(recs.getExtractorRecords())//
-                .geodocsRecords(recs.getGeodocsRecords())//
                 .ogcStatsRecords(recs.getOgcStatsRecords())//
                 .build();
         log.info("GDPR: deleted info summary: {}", summary);
@@ -153,7 +150,6 @@ public class GDPRAccountWorker {
     public @VisibleForTesting static @Value class UserDataBundle {
         private Path folder;
         private Path metadataDirectory;
-        private Path geodocsDirectory;
         private Path extractorCsvFile;
         private Path ogcstatsCsvFile;
     }
@@ -187,11 +183,6 @@ public class GDPRAccountWorker {
      * │    ├── YYYY-MM-DD_<MD_Schema>_<recordid>.xml (e.g. 2019-07-01_ISO19139_1000.xml)
      * │    ├── YYYY-MM-DD_<MD_Schema>_<recordid>.xml (e.g. 2019-07-01_ISO19139_1001.xml)
      * │    └── ...
-     * ├── geodocs -> Directory of documents saved by the user, one file per doc plus one CSV file with additional info for each doc
-     *      ├── geodocs.csv -> CSV file with per-file hash record statistics
-     *      ├── YYYY-MM-DD_<standard>_<hash>.xml (e.g. 2019-07-01_abc123.sld)
-     *      ├── YYYY-MM-DD_<standard>_<hash>.xml (e.g. 2019-07-01_abc124.gml)
-     *      └── ...
      * }
      * </pre>
      */
@@ -203,7 +194,6 @@ public class GDPRAccountWorker {
         Files.write(bundleFolder.resolve("account_info.ldif"), Collections.singleton(lidfContent));
 
         final Path metadataDirectory = bundleFolder.resolve("metadata");
-        final Path geodocsDirectory = bundleFolder.resolve("geodocs");
         final Path extractorCsvFile = bundleFolder.resolve("data_extractions_log.csv");
         final Path ogcstatsCsvFile = bundleFolder.resolve("ogc_request_log.csv");
 
@@ -214,24 +204,21 @@ public class GDPRAccountWorker {
         }
 
         final @Cleanup ContentProducer<MetadataRecord> metadata = new MetadataProducer(metadataDirectory);
-        final @Cleanup ContentProducer<GeodocRecord> docs = new GeodocsProducer(geodocsDirectory);
         final @Cleanup ContentProducer<ExtractorRecord> extractor = new ExtractorProducer(extractorCsvFile);
         final @Cleanup ContentProducer<OgcStatisticsRecord> ogcStats = new OgcStatisticsProducer(ogcstatsCsvFile);
 
         CompletableFuture<Void> extractorTask;
-        CompletableFuture<Void> geodocsTask;
         CompletableFuture<Void> mdTask;
         CompletableFuture<Void> statsTask;
 
         extractorTask = runAsync(() -> accountGDPRDao.visitExtractorRecords(account, extractor));
-        geodocsTask = runAsync(() -> accountGDPRDao.visitGeodocsRecords(account, docs));
         mdTask = runAsync(() -> accountGDPRDao.visitMetadataRecords(account, metadata));
         statsTask = runAsync(() -> accountGDPRDao.visitOgcStatsRecords(account, ogcStats));
 
-        CompletableFuture<Void> allTasks = CompletableFuture.allOf(extractorTask, geodocsTask, mdTask, statsTask);
+        CompletableFuture<Void> allTasks = CompletableFuture.allOf(extractorTask, mdTask, statsTask);
 
-        CompletableFuture<UserDataBundle> bundleFuture = allTasks.thenApply(v -> new UserDataBundle(bundleFolder,
-                metadataDirectory, geodocsDirectory, extractorCsvFile, ogcstatsCsvFile));
+        CompletableFuture<UserDataBundle> bundleFuture = allTasks
+                .thenApply(v -> new UserDataBundle(bundleFolder, metadataDirectory, extractorCsvFile, ogcstatsCsvFile));
 
         return bundleFuture.join();
     }
@@ -318,53 +305,6 @@ public class GDPRAccountWorker {
 
         public @Override void close() throws Exception {
             // nothing to close, each md file is opened and closed atomically at accept()
-        }
-    }
-
-    /**
-     * Receives a {@link Path} denoting a directory where to save a
-     * {@code geodocs.csv} file with one row per user's document, as well as one
-     * file with the actual document for each record.
-     */
-    private static class GeodocsProducer extends CsvContentProducer<GeodocRecord> {
-
-        /**
-         * Directory where to save one the {@code geodocs.csv} file as well as one
-         * document (the actual geodoc) per record
-         */
-        private final Path directory;
-
-        public GeodocsProducer(Path directory) {
-            super(directory.resolve("geodocs.csv"));
-            this.directory = directory;
-        }
-
-        protected @Override List<String> createHeader() {
-            return Arrays.asList("created_at", "last_access", "standard", "access_count", "file_hash");
-        }
-
-        @Override
-        protected List<Object> encode(GeodocRecord record) {
-            LocalDateTime createdAt = record.getCreatedAt();
-            if (null == createdAt) {
-                return Collections.emptyList();
-            }
-            String date = FILENAME_DATE_FORMAT.format(createdAt);
-            String standard = record.getStandard() == null ? "unknown" : record.getStandard().toLowerCase();
-            String fileName = String.format("%s_%s.%s", date, record.getFileHash(), standard);
-            Path docFile = directory.resolve(fileName);
-            try {
-                Files.write(docFile, Collections.singleton(record.getRawFileContent()));
-            } catch (IOException e) {
-                log.error("Error writing medatata document {}", docFile.toAbsolutePath(), e);
-            }
-            return Arrays.asList(//
-                    ContentProducer.ifNonNull(record.getCreatedAt(), CONTENT_DATE_FORMAT::format), //
-                    ContentProducer.ifNonNull(record.getLastAccess(), CONTENT_DATE_FORMAT::format), //
-                    record.getStandard(), //
-                    record.getAccessCount(), //
-                    record.getFileHash()//
-            );
         }
     }
 
