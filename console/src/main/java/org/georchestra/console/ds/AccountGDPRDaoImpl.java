@@ -83,10 +83,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
 
     private static final String DELETE_EXTRACTORAPP_RECORDS = "update extractorapp.extractor_log set username = ? where username = ?";
 
-    private static final String QUERY_GEODOCS_RECORDS = "select standard, raw_file_content, file_hash, created_at, last_access, access_count"
-            + " from mapfishapp.geodocs where username = ?";
-    private static final String DELETE_GEODOCS_RECORDS = "update mapfishapp.geodocs set username = ? where username = ?";
-
     private static final String QUERY_OGCSTATS_RECORDS = "select date, service, layer, id, request, org, roles from ogcstatistics.ogc_services_log where user_name = ?";
     private static final String DELETE_OGCSTATS_RECORDS = "update ogcstatistics.ogc_services_log set user_name = ? where user_name = ?";
 

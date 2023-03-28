@@ -88,7 +88,7 @@ public class ProxyTest {
         targets.put("nextcloud", "http://localhost/nextcloud");
         proxy.setTargets(targets);
 
-        proxy.setDefaultTarget("/mapfishapp/");
+        proxy.setDefaultTarget("/header/");
 
     }
 
@@ -148,7 +148,7 @@ public class ProxyTest {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/");
         proxy.handleDefaultRequest(request, httpResponse);
 
-        assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
+        assertTrue(httpResponse.getRedirectedUrl().equals("/header/"));
 
     }
 

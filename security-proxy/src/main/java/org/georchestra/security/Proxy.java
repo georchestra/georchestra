@@ -332,7 +332,7 @@ public class Proxy {
 
     /**
      * Entry point used for security-proxified webapps. Note: the url parameter is
-     * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
+     * sometimes used by the underlying webapps (e.g. header and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
     @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
@@ -378,8 +378,8 @@ public class Proxy {
 
     /**
      * Indicates whether the requested URL is a one protected by the Security-proxy
-     * or not, e.g. urlIsProtected(mapfishapp) will generally return true (unless if
-     * mapfishapp is not configured on this geOrchestra instance, which is probably
+     * or not, e.g. urlIsProtected(header) will generally return true (unless if
+     * header is not configured on this geOrchestra instance, which is probably
      * unlikely).
      *
      * @param request the HttpServletRequest
@@ -604,7 +604,7 @@ public class Proxy {
      * @param finalResponse the servlet response
      * @param sURL          the url to proxify onto
      * @param localProxy    true if the request targets a security-proxyfied webapp
-     *                      (e.g. mapfishapp, ...), false otherwise
+     *                      (e.g. header, ...), false otherwise
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL,
             boolean localProxy) {

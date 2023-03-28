@@ -167,7 +167,6 @@ public class LdapHeaderMappingsTest {
 
         final Map<String, String> defaultMappings = mappings.getDefaultMappings().toMap();
 
-        assertEquals(defaultMappings, mappings.getMappings("mapfishapp").toMap());
         assertEquals(defaultMappings, mappings.getMappings("mapstore").toMap());
 
         assertEquals(ImmutableSet.of("analytics", "console"), mappings.serviceMappings.keySet());

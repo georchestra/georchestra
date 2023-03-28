@@ -96,7 +96,7 @@ sn: geoserver_privileged_user
 mail: psc+geoserver_privileged_user@georchestra.org
 uid: geoserver_privileged_user
 cn: geoserver_privileged_user
-description: Do not modify.  This is a required user for extractorapp, mapfishapp...
+description: Do not modify.  This is a required user for extractorapp, ...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 georchestraObjectIdentifier: 82dc7198-6fea-4e9a-b30d-d1e414c30f30
 

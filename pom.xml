@@ -880,7 +880,6 @@
       <modules>
         <module>extractorapp</module>
         <module>console</module>
-        <module>mapfishapp</module>
         <module>security-proxy</module>
         <module>analytics</module>
         <module>header</module>
@@ -904,7 +903,7 @@
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
-        <module>mapfishapp</module>
+        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>analytics</module>
@@ -953,12 +952,6 @@
       <id>console</id>
       <modules>
         <module>console</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>mapfishapp</id>
-      <modules>
-        <module>mapfishapp</module>
       </modules>
     </profile>
     <profile>
