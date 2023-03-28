@@ -142,7 +142,7 @@ Once created, set the following parameters:
 
 Several user accounts can be protected against deletion or modification, with the `protectedUsersList` property, which holds a comma separated list of user accounts `uid`. These users also do not show up in the manager.
 
-By default, only `geoserver_privileged_user` (which is internally used by extractorapp for several operations) is protected:
+By default, only `geoserver_privileged_user` is protected:
 ```
 protectedUsersList=geoserver_privileged_user
 ```

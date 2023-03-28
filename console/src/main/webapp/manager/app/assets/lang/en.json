@@ -203,7 +203,6 @@
   "users.GN_ADMIN"        : "Metadata administrators",
   "users.GN_EDITOR"       : "Metadata editors",
   "users.GN_REVIEWER"     : "Metadata reviewers",
-  "users.EXTRACTORAPP"    : "Data extractor",
   "users.USER"            : "Users",
   "users.REFERENT"        : "Organization referent",
   "sel.all"               : "All",

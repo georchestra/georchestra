@@ -29,7 +29,6 @@ import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.io.FileUtils;
 import org.georchestra.console.ds.AccountGDPRDao;
 import org.georchestra.console.ds.AccountGDPRDao.DeletedRecords;
-import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.ds.DataServiceException;
@@ -75,7 +74,6 @@ public class GDPRAccountWorker {
     public static @Value @Builder class DeletedAccountSummary {
         private String accountId;
         private int metadataRecords;
-        private int extractorRecords;
         private int ogcStatsRecords;
     }
 
@@ -87,7 +85,6 @@ public class GDPRAccountWorker {
         DeletedAccountSummary summary = DeletedAccountSummary.builder()//
                 .accountId(recs.getAccountId())//
                 .metadataRecords(recs.getMetadataRecords())//
-                .extractorRecords(recs.getExtractorRecords())//
                 .ogcStatsRecords(recs.getOgcStatsRecords())//
                 .build();
         log.info("GDPR: deleted info summary: {}", summary);
@@ -150,7 +147,6 @@ public class GDPRAccountWorker {
     public @VisibleForTesting static @Value class UserDataBundle {
         private Path folder;
         private Path metadataDirectory;
-        private Path extractorCsvFile;
         private Path ogcstatsCsvFile;
     }
 
@@ -194,7 +190,6 @@ public class GDPRAccountWorker {
         Files.write(bundleFolder.resolve("account_info.ldif"), Collections.singleton(lidfContent));
 
         final Path metadataDirectory = bundleFolder.resolve("metadata");
-        final Path extractorCsvFile = bundleFolder.resolve("data_extractions_log.csv");
         final Path ogcstatsCsvFile = bundleFolder.resolve("ogc_request_log.csv");
 
         try {
@@ -204,21 +199,18 @@ public class GDPRAccountWorker {
         }
 
         final @Cleanup ContentProducer<MetadataRecord> metadata = new MetadataProducer(metadataDirectory);
-        final @Cleanup ContentProducer<ExtractorRecord> extractor = new ExtractorProducer(extractorCsvFile);
         final @Cleanup ContentProducer<OgcStatisticsRecord> ogcStats = new OgcStatisticsProducer(ogcstatsCsvFile);
 
-        CompletableFuture<Void> extractorTask;
         CompletableFuture<Void> mdTask;
         CompletableFuture<Void> statsTask;
 
-        extractorTask = runAsync(() -> accountGDPRDao.visitExtractorRecords(account, extractor));
         mdTask = runAsync(() -> accountGDPRDao.visitMetadataRecords(account, metadata));
         statsTask = runAsync(() -> accountGDPRDao.visitOgcStatsRecords(account, ogcStats));
 
-        CompletableFuture<Void> allTasks = CompletableFuture.allOf(extractorTask, mdTask, statsTask);
+        CompletableFuture<Void> allTasks = CompletableFuture.allOf(mdTask, statsTask);
 
         CompletableFuture<UserDataBundle> bundleFuture = allTasks
-                .thenApply(v -> new UserDataBundle(bundleFolder, metadataDirectory, extractorCsvFile, ogcstatsCsvFile));
+                .thenApply(v -> new UserDataBundle(bundleFolder, metadataDirectory, ogcstatsCsvFile));
 
         return bundleFuture.join();
     }
@@ -305,39 +297,6 @@ public class GDPRAccountWorker {
 
         public @Override void close() throws Exception {
             // nothing to close, each md file is opened and closed atomically at accept()
-        }
-    }
-
-    private static class ExtractorProducer extends CsvContentProducer<ExtractorRecord> {
-        private static final WKTWriter WKT_WRITER = new WKTWriter();
-
-        protected ExtractorProducer(@NonNull Path target) {
-            super(target);
-        }
-
-        protected @Override List<String> createHeader() {
-            return Arrays.asList("creation_date", "duration", "organization", "roles", "success", "layer_name",
-                    "format", "projection", "resolution", "bounding_box", "OWS_type", "URL");
-        }
-
-        protected @Override List<Object> encode(ExtractorRecord record) {
-            String bbox = ContentProducer.ifNonNull(record.getBbox(), box -> WKT_WRITER.write(box));
-            String owsurl = record.getOwsurl();
-            return Arrays.asList(//
-                    ContentProducer.ifNonNull(record.getCreationDate(), CONTENT_DATE_FORMAT::format), //
-                    ContentProducer.ifNonNull(record.getDuration(),
-                            d -> DateTimeFormatter.ISO_TIME.format(d.toLocalTime())), //
-                    record.getOrg(), //
-                    ContentProducer.ifNonNull(record.getRoles(),
-                            roles -> roles.stream().collect(Collectors.joining("|"))), //
-                    record.isSuccess(), //
-                    record.getLayerName(), //
-                    record.getFormat(), //
-                    record.getProjection(), //
-                    record.getResolution(), //
-                    bbox, //
-                    record.getOwstype(), //
-                    owsurl);
         }
     }
 
