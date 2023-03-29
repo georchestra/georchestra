@@ -11,6 +11,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,10 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.collect.Maps;
@@ -292,6 +297,20 @@ public class ProxyTest {
         testRequestEntity(RequestMethod.POST);
         testRequestEntity(RequestMethod.PUT);
         testRequestEntity(RequestMethod.PATCH);
+    }
+
+    @Test
+    public void testWhoami() throws Exception {
+        Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymousUser",
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        final String rawResponseBody = "{\"GeorchestraUser\":{\"roles\":[\"ROLE_ANONYMOUS\"],\"username\":\"anonymousUser\"}}";
+
+        request = new MockHttpServletRequest(RequestMethod.GET.toString(), "/whoami");
+        String content = proxy.whoami(request);
+
+        assertEquals(rawResponseBody, content);
     }
 
     private void testRequestEntity(RequestMethod method) throws Exception {

@@ -48,18 +48,23 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -79,6 +84,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -344,6 +350,30 @@ public class Proxy {
     public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(defaultTarget);
         return;
+    }
+
+    /**
+     * Entry point available for non security-proxified webapps to get information
+     * about current user.
+     */
+    @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String whoami(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final String authName = authentication.getName();
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        JSONArray roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collector.of(JSONArray::new, // init
+                JSONArray::put, // processing each element
+                JSONArray::put // confluence 2 accumulators in parallel execution
+        ));
+        JSONObject user = new JSONObject();
+        user.put("username", authName);
+        user.put("roles", roles);
+
+        JSONObject ret = new JSONObject();
+        ret.put("GeorchestraUser", user);
+        return ret.toString();
     }
 
     /**
