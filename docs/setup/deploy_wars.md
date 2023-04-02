@@ -40,12 +40,7 @@ mv /tmp/console.war /var/lib/tomcat9-georchestra/webapps
 wget -O /tmp/extractorapp.war https://packages.georchestra.org/wars-master/extractorapp-generic.war
 mv /tmp/extractorapp.war /var/lib/tomcat9-georchestra/webapps
 
-wget -O /tmp/atlas.war https://packages.georchestra.org/wars-master/atlas-generic.war
-mv /tmp/atlas.war /var/lib/tomcat9-georchestra/webapps
 ```
-
-Note: The atlas only provides endpoints which are called by a Mapfishapp addon, some [extra steps are required](../../atlas/README.md)
-to get the webapp fully functional.
 
 
 ## tomcat-geoserver0

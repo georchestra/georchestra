@@ -47,13 +47,6 @@ psql -d georchestra -f postgresql/010-create-extension.sql
 psql -d georchestra -f postgresql/090-extractorapp.sql
 ```
 
-### Atlas schema
-
-If the **Atlas** is deployed:
-```
-psql -d georchestra -f postgresql/060-atlas.sql
-```
-
 ## GeoWebCache schema
 
 If geowebcache is used, it creates a geowebcache schema to store quota and relevant infos for
@@ -77,7 +70,6 @@ psql -d georchestra -c "SELECT change_owner('console', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('extractorapp', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('geofence', 'georchestra');";
-psql -d georchestra -c "SELECT change_owner('atlas', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 ```
 
