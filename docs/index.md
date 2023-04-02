@@ -48,4 +48,3 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md) module,
  * [console](https://github.com/georchestra/georchestra/blob/master/console/README.md): also an admin-oriented module, to manage users and groups,
  * [header](https://github.com/georchestra/georchestra/blob/master/header/README.md): the common header which is used by all modules,
- * [atlas](https://github.com/georchestra/georchestra/blob/master/atlas/README.md): a server-side component to print multi-page PDF with one geographic feature per page.

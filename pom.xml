@@ -884,7 +884,6 @@
         <module>security-proxy</module>
         <module>analytics</module>
         <module>header</module>
-        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -906,19 +905,12 @@
         <module>testcontainers</module>
         <module>console</module>
         <module>mapfishapp</module>
-        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>analytics</module>
         <module>header</module>
         <module>datafeeder</module>
         <module>datafeeder-ui</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>atlas</id>
-      <modules>
-        <module>atlas</module>
       </modules>
     </profile>
     <profile>
