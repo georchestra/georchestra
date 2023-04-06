@@ -903,7 +903,6 @@
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
-        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>analytics</module>
