@@ -83,10 +83,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
 
     private static final String DELETE_EXTRACTORAPP_RECORDS = "update extractorapp.extractor_log set username = ? where username = ?";
 
-    private static final String QUERY_GEODOCS_RECORDS = "select standard, raw_file_content, file_hash, created_at, last_access, access_count"
-            + " from mapfishapp.geodocs where username = ?";
-    private static final String DELETE_GEODOCS_RECORDS = "update mapfishapp.geodocs set username = ? where username = ?";
-
     private static final String QUERY_OGCSTATS_RECORDS = "select date, service, layer, id, request, org, roles from ogcstatistics.ogc_services_log where user_name = ?";
     private static final String DELETE_OGCSTATS_RECORDS = "update ogcstatistics.ogc_services_log set user_name = ? where user_name = ?";
 
@@ -109,15 +105,13 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             try {
                 int metadataRecords;
                 int extractorRecords;
-                int geodocsRecords;
                 int ogcStatsRecords;
                 metadataRecords = deleteUserMetadataRecords(conn, account);
                 extractorRecords = deleteUserExtractorRecords(conn, account);
-                geodocsRecords = deleteUserGeodocsRecords(conn, account);
                 ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
                 conn.commit();
                 DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, extractorRecords,
-                        geodocsRecords, ogcStatsRecords);
+                        ogcStatsRecords);
                 log.info("Deleted records: {}", ret);
                 return ret;
             } catch (SQLException e) {
@@ -133,14 +127,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
 
     private int deleteUserOgcStatsRecords(Connection conn, @NonNull Account account) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(DELETE_OGCSTATS_RECORDS)) {
-            ps.setString(1, DELETED_ACCOUNT_USERNAME);
-            ps.setString(2, account.getUid());
-            return ps.executeUpdate();
-        }
-    }
-
-    private int deleteUserGeodocsRecords(Connection conn, @NonNull Account account) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(DELETE_GEODOCS_RECORDS)) {
             ps.setString(1, DELETED_ACCOUNT_USERNAME);
             ps.setString(2, account.getUid());
             return ps.executeUpdate();
@@ -199,18 +185,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             ps.executeUpdate();
         }
         return count;
-    }
-
-    public @Override void visitGeodocsRecords(@NonNull Account owner, @NonNull Consumer<GeodocRecord> consumer) {
-
-        final String userName = owner.getUid();
-        try {
-            int reccount = visitRecords(QUERY_GEODOCS_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createGeodocRecord, consumer);
-            log.info("Extracted {} geodocs records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     public @Override void visitOgcStatsRecords(@NonNull Account owner,
@@ -301,22 +275,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static GeodocRecord createGeodocRecord(ResultSet rs) {
-        GeodocRecord.GeodocRecordBuilder builder = GeodocRecord.builder();
-        try {
-            builder.standard(rs.getString("standard"));
-            builder.rawFileContent(rs.getString("raw_file_content"));
-            builder.fileHash(rs.getString("file_hash"));
-            builder.createdAt(ifNonNull(rs.getTimestamp("created_at"), Timestamp::toLocalDateTime));
-            Timestamp lastAccess = rs.getTimestamp("last_access");
-            builder.lastAccess(lastAccess == null ? null : lastAccess.toLocalDateTime());
-            builder.accessCount(rs.getInt("access_count"));
-        } catch (SQLException e) {
-            throw new IllegalStateException(e);
-        }
-        return builder.build();
     }
 
     public static ExtractorRecord createExtractorRecord(ResultSet rs) {

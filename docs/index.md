@@ -39,8 +39,8 @@ If you want to report a **security issue**, please don't fill an issue. Instead,
 ## More
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
- * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-gn3.4-18.06/README.md): standard GeoNetwork with a light customization,
- * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,
+ * [catalog](https://github.com/georchestra/geonetwork/): standard GeoNetwork with a light customization,
+ * [viewer](https://github.com/georchestra/mapstore2-georchestra#readme) (aka mapstore): a robust, OGC-compliant webgis with editing capabilities,
  * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,
  * [geoserver](http://geoserver.org/): the reference implementation for many OGC web services,
  * [geowebcache](http://geowebcache.org/): a fast and easy to use tile cache,

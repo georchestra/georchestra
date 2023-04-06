@@ -47,8 +47,6 @@ public interface AccountGDPRDao {
      */
     DeletedRecords deleteAccountRecords(@NonNull Account account) throws DataServiceException;
 
-    void visitGeodocsRecords(@NonNull Account owner, @NonNull Consumer<GeodocRecord> consumer);
-
     void visitOgcStatsRecords(@NonNull Account owner, @NonNull Consumer<OgcStatisticsRecord> consumer);
 
     void visitExtractorRecords(@NonNull Account owner, @NonNull Consumer<ExtractorRecord> consumer);
@@ -60,20 +58,7 @@ public interface AccountGDPRDao {
         private String accountId;
         private int metadataRecords;
         private int extractorRecords;
-        private int geodocsRecords;
         private int ogcStatsRecords;
-    }
-
-    @Value
-    @Builder
-    @AllArgsConstructor
-    class GeodocRecord {
-        private String standard;
-        private String rawFileContent;
-        private String fileHash;
-        private LocalDateTime createdAt;
-        private LocalDateTime lastAccess;
-        private int accessCount;
     }
 
     @Value

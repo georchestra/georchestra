@@ -580,7 +580,6 @@ public class UsersController {
         DeletedUserDataInfo responseValue = DeletedUserDataInfo.builder().account(accountId)//
                 .metadata(summary.getMetadataRecords())//
                 .extractor(summary.getExtractorRecords())//
-                .geodocs(summary.getGeodocsRecords())//
                 .metadata(summary.getMetadataRecords())//
                 .ogcStats(summary.getOgcStatsRecords())//
                 .build();

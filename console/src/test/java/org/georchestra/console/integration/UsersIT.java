@@ -165,7 +165,6 @@ public class UsersIT extends ConsoleIntegrationTest {
                 .andExpect(jsonPath("$.account").value("user1"))//
                 .andExpect(jsonPath("$.metadata").value(2))//
                 .andExpect(jsonPath("$.extractor").value(2))//
-                .andExpect(jsonPath("$.geodocs").value(3))//
                 .andExpect(jsonPath("$.ogcStats").value(3));
 
         this.mockMvc.perform(post("/account/gdpr/delete").header(SEC_USERNAME, "user1"))//
@@ -190,6 +189,6 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     boolean isEmpty(DeletedAccountSummary summary) {
         return summary.getMetadataRecords() == 0 && summary.getExtractorRecords() == 0
-                && summary.getGeodocsRecords() == 0 && summary.getOgcStatsRecords() == 0;
+                && summary.getOgcStatsRecords() == 0;
     }
 }

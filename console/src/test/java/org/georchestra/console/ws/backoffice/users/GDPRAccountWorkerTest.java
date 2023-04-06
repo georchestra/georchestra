@@ -19,7 +19,6 @@ import java.util.stream.IntStream;
 
 import org.georchestra.console.ds.AccountGDPRDao;
 import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
-import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
@@ -59,31 +58,22 @@ public class GDPRAccountWorkerTest {
 
     private static String extractorHeader = "creation_date,duration,organization,roles,success,layer_name,format,projection,resolution,bounding_box,OWS_type,URL";
     private static String ogcstatsHeader = "date,organization,roles,layer,service,request";
-    private static String geodocsHeader = "created_at,last_access,standard,access_count,file_hash";
 
     private static class AccountGDPRDaoStub implements AccountGDPRDao {
 
-        private final ListMultimap<String, GeodocRecord> geodocRecords = ArrayListMultimap.create();
         private final ListMultimap<String, OgcStatisticsRecord> ogcstatsRecords = ArrayListMultimap.create();
         private final ListMultimap<String, ExtractorRecord> extractorRecords = ArrayListMultimap.create();
         private final ListMultimap<String, MetadataRecord> metadataRecords = ArrayListMultimap.create();
 
         public @Override DeletedRecords deleteAccountRecords(@NonNull Account account) throws DataServiceException {
-            List<GeodocRecord> geodocs = geodocRecords.removeAll(account.getUid());
             List<OgcStatisticsRecord> ogcstats = ogcstatsRecords.removeAll(account.getUid());
             List<MetadataRecord> md = metadataRecords.removeAll(account.getUid());
             List<ExtractorRecord> extractor = extractorRecords.removeAll(account.getUid());
-            geodocRecords.putAll(DELETED_ACCOUNT_USERNAME, geodocs);
             ogcstatsRecords.putAll(DELETED_ACCOUNT_USERNAME, ogcstats);
             metadataRecords.putAll(DELETED_ACCOUNT_USERNAME, md);
             extractorRecords.putAll(DELETED_ACCOUNT_USERNAME, extractor);
-            DeletedRecords summary = new DeletedRecords(account.getUid(), md.size(), extractor.size(), geodocs.size(),
-                    ogcstats.size());
+            DeletedRecords summary = new DeletedRecords(account.getUid(), md.size(), extractor.size(), ogcstats.size());
             return summary;
-        }
-
-        public @Override void visitGeodocsRecords(@NonNull Account owner, @NonNull Consumer<GeodocRecord> consumer) {
-            geodocRecords.get(owner.getUid()).forEach(consumer);
         }
 
         public @Override void visitOgcStatsRecords(@NonNull Account owner,
@@ -120,9 +110,6 @@ public class GDPRAccountWorkerTest {
         stub.metadataRecords.putAll(uid1, metadataRecords(uid1, 3));
         stub.metadataRecords.putAll(uid2, metadataRecords(uid2, 4));
 
-        stub.geodocRecords.putAll(uid1, geodocRecords(uid1, 3));
-        stub.geodocRecords.putAll(uid2, geodocRecords(uid2, 4));
-
         stub.ogcstatsRecords.putAll(uid1, ogcstatsRecords(uid1, 3));
         stub.ogcstatsRecords.putAll(uid2, ogcstatsRecords(uid2, 4));
 
@@ -136,12 +123,6 @@ public class GDPRAccountWorkerTest {
         List<String> roles = Lists.newArrayList(uid + "_role1", uid + "_role2");
         return IntStream.range(0, count).mapToObj(i -> //
         new OgcStatisticsRecord(LocalDateTime.now(), "WFS", "testlayer", "request body", uid + "_org", roles))//
-                .collect(Collectors.toList());
-    }
-
-    private Iterable<? extends GeodocRecord> geodocRecords(String uid, int count) {
-        return IntStream.range(0, count).mapToObj(i -> //
-        new GeodocRecord("WMS", uid + count + "_content", uid + count, LocalDateTime.now(), LocalDateTime.now(), i))//
                 .collect(Collectors.toList());
     }
 
@@ -200,13 +181,11 @@ public class GDPRAccountWorkerTest {
         final AccountGDPRDaoStub stub = (AccountGDPRDaoStub) daoStub;
         stub.extractorRecords.clear();
         stub.metadataRecords.clear();
-        stub.geodocRecords.clear();
         stub.ogcstatsRecords.clear();
 
         stub.extractorRecords.put(uid1,
                 new ExtractorRecord(null, null, null, null, null, null, null, null, null, null, null, true));
         LocalDateTime createdAt = LocalDateTime.now();
-        stub.geodocRecords.put(uid1, new GeodocRecord(null, null, null, createdAt, null, 0));
         stub.ogcstatsRecords.put(uid1, new OgcStatisticsRecord(null, null, null, null, null, null));
 
         LocalDateTime mdCreatedAt = createdAt;
@@ -224,12 +203,10 @@ public class GDPRAccountWorkerTest {
 
         Path extractorCsvFile = bundle.getExtractorCsvFile();
         Path ogcstatsCsvFile = bundle.getOgcstatsCsvFile();
-        Path geodocsDirectory = bundle.getGeodocsDirectory();
         Path metadataDirectory = bundle.getMetadataDirectory();
 
         assertNumCsvRecords(extractorCsvFile, 1, extractorHeader);
         assertNumCsvRecords(ogcstatsCsvFile, 1, ogcstatsHeader);
-        assertNumCsvRecords(geodocsDirectory.resolve("geodocs.csv"), 1, geodocsHeader);
         assertMetadtaRecords(metadataDirectory, 1);
     }
 
@@ -245,26 +222,23 @@ public class GDPRAccountWorkerTest {
 
     private void assertBundle(Path bundleFolder, int recordsPerUnit) throws IOException {
         final Path metadataDirectory = bundleFolder.resolve("metadata");
-        final Path geodocsDirectory = bundleFolder.resolve("geodocs");
         final Path extractorCsvFile = bundleFolder.resolve("data_extractions_log.csv");
         final Path ogcstatsCsvFile = bundleFolder.resolve("ogc_request_log.csv");
-        assertBundle(extractorCsvFile, ogcstatsCsvFile, geodocsDirectory, metadataDirectory, recordsPerUnit);
+        assertBundle(extractorCsvFile, ogcstatsCsvFile, metadataDirectory, recordsPerUnit);
     }
 
     private void assertBundle(UserDataBundle bundle, int recordsPerUnit) throws IOException {
         Path extractorCsvFile = bundle.getExtractorCsvFile();
         Path ogcstatsCsvFile = bundle.getOgcstatsCsvFile();
-        Path geodocsDirectory = bundle.getGeodocsDirectory();
         Path metadataDirectory = bundle.getMetadataDirectory();
 
-        assertBundle(extractorCsvFile, ogcstatsCsvFile, geodocsDirectory, metadataDirectory, recordsPerUnit);
+        assertBundle(extractorCsvFile, ogcstatsCsvFile, metadataDirectory, recordsPerUnit);
     }
 
-    private void assertBundle(Path extractorCsvFile, Path ogcstatsCsvFile, Path geodocsDirectory,
-            Path metadataDirectory, int recordsPerUnit) throws IOException {
+    private void assertBundle(Path extractorCsvFile, Path ogcstatsCsvFile, Path metadataDirectory, int recordsPerUnit)
+            throws IOException {
         assertNumCsvRecords(extractorCsvFile, recordsPerUnit, extractorHeader);
         assertNumCsvRecords(ogcstatsCsvFile, recordsPerUnit, ogcstatsHeader);
-        assertNumCsvRecords(geodocsDirectory.resolve("geodocs.csv"), recordsPerUnit, geodocsHeader);
         assertMetadtaRecords(metadataDirectory, recordsPerUnit);
     }
 
@@ -286,19 +260,16 @@ public class GDPRAccountWorkerTest {
         String uid = account2.getUid();
         assertEquals(uid, summary.getAccountId());
         assertEquals(4, summary.getExtractorRecords());
-        assertEquals(4, summary.getGeodocsRecords());
         assertEquals(4, summary.getMetadataRecords());
         assertEquals(4, summary.getOgcStatsRecords());
 
         assertEquals(4, daoStub.extractorRecords.get(ghostAccount.getUid()).size());
-        assertEquals(4, daoStub.geodocRecords.get(ghostAccount.getUid()).size());
         assertEquals(4, daoStub.metadataRecords.get(ghostAccount.getUid()).size());
         assertEquals(4, daoStub.ogcstatsRecords.get(ghostAccount.getUid()).size());
 
         summary = worker.deleteAccountRecords(account2);
         assertEquals(uid, summary.getAccountId());
         assertEquals(0, summary.getExtractorRecords());
-        assertEquals(0, summary.getGeodocsRecords());
         assertEquals(0, summary.getMetadataRecords());
         assertEquals(0, summary.getOgcStatsRecords());
     }

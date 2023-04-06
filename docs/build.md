@@ -43,7 +43,7 @@ In case you only want to build one module or a collection, the syntax is a bit d
 ```
 mvn -Dmaven.test.skip=true -P-all,module1,module2 clean install
 ```
-... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```console```, ```mapfishapp```, ```security-proxy```.
+... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```console```, ```mapstore```, ```security-proxy```.
 
 Alternately, if you want to build all projects but one (say ```geowebcache-webapp```):
 

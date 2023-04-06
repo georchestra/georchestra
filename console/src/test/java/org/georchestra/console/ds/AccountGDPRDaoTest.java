@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
-import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.integration.ds.AccountGDPRDaoIT;
@@ -48,16 +47,6 @@ public class AccountGDPRDaoTest {
         ZoneId zoneId = ZoneId.systemDefault();
         ts1 = new Timestamp(ZonedDateTime.of(ldt1, zoneId).toInstant().toEpochMilli());
         ts2 = new Timestamp(ZonedDateTime.of(ldt2, zoneId).toInstant().toEpochMilli());
-    }
-
-    public @Test void testGeodocRecord() throws Exception {
-        GeodocRecord expected = new GeodocRecord("SLD", "<StyledLayerDescriptor/>", "abcdef123", ldt1, ldt2, 10);
-
-        ResultSet rs = mockResultset("standard", "SLD", "raw_file_content", "<StyledLayerDescriptor/>", "file_hash",
-                "abcdef123", "created_at", ts1, "last_access", ts2, "access_count", 10);
-        GeodocRecord record = AccountGDPRDaoImpl.createGeodocRecord(rs);
-        assertNotNull(record);
-        assertEquals(expected, record);
     }
 
     public @Test void testOgcStatisticsRecord() throws Exception {
@@ -130,7 +119,6 @@ public class AccountGDPRDaoTest {
     public @Test void testParsingNullResiliency() {
         ResultSet rs = nullsMockResultset();
         assertNotNull(AccountGDPRDaoImpl.createExtractorRecord(rs));
-        assertNotNull(AccountGDPRDaoImpl.createGeodocRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createMetadataRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createOgcStatisticsRecord(rs));
     }

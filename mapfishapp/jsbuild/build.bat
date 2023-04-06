@@ -1,1 +1,0 @@
-powershell %~dp0/build.ps1
