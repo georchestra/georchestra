@@ -54,7 +54,6 @@
 		"roles": [
 			"ADMINISTRATOR",
 			"SUPERUSER",
-			"EXTRACTORAPP",
 			"GN_ADMIN",
 			"USER",
 			"MAPSTORE_ADMIN",

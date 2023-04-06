@@ -264,7 +264,7 @@ public class UsersController {
      * {
      *   uid: "testuser",
      *   org: "psc",
-     *   roles: ["USER", "MOD_EXTRACTORAPP"]
+     *   roles: ["USER"]
      * }
      * </pre>
      */
@@ -579,7 +579,6 @@ public class UsersController {
     private DeletedUserDataInfo toPresentation(final String accountId, DeletedAccountSummary summary) {
         DeletedUserDataInfo responseValue = DeletedUserDataInfo.builder().account(accountId)//
                 .metadata(summary.getMetadataRecords())//
-                .extractor(summary.getExtractorRecords())//
                 .metadata(summary.getMetadataRecords())//
                 .ogcStats(summary.getOgcStatsRecords())//
                 .build();

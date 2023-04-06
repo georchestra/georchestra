@@ -73,16 +73,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     private static final String QUERY_USER_ID_METADATA_RECORDS = "select id from geonetwork.users where username = ?";
     private static final String COUNT_USER_ID_METADATA_RECORDS = "select count(*) from geonetwork.metadata where owner = ?";
 
-    private static final String QUERY_EXTRACTORAPP_RECORDS = "select log.creation_date, log.duration, log.roles, log.org,"
-            + " layer.projection, layer.resolution, layer.format, ST_AsBinary(layer.bbox) as bbox, layer.owstype, layer.owsurl, layer.layer_name, layer.is_successful"
-            + " from extractorapp.extractor_log log left join extractorapp.extractor_layer_log layer on log.id = layer.extractor_log_id"
-            + " where log.username = ?";
-    private static final String COUNT_EXTRACTORAPP_RECORDS = "select count(*) "
-            + " from extractorapp.extractor_log log left join extractorapp.extractor_layer_log layer on log.id = layer.extractor_log_id"
-            + " where log.username = ?";
-
-    private static final String DELETE_EXTRACTORAPP_RECORDS = "update extractorapp.extractor_log set username = ? where username = ?";
-
     private static final String QUERY_OGCSTATS_RECORDS = "select date, service, layer, id, request, org, roles from ogcstatistics.ogc_services_log where user_name = ?";
     private static final String DELETE_OGCSTATS_RECORDS = "update ogcstatistics.ogc_services_log set user_name = ? where user_name = ?";
 
@@ -104,14 +94,11 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             conn.setAutoCommit(false);
             try {
                 int metadataRecords;
-                int extractorRecords;
                 int ogcStatsRecords;
                 metadataRecords = deleteUserMetadataRecords(conn, account);
-                extractorRecords = deleteUserExtractorRecords(conn, account);
                 ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
                 conn.commit();
-                DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, extractorRecords,
-                        ogcStatsRecords);
+                DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, ogcStatsRecords);
                 log.info("Deleted records: {}", ret);
                 return ret;
             } catch (SQLException e) {
@@ -131,26 +118,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             ps.setString(2, account.getUid());
             return ps.executeUpdate();
         }
-    }
-
-    private int deleteUserExtractorRecords(Connection conn, @NonNull Account account) throws SQLException {
-        int count;
-        try (PreparedStatement ps = conn.prepareStatement(COUNT_EXTRACTORAPP_RECORDS)) {
-            ps.setString(1, account.getUid());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    count = rs.getInt(1);
-                } else {
-                    return 0;
-                }
-            }
-        }
-        try (PreparedStatement ps = conn.prepareStatement(DELETE_EXTRACTORAPP_RECORDS)) {
-            ps.setString(1, DELETED_ACCOUNT_USERNAME);
-            ps.setString(2, account.getUid());
-            ps.executeUpdate();
-        }
-        return count;
     }
 
     private int deleteUserMetadataRecords(Connection conn, @NonNull Account account) throws SQLException {
@@ -200,26 +167,13 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         }
     }
 
-    public @Override void visitExtractorRecords(@NonNull Account owner, @NonNull Consumer<ExtractorRecord> consumer) {
-
-        final String userName = owner.getUid();
-        int reccount;
-        try {
-            reccount = visitRecords(QUERY_EXTRACTORAPP_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createExtractorRecord, consumer);
-            log.info("Extracted {} metadata records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public @Override void visitMetadataRecords(@NonNull Account owner, @NonNull Consumer<MetadataRecord> consumer) {
 
         final String userName = owner.getUid();
         try {
             int reccount = visitRecords(QUERY_METADATA_RECORDS, ps -> ps.setString(1, userName),
                     AccountGDPRDaoImpl::createMetadataRecord, consumer);
-            log.info("Extracted {} extractorapp records for user {}", reccount, userName);
+            log.info("Extracted {} metadata records for user {}", reccount, userName);
         } catch (DataServiceException e) {
             throw new IllegalStateException(e);
         }
@@ -275,37 +229,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static ExtractorRecord createExtractorRecord(ResultSet rs) {
-        ExtractorRecord.ExtractorRecordBuilder builder = ExtractorRecord.builder();
-        try {
-            byte[] bytes = rs.getBytes("bbox");
-            if (bytes != null && bytes.length > 0) {
-                WKBReader bboxReader = new WKBReader();
-                Geometry bbox = bboxReader.read(bytes);
-                builder.bbox(bbox);
-            }
-            builder.creationDate(ifNonNull(rs.getTimestamp("creation_date"), Timestamp::toLocalDateTime));
-            builder.duration(rs.getTime("duration"));
-            builder.roles(getStringArray(rs, "roles"));
-            builder.org(rs.getString("org"));
-            builder.projection(rs.getString("projection"));
-            int resolution = rs.getInt("resolution");
-            if (resolution != 0) {// resolution is nullable
-                builder.resolution(resolution);
-            }
-            builder.format(rs.getString("format"));
-            builder.owstype(rs.getString("owstype"));
-            builder.owsurl(rs.getString("owsurl"));
-            builder.layerName(rs.getString("layer_name"));
-            builder.success(rs.getBoolean("is_successful"));
-        } catch (ParseException bboxParseError) {
-            log.warn("Unable to parse bbox", bboxParseError);
-        } catch (SQLException e) {
-            throw new IllegalStateException(e);
-        }
-        return builder.build();
     }
 
     public static OgcStatisticsRecord createOgcStatisticsRecord(ResultSet rs) {

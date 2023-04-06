@@ -1,6 +1,6 @@
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 4), an **OGC server** (GeoServer 2.18) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 4), an **OGC server** (GeoServer 2.18) with fine-grained access control (based on GeoFence), an **advanced viewer and editor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 ## Releases
 
@@ -41,7 +41,6 @@ If you want to report a **security issue**, please don't fill an issue. Instead,
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
  * [catalog](https://github.com/georchestra/geonetwork/): standard GeoNetwork with a light customization,
  * [viewer](https://github.com/georchestra/mapstore2-georchestra#readme) (aka mapstore): a robust, OGC-compliant webgis with editing capabilities,
- * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,
  * [geoserver](http://geoserver.org/): the reference implementation for many OGC web services,
  * [geowebcache](http://geowebcache.org/): a fast and easy to use tile cache,
  * [geofence](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md): optional, advanced OGC web services security,

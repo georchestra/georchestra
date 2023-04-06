@@ -19,7 +19,6 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.integration.ds.AccountGDPRDaoIT;
@@ -64,33 +63,6 @@ public class AccountGDPRDaoTest {
         assertEquals(expected, record);
     }
 
-    public @Test void testExtractorRecord() throws Exception {
-        Geometry bbox = new WKTReader().read("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))");
-        LocalDateTime creationDate = ldt1;
-        Time duration = new Time(10_000L);
-        List<String> roles = Arrays.asList("ROLE_ADMINISTRATOR", "ROLE_USER");
-        String org = "geOrchestra";
-        String projection = "EPSG:4326";
-        Integer resolution = 1000;
-        String format = "TIFF";
-        String owstype = "WCS";
-        String owsurl = "http://localhost/geoserver/wcs?";
-        String layerName = "some_coverage";
-        boolean success = true;
-
-        ExtractorRecord expected = new ExtractorRecord(creationDate, duration, roles, org, projection, resolution,
-                format, bbox, owstype, owsurl, layerName, success);
-
-        ResultSet rs = mockResultset("creation_date", ts1, "duration", duration, "roles",
-                roles.toArray(new String[roles.size()]), "org", org, "projection", projection, "resolution", resolution,
-                "format", format, "bbox", bbox, "owstype", owstype, "owsurl", owsurl, "layer_name", layerName,
-                "is_successful", success);
-
-        ExtractorRecord record = AccountGDPRDaoImpl.createExtractorRecord(rs);
-        assertNotNull(record);
-        assertEquals(expected, record);
-    }
-
     public @Test void testMetadataRecord() throws Exception {
 
         long id = 101;
@@ -118,7 +90,6 @@ public class AccountGDPRDaoTest {
     // Test resiliency to unexpected null values, see GSHDF-291
     public @Test void testParsingNullResiliency() {
         ResultSet rs = nullsMockResultset();
-        assertNotNull(AccountGDPRDaoImpl.createExtractorRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createMetadataRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createOgcStatisticsRecord(rs));
     }

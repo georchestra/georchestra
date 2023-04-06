@@ -33,14 +33,6 @@ If the **security proxy** is deployed and its log4j uses the `org.georchestra.og
 psql -d georchestra -f postgresql/050-ogc-server-statistics.sql
 ```
 
-### Extractorapp schema
-
-If the **extractor app** is deployed:
-```
-psql -d georchestra -f postgresql/010-create-extension.sql
-psql -d georchestra -f postgresql/090-extractorapp.sql
-```
-
 ## GeoWebCache schema
 
 If geowebcache is used, it creates a geowebcache schema to store quota and relevant infos for
@@ -61,7 +53,6 @@ wget https://raw.githubusercontent.com/georchestra/georchestra/master/postgresql
 psql -d georchestra -f /tmp/fix-owner.sql
 psql -d georchestra -c "SELECT change_owner('console', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
-psql -d georchestra -c "SELECT change_owner('extractorapp', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('geofence', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 ```

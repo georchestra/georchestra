@@ -17,7 +17,6 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv security-proxy-${VERSION}.war ROOT.war
     mv analytics-${VERSION}.war analytics.war
     mv cas-server-webapp-${VERSION}.war cas.war
-    mv extractorapp-${VERSION}.war extractorapp.war
     mv geoserver-webapp-${VERSION}.war geoserver.war
     mv console-${VERSION}.war console.war
     mv header-${VERSION}.war header.war
@@ -67,7 +66,6 @@ However, this requires the build process to happen on the production host (or a 
     sudo service tomcat-georchestra stop
     cd /var/lib/tomcat-georchestra/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT.war analytics.war
-    sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT.war extractorapp.war
     sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
     sudo ln -s ~/.m2/repository/org/georchestra/console/${VERSION}-SNAPSHOT/console-${VERSION}-SNAPSHOT.war console.war
     sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT.war header.war

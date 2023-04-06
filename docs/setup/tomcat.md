@@ -295,8 +295,7 @@ Finally, we need to adapt the systemd unit file for this instance:
 ```
 
 Note: the `ReadWritePaths` parameters above should be set in the tomcat unit files accordingly. Here we assumed that
-GeoNetwork (which requires RW access to /opt/geonetwork_data_dir) and extractorapp (/opt/extracts) will be deployed
-in this instance.
+GeoNetwork (which requires RW access to /opt/geonetwork_data_dir) will be deployed in this instance.
 
 Reload the `systemd` configuration:
 
@@ -357,32 +356,6 @@ JAVA_OPTS="$JAVA_OPTS \
 
 Note: You can also override every geonetwork sub-data-directories by modifying
 the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
-
-#### Extractor
-
-If the extractor application is deployed:
-```
-JAVA_OPTS="$JAVA_OPTS \
-               -Dorg.geotools.referencing.forceXY=true \
-               -Dextractor.storage.dir=/path/to/temporary/extracts/"
-```
-... where ```/path/to/temporary/extracts/``` is a directory owned by tomcat in a dedicated server partition.
-
-If one of geonetwork or extractorapp is deployed:
-```
-JAVA_OPTS="$JAVA_OPTS \
-               -Djava.util.prefs.userRoot=/var/lib/tomcat9-georchestra/temp \
-               -Djava.util.prefs.systemRoot=/var/lib/tomcat9-georchestra/temp"
-```
-
-If your connection to the internet requires to pass through a proxy, you should also add the ```-Dhttp.proxy*``` options here.
-
-Finally, export both variables:
-
-```
-export JAVA_HOME
-export JAVA_OPTS
-```
 
 ### Configure connector
 

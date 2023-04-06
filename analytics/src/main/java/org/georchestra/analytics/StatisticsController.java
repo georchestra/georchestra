@@ -194,7 +194,7 @@ public class StatisticsController {
     }
 
     private static enum REQUEST_TYPE {
-        USAGE, EXTRACTION
+        USAGE
     }
 
     public StatisticsController(String localTimezone) throws PropertyVetoException, SQLException {
@@ -430,98 +430,6 @@ public class StatisticsController {
     }
 
     /**
-     * Gets statistics for layers extraction in JSON format. May be filtered by a
-     * user or a role and limited.
-     *
-     * @param payload  the JSON object containing the input parameters
-     * @param response the HttpServletResponse object.
-     * @return a JSON string containing the requested aggregated statistics.
-     *
-     * @throws JSONException
-     */
-    @RequestMapping(value = "/layersExtraction.json", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-    @ResponseBody
-    public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response)
-            throws JSONException, SQLException {
-        return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.JSON);
-    }
-
-    /**
-     * Gets full statistics for layers extraction in JSON format. Compared to
-     * previous method, this method will not aggregate records and it will contains
-     * several new informations : organization, start date, end date, duration ...
-     *
-     * @param startDate minimum date for stats
-     * @param endDate   maximum date for stats
-     * @param response  the HttpServletResponse object.
-     * @return a JSON string containing the requested statistics.
-     *
-     * @throws JSONException
-     */
-    @RequestMapping(value = "/fullLayersExtraction.csv", method = RequestMethod.GET, produces = "application/csv; charset=utf-8")
-    @ResponseBody
-    public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate,
-            HttpServletResponse response) throws JSONException, SQLException {
-
-        try {
-            if (startDate == null || endDate == null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                return null;
-            }
-        } catch (Throwable e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
-        }
-
-        response.setHeader("Content-Disposition", "attachment; filename=data.csv");
-        response.setContentType("application/csv; charset=utf-8");
-
-        String sql = "SELECT username, org, creation_date, CAST(duration AS text), creation_date + duration AS start_date, layer_name, is_successful, "
-                + "       trunc(CAST(ST_XMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMin(bbox) AS numeric), 5) || ',' || "
-                + "       trunc(CAST(ST_XMax(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMax(bbox) AS numeric), 5) AS bbox, "
-                + "       ST_Area(CAST(bbox AS geography), TRUE) / 1000000 AS area_km2 "
-                + "     FROM extractorapp.extractor_layer_log " + "     LEFT JOIN extractorapp.extractor_log "
-                + "	    ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) "
-                + "     WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) ";
-
-        Map<String, String> sqlValues = new HashMap<>();
-        sqlValues.put("startDate", startDate);
-        sqlValues.put("endDate", endDate);
-
-        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
-        try (Connection c = dataSource.getConnection(); //
-                Statement st = c.createStatement(); //
-                ResultSet sqlRes = st.executeQuery(generatedQuery)) {
-
-            StringBuilder res = new StringBuilder(
-                    "username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
-            while (sqlRes.next()) {
-                for (int i = 1; i < 9; i++)
-                    res.append(sqlRes.getString(i) + ";");
-                res.append(sqlRes.getString(9) + "\n");
-            }
-            return res.toString();
-        }
-    }
-
-    /**
-     * Gets statistics for layers extraction in CSV format. May be filtered by a
-     * user or a role and limited.
-     *
-     * @param payload  the JSON object containing the input parameters
-     * @param response the HttpServletResponse object.
-     * @return a CSV string containing the requested aggregated statistics.
-     *
-     * @throws JSONException
-     */
-    @RequestMapping(value = "/layersExtraction.csv", method = RequestMethod.POST, produces = "application/csv; charset=utf-8")
-    @ResponseBody
-    public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response)
-            throws JSONException, SQLException {
-        return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.CSV);
-    }
-
-    /**
      * This method generates stats for layer usage or extraction and return results
      * in CSV or JSON format
      *
@@ -568,12 +476,6 @@ public class StatisticsController {
             sql = "SELECT layer, COUNT(*) AS count " + "FROM ogcstatistics.ogc_services_log "
                     + "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) "
                     + "AND layer != '' ";
-        } else if (type == REQUEST_TYPE.EXTRACTION) {
-            sql = "SELECT layer_name AS layer, COUNT(*) AS count " + "FROM extractorapp.extractor_layer_log "
-                    + "LEFT JOIN extractorapp.extractor_log "
-                    + "	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) "
-                    + "WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) "
-                    + "AND is_successful ";
         } else {
             throw new IllegalArgumentException("Invalid request type : " + type);
         }
@@ -583,8 +485,6 @@ public class StatisticsController {
         if (userId != null) {
             if (type == REQUEST_TYPE.USAGE) {
                 sql += " AND user_name = {user} ";
-            } else if (type == REQUEST_TYPE.EXTRACTION) {
-                sql += " AND username = {user} ";
             } else {
                 throw new IllegalArgumentException("Invalid request type : " + type);
             }
@@ -592,8 +492,6 @@ public class StatisticsController {
 
         if (type == REQUEST_TYPE.USAGE) {
             sql += " GROUP BY layer " + " ORDER BY COUNT(*) DESC ";
-        } else if (type == REQUEST_TYPE.EXTRACTION) {
-            sql += " GROUP BY layer_name " + " ORDER BY COUNT(*) DESC";
         } else {
             throw new IllegalArgumentException("Invalid request type : " + type);
         }
