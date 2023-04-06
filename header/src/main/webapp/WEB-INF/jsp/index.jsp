@@ -91,12 +91,10 @@ javax.servlet.jsp.jstl.core.Config.set(
     new javax.servlet.jsp.jstl.fmt.LocalizationContext(bundle)
 );
 
-Boolean extractor = false;
 Boolean admin = false;
 Boolean catadmin = false;
 Boolean console = false;
 Boolean analyticsadmin = false;
-Boolean extractorappadmin = false;
 Boolean msadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
@@ -119,7 +117,6 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_ADMINISTRATOR")) {
             admin = true;
-            extractorappadmin = true;
         }
         if (roles[i].equals("ROLE_MAPSTORE_ADMIN")) {
             admin = true;
@@ -356,19 +353,6 @@ if(sec_roles != null) {
                             </c:when>
                             <c:otherwise>
                         <li><a href="/mapstore/#/admin"><fmt:message key="viewer"/></a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        </c:when>
-                    </c:choose>
-
-                    <c:choose>
-                        <c:when test='<%= extractorappadmin == true %>'>
-                        <c:choose>
-                            <c:when test='<%= active.equals("extractorappadmin") %>'>
-                        <li class="active"><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
-                            </c:when>
-                            <c:otherwise>
-                        <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>

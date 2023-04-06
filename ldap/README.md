@@ -37,7 +37,7 @@ The basic users:
  * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
  * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**.
  * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**.
- * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explained in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
+ * ```geoserver_privileged_user``` is a required user. It is internally used by the geofence module. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explained in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
  * ```testpendinguser``` is inside the pending users organizational unit, which means an admin has to validate it. The password is **testpendinguser**.
 
 Please note that `test*` users should be deleted before going into production !
@@ -45,7 +45,6 @@ Please note that `test*` users should be deleted before going into production !
 The roles:
  * ```SUPERUSER``` grants access to the console webapp (where one can manage users and roles),
  * ```ADMINISTRATOR``` is for GeoServer administrators,
- * ```EXTRACTORAPP``` grants access to the extractor application,
  * ```GN_ADMIN``` is for GeoNetwork administrators,
  * ```GN_EDITOR``` is for metadata editors,
  * ```GN_REVIEWER``` is for metadata reviewers,

@@ -34,9 +34,6 @@ mv /tmp/analytics.war /var/lib/tomcat9-georchestra/webapps
 wget -O /tmp/console.war https://packages.georchestra.org/wars-master/console-generic.war
 mv /tmp/console.war /var/lib/tomcat9-georchestra/webapps
 
-wget -O /tmp/extractorapp.war https://packages.georchestra.org/wars-master/extractorapp-generic.war
-mv /tmp/extractorapp.war /var/lib/tomcat9-georchestra/webapps
-
 ```
 
 

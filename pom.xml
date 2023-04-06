@@ -878,7 +878,6 @@
         </plugins>
       </build>
       <modules>
-        <module>extractorapp</module>
         <module>console</module>
         <module>security-proxy</module>
         <module>analytics</module>
@@ -891,19 +890,17 @@
         <file>
           <!-- this is added so that all will be the default profile -->
           <!-- one can build only a specific project by doing -->
-          <!-- -P-all,extractorapp -->
+          <!-- -P-all,geoserver -->
           <missing>hack_to_make_all_enabled_by_default</missing>
         </file>
       </activation>
       <modules>
-        <module>extractorapp</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
         <module>commons</module>
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
-        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>analytics</module>
@@ -922,12 +919,6 @@
       <id>header</id>
       <modules>
         <module>header</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>extractorapp</id>
-      <modules>
-        <module>extractorapp</module>
       </modules>
     </profile>
     <profile>

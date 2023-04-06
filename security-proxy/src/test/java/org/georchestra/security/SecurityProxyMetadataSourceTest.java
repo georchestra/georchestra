@@ -38,7 +38,7 @@ public class SecurityProxyMetadataSourceTest {
         ReflectionUtils.invokeMethod(m, sp, f);
 
         // Checks that the requestMap has correctly been populated
-        assertTrue("Expected 14 items, found " + map.keySet().size(), map.keySet().size() == 14);
+        assertTrue("Expected 11 items, found " + map.keySet().size(), map.keySet().size() == 11);
     }
 
 }

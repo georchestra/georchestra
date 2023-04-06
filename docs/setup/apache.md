@@ -182,17 +182,6 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
 
-* ```extractorapp.conf```:
-
-```
-<Proxy http://localhost:8180/extractorapp/*>
-    Require all granted
-</Proxy>
-ProxyPass /extractorapp/ http://localhost:8180/extractorapp/
-ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
-```
-
-
 * ```geonetwork.conf```:
 
 ```
