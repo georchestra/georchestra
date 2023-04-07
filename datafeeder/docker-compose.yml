@@ -61,7 +61,6 @@ services:
     depends_on:
       - console
       - database
-      - kibana
       - elasticsearch
     volumes:
       - config:/etc/georchestra
@@ -70,21 +69,13 @@ services:
       - ES_HOST=elasticsearch
       - ES_PROTOCOL=http
       - ES_PORT=9200
-      - KB_URL=http://kibana:5601
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
     ports:
       - "28080:8080"
 
   elasticsearch:
-    image: elasticsearch:7.9.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     environment:
       discovery.type: single-node
-
-  kibana:
-    image: kibana:7.9.0
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    volumes:
-      - ./src/test/resources/datadir/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
 
