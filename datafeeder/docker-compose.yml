@@ -78,4 +78,5 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     environment:
       discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
 
