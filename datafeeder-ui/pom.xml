@@ -91,17 +91,17 @@
                       </configuration>
                   </execution>
                   <execution>
-                      <id>npm run build</id>
+                      <id>build</id>
                       <goals>
-                          <goal>npm</goal>
+                          <goal>npx</goal>
                       </goals>
                       <configuration>
-                          <arguments>run build datafeeder -- --base-href=/import/</arguments>
+                          <arguments>nx build datafeeder -- --base-href=/import/</arguments>
                       </configuration>
                   </execution>
               </executions>
               <configuration>
-                  <nodeVersion>v12.22.1</nodeVersion>
+                  <nodeVersion>v18.15.0</nodeVersion>
                   <workingDirectory>${project.build.directory}/datafeeder-ui</workingDirectory>
               </configuration>
           </plugin>
