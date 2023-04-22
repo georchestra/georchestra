@@ -1,0 +1,10 @@
+dn: cn=pwd-no-expire,ou=pwpolicy,dc=georchestra,dc=org
+objectClass: person
+objectClass: pwdPolicyChecker
+objectClass: pwdPolicy
+cn: pwpolicy
+cn: pwd-no-expire
+sn: pwpolicy
+pwdAttribute: userPassword
+pwdMinAge: 0
+pwdMaxAge: 0
