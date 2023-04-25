@@ -169,6 +169,7 @@ objectClass: georchestraRole
 cn: GN_ADMIN
 description: This role grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=georchestra_privileged_user,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: ab9d8932-a17c-4767-840d-940a183654f3
 
 # GN_EDITOR, roles, georchestra.org
