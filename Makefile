@@ -7,7 +7,7 @@ docker-pull-jetty:
 	docker pull jetty:9-jre11
 
 docker-build-ldap:
-	docker pull debian:buster
+	docker pull debian:bullseye
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
 
