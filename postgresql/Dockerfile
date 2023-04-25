@@ -2,7 +2,7 @@
 # Dockerfile for the geOrchestra database service
 #
 
-FROM postgres:13
+FROM postgres:15
 
 LABEL maintainer="psc@georchestra.org"
 
@@ -12,8 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        postgresql-13-postgis-3 \
-        postgresql-13-postgis-3-scripts && \
+        postgresql-15-postgis-3 \
+        postgresql-15-postgis-3-scripts && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --chown=postgres [0-9][0-9]* fix-owner.sql license.txt logo.png /docker-entrypoint-initdb.d/
