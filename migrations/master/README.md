@@ -61,3 +61,12 @@ services:
 ```
 
 You might need to reuse or adapt those changes for your setup.
+
+
+## ldap
+
+```
+ldapmodify -H "ldap://ldap:389" \
+   -D "cn=admin,dc=georchestra,dc=org" \
+   -w "secret"    -f ldap_migration.ldif 
+```
