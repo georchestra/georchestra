@@ -77,7 +77,7 @@ public class RolesControllerTest {
         accountDao = mock(AccountDao.class);
 
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
+        userRule.setListOfprotectedUsers(new String[] { "georchestra_privileged_user" });
 
         RoleProtected roles = new RoleProtected();
         roles.setListOfprotectedRoles(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });

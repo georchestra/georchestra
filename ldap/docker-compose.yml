@@ -10,14 +10,14 @@ services:
     build: ./
     secrets:
       - slapd_password
-      - geoserver_privileged_user_passwd
+      - georchestra_privileged_user_passwd
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
       - SLAPD_ADDITIONAL_MODULES=groupofmembers,openssh
       - SLAPD_PASSWORD_FILE=/run/secrets/slapd_password
       - SLAPD_PASSWORD=
-      - GEOSERVER_PRIVILEGED_USER_PASSWORD_FILE=/run/secrets/geoserver_privileged_user_passwd
+      - GEORCHESTRA_PRIVILEGED_USER_PASSWORD_FILE=/run/secrets/georchestra_privileged_user_passwd
       - SLAPD_LOG_LEVEL=32768
     volumes:
       - ldap_data_test:/var/lib/ldap
@@ -28,5 +28,5 @@ services:
 secrets:
   slapd_password:
     file: ./secrets/slapd_password.txt
-  geoserver_privileged_user_passwd:
-    file: ./secrets/geoserver_privileged_user_passwd.txt
+  georchestra_privileged_user_passwd:
+    file: ./secrets/georchestra_privileged_user_passwd.txt

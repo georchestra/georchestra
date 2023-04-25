@@ -84,18 +84,18 @@ knowledgeInformation: Internal CRM notes on testadmin
 cn: testadmin
 georchestraObjectIdentifier: 0c6bb556-4ee8-46f2-892d-6116e262b489
 
-# geoserver_privileged_user, users, georchestra.org
-dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+# georchestra_privileged_user, users, georchestra.org
+dn: uid=georchestra_privileged_user,ou=users,dc=georchestra,dc=org
 objectClass: georchestraUser
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: shadowAccount
 objectClass: top
-sn: geoserver_privileged_user
-mail: psc+geoserver_privileged_user@georchestra.org
-uid: geoserver_privileged_user
-cn: geoserver_privileged_user
+sn: georchestra_privileged_user
+mail: psc+georchestra_privileged_user@georchestra.org
+uid: georchestra_privileged_user
+cn: georchestra_privileged_user
 description: Do not modify. This is a required user for server-to-server internal communications...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 georchestraObjectIdentifier: 82dc7198-6fea-4e9a-b30d-d1e414c30f30
@@ -147,7 +147,7 @@ objectClass: groupOfMembers
 objectClass: georchestraRole
 cn: ADMINISTRATOR
 description: This role grants admin access to GeoServer
-member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+member: uid=georchestra_privileged_user,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: 6b98583f-0ff0-465f-bb29-e9696a634c74
 
