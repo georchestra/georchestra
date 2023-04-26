@@ -77,7 +77,7 @@ public class UsersControllerTest {
         orgsDao = mock(OrgsDao.class);
 
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
+        userRule.setListOfprotectedUsers(new String[] { "georchestra_privileged_user" });
 
         roles = mock(RoleProtected.class);
         when(roles.isProtected(Mockito.eq("USER"))).thenReturn(true);
@@ -126,7 +126,7 @@ public class UsersControllerTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testFindByUidProtected() throws Exception {
-        usersCtrl.findByUid("geoserver_privileged_user");
+        usersCtrl.findByUid("georchestra_privileged_user");
     }
 
     @Test(expected = NameNotFoundException.class)
@@ -153,13 +153,13 @@ public class UsersControllerTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testCreateProtectedUser() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("givenName", "geoserver")
+        JSONObject reqUsr = new JSONObject().put("sn", "georchestra privileged user").put("givenName", "geoserver")
                 .put("mail", "geoserver@localhost").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
         request.setRequestURI("/console/users/geoserver");
-        // geoserver_privileged_user is not a valid username automatically generated
-        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user", "ggeoserverprivilegeduser" });
+        // georchestra_privileged_user is not a valid username automatically generated
+        userRule.setListOfprotectedUsers(new String[] { "georchestra_privileged_user", "ggeorchestraprivilegeduser" });
         request.setContent(reqUsr.toString().getBytes());
 
         usersCtrl.create(request);
@@ -167,7 +167,7 @@ public class UsersControllerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateIllegalArgumentException_FirstNameIsRequired() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user")
+        JSONObject reqUsr = new JSONObject().put("sn", "georchestra privileged user")
                 .put("telephoneNumber", "+331234567890").put("facsimileTelephoneNumber", "+33123456788")
                 .put("street", "Avenue des Ducs de Savoie").put("postalCode", "73000").put("l", "Chambéry")
                 .put("postOfficeBox", "1234").put("o", "GeoServer");
@@ -179,7 +179,7 @@ public class UsersControllerTest {
 
     @Test(expected = DuplicatedEmailException.class)
     public void testCreateDuplicateEmailException() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
+        JSONObject reqUsr = new JSONObject().put("sn", "georchestra privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
@@ -193,7 +193,7 @@ public class UsersControllerTest {
     @Test
     @Ignore("not implemented")
     public void testCreateSaslUser() {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
+        JSONObject reqUsr = new JSONObject().put("sn", "georchestra privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
@@ -201,7 +201,7 @@ public class UsersControllerTest {
 
     @Test
     public void createUser() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
+        JSONObject reqUsr = new JSONObject().put("sn", "georchestra privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234")
@@ -214,9 +214,9 @@ public class UsersControllerTest {
 
         verify(dao).insert(notNull(Account.class));
 
-        assertEquals(res.getUid(), "ggeoserverprivilegeduser");
+        assertEquals(res.getUid(), "ggeorchestraprivilegeduser");
         assertEquals(res.getEmail(), "tomcat@localhost");
-        assertEquals(res.getSurname(), "geoserver privileged user");
+        assertEquals(res.getSurname(), "georchestra privileged user");
         assertEquals(res.getFacsimile(), "+33123456788");
         assertEquals(res.getStreet(), "Avenue des Ducs de Savoie");
         assertEquals(res.getLocality(), "Chambéry");
@@ -234,7 +234,7 @@ public class UsersControllerTest {
 
     @Test(expected = AccessDeniedException.class)
     public void testUpdateUserProtected() throws Exception {
-        usersCtrl.update("geoserver_privileged_user", request);
+        usersCtrl.update("georchestra_privileged_user", request);
     }
 
     @Test(expected = NameNotFoundException.class)
@@ -436,12 +436,12 @@ public class UsersControllerTest {
     public void testDeleteUserProtected() throws Exception {
         Mockito.reset(mockDelegationDao);
 
-        mockLookup("geoserver_privileged_user", false);
+        mockLookup("georchestra_privileged_user", false);
 
         DelegationEntry toBeDeleted = new DelegationEntry();
-        when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
+        when(mockDelegationDao.findOne("georchestra_privileged_user")).thenReturn(toBeDeleted);
 
-        usersCtrl.delete("geoserver_privileged_user", request, response);
+        usersCtrl.delete("georchestra_privileged_user", request, response);
 
         verify(mockDelegationDao).delete(toBeDeleted);
         verify(mockDelegationDao, never()).save(any(DelegationEntry.class));

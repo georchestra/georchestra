@@ -184,7 +184,7 @@ public class UsersRolesControllerTest {
             setUpMockedObjects();
         }
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
+        userRule.setListOfprotectedUsers(new String[] { "georchestra_privileged_user" });
 
         // Configures roleDao
         roleDao = new RoleDaoImpl();

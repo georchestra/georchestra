@@ -116,7 +116,7 @@ ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
 This will also ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn.
 
 
-Note that you are free to customize the users (entries under the "users" OrganizationUnit) to fit your needs, provided you keep the required ```geoserver_privileged_user```.
+Note that you are free to customize the users (entries under the "users" OrganizationUnit) to fit your needs, provided you keep the required ```georchestra_privileged_user```.
 
 
 

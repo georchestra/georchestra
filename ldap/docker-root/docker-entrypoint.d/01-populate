@@ -39,13 +39,13 @@ if [ ! -f /etc/ldap/slapd.d/initialized ]; then
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /georchestra.ldif";
     else
-        if [ -n "$GEOSERVER_PRIVILEGED_USER_PASSWORD" ]; then
+        if [ -n "$GEORCHESTRA_PRIVILEGED_USER_PASSWORD" ]; then
             # Allow changing the geoserver master password.
             # Works on first run only
             echo "replacing geoserver master password"
-            GEOSERVER_PRIVILEGED_USER_PASSWORD=`slappasswd -s "$GEOSERVER_PRIVILEGED_USER_PASSWORD"`
-            GEOSERVER_PRIVILEGED_USER_PASSWORD=`echo $GEOSERVER_PRIVILEGED_USER_PASSWORD |base64 -`
-            perl -p -i -e "s/e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9/${GEOSERVER_PRIVILEGED_USER_PASSWORD}/" /georchestra.ldif
+            GEORCHESTRA_PRIVILEGED_USER_PASSWORD=`slappasswd -s "$GEORCHESTRA_PRIVILEGED_USER_PASSWORD"`
+            GEORCHESTRA_PRIVILEGED_USER_PASSWORD=`echo $GEORCHESTRA_PRIVILEGED_USER_PASSWORD |base64 -`
+            perl -p -i -e "s/e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9/${GEORCHESTRA_PRIVILEGED_USER_PASSWORD}/" /georchestra.ldif
         fi
 
         perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"        /georchestra.ldif

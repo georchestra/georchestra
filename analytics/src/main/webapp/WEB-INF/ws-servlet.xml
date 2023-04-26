@@ -68,7 +68,7 @@
 
     <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController">
         <constructor-arg name="localTimezone" value="${localTimezone:Europe/Paris}"/>
-        <property name="excludedUsers" value="${excludedUsers:geoserver_privileged_user}"/>
+        <property name="excludedUsers" value="${excludedUsers:georchestra_privileged_user}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
