@@ -65,6 +65,12 @@ You might need to reuse or adapt those changes for your setup.
 
 ## ldap
 
+We renamed the user `geoserver_privileged_user` to `georchestra_privileged_user` to avoir confusion because it is an user used by few services (and not only geoserver).
+
+All changes of the schema are stored in [ldap_migration.ldif](ldap_migration.ldif) file.
+
+To apply those modification you can run the following command :
+
 ```
 ldapmodify -H "ldap://ldap:389" \
    -D "cn=admin,dc=georchestra,dc=org" \
