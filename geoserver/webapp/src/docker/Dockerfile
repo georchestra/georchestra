@@ -9,6 +9,7 @@ COPY --chown=jetty:jetty . /
 USER root
 
 RUN apt-get update \
+    && echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections \
     && apt-get install -y ttf-mscorefonts-installer \
     && apt-get install -y wget \
     && apt-get clean \
