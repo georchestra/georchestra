@@ -63,16 +63,14 @@ services:
 You might need to reuse or adapt those changes for your setup.
 
 
-## ldap
+## LDAP
 
-We renamed the user `geoserver_privileged_user` to `georchestra_privileged_user` to avoir confusion because it is an user used by few services (and not only geoserver).
+The `geoserver_privileged_user` user was renamed to `georchestra_privileged_user`.
 
-All changes of the schema are stored in [ldap_migration.ldif](ldap_migration.ldif) file.
+This user is internally used by datafeeder to import datasets and metadata into geoserver and geonetwork.
 
-To apply those modification you can run the following command :
+To upgrade the ldap, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
 
 ```
-ldapmodify -H "ldap://ldap:389" \
-   -D "cn=admin,dc=georchestra,dc=org" \
-   -w "secret"    -f ldap_migration.ldif 
+ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif 
 ```
