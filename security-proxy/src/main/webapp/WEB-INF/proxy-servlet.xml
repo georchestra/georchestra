@@ -80,7 +80,7 @@
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
                 <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider">
-                    <property name="trustedUsers" value="${trustedUsers:georchestra_privileged_user}"/>
+                    <property name="trustedUsers" value="${trustedUsers:geoserver_privileged_user}"/>
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
                     <constructor-arg index="0" ref="contextSource" />

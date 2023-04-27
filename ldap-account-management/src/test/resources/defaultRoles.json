@@ -4,7 +4,7 @@
       "id" : "6b98583f-0ff0-465f-bb29-e9696a634c74",
       "lastUpdated" : "3a33e37f8ca3dcd35e6806001da8b1da827ede7bbdba15032270031677770aa7",
       "members" : [
-         "georchestra_privileged_user",
+         "geoserver_privileged_user",
          "testadmin"
       ],
       "name" : "ADMINISTRATOR"

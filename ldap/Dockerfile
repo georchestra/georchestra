@@ -32,4 +32,4 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "sh", "-c", "exec slapd -d ${SLAPD_LOG_LEVEL:-32768} -u ${RUN_AS_UID} -g ${RUN_AS_GID}" ]
 
 HEALTHCHECK --interval=30s --timeout=10s \
-  CMD ldapsearch -xLLL uid=georchestra_privileged_user || exit 1
+  CMD ldapsearch -xLLL uid=geoserver_privileged_user || exit 1

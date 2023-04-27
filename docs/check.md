@@ -26,14 +26,14 @@ First thing to check is the [proxy mapping](https://github.com/georchestra/templ
 Now testing the security proxy Basic Authentication.  
 The following command shall return the public and protected layers:
 ```
-curl --insecure --user "georchestra_privileged_user:password" "https://private:8443/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
+curl --insecure --user "geoserver_privileged_user:password" "https://private:8443/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
 ```
 
 Several potential issues if it's not :
  * the security proxy can't query the LDAP,
- * ```georchestra_privileged_user``` is not a valid LDAP account,
- * ```georchestra_privileged_user``` does not belong to the ```ADMINISTRATOR``` LDAP group,
- * ```georchestra_privileged_user```'s password is incorrect.
+ * ```geoserver_privileged_user``` is not a valid LDAP account,
+ * ```geoserver_privileged_user``` does not belong to the ```ADMINISTRATOR``` LDAP group,
+ * ```geoserver_privileged_user```'s password is incorrect.
 
 
 ## Apache
@@ -45,7 +45,7 @@ curl "http://mysdi.org/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
 
 Then...
 ```
-curl --insecure --user "georchestra_privileged_user:password" "http://mysdi.org/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
+curl --insecure --user "geoserver_privileged_user:password" "http://mysdi.org/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
 ```
 
 Finally, open QGIS and register the service with and without the privileged account.
