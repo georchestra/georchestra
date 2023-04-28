@@ -6,7 +6,6 @@ mail: psc+idatafeeder@georchestra.org
 givenName: Import
 sn: Datafeeder
 cn: Import Datafeeder
-knowledgeInformation: Internal CRM notes on idatafeeder
 objectClass: georchestraUser
 objectClass: organizationalPerson
 objectClass: person
