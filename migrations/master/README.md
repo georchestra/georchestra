@@ -61,3 +61,18 @@ services:
 ```
 
 You might need to reuse or adapt those changes for your setup.
+
+
+
+
+## LDAP
+
+The `idatafeeder` user was added to the ldap schema.
+
+This user is internally used by datafeeder to import datasets and metadata into geoserver and geonetwork.
+
+To upgrade the ldap, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
+
+```
+ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif 
+```

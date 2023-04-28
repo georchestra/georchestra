@@ -100,6 +100,22 @@ description: Do not modify. This is a required user for server-to-server interna
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 georchestraObjectIdentifier: 82dc7198-6fea-4e9a-b30d-d1e414c30f30
 
+dn: uid=idatafeeder,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+cn: Import Datafeeder
+sn: Datafeeder
+uid: idatafeeder
+description: DO NOT DELETE THIS USER
+georchestraObjectIdentifier: 0c6bb556-4ee8-46f2-892d-6116e262b489
+givenName: Import
+knowledgeInformation: Internal CRM notes on idatafeeder
+mail: psc+idatafeeder@georchestra.org
+
 # testpendinguser, pendingusers, georchestra.org
 dn: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 objectClass: georchestraUser
@@ -169,6 +185,7 @@ objectClass: georchestraRole
 cn: GN_ADMIN
 description: This role grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=idatafeeder,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: ab9d8932-a17c-4767-840d-940a183654f3
 
 # GN_EDITOR, roles, georchestra.org
