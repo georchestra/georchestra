@@ -143,7 +143,7 @@
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
         <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUsersList" key-->
-        <value>${protectedUsersList:georchestra_privileged_user}</value>
+        <value>${protectedUsersList:geoserver_privileged_user}</value>
     </property>
   </bean>
 

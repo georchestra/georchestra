@@ -142,9 +142,9 @@ Once created, set the following parameters:
 
 Several user accounts can be protected against deletion or modification, with the `protectedUsersList` property, which holds a comma separated list of user accounts `uid`. These users also do not show up in the manager.
 
-By default, only `georchestra_privileged_user` is protected:
+By default, only `geoserver_privileged_user` is protected:
 ```
-protectedUsersList=georchestra_privileged_user
+protectedUsersList=geoserver_privileged_user
 ```
 
 ## Developer's corner
