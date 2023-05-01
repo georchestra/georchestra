@@ -107,12 +107,12 @@ objectClass: organizationalPerson
 objectClass: person
 objectClass: shadowAccount
 objectClass: top
-cn: Import Datafeeder
-sn: Datafeeder
+cn: Datafeeder Import
+sn: Import
 uid: idatafeeder
 description: DO NOT DELETE THIS USER
-georchestraObjectIdentifier: 0c6bb556-4ee8-46f2-892d-6116e262b489
-givenName: Import
+georchestraObjectIdentifier: ab18b654-b281-4b6d-b09c-a2a4a690216d
+givenName: Datafeeder
 mail: psc+idatafeeder@georchestra.org
 
 # testpendinguser, pendingusers, georchestra.org
