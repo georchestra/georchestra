@@ -132,3 +132,27 @@ ldapvi --host localhost -D "cn=admin,dc=georchestra,dc=org" -w "secret" -b "dc=g
 
  * [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
  * our own [console](/console/README.md) web application, available at ```/console/manager/``` to  members of the ```SUPERUSER``` group, is probably the easiest one.
+
+# Enabling rotation policy for passwords management 
+
+To enable rotation policy for passwords management, please run the following commands:
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f ppolicy-rotation.ldif
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f rotationpolicyoverlay.ldif
+
+To disable password expire for no humain users (geoserver_privileged_user, idatafeeder), please run the following commands::
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f pwd_no_expire.ldif
+
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f pwd_no_expire_users.ldif
+
+If  rotation policy for passwords management is enabled, password has to be set after 12 months.
+Alerts will be shown to user during last month.
+
+
+
+
+
+
+
