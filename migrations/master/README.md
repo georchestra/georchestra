@@ -2,14 +2,6 @@
 
 ## GeoNetwork 4.0 to 4.2 migration notes
 
-### Link to MapStore
-
-On page ```/geonetwork/srv/fre/admin.console#/settings/ui```, section "viewer" > "external viewer" > "viewer url pattern"
-
-Older pattern for GN 4.0 was like this ```/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":["${service.name}"],"sources":[{"type":"${service.type}","url":"${service.url}"}]}]```
-
-Newer pattern for GN 4.2 is ```/mapstore/#/?actions=[{"type":"CATALOG:ADD_LAYERS_FROM_CATALOGS","layers":[${service.name}],"sources":[${service.url}]}]```
-
 ### Virtual CSWs and subportals
 
 The new GeoNetwork version dropped support for what was called "virtual CSW" (basically
