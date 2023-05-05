@@ -76,14 +76,14 @@ jobs:
         docker push georchestra/datafeeder:latest
         docker push georchestra/datafeeder-frontend:latest
 
-    - name: "Pushing release branch to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+    - name: "Pushing release branch to docker.io (23.x series)"
+      if: contains(github.ref, 'refs/heads/23.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
-    - name: "Pushing release tag to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+    - name: "Pushing release tag to docker.io (23.x series)"
+      if: contains(github.ref, 'refs/tags/23.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}

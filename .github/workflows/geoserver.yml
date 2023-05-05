@@ -72,13 +72,13 @@ jobs:
         docker push georchestra/geoserver:geofence
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/heads/23.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/tags/23.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
