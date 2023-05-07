@@ -146,6 +146,7 @@ To disable password expire for no humain users (geoserver_privileged_user, idata
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f pwd_no_expire.ldif
 ```
+```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f pwd_no_expire_users.ldif
 ```
 If  rotation policy for passwords management is enabled, password has to be set after 12 months.
