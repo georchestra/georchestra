@@ -1,2 +1,2 @@
-# From 23.x to master
+# From 23.0 to master
 
