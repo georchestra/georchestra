@@ -82,6 +82,26 @@ git push origin 20.1.0
 
 Then [create a new release](https://github.com/georchestra/geonetwork/releases).
 
+### CAS
+
+[https://github.com/georchestra/georchestra-cas-server](https://github.com/georchestra/georchestra-cas-server)
+
+```
+cd georchestra-cas-server
+git checkout master
+git pull -r # to get lastest commits
+git checkout -b 23.0.x
+
+# edit gradle.properties to replace dockerTag and datadirRef by: dockerTag=23.0.x and datadirRef=23.0
+git add gradle.properties
+git commit -am "23.0.x branch"
+git tag 23.0.0-georchestra
+git push --set-upstream origin 23.0.x --tag
+
+```
+
+Then [create a new release](https://github.com/georchestra/georchestra-cas-server/releases).
+
 ### geOrchestra
 
 From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `20.1.x` branch:
@@ -107,7 +127,9 @@ Other tasks:
  * Change the `BTAG` variable in the Makefile to `20.1.x`
  * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
  * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
+ * Update the [github workflow](https://github.com/georchestra/georchestra/tree/master/.github/workflows) files to change the `refs/heads/22.` to `refs/heads/23.` to push on docker hub new images versions
  * Change the default branches in github repositories
+ * clean and archive old/none used branches
 
 Commit and propagate the changes:
 ```
