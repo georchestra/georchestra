@@ -1,4 +1,4 @@
-# From 22.x to master
+# From 22.x to 23.0.x
 
 ## GeoNetwork 4.0 to 4.2 migration notes
 
