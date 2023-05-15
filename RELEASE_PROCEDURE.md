@@ -251,9 +251,8 @@ Releasing a new version of geOrchestra when it comes to these new repositories i
 a branch so that an artifact can be generated.
 
 **To summarize, when releasing a patch release, do not forget to:**
-* `georchestra/mapstore2-georchestra`: Add a tag on top of the stable branch. As of today, `22.0.3-georchestra`, and since `20.1.7-georchestra`, we are still on the same commit, in branch `2021.02.xx`.
-* `georchestra/georchestra-cas-server`: Add a tag on top of the appropriate branch (`22.0.x`)
-* `georchestra/geonetwork-ui`: Add a tag on top of the appropriate branch (`22.0.x`)
+* `georchestra/mapstore2-georchestra`: Add a tag on top of the stable branch. As of today, `23.0.0-georchestra`, in branch `2022.02.xx`.
+* `georchestra/georchestra-cas-server`: Add a tag on top of the appropriate branch (`23.0.x`)
 
 ### Packaging
 
