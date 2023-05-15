@@ -102,6 +102,26 @@ git push --set-upstream origin 23.0.x --tag
 
 Then [create a new release](https://github.com/georchestra/georchestra-cas-server/releases).
 
+### mapstore2-geOrchestra
+
+[https://github.com/georchestra/mapstore2-georchestra](https://github.com/georchestra/mapstore2-georchestra)
+
+Mapstore2-geOrchestra has its own [release
+procedure](https://github.com/georchestra/mapstore2-georchestra#release-procedure)
+and follow its own [release
+train](https://github.com/georchestra/mapstore2-georchestra/releases).
+
+It might not be necessary to make a release of mapstore2-georchestra when
+releasing geOrchestra, but if it's really needed, just place a tag on the
+latest commit in the stable branch (as of today,
+[2022.02.xx](https://github.com/georchestra/mapstore2-georchestra/tree/2022.02.xx)
+but will soon 2023.01.xx)
+
+The versioning might not necessary match geOrchestra's, but follows mapstore's
+stable branch used in the
+[MapStore2)(https://github.com/georchestra/mapstore2-georchestra/blob/master/.gitmodules)
+submodule.
+
 ### geOrchestra
 
 From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `20.1.x` branch:
