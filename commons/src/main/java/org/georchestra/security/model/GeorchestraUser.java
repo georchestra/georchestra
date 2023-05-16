@@ -80,6 +80,12 @@ public class GeorchestraUser implements Serializable {
     /** Provided by request header {@code sec-notes} */
     private String notes;
 
+    /** Provided by request header {@code sec-ldap-warn} */
+    private Boolean ldapWarn;
+
+    /** Provided by request header {@code sec-ldap-remaining-days} */
+    private String ldapRemainingDays;
+
     public void setRoles(List<String> roles) {
         this.roles = roles == null ? new ArrayList<>() : roles;
     }

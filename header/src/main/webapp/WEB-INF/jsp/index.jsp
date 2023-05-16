@@ -99,6 +99,8 @@ Boolean analyticsadmin = false;
 Boolean extractorappadmin = false;
 Boolean msadmin = false;
 String sec_roles = request.getHeader("sec-roles");
+String sec_remaining_days=request.getHeader("sec-ldap-remaining-days");
+
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
@@ -267,6 +269,10 @@ if(sec_roles != null) {
         #go_head .expanded > a:after {
             content: '';
         }
+        #ldap_user_alert {
+            padding-right:50px;
+            display:inline-block;
+        }
     </style>
 
 </head>
@@ -408,9 +414,12 @@ if(sec_roles != null) {
 
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
-        <p class="logged">
-            <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
-        </p>
+                <p class="logged">
+                        <c:if test='<%= sec_remaining_days != null && !sec_remaining_days.equals("") %>'>
+                            <span id="ldap_user_alert" style="display:none;" >You have only <%= sec_remaining_days %> days to <a href="${consolePublicContextPath}/account/changePassword">change your password </a></span>
+                        </c:if>
+                    <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout" onclick="logout()"><fmt:message key="logout"/></a>
+                </p>
             </c:when>
             <c:otherwise>
         <p class="logged">
@@ -421,7 +430,19 @@ if(sec_roles != null) {
     </div>
 
     <script>
+        function logout() {
+            localStorage.removeItem("passwordChanged");
+        }
+    </script>
+    <script>
         (function(){
+            document.addEventListener('DOMContentLoaded', function() {
+                if (localStorage.getItem("passwordChanged") === null ||
+                    localStorage.getItem("passwordChanged") === undefined ||
+                    localStorage.getItem("passwordChanged") !== "true") {
+                        document.getElementById('ldap_user_alert').style.display = 'inline';
+                }
+            }, false);
             // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
             var url,
                 a = document.getElementById("login_a"),
