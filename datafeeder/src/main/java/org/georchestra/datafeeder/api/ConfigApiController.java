@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
@@ -53,6 +54,7 @@ public class ConfigApiController implements ConfigApi {
             throw ApiException.internalServerError(e, "Invalid parsing file from config: %s=%s", CONFIG_PROPERTY_NAME,
                     uri);
         }
+        ((ObjectNode) node).put("maxFileUploadSize", props.getFileUpload().getMaxFileSize());
         return ResponseEntity.ok(node);
     }
 }
