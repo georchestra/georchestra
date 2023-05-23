@@ -82,6 +82,46 @@ git push origin 20.1.0
 
 Then [create a new release](https://github.com/georchestra/geonetwork/releases).
 
+### CAS
+
+[https://github.com/georchestra/georchestra-cas-server](https://github.com/georchestra/georchestra-cas-server)
+
+```
+cd georchestra-cas-server
+git checkout master
+git pull -r # to get lastest commits
+git checkout -b 23.0.x
+
+# edit gradle.properties to replace dockerTag and datadirRef by: dockerTag=23.0.x and datadirRef=23.0
+git add gradle.properties
+git commit -am "23.0.x branch"
+git tag 23.0.0-georchestra
+git push --set-upstream origin 23.0.x --tag
+
+```
+
+Then [create a new release](https://github.com/georchestra/georchestra-cas-server/releases).
+
+### mapstore2-geOrchestra
+
+[https://github.com/georchestra/mapstore2-georchestra](https://github.com/georchestra/mapstore2-georchestra)
+
+Mapstore2-geOrchestra has its own [release
+procedure](https://github.com/georchestra/mapstore2-georchestra#release-procedure)
+and follow its own [release
+train](https://github.com/georchestra/mapstore2-georchestra/releases).
+
+It might not be necessary to make a release of mapstore2-georchestra when
+releasing geOrchestra, but if it's really needed, just place a tag on the
+latest commit in the stable branch (as of today,
+[2022.02.xx](https://github.com/georchestra/mapstore2-georchestra/tree/2022.02.xx)
+but will soon 2023.01.xx)
+
+The versioning might not necessary match geOrchestra's, but follows mapstore's
+stable branch used in the
+[MapStore2)(https://github.com/georchestra/mapstore2-georchestra/blob/master/.gitmodules)
+submodule.
+
 ### geOrchestra
 
 From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `20.1.x` branch:
@@ -107,7 +147,9 @@ Other tasks:
  * Change the `BTAG` variable in the Makefile to `20.1.x`
  * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
  * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
+ * Update the [github workflow](https://github.com/georchestra/georchestra/tree/master/.github/workflows) files to change the `refs/heads/22.` to `refs/heads/23.` to push on docker hub new images versions
  * Change the default branches in github repositories
+ * clean and archive old/none used branches
 
 Commit and propagate the changes:
 ```
@@ -209,9 +251,8 @@ Releasing a new version of geOrchestra when it comes to these new repositories i
 a branch so that an artifact can be generated.
 
 **To summarize, when releasing a patch release, do not forget to:**
-* `georchestra/mapstore2-georchestra`: Add a tag on top of the stable branch. As of today, `22.0.3-georchestra`, and since `20.1.7-georchestra`, we are still on the same commit, in branch `2021.02.xx`.
-* `georchestra/georchestra-cas-server`: Add a tag on top of the appropriate branch (`22.0.x`)
-* `georchestra/geonetwork-ui`: Add a tag on top of the appropriate branch (`22.0.x`)
+* `georchestra/mapstore2-georchestra`: Add a tag on top of the stable branch. As of today, `23.0.0-georchestra`, in branch `2022.02.xx`.
+* `georchestra/georchestra-cas-server`: Add a tag on top of the appropriate branch (`23.0.x`)
 
 ### Packaging
 
