@@ -53,6 +53,15 @@
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<s:message code="changePasswordForm.success" />
 			</div>
+            <script type="text/javascript">
+                localStorage.setItem("passwordChanged", "true");
+                setTimeout(() => {
+                    $( window ).load(function() {
+                        if (window.location.href.indexOf('reload')==-1) {
+                            window.location.replace(window.location.href+'?reload');
+                    }});
+                }, 1000);
+            </script>
 			</c:if>
 
 			<s:bind path="*">
