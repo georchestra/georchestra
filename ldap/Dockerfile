@@ -4,6 +4,7 @@
 
 FROM debian:bullseye
 
+ARG PM_POLICY=default
 ENV OPENLDAP_VERSION 2.4.57
 ENV RUN_AS_UID 101
 ENV RUN_AS_GID 101
@@ -12,6 +13,7 @@ ENV SLAPD_DOMAIN georchestra.org
 ENV SLAPD_PASSWORD secret
 ENV SLAPD_ADDITIONAL_SCHEMAS ppolicy
 ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh,ppolicy
+ENV SLAPD_PASSWORD_MGT_POLICY ${PM_POLICY}
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \

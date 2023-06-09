@@ -10,6 +10,11 @@ docker-build-ldap:
 	docker pull debian:bullseye
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
+	
+docker-build-ldap-withrotation:
+	docker pull debian:bullseye
+	cd ldap; \
+	docker build -t georchestra/ldap:${BTAG} --build-arg PM_POLICY=rotation .
 
 docker-build-database:
 	docker pull postgres:15
