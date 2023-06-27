@@ -4,7 +4,7 @@ geOrchestra has been validated to run against Debian Buster, but this version of
 current version of Java supported by geOrchestra. This will then require to install it from the AdoptOpenJDK packages repository (see below).
 
 In this section, you will learn how to install and setup the foundations of your geOrchestra SDI, according to the recommended architecture:
-![architecture](https://cloud.githubusercontent.com/assets/265319/5538326/ea5a8e32-8ab1-11e4-8d21-00685457a912.png)
+![architecture](https://github-production-user-asset-6210df.s3.amazonaws.com/265319/249208473-844ae06e-7f35-4d41-9807-ae5da328386c.png)
 
 The HAProxy / distributed GeoServer setup (in orange) is an alternative setup for high availability or high performance purposes, which is documented in a [dedicated tutorial](tutorials/geoserver_clustering.md).
 
