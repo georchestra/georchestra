@@ -399,9 +399,9 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
                 <p class="logged">
-                        <c:if test='<%= sec_remaining_days != null && !sec_remaining_days.equals("") %>'>
-                            <span id="ldap_user_alert" style="display:none;" >You have only <%= sec_remaining_days %> days to <a href="${consolePublicContextPath}/account/changePassword">change your password </a></span>
-                        </c:if>
+                       <c:if test='<%= sec_remaining_days != null && !sec_remaining_days.equals("") %>'>
+                            <span id="ldap_user_alert" style="display:none;" ><fmt:message key="remaining_days_msg_part1"/> <%= sec_remaining_days %> <fmt:message key="remaining_days_msg_part2"/> <a href="${consolePublicContextPath}/account/changePassword"><fmt:message key="remaining_days_msg_part3"/> </a></span>
+                       </c:if>
                     <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout" onclick="logout()"><fmt:message key="logout"/></a>
                 </p>
             </c:when>
