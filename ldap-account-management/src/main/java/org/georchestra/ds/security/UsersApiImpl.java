@@ -83,6 +83,19 @@ public class UsersApiImpl implements UsersApi {
         }
     }
 
+    @Override
+    public Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId) {
+        try {
+            return Optional.of(this.accountsDao.findByOAuth2ProviderId(oauth2ProviderId))//
+                    .filter(notPending().and(notProtected()))//
+                    .map(mapper::map);
+        } catch (NameNotFoundException e) {
+            return Optional.empty();
+        } catch (DataServiceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Predicate<Account> notProtected() {
         return this.userRule.isProtected().negate();
     }
