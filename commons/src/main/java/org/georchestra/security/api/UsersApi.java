@@ -35,6 +35,8 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByUsername(String username);
 
+    Optional<GeorchestraUser> findByEmail(String username);
+
     Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId);
 
     List<GeorchestraUser> findAll();
