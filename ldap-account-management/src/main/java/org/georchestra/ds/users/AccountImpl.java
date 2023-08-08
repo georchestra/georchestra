@@ -156,6 +156,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonIgnore
     private PasswordType passwordType;
 
+    @JsonProperty(UserSchema.OAUTH2_PROVIDER_ID_KEY)
+    private String oAuth2ProviderId;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -592,5 +595,15 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setPasswordType(PasswordType passwordType) {
         this.passwordType = passwordType;
+    }
+
+    @Override
+    public String getOAuth2ProviderId() {
+        return this.oAuth2ProviderId;
+    }
+
+    @Override
+    public void setOAuth2ProviderId(String oAuth2Provider) {
+        this.oAuth2ProviderId = oAuth2Provider;
     }
 }

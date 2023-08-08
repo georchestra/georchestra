@@ -3,10 +3,10 @@ objectClass: olcSchemaConfig
 cn: georchestra
 olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.1
     NAME 'georchestraUser'
-    DESC 'georchestra user'
+    DESC 'geOrchestra user'
     SUP top
     AUXILIARY
-    MAY ( privacyPolicyAgreementDate $ knowledgeInformation $ georchestraObjectIdentifier ))
+    MAY ( privacyPolicyAgreementDate $ knowledgeInformation $ georchestraObjectIdentifier $oAuth2ProviderId ))
 olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.1
     NAME 'privacyPolicyAgreementDate'
     DESC 'Epoch day when a user agrees to the privacy policy (terms and conditions)'
@@ -18,6 +18,12 @@ olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.2
     DESC 'A UUID identifying the geOrchestra object'
     SYNTAX 1.3.6.1.1.16.1
     SINGLE-VALUE  )
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.3
+    NAME 'oAuth2ProviderId'
+    DESC 'OAuth2 provider ID for external identity provider users)'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
 olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
     NAME 'georchestraOrg'
     DESC 'georchestra org'
@@ -30,4 +36,11 @@ olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
     SUP top
     AUXILIARY
     MAY (georchestraObjectIdentifier))
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.4
+    NAME 'georchestraOAuth2ProviderId'
+    DESC 'OAuth2 provider ID for external identity provider users'
+    SUP top
+    AUXILIARY
+    MAY (oAuth2ProviderId))
+
     

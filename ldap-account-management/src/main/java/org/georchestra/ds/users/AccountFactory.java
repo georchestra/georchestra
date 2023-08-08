@@ -51,8 +51,10 @@ public class AccountFactory {
      * @param email
      * @param phone
      * @param description
+     * @param oAuth2ProviderId
      * @return
      */
+
     public static Account createBrief(String uid, String password, String firstName, String surname, String email,
             String phone, String title, String description) {
 
@@ -67,6 +69,14 @@ public class AccountFactory {
         account.setTitle(title);
         account.setDescription(description);
         account.setSshKeys(new String[0]);
+        return account;
+    }
+
+    public static Account createBrief(String uid, String password, String firstName, String surname, String email,
+            String phone, String title, String description, String oAuth2ProviderId) {
+
+        Account account = createBrief(uid, password, firstName, surname, email, phone, title, description);
+        account.setOAuth2ProviderId(oAuth2ProviderId);
         return account;
     }
 
@@ -100,6 +110,7 @@ public class AccountFactory {
      * @param org
      * @param sshKeys
      * @param saslUser
+     * @param oAuth2ProviderId
      *
      * @return {@link Account}
      */
@@ -108,7 +119,7 @@ public class AccountFactory {
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
             String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys,
-            String saslUser) {
+            String saslUser, String oAuth2ProviderId) {
 
         Account a = new AccountImpl();
         a.setUniqueIdentifier(uuid);
@@ -138,6 +149,7 @@ public class AccountFactory {
         a.setOrg(org);
         a.setSshKeys(sshKeys);
         a.setSASLUser(saslUser);
+        a.setOAuth2ProviderId(oAuth2ProviderId);
 
         return a;
     }
@@ -183,6 +195,7 @@ public class AccountFactory {
         a.setPending(o.isPending());
         a.setSshKeys(o.getSshKeys());
         a.setSASLUser(o.getSASLUser());
+        a.setOAuth2ProviderId(o.getOAuth2ProviderId());
         return a;
     }
 

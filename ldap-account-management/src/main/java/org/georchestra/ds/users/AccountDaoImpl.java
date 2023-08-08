@@ -21,9 +21,7 @@ package org.georchestra.ds.users;
 
 import static java.util.stream.Collectors.toList;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
@@ -63,7 +61,6 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).
@@ -289,10 +286,22 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public Account findByEmail(final String email) throws DataServiceException, NameNotFoundException {
-        List<Account> accountList = new AccountSearcher().and(new EqualsFilter("mail", email))
+        List<Account> accountList = new AccountSearcher().and(new EqualsFilter(UserSchema.MAIL_KEY, email))
                 .getActiveOrPendingAccounts();
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
+        }
+        return accountList.get(0);
+    }
+
+    @Override
+    public Account findByOAuth2ProviderId(final String oAuth2ProviderId)
+            throws DataServiceException, NameNotFoundException {
+        List<Account> accountList = new AccountSearcher()
+                .and(new EqualsFilter(UserSchema.OAUTH2_PROVIDER_ID_KEY, oAuth2ProviderId))
+                .getActiveOrPendingAccounts();
+        if (accountList.isEmpty()) {
+            throw new NameNotFoundException("There is no user with this oAuth2ProviderId: " + oAuth2ProviderId);
         }
         return accountList.get(0);
     }
@@ -505,6 +514,8 @@ public class AccountDaoImpl implements AccountDao {
                     : "{SASL}" + account.getSASLUser();
             setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
         }
+
+        setAccountField(context, UserSchema.OAUTH2_PROVIDER_ID_KEY, account.getOAuth2ProviderId());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -565,7 +576,8 @@ public class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
                     context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
-                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null);
+                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null,
+                    context.getStringAttribute(UserSchema.OAUTH2_PROVIDER_ID_KEY));
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {
