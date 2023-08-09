@@ -75,7 +75,33 @@ The `oAuth2ProviderId` user attribute was added to the ldap schema.
 
 This attribute will contain OAuth2 user id when user is connected using external identity provider.
 
-To upgrade the ldap, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
+
+To upgrade the ldap, you need first to find the georchestra schema definition using the following command : 
+
+```
+ldapsearch -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret -b cn=schema,cn=config '(cn=*georchestra)' dn
+```
+
+Commands provided in [ldap_migration.ldif](ldap_migration.ldif) assume that required dn is :
+
+dn: cn={7}georchestra,cn=schema,cn=config
+
+If you find a different dn please update Commands provided in [ldap_migration.ldif](ldap_migration.ldif) file
+
+Also, required olcObjectClasses "georchestraUser" to be changed should be localized using the following command : 
+
+```
+ldapsearch -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret -b "cn=schema,cn=config" | grep 1.3.6.1.4.1.53611.1.1.1
+```
+Commands provided in [ldap_migration.ldif](ldap_migration.ldif) assume that required dn is :
+
+olcObjectClasses: {0}
+
+If you find a different olcObjectClasses number please update commands provided in [ldap_migration.ldif](ldap_migration.ldif) file
+
+Please follow previous steps with precaution before running final script.
+
+Finally, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
 
 ```
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif 
