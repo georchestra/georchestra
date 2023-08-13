@@ -57,7 +57,7 @@ public enum AdminLogType {
 
     USER_CREATED("A user was created"), USER_DELETED("A user was deleted"),
 
-    USER_PASSWORD_CHANGED("Password was changed for a user");
+    USER_PASSWORD_CHANGED("Password was changed for a user"), OAUTH2_USER_CREATED("An OAuth2 user was created");
 
     private String name;
 

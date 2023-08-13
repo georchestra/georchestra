@@ -62,16 +62,13 @@ import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.DuplicatedUidException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 /**
@@ -194,6 +191,12 @@ public final class NewAccountFormController {
         }
 
         return "createAccountForm";
+    }
+
+    @RequestMapping(value = "/account/log/{uid}", method = RequestMethod.GET)
+    public ResponseEntity<String> logOAuth2AccountCreation(@PathVariable("uid") String uid) {
+        logUtils.createLog(uid, AdminLogType.OAUTH2_USER_CREATED, null);
+        return new ResponseEntity<String>(HttpStatus.OK);
     }
 
     /**
