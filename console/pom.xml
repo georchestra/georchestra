@@ -270,7 +270,16 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-amqp</artifactId>
+      <version>1.1.4.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+      <version>1.1.1.RELEASE</version>
+    </dependency>
     <!-- commons -->
     <dependency>
       <groupId>commons-digester</groupId>

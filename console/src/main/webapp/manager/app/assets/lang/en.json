@@ -170,6 +170,7 @@
   "role.users_none"      : "No user",
   "role.filter_users"    : "Filter",
   "role.created"         : "Role created",
+  "logs.oauth2usercreated": "OAuth2 user created",
   "role.updated"         : "Role updated",
   "role.deleted"         : "Role deleted",
   "role.error"           : "Error creating role",

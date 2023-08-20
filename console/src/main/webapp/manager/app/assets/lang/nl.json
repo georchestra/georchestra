@@ -125,6 +125,7 @@
   "role.updated"          : "Gewijzigde rol",
   "role.deleted"          : "Rol verwijderd",
   "role.created"          : "Rol aangemaakt",
+  "logs.oauth2usercreated": "OAuth2-gebruiker gemaakt",
   "role.error"            : "Fout bij het maken van de rol",
   "role.warning"          : "Waarschuwing, deze actie is onomkeerbaar — ",
   "role.delete"           : "De rol verwijderen",
