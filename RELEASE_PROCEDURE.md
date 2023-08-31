@@ -10,16 +10,16 @@ From [master](https://github.com/georchestra/datadir/tree/master), create a new 
 ```
 git checkout master
 git pull origin master
-git checkout -b 20.1
-git push origin 20.1
+git checkout -b 23.1
+git push origin 23.1
 ```
 
 Same has to be done for the `docker-master` branch:
 ```
 git checkout docker-master
 git pull origin docker-master
-git checkout -b docker-20.1
-git push origin docker-20.1
+git checkout -b docker-23.1
+git push origin docker-23.1
 ```
 
 ### Docker
@@ -28,28 +28,28 @@ From [master](https://github.com/georchestra/docker/tree/master), create a new b
 ```
 git checkout master
 git pull origin master
-git checkout -b 20.1
+git checkout -b 23.1
 ```
 
 Update the image tags:
 ```
-sed -i 's/latest/20.1.x/g' docker-compose.yml
+sed -i 's/latest/23.1.x/g' docker-compose.yml
 ```
 
-Make sure the config folder tracks the `docker-20.1` datadir branch:
+Make sure the config folder tracks the `docker-23.1` datadir branch:
 ```
 $ cat .gitmodules
 [submodule "config"]
 	path = config
 	url = https://github.com/georchestra/datadir.git
-	branch = docker-20.1
+	branch = docker-23.1
 ```
 
 Manually update the README and `.github/dependabot.yml`
 
 ```
-git commit -am "20.1 branch"
-git push origin 20.1
+git commit -am "23.1 branch"
+git push origin 23.1
 ```
 
 ### GeoServer minimal datadir
@@ -58,26 +58,26 @@ From [master](https://github.com/georchestra/geoserver_minimal_datadir/tree/mast
 ```
 git checkout master
 git pull origin master
-git checkout -b 20.1
-git push origin 20.1
+git checkout -b 23.1
+git push origin 23.1
 ```
 
 Same has to be done for the `geofence` branch:
 ```
 git checkout geofence
 git pull origin geofence
-git checkout -b 20.1-geofence
-git push origin 20.1-geofence
+git checkout -b 23.1-geofence
+git push origin 23.1-geofence
 ```
 
 ### GeoNetwork
 
 ```
 cd geonetwork
-git checkout georchestra-gn3.10.2
-git pull origin georchestra-gn3.10.2
-git tag 20.1.0
-git push origin 20.1.0
+git checkout georchestra-gn4.2.x
+git pull origin georchestra-gn4.2.x
+git tag 23.1.0
+git push origin 23.1.0
 ```
 
 Then [create a new release](https://github.com/georchestra/geonetwork/releases).
@@ -124,27 +124,27 @@ submodule.
 
 ### geOrchestra
 
-From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `20.1.x` branch:
+From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `23.1.x` branch:
 ```
 git checkout master
 git pull origin master
-git checkout -b 20.1.x
+git checkout -b 23.1.x
 ```
 
 Update the GeoNetwork submodule to the release commit:
 ```
 cd geonetwork
 git fetch origin
-git checkout 20.1.0
+git checkout 23.1.0
 cd -
 ```
 
 Other tasks:
  * Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```)
  * Update the branch name for the Travis status logo
- * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `20.1`
+ * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `23.1`
  * Replace `99.master` by `${build.closest.tag.name}` in the root `pom.xml` so that debian packages have the right version
- * Change the `BTAG` variable in the Makefile to `20.1.x`
+ * Change the `BTAG` variable in the Makefile to `23.1.x`
  * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
  * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
  * Update the [github workflow](https://github.com/georchestra/georchestra/tree/master/.github/workflows) files to change the `refs/heads/22.` to `refs/heads/23.` to push on docker hub new images versions
@@ -154,24 +154,24 @@ Other tasks:
 Commit and propagate the changes:
 ```
 git add geonetwork
-git commit -am "20.1.x branch"
+git commit -am "23.1.x branch"
 ```
 
-When the release is ready on branch `20.1.x`, push a tag:
+When the release is ready on branch `23.1.x`, push a tag:
 ```
-git tag 20.1.0
-git push origin 20.1.x --tags
+git tag 23.1.0
+git push origin 23.1.x --tags
 ```
 
 The master branch requires some work too:
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's#<version>20.1-SNAPSHOT</version>#<version>20.2-SNAPSHOT</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>23.1-SNAPSHOT</version>#<version>20.2-SNAPSHOT</version>#' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
 
-geOrchestra 20.1.0 is now released, congrats !
+geOrchestra 23.1.0 is now released, congrats !
 
 Do not forget to :
  * update dependabot files (like https://github.com/georchestra/docker/blob/master/.github/dependabot.yml)
@@ -181,49 +181,54 @@ Do not forget to :
 
 ## Patch releases
 
-We're taking example on the 20.0.2 release.
+We're taking example on the 23.0.3 release.
 
-### GeoNetwork
-
-```
-cd geonetwork
-git checkout georchestra-gn3.8.2
-git pull origin georchestra-gn3.8.2
-git tag 20.0.2
-git push origin 20.0.2
-```
-
-Then [create a new release](https://github.com/georchestra/geonetwork/releases).
-
-
-### geOrchestra
+### geOrchestra & GeoNetwork submodule
 
 Create the release commit:
 ```
 cd georchestra
-git checkout 20.0.x
-git pull origin 20.0.x
-find ./ -name pom.xml -exec sed -i 's#<version>20.0.2-SNAPSHOT</version>#<version>20.0.2</version>#' {} \;
+git checkout 23.0.x
+git pull origin 23.0.x
+git submodule update --init --recursive
+cd geonetwork 
+git checkout georchestra-gn4.2.x
+git pull origin georchestra-gn4.2.x
+cd ../
+find ./ -name pom.xml -exec sed -i 's#version>23.0.3-SNAPSHOT</#version>23.0.3</#' {} \;
 cd geonetwork
-git fetch origin
-git checkout 20.0.2
-cd ..
+git add georchestra-integration/pom.xml
+git commit -m "23.0.3 release"
+git tag 23.0.3
+git push origin 23.0.3
+git push origin georchestra-gn4.2.x
+
+```
+Then [create a new release for GeoNetwork](https://github.com/georchestra/geonetwork/releases).
+
+```
+cd ../
 git add geonetwork
 git add -p
-git commit -m "20.0.2 release"
-git push origin 20.0.x
-git tag 20.0.2
-git push origin 20.0.2
+git commit -m "23.0.3 release"
+git push origin 23.0.x
+git tag 23.0.3
+git push origin 23.0.3
 ```
 
-Then [create a new release](https://github.com/georchestra/georchestra/releases).
+Then [create a new release for geOrchestra](https://github.com/georchestra/georchestra/releases).
 
-Finally, revert the maven version back to SNAPSHOT:
+Finally, revert the maven version back to SNAPSHOT and new patch release:
 ```
-find ./ -name pom.xml -exec sed -i 's#<version>20.0.2</version>#<version>20.0.3-SNAPSHOT</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#version>23.0.3</#version>20.0.4-SNAPSHOT</#' {} \; 
+cd geonetwork
+git add georchestra-integration/pom.xml
+git commit -m "back to SNAPSHOT"
+git push
+cd ../
 git add -p
 git commit -m "back to SNAPSHOT"
-git push origin 20.0.x
+git push origin 23.0.x
 ```
 
 Create new milestones for [georchestra](https://github.com/georchestra/georchestra/milestones) and [geonetwork](https://github.com/georchestra/geonetwork/milestones).
