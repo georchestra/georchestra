@@ -148,15 +148,10 @@ ldapsearch -x -LLL \
    -w "secret"
 ```
 
-
-
 ## Update password policy
-
-
 Rotation password policy to gateway (georchestra sub-module) to show alert and force password change for user periodically.
 
-
-pwdExpireWarning : Number of seconds without alert message, if delay it will print a message 
+**pwdExpireWarning** : Number of seconds without alert message, if delay it will print a message
 
 with the value 31536000 ( 31536000 / ( 60 * 60 * 24) ) = 365 days
 
@@ -169,13 +164,13 @@ changetype: modify
 delete: pwdExpireWarning
 -
 add: pwdExpireWarning
-pwdExpireWarning: 2592000
+pwdExpireWarning: 31536000
 -
 !
 
 ```
 
-pwdMaxAge : number of second to modify our password after it expired, if deplayed the account will be blocked
+**pwdMaxAge** : number of second to modify our password after it expired, if deplayed the account will be blocked
 
 with the value 2592000 ( 2592000 / ( 60 * 60 * 24 ) ) = 30 days
 
@@ -188,7 +183,7 @@ changetype: modify
 delete: pwdMaxAge
 -
 add: pwdMaxAge
-pwdMaxAge: 31536000
+pwdMaxAge: 2592000
 -
 !
 
