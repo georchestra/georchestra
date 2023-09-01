@@ -148,33 +148,25 @@ ldapsearch -x -LLL \
    -w "secret"
 ```
 
-## Update password policy
-Rotation password policy to gateway (georchestra sub-module) to show alert and force password change for user periodically.
+## About the password policy
 
-**pwdExpireWarning** : Number of seconds without alert message, if delay it will print a message
+If the `SLAPD_PASSWORD_MGT_POLICY` env var is set to "rotation" when starting the initial LDAP container startup (on an empty configuration volume), three LDIF files are loaded, which enforce password rotation.
 
-with the value 31536000 ( 31536000 / ( 60 * 60 * 24) ) = 365 days
+These three files are:
+ * rotationpolicyoverlay.ldif - sets up the `pwpolicy` password policy for regular users
+ * pwd_no_expire.ldif - sets up a `a pwd-no-expire` policy
+ * pwd_no_expire_users.ldif - sets a `pwd-no-expire` management policy to internal users
 
-You can update it with the following command : 
 
-```
-ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<!
-dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
-changetype: modify
-delete: pwdExpireWarning
--
-add: pwdExpireWarning
-pwdExpireWarning: 31536000
--
-!
+The `rotationpolicyoverlay.ldif` file has two key variables which define the password policy.
 
-```
 
-**pwdMaxAge** : number of second to modify our password after it expired, if deplayed the account will be blocked
+**pwdMaxAge** - when this delay is expired, geOrchestra will print a "change your password" message.
 
-with the value 2592000 ( 2592000 / ( 60 * 60 * 24 ) ) = 30 days
 
-You can update it with the following command :
+The default value is `31536000`, which corresponds to 365 days.
+
+It can be updated with the following command:
 
 ```
 ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<!
@@ -183,7 +175,27 @@ changetype: modify
 delete: pwdMaxAge
 -
 add: pwdMaxAge
-pwdMaxAge: 2592000
+pwdMaxAge: 63072000
+-
+!
+
+```
+
+
+**pwdExpireWarning** is the number of seconds granted to modify an expired password. Past this delay, the account will be blocked.
+
+The default value is `2592000`, which corresponds to 30 days.
+
+You can update it with the following command:
+
+```
+ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<!
+dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
+changetype: modify
+delete: pwdExpireWarning
+-
+add: pwdExpireWarning
+pwdExpireWarning: 648000
 -
 !
 
