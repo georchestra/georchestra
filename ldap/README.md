@@ -161,7 +161,7 @@ These three files are:
 The `rotationpolicyoverlay.ldif` file has two key variables which define the password policy.
 
 
-**pwdMaxAge** - when this delay is expired, geOrchestra will print a "change your password" message.
+**pwdMaxAge** - when this delay is expired, geOrchestra will disable the account. This field describe the total time (in seconds) of validity for a user password. 
 
 
 The default value is `31536000`, which corresponds to 365 days.
@@ -169,34 +169,34 @@ The default value is `31536000`, which corresponds to 365 days.
 It can be updated with the following command:
 
 ```
-ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<!
+ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<EOF
 dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
 changetype: modify
 delete: pwdMaxAge
 -
 add: pwdMaxAge
-pwdMaxAge: 63072000
+pwdMaxAge: 18396000
 -
-!
-
+EOF
 ```
 
 
-**pwdExpireWarning** is the number of seconds granted to modify an expired password. Past this delay, the account will be blocked.
+**pwdExpireWarning** is the number of seconds printing "change your password" message. It calculated with :  pwdExpireWarning = pwdMaxAge - TimeWithoutWaring
 
 The default value is `2592000`, which corresponds to 30 days.
+
+So for default value the password will be valid for 365 jours (pwdMaxAge), but from 30 days (pwdExpireWarning) before the expiration it will print the warning, so from the day 335.
 
 You can update it with the following command:
 
 ```
-ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<!
+ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<EOF
 dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
 changetype: modify
 delete: pwdExpireWarning
 -
 add: pwdExpireWarning
-pwdExpireWarning: 648000
+pwdExpireWarning: 2628000
 -
-!
-
+EOF
 ```
