@@ -161,7 +161,7 @@ These three files are:
 The `rotationpolicyoverlay.ldif` file has two key variables which define the password policy.
 
 
-**pwdMaxAge** - when this delay is expired, geOrchestra will disable the account. This field describe the total time (in seconds) of validity for a user password. 
+**pwdMaxAge** - Password validity time (expressed in seconds) - when this delay is expired, user will not be able to login anymore. 
 
 
 The default value is `31536000`, which corresponds to 365 days.
