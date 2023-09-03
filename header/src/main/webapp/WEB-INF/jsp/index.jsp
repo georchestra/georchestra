@@ -98,6 +98,8 @@ Boolean analyticsadmin = false;
 Boolean msadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 String sec_remaining_days=request.getHeader("sec-ldap-remaining-days");
+String sec_organisation=request.getHeader("sec-org");
+
 
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
@@ -402,7 +404,11 @@ if(sec_roles != null) {
                        <c:if test='<%= sec_remaining_days != null && !sec_remaining_days.equals("") %>'>
                             <span id="ldap_user_alert" style="display:none;" ><fmt:message key="remaining_days_msg_part1"/> <%= sec_remaining_days %> <fmt:message key="remaining_days_msg_part2"/> <a href="${consolePublicContextPath}/account/changePassword"><fmt:message key="remaining_days_msg_part3"/> </a></span>
                        </c:if>
-                    <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout" onclick="logout()"><fmt:message key="logout"/></a>
+                        <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a>
+                       <c:if test='<%= sec_organisation != null && !sec_organisation.equals("INRAE") %>'>
+                         <span class="light"> | </span><a href="/logout" onclick="logout()"><fmt:message key="logout"/></a>
+                       </c:if>
+
                 </p>
             </c:when>
             <c:otherwise>
