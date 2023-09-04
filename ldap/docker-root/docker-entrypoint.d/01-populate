@@ -56,11 +56,11 @@ if [ ! -f /etc/ldap/slapd.d/initialized ]; then
         perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"        /georchestra.ldif
         perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"     /georchestra.ldif
         ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /georchestra.ldif
+
         if [ "$SLAPD_PASSWORD_MGT_POLICY" == 'rotation' ]; then
-    	echo "Updating password management policy..."
-		ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /pwd_no_expire_users.ldif
-	fi
-    fi
+            echo "Setting a pwd-no-expire management policy to internal users"
+            ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /pwd_no_expire_users.ldif
+        fi
     fi
     echo "Populating LDAP tree: OK"
 
