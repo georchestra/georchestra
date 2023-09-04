@@ -181,11 +181,17 @@ EOF
 ```
 
 
-**pwdExpireWarning** is the number of seconds printing "change your password" message. It calculated with :  pwdExpireWarning = pwdMaxAge - TimeWithoutWaring
+**pwdExpireWarning** is the number of seconds before the password expires. Users are kindly remembered to change password. 
+
+To sum up: pwdExpireWarning + "time without warning" = pwdMaxAge.
 
 The default value is `2592000`, which corresponds to 30 days.
 
-So for default value the password will be valid for 365 jours (pwdMaxAge), but from 30 days (pwdExpireWarning) before the expiration it will print the warning, so from the day 335.
+geOrchestra's default password policy will:
+
+* warn users 335 days after their last password change
+* prevent users from logging in 365 days after their last password change
+
 
 You can update it with the following command:
 
