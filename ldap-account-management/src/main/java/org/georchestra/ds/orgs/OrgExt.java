@@ -35,71 +35,17 @@ import lombok.ToString;
 class OrgExt extends ReferenceAware implements Cloneable {
 
     private @Getter @Setter UUID uniqueIdentifier;
-    private String id;
-    private String orgType = null;
+    private @Getter @Setter String id;
+    private @Getter @Setter String orgType = null;
     // these attribute default values are the empty string to match how they're
     // mapped to the ldap context and keep equals and hashCode consistency
-    private String address = "";
-    private String description = "";
-    private String url = "";
-    private String logo = "";
-    private String note = "";
+    private @Getter @Setter String address = "";
+    private @Getter @Setter String description = "";
+    private @Getter @Setter String url = "";
+    private @Getter @Setter String logo = "";
+    private @Getter @Setter String note = "";
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getOrgType() {
-        return orgType;
-    }
-
-    public void setOrgType(String orgType) {
-        this.orgType = orgType;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
+    private @Getter @Setter String mail = "";
 
     @Override
     public OrgExt clone() {

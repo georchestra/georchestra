@@ -57,6 +57,8 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ORG_TYPE = "orgType";
 
+    public static final String JSON_MAIL = "mail";
+
     private String id;
     private String name;
     private String shortName;
@@ -212,5 +214,14 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
 
     public void setUniqueIdentifier(UUID uuid) {
         this.ext.setUniqueIdentifier(uuid);
+    }
+
+    @JsonProperty(JSON_MAIL)
+    public String getMail() {
+        return this.ext.getMail();
+    }
+
+    public void setMail(String mail) {
+        this.ext.setMail(mail);
     }
 }

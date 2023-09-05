@@ -221,6 +221,7 @@ public class OrgsDaoImpl implements OrgsDao {
             if (org.getUniqueIdentifier() == null) {
                 org.setUniqueIdentifier(UUID.randomUUID());
             }
+            setOrDeleteField(context, "mail", org.getMail());
             setOrDeleteField(context, "georchestraObjectIdentifier", org.getUniqueIdentifier().toString());
             setOrDeleteField(context, "knowledgeInformation", org.getNote());
             setOrDeleteField(context, "description", org.getDescription());
@@ -235,7 +236,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
         @Override
         protected String[] getObjectClass() {
-            return new String[] { "top", "organization", "georchestraOrg" };
+            return new String[] { "top", "organization", "georchestraOrg", "extensibleObject" };
         }
 
         @Override
@@ -256,6 +257,7 @@ public class OrgsDaoImpl implements OrgsDao {
                     orgExt.setNote(listToCommaSeparatedString(attrs, "knowledgeInformation"));
                     orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
                     orgExt.setPending(pending);
+                    orgExt.setMail(asString(attrs.get("mail")));
                     return orgExt;
                 }
 
