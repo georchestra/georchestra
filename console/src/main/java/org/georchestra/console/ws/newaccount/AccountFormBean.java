@@ -19,6 +19,9 @@
 
 package org.georchestra.console.ws.newaccount;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
@@ -55,6 +58,8 @@ public class AccountFormBean implements Serializable {
     private String orgDescription;
     private String orgUrl;
     private String orgLogo;
+
+    private @Getter @Setter String orgMail;
 
     public String getRecaptcha_response_field() {
         return recaptcha_response_field;

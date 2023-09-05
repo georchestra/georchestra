@@ -167,7 +167,7 @@ public final class NewAccountFormController {
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
                 "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName", "orgShortName",
-                "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo",
+                "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
                 "recaptcha_response_field");
     }
 
@@ -240,6 +240,7 @@ public final class NewAccountFormController {
                 org.setDescription(formBean.getOrgDescription());
                 org.setUrl(formBean.getOrgUrl());
                 org.setLogo(formBean.getOrgLogo());
+                org.setMail(formBean.getOrgMail());
                 // Parse and store cities
                 orgCities = orgCities.trim();
                 if (orgCities.length() > 0)
