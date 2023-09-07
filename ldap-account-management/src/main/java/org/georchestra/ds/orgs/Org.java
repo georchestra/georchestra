@@ -45,6 +45,21 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
 
+    public static final String JSON_UUID = "uuid";
+    public static final String JSON_ID = "id";
+    public static final String JSON_NAME = "name";
+    public static final String JSON_SHORT_NAME = "shortName";
+    public static final String JSON_CITIES = "cities";
+    public static final String JSON_NOTE = "note";
+    public static final String JSON_MEMBERS = "members";
+    public static final String JSON_PENDING = "pending";
+    public static final String JSON_DESCRIPTION = "description";
+    public static final String JSON_URL = "url";
+    public static final String JSON_LOGO = "logo";
+    public static final String JSON_ADDRESS = "address";
+    public static final String JSON_ORG_TYPE = "orgType";
+    public static final String JSON_MAIL = "mail";
+
     private String id;
     private String name;
     private String shortName;
@@ -94,7 +109,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
     }
 
     // property delegation to OrgExt, this is just an implementation detail //
-    @JsonProperty("orgType")
+    @JsonProperty(JSON_ORG_TYPE)
     public String getOrgType() {
         return this.ext.getOrgType();
     }
@@ -103,7 +118,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setOrgType(orgType);
     }
 
-    @JsonProperty("address")
+    @JsonProperty(JSON_ADDRESS)
     public String getAddress() {
         return this.ext.getAddress();
     }
@@ -112,7 +127,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setAddress(address);
     }
 
-    @JsonProperty("description")
+    @JsonProperty(JSON_DESCRIPTION)
     public String getDescription() {
         return ext.getDescription();
     }
@@ -121,7 +136,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setDescription(description);
     }
 
-    @JsonProperty("note")
+    @JsonProperty(JSON_NOTE)
     public String getNote() {
         return ext.getNote();
     }
@@ -130,7 +145,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setNote(note);
     }
 
-    @JsonProperty("url")
+    @JsonProperty(JSON_URL)
     public String getUrl() {
         return ext.getUrl();
     }
@@ -139,7 +154,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setUrl(url);
     }
 
-    @JsonProperty("logo")
+    @JsonProperty(JSON_LOGO)
     public String getLogo() {
         return ext.getLogo();
     }
@@ -148,7 +163,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setLogo(logo);
     }
 
-    @JsonProperty("uuid")
+    @JsonProperty(JSON_UUID)
     public UUID getUniqueIdentifier() {
         return ext.getUniqueIdentifier();
     }
@@ -157,7 +172,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setUniqueIdentifier(uuid);
     }
 
-    @JsonProperty("mail")
+    @JsonProperty(JSON_MAIL)
     public String getMail() {
         return this.ext.getMail();
     }
