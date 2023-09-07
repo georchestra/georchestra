@@ -65,6 +65,8 @@ public class Organization implements Serializable {
     /** Provided by request header {@code sec-org-notes} */
     private String notes;
 
+    private String mail;
+
     /**
      * String that somehow represents the current version, may be a timestamp, a
      * hash, etc. Provided by request header {@code sec-lastupdated}
