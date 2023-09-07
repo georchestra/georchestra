@@ -50,6 +50,7 @@ public interface OrganizationMapper {
     @Mapping(target = "withNotes", ignore = true)
     @Mapping(target = "withLastUpdated", ignore = true)
     @Mapping(target = "withMembers", ignore = true)
+    @Mapping(target = "withMail", source = "mail", ignore = true)
     Organization map(Org org);
 
     @AfterMapping

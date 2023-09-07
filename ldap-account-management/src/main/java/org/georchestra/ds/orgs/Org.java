@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
@@ -38,26 +39,11 @@ import lombok.ToString;
  * @implNote as an implementation detail, non standard LDAP organization
  *           properties are delegated to an {@link OrgExt} instance variable.
  */
+@Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
-
-    public static final String JSON_UUID = "uuid";
-    public static final String JSON_ID = "id";
-    public static final String JSON_NAME = "name";
-    public static final String JSON_SHORT_NAME = "shortName";
-    public static final String JSON_CITIES = "cities";
-    public static final String JSON_NOTE = "note";
-    public static final String JSON_MEMBERS = "members";
-    public static final String JSON_PENDING = "pending";
-    public static final String JSON_DESCRIPTION = "description";
-    public static final String JSON_URL = "url";
-    public static final String JSON_LOGO = "logo";
-    public static final String JSON_ADDRESS = "address";
-    public static final String JSON_ORG_TYPE = "orgType";
-
-    public static final String JSON_MAIL = "mail";
 
     private String id;
     private String name;
@@ -67,17 +53,6 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
 
     @JsonIgnore
     private @NonNull OrgExt ext = new OrgExt();
-
-    Org setOrgExt(OrgExt orgExt) {
-        this.ext = orgExt == null ? new OrgExt() : orgExt;
-        this.ext.setId(this.getId());
-        this.ext.setPending(this.isPending());
-        return this;
-    }
-
-    OrgExt getExt() {
-        return this.ext;
-    }
 
     @Override
     public void setPending(boolean pending) {
@@ -90,70 +65,36 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setId(id);
     }
 
-    @JsonProperty(JSON_ID)
-    public String getId() {
-        return id;
-    }
-
-    @JsonProperty(JSON_NAME)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @JsonProperty(JSON_SHORT_NAME)
-    public String getShortName() {
-        return shortName;
-    }
-
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
-    }
-
-    @JsonProperty(JSON_CITIES)
-    public List<String> getCities() {
-        return cities;
-    }
-
-    public void setCities(List<String> cities) {
-        this.cities = cities;
-    }
-
-    @JsonProperty(JSON_MEMBERS)
-    public List<String> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<String> members) {
-        this.members = members;
-    }
-
     @Override
     public int compareTo(Org org) {
         return this.getName().compareToIgnoreCase(org.getName());
     }
 
     @Override
-    @JsonProperty(JSON_PENDING)
-    public boolean isPending() {
-        return isPending;
-    }
-
-    @Override
     public Org clone() {
         try {
-            return (Org) super.clone();
+            Org clone = (Org) super.clone();
+            clone.setCities(new LinkedList<>(cities));
+            clone.setMembers(new LinkedList<>(members));
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // property delegation to OrgExt, this is just an implementation detail //
+    Org setOrgExt(OrgExt orgExt) {
+        this.ext = orgExt == null ? new OrgExt() : orgExt;
+        this.ext.setId(this.getId());
+        this.ext.setPending(this.isPending());
+        return this;
+    }
 
-    @JsonGetter(JSON_ORG_TYPE)
+    OrgExt getExt() {
+        return this.ext;
+    }
+
+    // property delegation to OrgExt, this is just an implementation detail //
+    @JsonProperty("orgType")
     public String getOrgType() {
         return this.ext.getOrgType();
     }
@@ -162,7 +103,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setOrgType(orgType);
     }
 
-    @JsonGetter(JSON_ADDRESS)
+    @JsonProperty("address")
     public String getAddress() {
         return this.ext.getAddress();
     }
@@ -171,7 +112,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setAddress(address);
     }
 
-    @JsonProperty(JSON_DESCRIPTION)
+    @JsonProperty("description")
     public String getDescription() {
         return ext.getDescription();
     }
@@ -180,7 +121,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setDescription(description);
     }
 
-    @JsonProperty(JSON_NOTE)
+    @JsonProperty("note")
     public String getNote() {
         return ext.getNote();
     }
@@ -189,7 +130,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setNote(note);
     }
 
-    @JsonProperty(JSON_URL)
+    @JsonProperty("url")
     public String getUrl() {
         return ext.getUrl();
     }
@@ -198,7 +139,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setUrl(url);
     }
 
-    @JsonProperty(JSON_LOGO)
+    @JsonProperty("logo")
     public String getLogo() {
         return ext.getLogo();
     }
@@ -207,7 +148,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setLogo(logo);
     }
 
-    @JsonProperty(JSON_UUID)
+    @JsonProperty("uuid")
     public UUID getUniqueIdentifier() {
         return ext.getUniqueIdentifier();
     }
@@ -216,7 +157,7 @@ public class Org extends ReferenceAware implements Comparable<Org>, Cloneable {
         this.ext.setUniqueIdentifier(uuid);
     }
 
-    @JsonProperty(JSON_MAIL)
+    @JsonProperty("mail")
     public String getMail() {
         return this.ext.getMail();
     }
