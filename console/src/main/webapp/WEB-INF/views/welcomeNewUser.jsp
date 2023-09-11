@@ -19,7 +19,14 @@
 	<div class="jumbotron">
 		<div class="container">
 			<h1><s:message code="newUserWelcome.title" /></h1>
-			<p><s:message code="newUserWelcome.body" /></p>
+			<c:choose>
+			    <c:when test="${moderatedSignup}">
+			    <p><s:message code="newUserWelcome.body" /></p>
+			    </c:when>
+			    <c:otherwise>
+			    <p><s:message code="newUserWelcomeNoModeration.body" /></p>
+			    </c:otherwise>
+			</c:choose>
 			<p><a class="btn btn-primary btn-lg" href='/console/'><s:message code="newUserWelcome.link" /></a></p>
 		</div>
 	</div>
