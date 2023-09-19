@@ -217,7 +217,7 @@ public final class NewAccountFormController {
             throws IOException, SQLException {
 
         populateOrgsAndOrgTypes(model);
-
+        model.addAttribute("moderatedSignup", this.moderatedSignup);
         validateFields(formBean, result);
 
         if (result.hasErrors()) {
