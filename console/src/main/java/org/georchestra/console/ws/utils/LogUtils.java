@@ -75,6 +75,32 @@ public class LogUtils {
         return log;
     }
 
+    public AdminLogEntry createOAuth2Log(String target, AdminLogType type, String values) {
+
+        AdminLogEntry log = new AdminLogEntry();
+        String admin = "anonymousUser";
+        // case where we don't need to log changes
+        if (values == null || values.isEmpty()) {
+            log = new AdminLogEntry(admin, target, type, new Date());
+        } else {
+            log = new AdminLogEntry(admin, target, type, new Date(), values);
+        }
+        if (logDao != null) {
+            try {
+                logDao.save(log);
+            } catch (DataIntegrityViolationException divex) {
+                // Value could be to large for field size
+                LOG.error("Could not save changed values for admin log, reset value : " + values, divex);
+                JSONObject errorsjson = new JSONObject();
+                errorsjson.put("error",
+                        "Error while inserting admin log in database, see admin log file for more information");
+                log.setChanged(errorsjson.toString());
+                logDao.save(log);
+            }
+        }
+        return log;
+    }
+
     /**
      * Return JSONObject from informations to be save as log detail into database.
      * This allow to modify details before create log.

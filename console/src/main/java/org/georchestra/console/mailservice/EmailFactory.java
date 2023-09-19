@@ -64,7 +64,10 @@ public class EmailFactory {
     private String accountUidRenamedEmailSubject;
 
     private String newAccountNotificationEmailFile;
+
     private String newAccountNotificationEmailSubject;
+
+    private String newOAuth2AccountNotificationEmailSubject;
 
     private String publicUrl;
     private String instanceName;
@@ -178,13 +181,34 @@ public class EmailFactory {
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
                 this.instanceName);
+
+        email.set("oauth2", "");
         email.set("name", userName);
-        email.set("uid", uid);
+        email.set("uid_msg", "User ID: " + uid + "\n");
         email.set("email", userEmail);
         if (userOrg == null) {
             userOrg = "";
         }
-        email.set("org", userOrg);
+        email.set("org_msg", "User Organization: " + userOrg + "\n");
+        email.set("provider_msg", "");
+        email.set("user_id", uid);
+        email.send(reallySend);
+    }
+
+    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String userName, String userEmail,
+            String provider, boolean reallySend) throws MessagingException {
+
+        Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
+                this.emailHtml, userEmail, // Reply-to
+                this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
+                this.newAccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
+        email.set("name", userName);
+        email.set("email", userEmail);
+        email.set("uid_msg", "");
+        email.set("org_msg", "");
+        email.set("provider_msg", "Provider : " + provider + "\n");
+        email.set("oauth2", "OAuth 2 ");
+        email.set("user_id", userEmail);
         email.send(reallySend);
     }
 
@@ -282,6 +306,10 @@ public class EmailFactory {
 
     public void setNewAccountNotificationEmailSubject(String newAccountNotificationEmailSubject) {
         this.newAccountNotificationEmailSubject = newAccountNotificationEmailSubject;
+    }
+
+    public void setNewOAuth2AccountNotificationEmailSubject(String newOAuth2AccountNotificationEmailSubject) {
+        this.newOAuth2AccountNotificationEmailSubject = newOAuth2AccountNotificationEmailSubject;
     }
 
     public void setPublicUrl(String publicUrl) {
