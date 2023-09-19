@@ -104,7 +104,6 @@ public class RabbitmqEventsListener implements MessageListener {
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
     }
