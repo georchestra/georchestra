@@ -76,6 +76,7 @@ public class GeorchestraUserHasher {
             hasher.putUnencodedChars(nonNull(org.getName()));
             hasher.putUnencodedChars(nonNull(org.getLastUpdated()));
             hasher.putUnencodedChars(nonNull(org.getCategory()));
+            hasher.putUnencodedChars(nonNull(org.getMail()));
             hasher.putUnencodedChars(nonNull(org.getDescription()));
             hasher.putUnencodedChars(nonNull(org.getLinkage()));
             hasher.putUnencodedChars(nonNull(org.getNotes()));
