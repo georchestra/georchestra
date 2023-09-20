@@ -18,10 +18,10 @@
  */
 package org.georchestra.security.api;
 
-import org.georchestra.security.model.GeorchestraUser;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.georchestra.security.model.GeorchestraUser;
 
 public interface UsersApi {
 
@@ -35,13 +35,9 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByUsername(String username);
 
-    default Optional<GeorchestraUser> findByEmail(String username) {
-        return Optional.empty();
-    };
+    Optional<GeorchestraUser> findByEmail(String username);
 
-    default Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId) {
-        return Optional.empty();
-    };
+    Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId);
 
     List<GeorchestraUser> findAll();
 }
