@@ -8,6 +8,11 @@
     <!-- obtain admin rights to create the an exchange -->
     <rabbit:admin connection-factory="connectionFactory" />
 
+    <bean id="rabbitmqEventsSender" class="org.georchestra.console.events.RabbitmqEventsSender" depends-on="eventTemplate">
+        <property name="eventTemplate" ref="eventTemplate"/>
+    </bean>
+
     <!-- create a bean which can send message to OAUTH2-EXCHANGE for the Java program to call -->
     <rabbit:template id="eventTemplate" connection-factory="connectionFactory"  exchange="OAUTH2-EXCHANGE-GATEWAY"/>
+
 </beans>
