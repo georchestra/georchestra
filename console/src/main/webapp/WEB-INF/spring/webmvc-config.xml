@@ -324,12 +324,4 @@
     <constructor-arg value="${AreasUrl:cities.geojson}"/>
   </bean>
 
-  <bean id="rabbitmqEventsSender" class="org.georchestra.console.events.RabbitmqEventsSender" depends-on="eventTemplate">
-    <property name="eventTemplate" ref="eventTemplate"/>
-  </bean>
-
-  <import resource="file:webapps/console/WEB-INF/spring/rabbit-listener-context.xml"/>
-
-  <import resource="file:webapps/console/WEB-INF/spring/rabbit-sender-context.xml"/>
-
 </beans>

@@ -4,10 +4,15 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
     http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
     <!--  first following line creates a rabbit connection factory with specified parameters -->
-    <rabbit:connection-factory id="connectionFactory" host="${rabbitmqHost}" port="${rabbitmqPort}" username="${rabbitmqUser}" password="${rabbitmqPassword}" />
+    <rabbit:connection-factory id="connectionFactory" host="${rabbitmqHost}" port="5672" username="${rabbitmqUser}" password="${rabbitmqPassword}" />
     <!-- obtain admin rights to create the an exchange -->
     <rabbit:admin connection-factory="connectionFactory" />
 
+    <bean id="rabbitmqEventsSender" class="org.georchestra.console.events.RabbitmqEventsSender" depends-on="eventTemplate">
+        <property name="eventTemplate" ref="eventTemplate"/>
+    </bean>
+
     <!-- create a bean which can send message to OAUTH2-EXCHANGE for the Java program to call -->
     <rabbit:template id="eventTemplate" connection-factory="connectionFactory"  exchange="OAUTH2-EXCHANGE-GATEWAY"/>
+
 </beans>
