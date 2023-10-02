@@ -62,7 +62,7 @@ jobs:
       run: ./mvnw -f datafeeder-ui/ clean package docker:build -Pdocker -DskipTests -DdockerImageName=georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
-      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
@@ -77,24 +77,26 @@ jobs:
         docker push georchestra/datafeeder-frontend:latest
 
     - name: "Pushing release branch to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io (22.x series)"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/datafeeder:${{ steps.version.outputs.VERSION }}
         docker push georchestra/datafeeder-frontend:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
       run: ./mvnw deploy -pl :datafeeder -P-all,datafeeder -DskipTests -ntp -Dfmt.skip=true
+      if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
         ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
+      if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         find .m2/repository -name "*SNAPSHOT*" -type d | xargs rm -rf {}
