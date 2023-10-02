@@ -283,9 +283,9 @@ public class LogUtils {
         if (!org.getNote().equals(json.optString(Org.JSON_NOTE))) {
             createAndLogDetails(id, Org.JSON_NOTE, org.getNote(), json.optString(Org.JSON_NOTE), type);
         }
-        // mail addres of org changed
-        if (!org.getMail().equals(json.optString(Org.JSON_MAIL))) {
-            createAndLogDetails(id, Org.JSON_MAIL, org.getNote(), json.optString(Org.JSON_MAIL), type);
+        // mail address of org changed
+        if (!json.optString(Org.JSON_MAIL).equals(org.getMail())) {
+            createAndLogDetails(id, Org.JSON_MAIL, org.getMail(), json.optString(Org.JSON_MAIL), type);
         }
     }
 
