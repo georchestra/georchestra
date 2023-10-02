@@ -110,6 +110,7 @@
   "org.userlabel"         : "Add",
   "org.description"       : "Description",
   "org.url"               : "Website",
+  "org.mail"               : "Mail",
   "org.logo"              : "Logo",
   "org.note"              : "Internal Notes",
   "org.cities"            : "Area",

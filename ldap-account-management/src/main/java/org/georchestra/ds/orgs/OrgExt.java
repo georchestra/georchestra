@@ -32,9 +32,11 @@ import lombok.ToString;
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Getter
+@Setter
 class OrgExt extends ReferenceAware implements Cloneable {
 
-    private @Getter @Setter UUID uniqueIdentifier;
+    private UUID uniqueIdentifier;
     private String id;
     private String orgType = null;
     // these attribute default values are the empty string to match how they're
@@ -44,62 +46,7 @@ class OrgExt extends ReferenceAware implements Cloneable {
     private String url = "";
     private String logo = "";
     private String note = "";
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getOrgType() {
-        return orgType;
-    }
-
-    public void setOrgType(String orgType) {
-        this.orgType = orgType;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
+    private String mail = "";
 
     @Override
     public OrgExt clone() {

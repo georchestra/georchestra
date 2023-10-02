@@ -7,12 +7,12 @@ docker-pull-jetty:
 	docker pull jetty:9-jre11
 
 docker-build-ldap:
-	docker pull debian:bullseye
+	docker pull debian:bookworm
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
 	
 docker-build-ldap-withrotation:
-	docker pull debian:bullseye
+	docker pull debian:bookworm
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} --build-arg PM_POLICY=rotation .
 

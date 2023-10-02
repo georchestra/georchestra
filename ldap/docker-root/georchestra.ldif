@@ -278,7 +278,9 @@ dn: o=PSC,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 objectClass: georchestraOrg
+objectClass: extensibleObject
 o: PSC
+mail: psc@georchestra.org
 businessCategory: Association
 postalAddress: 127 rue georchestra, 73590 Chamblille
 description: Association PSC geOrchestra
@@ -354,7 +356,9 @@ dn: o=C2C,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 objectClass: georchestraOrg
+objectClass: extensibleObject
 o: C2C
+mail: georchestra@camptocamp.com
 businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 labeledURI: https://www.camptocamp.com/
@@ -376,6 +380,8 @@ dn: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 objectClass: georchestraOrg
+objectClass: extensibleObject
+mail: pendingorg@georchestra.org
 o: pendingorg
 businessCategory: Company
 postalAddress: Null island

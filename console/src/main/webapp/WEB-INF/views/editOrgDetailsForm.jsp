@@ -85,6 +85,9 @@
           <t:input path="url" required="${urlRequired}">
             <jsp:attribute name="label"><s:message code="url.label"/></jsp:attribute>
           </t:input>
+          <t:input path="mail" required="${mailRequired}">
+            <jsp:attribute name="label"><s:message code="mail.label"/></jsp:attribute>
+          </t:input>
           <div class="form-group">
             <label for="logo" class="control-label col-lg-4"><s:message
                 code="logo.label"/></label>

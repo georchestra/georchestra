@@ -124,6 +124,10 @@
                         <jsp:attribute name="label"><s:message code="org.creation.orgUrl"/></jsp:attribute>
                     </t:input>
 
+                    <t:input path="orgMail" required="${orgMailRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgMail"/></jsp:attribute>
+                    </t:input>
+
                     <t:textarea path="orgLogo" required="${orgLogoRequired}">
                         <jsp:attribute name="label"><s:message code="org.creation.orgLogo"/></jsp:attribute>
                     </t:textarea>
