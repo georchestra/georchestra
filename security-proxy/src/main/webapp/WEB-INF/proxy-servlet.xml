@@ -22,6 +22,7 @@
             <map>
                 <entry key="headerHeight" value="${headerHeight}" />
                 <entry key="headerUrl" value="${headerUrl}" />
+                <entry key="headerScript" value="${headerScript}" />
             </map>
         </property>
     </bean>
