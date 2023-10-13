@@ -89,7 +89,7 @@ public @Data class DataFeederConfigurationProperties {
         private String templateRecordId;
         private URI templateRecord;
         private URI templateTransform;
-        private String defaultResourceType = "series";
+        private String defaultResourceType = "dataset";
     }
 
     @Data
