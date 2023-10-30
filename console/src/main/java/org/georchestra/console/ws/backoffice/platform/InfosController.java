@@ -19,6 +19,8 @@
 
 package org.georchestra.console.ws.backoffice.platform;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,9 +42,13 @@ public class InfosController {
     private String saslServer;
 
     @Value("${analyticsEnabled:true}")
+    @Getter
+    @Setter
     private boolean analyticsEnabled;
 
     @Value("${extractorappEnabled:true}")
+    @Getter
+    @Setter
     private boolean extractorappEnabled;
 
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
