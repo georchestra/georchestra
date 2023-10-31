@@ -125,8 +125,14 @@ public class PasswordRecoveryFormController {
                 return "userManagedBySASL";
             }
         }
-
         HttpSession session = request.getSession();
+
+        String errmsg = (String) session.getAttribute("errmsg");
+        if ("bad.token".equals(errmsg)) {
+            session.removeAttribute("errmsg");
+            model.addAttribute("badtoken", true);
+        }
+
         PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
         formBean.setEmail(email);
 

@@ -57,6 +57,13 @@
 			</div>
 			</c:if>
 
+			<c:if test="${badtoken}">
+                <div id="message" class="alert alert-dismissable alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <s:message code="passwordRecoveryForm.badtoken" />
+                </div>
+			</c:if>
+
 			<s:bind path="*">
 			<c:if test="${status.error}">
 			<div id="message" class="alert alert-dismissable alert-danger">
@@ -64,6 +71,7 @@
 				<s:message code="form.error" />
 			</div>
 			</c:if>
+
 			</s:bind>
 
 			<fieldset>
