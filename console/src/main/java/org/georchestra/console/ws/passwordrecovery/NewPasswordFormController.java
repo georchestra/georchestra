@@ -85,8 +85,8 @@ public class NewPasswordFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/newPassword", method = RequestMethod.GET)
-    public String setupForm(@RequestParam("token") String token, Model model, HttpServletRequest request)
-            throws IOException {
+    public String setupForm(@RequestParam(name = "token", required = false) String token, Model model,
+            HttpServletRequest request) throws IOException {
         model.addAttribute("recaptchaActivated", reCaptchaActivated);
         try {
             final String uid = this.userTokenDao.findUserByToken(token);
