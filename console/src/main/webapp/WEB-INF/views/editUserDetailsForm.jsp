@@ -77,12 +77,34 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
 
     <fieldset>
       <legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
-      <t:input path="firstName" required="${firstNameRequired}">
-        <jsp:attribute name="label"><s:message code="firstName.label"/></jsp:attribute>
-      </t:input>
-      <t:input path="surname" required="${surnameRequired}">
-        <jsp:attribute name="label"><s:message code="surname.label"/></jsp:attribute>
-      </t:input>
+      <c:choose>
+        <c:when test="${editUserDetailsFormBean.isOAuth2}">
+          <div class="form-group">
+            <label class="col-lg-4 control-label"><s:message code="firstName.label"/></label>
+            <div class="col-lg-8">
+              <p class="form-control-static">
+                  ${editUserDetailsFormBean.firstName}
+              </p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-4 control-label"><s:message code="surname.label"/></label>
+            <div class="col-lg-8">
+              <p class="form-control-static">
+                  ${editUserDetailsFormBean.surname}
+              </p>
+            </div>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <t:input path="firstName" required="${firstNameRequired}">
+            <jsp:attribute name="label"><s:message code="firstName.label"/></jsp:attribute>
+          </t:input>
+          <t:input path="surname" required="${surnameRequired}">
+            <jsp:attribute name="label"><s:message code="surname.label"/></jsp:attribute>
+          </t:input>
+        </c:otherwise>
+      </c:choose>
       <div class="form-group">
         <label class="col-lg-4 control-label"><s:message code="email.label"/></label>
         <div class="col-lg-8">

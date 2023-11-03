@@ -35,6 +35,7 @@ public class EditUserDetailsFormBean implements java.io.Serializable {
     private String org;
     private String description;
     private String postalAddress;
+    private boolean isOAuth2;
 
     @Override
     public String toString() {
@@ -123,4 +124,11 @@ public class EditUserDetailsFormBean implements java.io.Serializable {
         this.postalAddress = postalAddress;
     }
 
+    public boolean getIsOAuth2() {
+        return isOAuth2;
+    }
+
+    public void setIsOAuth2(boolean isOAuth2) {
+        this.isOAuth2 = isOAuth2;
+    }
 }
