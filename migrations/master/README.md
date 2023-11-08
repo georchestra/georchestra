@@ -2,23 +2,41 @@
 
 ## LDAP
 
+### Migrating to Debian Bookworm
+
+The `openldap` version has been upgraded, and with this new version, this is no
+longer needed to have custom schemas with extensions loaded under `/etc/ldap/slapd.d`,
+as they are contained into the plugin (.so) file.
+
+If you keep your previous `/etc/ldap/slapd.d` content and try to launch
+`slapd` on it, you may encounter the following error, preventing it to start:
+
+```
+0x7f84fc502200 config error processing cn={7}ppolicy,cn=schema,cn=config: olcAttributeTypes: Duplicate attributeType: "1.3.6.1.4.1.42.2.27.8.1.1"
+0x7f84fc502200 slapd stopped.
+0x7f84fc502200 connections_destroy: nothing to destroy
+```
+
+In order to fix this, you just need to browse your `/etc/ldap/slapd.d/cn=schema`,
+and remove the `cn={7}ppolicy.ldif` file (Note: file naming may vary).
+
 ### Password rotation policy
 
 To activate password rotation policy for ldap, user need to run these commands:
 
 ```
-ldapmodify -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret  << EOF 
+ldapmodify -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret  << EOF
 dn: olcOverlay={0}ppolicy,olcDatabase={1}mdb,cn=config
 changetype: modify
 replace: olcPPolicyDefault
 olcPPolicyDefault: cn=default,ou=pwpolicy,dc=georchestra,dc=org
 
 
-EOF 
+EOF
 
 ```
 ```
-ldapadd -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret   << EOF 
+ldapadd -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret   << EOF
 dn: ou=pwpolicy,dc=georchestra,dc=org
 objectClass: organizationalUnit
 objectClass: top
@@ -53,11 +71,11 @@ EOF
 ```
 To activate rotation password policy for all users, please run script 'set_rotation_policy_for_all_users.sh' located in this very same folder :
 ```
-sh set_rotation_policy_for_all_users.sh 
+sh set_rotation_policy_for_all_users.sh
 ```
 To disable rotation policy for non-human users, run the following :
 ```
-ldapmodify -H ldap://localhost:389  -D cn=admin,dc=georchestra,dc=org -w secret  << EOF 
+ldapmodify -H ldap://localhost:389  -D cn=admin,dc=georchestra,dc=org -w secret  << EOF
 dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
 changetype: modify
 add: pwdPolicySubentry
@@ -69,7 +87,7 @@ add: pwdPolicySubentry
 pwdPolicySubentry: cn=pwd-no-expire,ou=pwpolicy,dc=georchestra,dc=org
 
 
-EOF 
+EOF
 ```
 ### oAuth2ProviderId attribute on the georchestraUser schema
 
@@ -78,7 +96,7 @@ The `oAuth2ProviderId` user attribute was added to the `georchestraUser` ldap sc
 This attribute will contain the OAuth2 user identifier when said user is connected using an external identity provider.
 
 
-To upgrade the ldap, you need first to find the georchestra schema definition using the following command : 
+To upgrade the ldap, you need first to find the georchestra schema definition using the following command :
 
 ```
 ldapsearch -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret -b cn=schema,cn=config '(cn=*georchestra)' dn
@@ -90,7 +108,7 @@ dn: cn={7}georchestra,cn=schema,cn=config
 
 If you find a different dn please update Commands provided in [ldap_migration.ldif](ldap_migration.ldif) file
 
-Also, required olcObjectClasses "georchestraUser" to be changed should be localized using the following command : 
+Also, required olcObjectClasses "georchestraUser" to be changed should be localized using the following command :
 
 ```
 ldapsearch -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret -b "cn=schema,cn=config" | grep 1.3.6.1.4.1.53611.1.1.1
@@ -106,7 +124,7 @@ Please follow previous steps with precaution before running final script.
 Finally, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
 
 ```
-ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif 
+ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
 ```
 
 ### mail attribute on the organizations
