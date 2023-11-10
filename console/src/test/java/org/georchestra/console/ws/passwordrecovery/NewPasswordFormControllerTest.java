@@ -20,6 +20,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 public class NewPasswordFormControllerTest {
 
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
@@ -49,19 +52,22 @@ public class NewPasswordFormControllerTest {
     public void testSetupForm() throws IOException {
 
         Model model = Mockito.mock(Model.class);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getSession()).thenReturn(Mockito.mock(HttpSession.class));
 
-        String ret = ctrl.setupForm("test", model);
+        String ret = ctrl.setupForm("test", model, request);
         assertTrue(ret.equals("newPasswordForm"));
     }
 
     @Test
-    public void testSetupFormUserNotFound() throws Exception {
+    public void testSetupFormUserTokenNotFound() throws Exception {
         Model model = Mockito.mock(Model.class);
-        Mockito.doThrow(new NameNotFoundException("User not found")).when(userTokenDao)
-                .findUserByToken(Mockito.anyString());
+        Mockito.when(userTokenDao.findUserByToken(Mockito.anyString())).thenThrow(NameNotFoundException.class);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getSession()).thenReturn(Mockito.mock(HttpSession.class));
 
-        String ret = ctrl.setupForm("test", model);
-        assertTrue(ret.equals("passwordRecoveryForm"));
+        String ret = ctrl.setupForm("test", model, request);
+        assertTrue(ret.equals("redirect:/account/passwordRecovery"));
     }
 
     @Test
@@ -69,9 +75,11 @@ public class NewPasswordFormControllerTest {
         Model model = Mockito.mock(Model.class);
         Mockito.doThrow(new DataServiceException("Error while accessing db")).when(userTokenDao)
                 .findUserByToken(Mockito.anyString());
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        Mockito.when(request.getSession()).thenReturn(Mockito.mock(HttpSession.class));
 
         try {
-            ctrl.setupForm("test", model);
+            ctrl.setupForm("test", model, request);
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
         }
