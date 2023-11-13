@@ -40,7 +40,7 @@
       <li role="presentation" ng-class="{'active': isActive(['delegations'])}" ng-if="profile === 'SUPERUSER'">
         <a ng-link="delegations({})" translate>nav.delegations</a>
       </li>
-      <li role="presentation" ng-class="{'active': isActive(['analytics'])}">
+      <li role="presentation" ng-class="{'active': isActive(['analytics'])}" ng-if="platformInfos.analyticsEnabled">
         <a ng-link="analytics({'role': 'all'})" translate>nav.analytics</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['logs'])}">

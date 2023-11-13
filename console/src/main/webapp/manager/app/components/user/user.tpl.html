@@ -113,7 +113,7 @@
                  title="'analytics.layers'" class="col-md-6" csv-config="user.usageOptions"/>
         </div>
         <hr>
-        <div class="row">
+        <div class="row" ng-if="platformInfos.extractorappEnabled">
           <stats data="user.extractions" type="'bar'" config="user.config.extractions"
                  title="'analytics.extractions'" class="col-md-6" csv-config="user.extractionOptions"/>
         </div>
