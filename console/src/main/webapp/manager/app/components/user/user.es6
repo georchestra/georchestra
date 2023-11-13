@@ -20,6 +20,13 @@ class UserController {
     strings.map(str => translate(str, this.i18n))
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
+
+    this.$injector.get('PlatformInfos').get().$promise.then((platformInfos) => {
+      if (!platformInfos.analyticsEnabled) {
+        this.tabs.splice(this.tabs.indexOf('analytics'), 1)
+      }
+    })
+
     this.tab = $routeParams.tab
     this.uid = $routeParams.id
 
@@ -365,8 +372,8 @@ class UserController {
         }
       }, saveRoles.bind(this))
     })
-
-    if (this.tab === 'analytics') {
+    const platformInfos = this.$injector.get('PlatformInfos').get()
+    if (this.tab === 'analytics' && platformInfos.analyticsEnabled) {
       this.loadAnalytics($scope)
     }
   }

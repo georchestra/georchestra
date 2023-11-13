@@ -21,23 +21,27 @@ class HomeController {
 
     const flash = $injector.get('Flash')
 
-    const Analytics = $injector.get('Analytics')
-    const options = {
-      service: 'distinctUsers',
-      startDate: $injector.get('date').getFromDiff('day'),
-      endDate: $injector.get('date').getEnd()
-    }
+    const platformInfos = $injector.get('PlatformInfos').get()
 
-    this.connected = Analytics.get(options, () => {}, () => {
-      flash.create('danger', this.i18n.errorload)
-    })
-    this.requests = Analytics.get({
-      ...options,
-      service: 'combinedRequests.json',
-      startDate: $injector.get('date').getFromDiff('week')
-    }, () => {}, () => {
-      flash.create('danger', this.i18n.errorload)
-    })
+    if (platformInfos.analyticsEnabled) {
+      const Analytics = $injector.get('Analytics')
+      const options = {
+        service: 'distinctUsers',
+        startDate: $injector.get('date').getFromDiff('day'),
+        endDate: $injector.get('date').getEnd()
+      }
+
+      this.connected = Analytics.get(options, () => {}, () => {
+        flash.create('danger', this.i18n.errorload)
+      })
+      this.requests = Analytics.get({
+        ...options,
+        service: 'combinedRequests.json',
+        startDate: $injector.get('date').getFromDiff('week')
+      }, () => {}, () => {
+        flash.create('danger', this.i18n.errorload)
+      })
+    }
   }
 }
 
