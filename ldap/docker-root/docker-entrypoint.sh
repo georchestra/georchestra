@@ -4,7 +4,7 @@ DIR=/docker-entrypoint.d
 
 if [[ -d "$DIR" ]]
 then
-  /bin/run-parts --verbose "$DIR"
+  /bin/run-parts --verbose "$DIR" --regex='.*'
 fi
 
 exec "$@"
