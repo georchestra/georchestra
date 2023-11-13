@@ -35,7 +35,7 @@
     ></stats>
   </div>
   <hr>
-  <div class="row">
+  <div class="row" ng-if="platformInfos.extractorappEnabled">
     <stats data="analytics.extractions" type="'bar'" config="analytics.config.extractions"
            title="'analytics.extractions'" class="col-md-4" csv-config="analytics.extractionOptions"/>
   </div>
