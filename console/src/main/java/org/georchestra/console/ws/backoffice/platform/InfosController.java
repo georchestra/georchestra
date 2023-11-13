@@ -46,7 +46,7 @@ public class InfosController {
     @Setter
     private boolean analyticsEnabled;
 
-    @Value("${extractorappEnabled:true}")
+    @Value("${extractorappEnabled:false}")
     @Getter
     @Setter
     private boolean extractorappEnabled;
