@@ -6,8 +6,6 @@ current version of Java supported by geOrchestra. This will then require to inst
 In this section, you will learn how to install and setup the foundations of your geOrchestra SDI, according to the recommended architecture:
 ![architecture](https://github-production-user-asset-6210df.s3.amazonaws.com/265319/249208473-844ae06e-7f35-4d41-9807-ae5da328386c.png)
 
-The HAProxy / distributed GeoServer setup (in orange) is an alternative setup for high availability or high performance purposes, which is documented in a [dedicated tutorial](tutorials/geoserver_clustering.md).
-
 
 So, here are the steps:
 
