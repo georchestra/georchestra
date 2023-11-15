@@ -9,5 +9,3 @@ then
 fi
 
 exec "$@"
-
-
