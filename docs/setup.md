@@ -46,7 +46,7 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64
 
  * If you are willing to deploy the Datafeeder, please [follow these notes](setup/datafeeder.md).
 
-## Notes about geOrchestra 22.0
+## Notes about geOrchestra 22.0
 
 Some major updates come with this geOrchestra version, especially regading CAS and GeoNetwork,
 and a new webapp has been introduced, the _Datafeeder_.
