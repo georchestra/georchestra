@@ -1,6 +1,6 @@
 <section class="home row">
 
-  <div ng-class="{'col-md-12': !platformInfos.analyticsEnabled, 'col-md-4': platformInfos.analyticsEnabled}">
+  <div class="col-md-4">
     <div class="alerts">
       <div class="alert alert-info">
         <i class="glyphicon glyphicon-user pull-right"></i>
@@ -57,9 +57,8 @@
 
   </div>
 
-  <div class="col-md-8" ng-if="platformInfos.analyticsEnabled">
-
-    <stats data="home.requests" type="'line'" config="['date', 'count']" title="'analytics.requests'"></stats>
+  <div class="col-md-8">
+    <stats data="home.requests" type="'line'" config="['date', 'count']" title="'analytics.requests'" ng-if="platformInfos.analyticsEnabled"></stats>
     <logger filter="false" title="true"></logger>
   </div>
 
