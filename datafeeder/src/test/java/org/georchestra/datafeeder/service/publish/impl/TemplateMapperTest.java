@@ -73,7 +73,7 @@ public class TemplateMapperTest {
                 mdprops.getLineage());
 
         // resource type, provided by metadata template
-        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='series']");
+        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
 
         // online resource, computed
         for (OnlineResource ol : mdprops.getOnlineResources()) {

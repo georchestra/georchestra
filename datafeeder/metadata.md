@@ -37,7 +37,7 @@
 | |  |  | metadataTimestamp  = `LocalDateTime.now()` | gmd:dateStamp/gco:DateTime |
 | |  | publishing.<br>datasetCreationDate | creationDate | //gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date[1]/gmd:CI_Date/gmd:date/gco:Date |
 | |  | publishing.dataset-<br>CreationProcessDescription | lineage |  |
-| |  |  | resourceType = `series` |  |
+| |  |  | resourceType = `dataset` |  |
 | |  |  | dataIdentifier = `<gn-url>` + metadataId | //gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:identifier/gmd:MD_Identifier/gmd:code/gco:CharacterString |
 | |  |  | datasetLanguage = `eng` |  |
 | |  |  | metadataLanguage = `eng` | gmd:language/gmd:LanguageCode/@codeListValue |

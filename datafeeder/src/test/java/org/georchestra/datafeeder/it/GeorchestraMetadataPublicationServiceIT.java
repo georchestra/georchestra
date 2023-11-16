@@ -179,7 +179,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom,
                 "MD_Metadata/dataQualityInfo/DQ_DataQuality/lineage/LI_Lineage/statement/CharacterString[text() = 'Test process description']");
 
-        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='series']");
+        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
 
         final String title = publishing.getTitle();
         assertOnlineResource(dom, "OGC:WMS", PULISHED_LAYERNAME, title + " - WMS");
