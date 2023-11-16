@@ -364,6 +364,7 @@ if(sec_roles != null) {
                         </c:when>
                     </c:choose>
 
+                    <c:if test="${analyticsEnabled}">
                     <c:choose>
                         <c:when test='<%= console == true %>'>
                         <c:choose>
@@ -376,6 +377,7 @@ if(sec_roles != null) {
                         </c:choose>
                         </c:when>
                     </c:choose>
+                    </c:if>
 
                     <c:choose>
                         <c:when test='<%= console == true %>'>
