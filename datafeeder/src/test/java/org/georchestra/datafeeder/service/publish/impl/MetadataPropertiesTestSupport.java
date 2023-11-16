@@ -35,7 +35,7 @@ public class MetadataPropertiesTestSupport {
     public MetadataRecordProperties createTestProps() {
         MetadataRecordProperties p = new MetadataRecordProperties();
         assertEquals("vector", p.getSpatialRepresentation());
-        assertEquals("series", p.getResourceType());
+        assertEquals("dataset", p.getResourceType());
         assertEquals("asNeeded", p.getUpdateFequency());
         assertEquals("ODBL", p.getUseLimitation());
         assertEquals("otherRestrictions", p.getAccessConstraints());
