@@ -11,7 +11,7 @@
     </keywords>
     <creationDate>2021-03-23</creationDate>
     <lineage>test lineage</lineage>
-    <resourceType>series</resourceType>
+    <resourceType>dataset</resourceType>
     <onlineResources>
         <onlineResource>
             <description>test description 1</description>

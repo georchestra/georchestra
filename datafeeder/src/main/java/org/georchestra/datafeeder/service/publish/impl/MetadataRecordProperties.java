@@ -57,7 +57,7 @@ public class MetadataRecordProperties {
 
     String lineage;
 
-    String resourceType = "series";
+    String resourceType = "dataset";
 
     @XmlElementWrapper(name = "onlineResources")
     @XmlElement(name = "onlineResource")
