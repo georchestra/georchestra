@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="jumbotron">
+    <div class="jumbotron" ng-if="platformInfos.analyticsEnabled">
       <h1 ng-if="home.connected && home.connected.results.length > 0" ng-cloack>{{::home.connected.results.length}}</h1>
       <p><ng-pluralize count="home.connected.results.length"
                        when="{'0': '{{ &quot;home.connected_users_none&quot; | translate }}',
