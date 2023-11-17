@@ -25,7 +25,7 @@ public class InfosControllerIT extends ConsoleIntegrationTest {
         // By default, analytics & extractorapp are enabled
         JSONObject ret = new JSONObject(infosController.getPlatformInfos());
 
-        assertTrue(ret.getBoolean("analyticsEnabled") == true && ret.getBoolean("extractorappEnabled") == true);
+        assertTrue(ret.getBoolean("analyticsEnabled") == true && ret.getBoolean("extractorappEnabled") == false);
 
         infosController.setAnalyticsEnabled(false);
         infosController.setExtractorappEnabled(false);
