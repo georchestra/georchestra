@@ -19,6 +19,7 @@
             <map>
                 <entry key="defaultLanguage" value="${language}" />
                 <entry key="consolePublicContextPath" value="${consolePublicContextPath:/console}" />
+                <entry key="analyticsEnabled" value="${analyticsEnabled:true}" />
             </map>
         </property>
     </bean>
