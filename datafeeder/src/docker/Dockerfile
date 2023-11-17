@@ -9,10 +9,11 @@ RUN groupadd -r -g 630 geo && \
 # where to store file uploads, should be mapped to a volume
 RUN mkdir /tmp/datafeeder && chown geo:geo /tmp/datafeeder
 
+COPY . /
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 USER geo
 EXPOSE 8080
-
-ENV JAVA_OPTS=
 
 ARG JAR_FILE=dummy
 ADD ${JAR_FILE} /opt/app/datafeeder.jar

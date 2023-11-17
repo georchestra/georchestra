@@ -6,6 +6,8 @@ RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-rem
 
 COPY --chown=jetty:jetty . /
 
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 VOLUME [ "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
