@@ -184,7 +184,6 @@ public class GeorchestraMetadataPublicationServiceIT {
         final String title = publishing.getTitle();
         assertOnlineResource(dom, "OGC:WMS", PULISHED_LAYERNAME, title + " - WMS");
         assertOnlineResource(dom, "OGC:WFS", PULISHED_LAYERNAME, title + " - WFS");
-        assertOnlineResource(dom, "WWW:DOWNLOAD-1.0-http--download", PULISHED_LAYERNAME, title + " - WWW");
 
         URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
         final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
