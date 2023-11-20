@@ -15,6 +15,8 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 USER geo
 EXPOSE 8080
 
+ENV JAVA_OPTS=
+
 ARG JAR_FILE=dummy
 ADD ${JAR_FILE} /opt/app/datafeeder.jar
 
