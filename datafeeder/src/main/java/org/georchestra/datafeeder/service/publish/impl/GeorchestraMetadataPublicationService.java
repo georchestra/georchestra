@@ -112,7 +112,6 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
         m.getOnlineResources().add(wmsOnlineResource(d));
         m.getOnlineResources().add(wfsOnlineResource(d));
-        m.getOnlineResources().add(downloadOnlineResource(d));
 
         URI uniqueResourceIdentifier = geonetwork.buildMetadataRecordIdentifier(metadataId);
         m.setDataIdentifier(uniqueResourceIdentifier);
@@ -287,14 +286,6 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         String queryString = "";
         String layerName = fullyQualifiedLayerName(d.getPublishing());
         return onlineResource(d, layerName, protocol, description, queryString);
-    }
-
-    private OnlineResource downloadOnlineResource(DatasetUploadState d) {
-        String protocol = "WWW:DOWNLOAD-1.0-http--download";
-        String description = d.getPublishing().getTitle() + " - WWW";
-        String layer = d.getPublishing().getPublishedName();
-        String queryString = String.format("SERVICE=WFS&REQUEST=GetFeature&typename=%s&outputformat=shape-zip", layer);
-        return onlineResource(d, layer, protocol, description, queryString);
     }
 
     private OnlineResource onlineResource(DatasetUploadState d, String publishedName, String protocol,
