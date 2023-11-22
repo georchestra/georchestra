@@ -68,3 +68,11 @@ To upgrade the ldap, use the following command with the [ldap_migration.ldif](ld
 ```
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif 
 ```
+
+## Fixing OGC services coming from Géo-IDE
+
+A custom transformation is now available for harvesters pointing at Géo-IDE (French Spatial Infrastructure) services. On such a harvester, in the dropdown "XSL Transformation to apply", select the value:
+
+**GeoIDE-services-OGC**
+
+This will make all records coming from that harvester to have valid WMS/WFS links, enabling their use in the map viewer and Datahub preview.
