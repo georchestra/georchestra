@@ -5,6 +5,8 @@ FROM jetty:9-jre11
 # https://github.com/eclipse/jetty.docker/issues/10
 USER root
 RUN rm -r /usr/local/jetty/lib/mail
+RUN mkdir -p /docker-entrypoint.d
+RUN chown jetty /docker-entrypoint.d
 USER jetty
 
 ENV XMS=512M XMX=1G

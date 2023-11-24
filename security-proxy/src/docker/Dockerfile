@@ -1,4 +1,9 @@
 FROM jetty:9-jre11
+USER root
+RUN mkdir -p /docker-entrypoint.d
+RUN chown jetty /docker-entrypoint.d
+USER jetty
+
 
 ENV XMS=512M XMX=1G
 
