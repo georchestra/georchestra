@@ -25,7 +25,11 @@ public class InfosControllerIT extends ConsoleIntegrationTest {
         // By default, analytics & extractorapp are enabled
         JSONObject ret = new JSONObject(infosController.getPlatformInfos());
 
-        assertTrue(ret.getBoolean("analyticsEnabled") == true && ret.getBoolean("extractorappEnabled") == false);
+        assertTrue(ret.getBoolean("analyticsEnabled") == true && ret.getBoolean("extractorappEnabled") == false
+                && ret.getBoolean("useLegacyHeader") == false);
+
+        assertTrue(ret.getString("headerUrl").equals("/header/") && ret.getString("headerHeight").equals("90") && ret
+                .getString("headerScript").equals("https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js"));
 
         infosController.setAnalyticsEnabled(false);
         infosController.setExtractorappEnabled(false);

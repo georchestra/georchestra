@@ -71,6 +71,7 @@ public class InfosController {
         ret.put("saslEnabled", saslEnabled);
         ret.put("saslServer", saslServer);
         ret.put("analyticsEnabled", analyticsEnabled);
+        ret.put("extractorappEnabled", extractorappEnabled);
         ret.put("useLegacyHeader", useLegacyHeader);
         ret.put("headerUrl", headerUrl);
         ret.put("headerHeight", headerHeight);
