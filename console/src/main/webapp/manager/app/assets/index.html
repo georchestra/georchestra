@@ -14,12 +14,12 @@
 
 <body ng-app="manager" ng-strict-di ng-controller="AppController">
 
-  <geor-header style="width:100%;height:90px" active-app="console"></geor-header>
-  <script src="http://localhost:5500/header.js"></script>
+  <geor-header legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}" style="width:100%;height:{{ platformInfos.headerHeight }}px;border:none;" active-app="console"></geor-header>
+  <script ng-src="{{ trustSrc(platformInfos.headerScript) }}"></script>
 
   <div flash-message="2000"></div>
 
-  <div class="container">
+  <div class="container" style="padding-top:20px">
 
     <div class="profile label label-{{(profile === 'SUPERUSER') ? 'info' : 'warning'}} pull-right" title="{{'index.' + profile + 'tip' | translate }}">
       {{ 'index.' + profile | translate}}

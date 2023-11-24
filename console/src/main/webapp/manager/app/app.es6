@@ -1,9 +1,9 @@
 class AppController {
   static $inject = [
-    '$scope', '$router', '$location', '$translate', 'roleAdminList', 'Profile', 'PlatformInfos'
+    '$scope', '$router', '$location', '$translate', '$sce', 'roleAdminList', 'Profile', 'PlatformInfos'
   ]
 
-  constructor ($scope, $router, $location, $translate, roleAdminList, Profile, PlatformInfos) {
+  constructor ($scope, $router, $location, $translate, $sce, roleAdminList, Profile, PlatformInfos) {
     $router.config([
       {
         path: '/',
@@ -66,6 +66,8 @@ class AppController {
         ? 'DELEGATED' : 'SUPERUSER'
     })
     $scope.platformInfos = PlatformInfos.get()
+
+    $scope.trustSrc = (src) => $sce.trustAsResourceUrl(src)
 
     $scope.isProtectedRole = role => roleAdminList().indexOf(role.cn) !== -1
     $scope.$translate = $translate
