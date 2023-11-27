@@ -9,7 +9,7 @@ else
   echo "[INFO] CUSTOM_SCRIPTS_DIRECTORY env variable set to ${CUSTOM_SCRIPTS_DIRECTORY}"
   # Regex is needed in jetty9 images, but not alpine's ones.
   cp -v "${CUSTOM_SCRIPTS_DIRECTORY}"/* "$DIR"
-  echo "[INFO] End moving custom scripts"
+  echo "[INFO] End copying custom scripts"
 fi
 
 if [[ -d "$DIR" ]]
