@@ -51,6 +51,18 @@ public class InfosController {
     @Setter
     private boolean extractorappEnabled;
 
+    @Value("${useLegacyHeader:false}")
+    private boolean useLegacyHeader;
+
+    @Value("${headerUrl:/header/}")
+    private String headerUrl;
+
+    @Value("${headerHeight:90}")
+    private String headerHeight;
+
+    @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
+    private String headerScript;
+
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
     @PreAuthorize(value = "hasRole('SUPERUSER')")
     @ResponseBody
@@ -60,6 +72,10 @@ public class InfosController {
         ret.put("saslServer", saslServer);
         ret.put("analyticsEnabled", analyticsEnabled);
         ret.put("extractorappEnabled", extractorappEnabled);
+        ret.put("useLegacyHeader", useLegacyHeader);
+        ret.put("headerUrl", headerUrl);
+        ret.put("headerHeight", headerHeight);
+        ret.put("headerScript", headerScript);
         return ret.toString();
     }
 }

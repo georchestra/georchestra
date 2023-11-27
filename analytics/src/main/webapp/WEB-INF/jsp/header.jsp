@@ -3,7 +3,8 @@
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
-        <iframe src="${headerUrl}?lang=<%= lang %>" style="width:100%;height:${headerHeight}px;border:none;overflow:hidden;" scrolling="no" frameborder="0"></iframe>
+        <geor-header legacy-header="${useLegacyHeader}" legacy-url="${headerUrl}" style="width:100%;height:${headerHeight}px;border:none;" active-app="analytics"></geor-header>
+        <script src="<c:out value="${headerScript}" />"></script>
     </div>
     </c:when>
 </c:choose>

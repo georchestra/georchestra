@@ -58,6 +58,7 @@
       <map>
         <entry key="headerHeight" value="${headerHeight}" />
         <entry key="headerUrl" value="${headerUrl}" />
+        <entry key="headerScript" value="${headerScript}" />
         <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>

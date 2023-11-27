@@ -4,7 +4,8 @@
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
-        <iframe src="${headerUrl}" style="width:100%;height:${headerHeight}px;border:none;overflow:none;" scrolling="no"></iframe>
+        <geor-header legacy-header="${useLegacyHeader}" legacy-url="${headerUrl}" style="width:100%;height:${headerHeight}px;border:none;"></geor-header>
+        <script src="<c:out value="${headerScript}" />"></script>
     </div>
     </c:when>
 </c:choose>

@@ -51,6 +51,8 @@
                 <entry key="defaultLanguage" value="${language}"/>
                 <entry key="headerUrl" value="${headerUrl}"/>
                 <entry key="headerHeight" value="${headerHeight}"/>
+                <entry key="headerScript" value="${headerScript}" />
+                <entry key="useLegacyHeader" value="${useLegacyHeader}" />
             </map>
         </property>
     </bean>
