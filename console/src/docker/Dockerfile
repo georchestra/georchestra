@@ -6,7 +6,7 @@ FROM jetty:9-jre11
 USER root
 RUN rm -r /usr/local/jetty/lib/mail
 RUN mkdir -p /docker-entrypoint.d
-RUN chown jetty /docker-entrypoint.d
+RUN chown jetty:jetty /docker-entrypoint.d
 USER jetty
 
 ENV XMS=512M XMX=1G

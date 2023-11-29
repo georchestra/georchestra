@@ -14,7 +14,7 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 USER root
 RUN mkdir -p /docker-entrypoint.d
-RUN chown geo /docker-entrypoint.d
+RUN chown geo:geo /docker-entrypoint.d
 USER geo
 EXPOSE 8080
 
