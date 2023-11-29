@@ -21,27 +21,27 @@ class HomeController {
 
     const flash = $injector.get('Flash')
 
-    const platformInfos = $injector.get('PlatformInfos').get()
+    $injector.get('PlatformInfos').get().$promise.then((platformInfos) => {
+      if (platformInfos.analyticsEnabled) {
+        const Analytics = $injector.get('Analytics')
+        const options = {
+          service: 'distinctUsers',
+          startDate: $injector.get('date').getFromDiff('day'),
+          endDate: $injector.get('date').getEnd()
+        }
 
-    if (platformInfos.analyticsEnabled) {
-      const Analytics = $injector.get('Analytics')
-      const options = {
-        service: 'distinctUsers',
-        startDate: $injector.get('date').getFromDiff('day'),
-        endDate: $injector.get('date').getEnd()
+        this.connected = Analytics.get(options, () => {}, () => {
+          flash.create('danger', this.i18n.errorload)
+        })
+        this.requests = Analytics.get({
+          ...options,
+          service: 'combinedRequests.json',
+          startDate: $injector.get('date').getFromDiff('week')
+        }, () => {}, () => {
+          flash.create('danger', this.i18n.errorload)
+        })
       }
-
-      this.connected = Analytics.get(options, () => {}, () => {
-        flash.create('danger', this.i18n.errorload)
-      })
-      this.requests = Analytics.get({
-        ...options,
-        service: 'combinedRequests.json',
-        startDate: $injector.get('date').getFromDiff('week')
-      }, () => {}, () => {
-        flash.create('danger', this.i18n.errorload)
-      })
-    }
+    })
   }
 }
 
