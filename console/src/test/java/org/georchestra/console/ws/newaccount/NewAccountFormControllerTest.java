@@ -1,30 +1,5 @@
 package org.georchestra.console.ws.newaccount;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.ReCaptchaV2;
@@ -38,11 +13,7 @@ import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
-import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDao;
-import org.georchestra.ds.users.AccountFactory;
-import org.georchestra.ds.users.DuplicatedEmailException;
-import org.georchestra.ds.users.DuplicatedUidException;
+import org.georchestra.ds.users.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +32,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({ "javax.net.ssl.*", "jdk.internal.reflect.*" })
@@ -399,6 +383,26 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("orgShortName").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("orgAddress").getDefaultMessage());
         assertEquals(4, resultErrors.getFieldErrorCount());
+    }
+
+    @Test
+    public void testGetSuperUserEmailAddresses() throws Exception {
+        NewAccountFormController toTest = new NewAccountFormController(new ReCaptchaParameters(), new Validation(""));
+        AccountDao accountDao = mock(AccountDao.class);
+        Account acc1 = new AccountImpl();
+        acc1.setEmail("pierre.martin@georchestra.org");
+        Account acc2 = new AccountImpl();
+        acc2.setEmail(null);
+        Account acc3 = new AccountImpl();
+        acc3.setEmail("");
+        Account acc4 = new AccountImpl();
+        acc4.setEmail("flup@georchestra.org");
+        when(accountDao.findByRole(anyString())).thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
+        toTest.setAccountDao(accountDao);
+
+        List<String> ret = toTest.getSuperUserEmailAddresses();
+
+        assertTrue(ret.size() == 2 && ret.contains("pierre.martin@georchestra.org"));
     }
 
     private void configureFormBean() {
