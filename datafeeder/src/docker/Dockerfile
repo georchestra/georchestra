@@ -9,6 +9,12 @@ RUN groupadd -r -g 630 geo && \
 # where to store file uploads, should be mapped to a volume
 RUN mkdir /tmp/datafeeder && chown geo:geo /tmp/datafeeder
 
+COPY . /
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+USER root
+RUN mkdir -p /docker-entrypoint.d
+RUN chown geo:geo /docker-entrypoint.d
 USER geo
 EXPOSE 8080
 
