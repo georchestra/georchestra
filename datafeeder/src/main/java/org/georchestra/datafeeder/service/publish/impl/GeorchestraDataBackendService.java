@@ -181,7 +181,14 @@ public class GeorchestraDataBackendService implements DataBackendService {
             throw new IllegalStateException("Georchestra organization name not provided in job.user.organization.id");
         }
         String schema = nameResolver.resolveDatabaseSchemaName(orgName);
-        connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);
+
+        for (String k : connectionParams.keySet()) {
+            String v = connectionParams.get(k);
+            if ("<schema>".equals(v)) {
+                connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);
+            }
+        }
+
         return connectionParams;
     }
 }
