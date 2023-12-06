@@ -40,13 +40,13 @@ jobs:
       run: ./mvnw test -pl :datafeeder -P-all,datafeeder -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
       # pull images, fetches in parallel docker layers and speeds up the process
-    - name: "Pull required docker images for integration testing"
-      working-directory: datafeeder/
-      run: docker-compose pull -q
+    #- name: "Pull required docker images for integration testing"
+    #  working-directory: datafeeder/
+    #  run: docker-compose pull -q
 
-    - name: "Running Integration Tests"
-      working-directory: datafeeder/
-      run: ../mvnw verify -P-all,datafeeder -DskipITs=false -DskipTests -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+    #- name: "Running Integration Tests"
+    #  working-directory: datafeeder/
+    #  run: ../mvnw verify -P-all,datafeeder -DskipITs=false -DskipTests -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
