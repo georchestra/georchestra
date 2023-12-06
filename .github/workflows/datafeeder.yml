@@ -44,6 +44,10 @@ jobs:
       working-directory: datafeeder/
       run: docker-compose pull -q
 
+    - name: "Up docker images for integration testing"
+      working-directory: datafeeder/
+      run: docker compose up -d
+
     - name: "Running Integration Tests"
       working-directory: datafeeder/
       run: ../mvnw verify -P-all,datafeeder -DskipITs=false -DskipTests -ntp -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
