@@ -1,13 +1,30 @@
 version: "3.1"
 
 volumes:
-  config:
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/src/test/resources/datadir
+  georchestra_datadir:
 
 services:
+  copy-datadir:
+    image: alpine
+    command: sh -c "rm -r /etc/georchestra/* ; cp -r -f -v /mnt/datadir/* /etc/georchestra/ ; chmod 777 -R -v /etc/georchestra/" # "sleep 6000"
+    volumes:
+      - ${PWD}/src/test/resources/datadir:/mnt/datadir
+      - georchestra_datadir:/etc/georchestra
+
+  envsubst:
+    image: georchestra/k8s-initcontainer-envsubst
+    depends_on:
+      copy-datadir:
+        condition: service_completed_successfully
+    environment:
+      - DEBUG=yes
+      - SUBST_FILES=/etc/georchestra/default.properties /etc/georchestra/security-proxy/targets-mapping.properties /etc/georchestra/datafeeder/frontend-config.json /etc/georchestra/datafeeder/metadata_* /etc/georchestra/geonetwork/microservices/ogc-api-records/config.yml
+    env_file:
+      - .envs-common
+      - .envs-hosts
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+
   smtp:
     image: camptocamp/smtp-sink:latest
     ports:
@@ -15,67 +32,143 @@ services:
     restart: always
 
   database:
-    image: georchestra/database:latest
-    environment:
-      - POSTGRES_USER=georchestra
-      - POSTGRES_PASSWORD=georchestra
+    image: georchestra/database:23.0.x
+    #image: postgis/postgis:13-3.1-alpine
+    env_file:
+      - .envs-database-georchestra
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
     ports:
       - "15432:5432"
 
   ldap:
-    image: georchestra/ldap:latest
+    image: georchestra/ldap:23.0.x
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
     environment:
-        - SLAPD_ORGANISATION=georchestra
-        - SLAPD_DOMAIN=georchestra.org
-        - SLAPD_PASSWORD=secret
-        - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
+      - SLAPD_ORGANISATION=georchestra
+      - SLAPD_DOMAIN=georchestra.org
+      - SLAPD_PASSWORD=secret
+      - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
+      - RUN_AS_UID=0
+      - RUN_AS_GID=0
+      - LDAPHOST=localhost # needed for container to start correctly, DO NOT REMOVE
+    restart: always
+
+  geoserver:
+    image: georchestra/geoserver:23.0.x
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    volumes:
+      - georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Dgwc.context.suffix=gwc
+      - XMS=256M
+      - XMX=8G
+    env_file:
+      - .envs-database-georchestra
+      - .envs-database-datafeeder
+    ports:
+      - "18080:8080"
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:23.0.x
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - ldap
-      - database
+      ldap:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     volumes:
-      - config:/etc/georchestra
+      - georchestra_datadir:/etc/georchestra
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
       - XMX=1G
+    env_file:
+      - .envs-common
+      - .envs-ldap
+      - .envs-database-georchestra
     ports:
       - "38080:8080"
-
-  geoserver:
-    image: georchestra/geoserver:latest
-    depends_on:
-      - ldap
-    volumes:
-      - config:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-    ports:
-      - "18080:8080"
-
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:23.0.x
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
-      - console
-      - database
-      - elasticsearch
+      console:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     volumes:
-      - config:/etc/georchestra
+      - georchestra_datadir:/etc/georchestra
     environment:
-      - DATA_DIR=/var/lib/geonetwork_data
-      - ES_HOST=elasticsearch
-      - ES_PROTOCOL=http
-      - ES_PORT=9200
+#      - DATA_DIR=/var/lib/geonetwork_data
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
+      - XMX=6G
+    env_file:
+      - .envs-common
+      - .envs-hosts
+      - .envs-database-georchestra
     ports:
       - "28080:8080"
 
+  postgis:
+    # used by datafeeder to ingest uploaded user datasets into
+    image: postgis/postgis:13-3.1-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
+    env_file:
+      - .envs-database-datafeeder
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cat/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      envsubst:
+        condition: service_completed_successfully
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms1g -Xmx1g"

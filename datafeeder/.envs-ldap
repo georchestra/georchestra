@@ -1,0 +1,10 @@
+# envs-ldap
+LDAPHOST=ldap
+LDAPPORT=389
+LDAPSCHEME=ldap
+LDAPBASEDN=dc=georchestra,dc=org
+LDAPADMINDN=cn=admin,dc=georchestra,dc=org
+LDAPADMINPASSWORD=secret
+LDAPUSERSRDN=ou=users
+LDAPROLESRDN=ou=roles
+LDAPORGSRDN=ou=orgs

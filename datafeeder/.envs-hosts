@@ -1,0 +1,21 @@
+ANALYTICS_HOST=analytics
+CAS_HOST=cas
+CONSOLE_HOST=console
+GEONETWORK_HOST=geonetwork
+GEOSERVER_HOST=geoserver
+HEADER_HOST=header
+GEOWEBCACHE_HOST=geowebcache
+MAPSTORE_HOST=mapstore
+DATAFEEDER_HOST=datafeeder
+IMPORT_HOST=import
+DATAHUB_HOST=datahub
+OGC_API_RECORDS_HOST=ogc-api-records
+KB_HOST=kibana
+KB_PORT=5601
+ES_HOST=elasticsearch
+ES_PORT=9200
+
+# needed for geonetwork entrypoint DO NOT REMOVE
+CONSOLE_URL=http://${CONSOLE_HOST}:8080
+# needed for kibana DO NOT REMOVE
+ELASTICSEARCH_HOSTS=http://${ES_HOST}:${ES_PORT}

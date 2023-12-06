@@ -1,0 +1,4 @@
+# envs-common
+FQDN=georchestra-127-0-1-1.traefik.me
+SMTPHOST=smtp
+SMTPPORT=2025
