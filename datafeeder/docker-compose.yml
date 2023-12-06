@@ -49,6 +49,7 @@ services:
 
     ports:
       - "15432:5432"
+      - "2023:5432"
 
   ldap:
     image: georchestra/ldap:23.0.x
@@ -79,6 +80,7 @@ services:
         condition: service_healthy
     volumes:
       - georchestra_datadir:/etc/georchestra
+      - ./src/test/resources/datadir/geoserver/jetty-env.xml:/var/lib/jetty/webapps/geoserver/WEB-INF/jetty-env.xml
     environment:
       - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF -Dgwc.context.suffix=gwc
       - XMS=256M
@@ -154,6 +156,8 @@ services:
         condition: service_completed_successfully
     env_file:
       - .envs-database-datafeeder
+    ports:
+      - "2024:5432"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1

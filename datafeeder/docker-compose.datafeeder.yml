@@ -22,7 +22,7 @@ services:
       - ./src/test/resources/datadir:/etc/georchestra
       - datafeeder_uploads:/tmp/datafeeder
     environment:
-      - JAVA_OPTS=-Xms512m -Xmx512m
+      - JAVA_OPTS=-Xms512m -Xmx512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
     env_file:
       - .envs-common
       - .envs-hosts
@@ -30,4 +30,5 @@ services:
       - .envs-database-datafeeder
     ports:
       - ${DATAFEEDER_PORT}:8080
+      - 5005:5005
 
