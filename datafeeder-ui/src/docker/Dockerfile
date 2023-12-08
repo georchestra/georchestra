@@ -1,4 +1,4 @@
-FROM nginx:1.16.0-alpine
+FROM nginx:1.25.3-alpine
 
 RUN rm -rf /usr/share/nginx/html/*
 
