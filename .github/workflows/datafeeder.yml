@@ -42,7 +42,11 @@ jobs:
       # pull images, fetches in parallel docker layers and speeds up the process
     - name: "Pull required docker images for integration testing"
       working-directory: datafeeder/
-      run: docker-compose pull -q
+      run: docker compose pull -q
+
+    - name: "Up docker images for integration testing"
+      working-directory: datafeeder/
+      run: docker compose up -d --wait
 
     - name: "Running Integration Tests"
       working-directory: datafeeder/

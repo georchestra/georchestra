@@ -46,6 +46,11 @@ services:
 
   geoserver:
     image: georchestra/geoserver:latest
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
       - ldap
     volumes:
@@ -57,7 +62,12 @@ services:
       - "18080:8080"
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:23.0.x
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
       - console
       - database
