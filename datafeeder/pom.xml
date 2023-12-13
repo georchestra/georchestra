@@ -748,7 +748,6 @@
         <!-- define the ports where the services will be exposed to on localhost -->
         <skipTests>false</skipTests>
         <skipITs>${skipTests}</skipITs>
-        <docker-compose.skip>${skipITs}</docker-compose.skip>
       </properties>
       <build>
         <plugins>
@@ -767,42 +766,6 @@
             <configuration>
               <skipTests>false</skipTests>
               <skipITs>${skipITs}</skipITs>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>com.dkanejs.maven.plugins</groupId>
-            <artifactId>docker-compose-maven-plugin</artifactId>
-            <version>4.0.0</version>
-            <executions>
-              <execution>
-                <id>up</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>up</goal>
-                </goals>
-                <configuration>
-                  <awaitCmd>curl</awaitCmd>
-                  <awaitCmdArgs>-s,http://localhost:28080/geonetwork/srv/eng/catalog.search#/home</awaitCmdArgs>
-                  <awaitTimeout>360</awaitTimeout>
-                </configuration>
-              </execution>
-              <execution>
-                <id>down</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>down</goal>
-                </goals>
-                <inherited>true</inherited>
-              </execution>
-            </executions>
-            <configuration>
-              <skip>${docker-compose.skip}</skip>
-              <composeFile>${project.basedir}/docker-compose.yml</composeFile>
-              <detachedMode>true</detachedMode>
-              <verbose>false</verbose>
-              <removeVolumes>true</removeVolumes>
-              <removeImages>false</removeImages>
-              <removeImagesType>local</removeImagesType>
             </configuration>
           </plugin>
         </plugins>
