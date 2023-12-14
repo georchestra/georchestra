@@ -7,12 +7,14 @@ on:
       - "commons/**"
       - "security-proxy-spring-integration/**"
       - "datafeeder/**"
+      - "datafeeder-ui/**"
   pull_request:
     paths:
       - ".github/workflows/datafeeder.yml"
       - "commons/**"
       - "security-proxy-spring-integration/**"
       - "datafeeder/**"
+      - "datafeeder-ui/**"
 
 jobs:
   build:
