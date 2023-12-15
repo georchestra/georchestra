@@ -14,7 +14,7 @@
 
 <body ng-app="manager" ng-strict-di ng-controller="AppController">
 
-  <geor-header legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}" style="width:100%;height:{{ platformInfos.headerHeight }}px;border:none;" active-app="console"></geor-header>
+  <geor-header legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}" style="width:100%;height:{{ platformInfos.headerHeight }}px;border:none;"  logo-url="{{ trustSrc(platformInfos.logoUrl) }}" stylesheet="{{ trustSrc(platformInfos.georchestraStylesheet) }}" active-app="console"></geor-header>
   <script ng-src="{{ trustSrc(platformInfos.headerScript) }}"></script>
 
   <div flash-message="2000"></div>
@@ -41,7 +41,7 @@
       <li role="presentation" ng-class="{'active': isActive(['delegations'])}" ng-if="profile === 'SUPERUSER'">
         <a ng-link="delegations({})" translate>nav.delegations</a>
       </li>
-      <li role="presentation" ng-class="{'active': isActive(['analytics'])}" ng-if="platformInfos.analyticsEnabled">
+      <li role="presentation" ng-class="{'active': isActive(['analytics'])}" ng-if="platformInfos.analyticsEnabled || false">
         <a ng-link="analytics({'role': 'all'})" translate>nav.analytics</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['logs'])}">
