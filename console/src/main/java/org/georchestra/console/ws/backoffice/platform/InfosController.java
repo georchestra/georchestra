@@ -63,8 +63,14 @@ public class InfosController {
     @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
     private String headerScript;
 
+    @Value("${logoUrl:https://www.georchestra.org/public/georchestra-logo.svg}")
+    private String logoUrl;
+
+    @Value("${georchestraStylesheet:}")
+    private String georchestraStylesheet;
+
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
-    @PreAuthorize(value = "hasRole('SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('SUPERUSER', 'ORGADMIN')")
     @ResponseBody
     public String getPlatformInfos() {
         JSONObject ret = new JSONObject();
@@ -76,6 +82,8 @@ public class InfosController {
         ret.put("headerUrl", headerUrl);
         ret.put("headerHeight", headerHeight);
         ret.put("headerScript", headerScript);
+        ret.put("logoUrl", logoUrl);
+        ret.put("georchestraStylesheet", georchestraStylesheet);
         return ret.toString();
     }
 }
