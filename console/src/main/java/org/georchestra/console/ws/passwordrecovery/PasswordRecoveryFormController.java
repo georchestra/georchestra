@@ -200,8 +200,7 @@ public class PasswordRecoveryFormController {
         } catch (DataServiceException | MessagingException e) {
             throw new IOException(e);
         } catch (NameNotFoundException e) {
-            resultErrors.rejectValue("email", "email.error.notFound", "Incorrect email.");
-            return "passwordRecoveryForm";
+            return "emailWasSent";
         }
     }
 
