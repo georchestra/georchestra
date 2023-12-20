@@ -153,7 +153,7 @@ datafeeder:
       local:
         dbtype: postgis
         host: localhost
-        schema: public
+        schema: <schema>
         port: 15432
         database: georchestra
         user: georchestra
