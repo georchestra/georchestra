@@ -147,27 +147,29 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
       </t:textarea>
     </fieldset>
 
-    <fieldset>
-      <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
-      <div class="form-group">
-        <label class="col-lg-4 control-label"><s:message code="uid.label"/></label>
-        <div class="col-lg-8">
-          <p class="form-control-static">
-              ${editUserDetailsFormBean.uid}
-          </p>
+    <c:if test="${!editUserDetailsFormBean.isOAuth2}">
+      <fieldset>
+        <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
+        <div class="form-group">
+          <label class="col-lg-4 control-label"><s:message code="uid.label"/></label>
+          <div class="col-lg-8">
+            <p class="form-control-static">
+                ${editUserDetailsFormBean.uid}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-lg-4 control-label"><s:message code="password.label"/></label>
-        <div class="col-lg-8">
-          <p class="form-control-static">
-            <a href='<c:out value="${publicContextPath}/account/changePassword" />'>
-              <s:message code="editUserDetailsForm.changePassword.link"/>
-            </a>
-          </p>
+        <div class="form-group">
+          <label class="col-lg-4 control-label"><s:message code="password.label"/></label>
+          <div class="col-lg-8">
+            <p class="form-control-static">
+              <a href='<c:out value="${publicContextPath}/account/changePassword" />'>
+                <s:message code="editUserDetailsForm.changePassword.link"/>
+              </a>
+            </p>
+          </div>
         </div>
-      </div>
-    </fieldset>
+      </fieldset>
+    </c:if>
 
     <fieldset>
       <div class="form-group">
