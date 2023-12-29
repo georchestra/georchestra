@@ -62,10 +62,11 @@ jobs:
     - name: "Docker Hub Description"
       uses: peter-evans/dockerhub-description@v3
       with:
-        username: '${{ secrets.DOCKERHUB_USERNAME }}'
-        password: '${{ secrets.DOCKERHUB_PASSWORD }}'
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
         repository: georchestra/analytics
         readme-filepath: ./analytics/DOCKER_HUB.md
+        short-description: 'Analytics module for geOrchestra SDI'
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
