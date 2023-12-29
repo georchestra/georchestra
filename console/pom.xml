@@ -386,7 +386,7 @@
 	  <groupId>com.vladmihalcea</groupId>
 	  <artifactId>hibernate-types-52</artifactId>
 	  <version>2.10.3</version>
-	</dependency>    
+	</dependency>
 
     <dependency>
       <groupId>org.powermock</groupId>
@@ -592,7 +592,11 @@
           <forkCount>2</forkCount>
           <reuseForks>false</reuseForks>
         </configuration>
-      </plugin>          
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
   <profiles>
