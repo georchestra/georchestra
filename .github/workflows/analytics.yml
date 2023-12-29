@@ -58,6 +58,14 @@ jobs:
       run: |
         docker tag georchestra/analytics:${{ steps.version.outputs.VERSION }} georchestra/analytics:latest
         docker push georchestra/analytics:latest
+        
+    - name: "Docker Hub Description"
+      uses: peter-evans/dockerhub-description@v3
+      with:
+        username: '${{ secrets.DOCKERHUB_USERNAME }}'
+        password: '${{ secrets.DOCKERHUB_PASSWORD }}'
+        repository: georchestra/analytics
+        readme-filepath: ./analytics/DOCKER_HUB.md
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
