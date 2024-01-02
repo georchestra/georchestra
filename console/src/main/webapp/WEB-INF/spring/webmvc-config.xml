@@ -255,6 +255,7 @@
 
   <!-- Email Factory configuration -->
   <bean id="emailFactory" class="org.georchestra.console.mailservice.EmailFactory" >
+    <property name="language" value="${language:en}"/>
     <property name="smtpHost" value="${smtpHost}"/>
     <property name="smtpPort" value="${smtpPort}"/>
     <property name="emailHtml" value="${emailHtml:false}"/>

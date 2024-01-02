@@ -22,6 +22,7 @@ package org.georchestra.console.mailservice;
 import static java.util.Collections.singletonList;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -30,12 +31,15 @@ import javax.servlet.ServletContext;
 
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.util.StringUtils;
 
 /**
  * Manage e-mails required for this application
  */
 public class EmailFactory {
 
+    private String language;
     private String smtpHost;
     private int smtpPort;
     private boolean emailHtml;
@@ -47,6 +51,9 @@ public class EmailFactory {
 
     @Autowired
     private GeorchestraConfiguration georConfig;
+
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
 
     private String accountWasCreatedEmailFile;
     private String accountWasCreatedEmailSubject;
@@ -181,17 +188,27 @@ public class EmailFactory {
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
                 this.instanceName);
-
         email.set("oauth2", "");
-        email.set("name", userName);
-        email.set("uid_msg", "User ID: " + uid + "\n");
-        email.set("email", userEmail);
-        if (userOrg == null) {
-            userOrg = "";
+        email.set("welcome_msg", messageSource.getMessage("email.welcome.message", null, new Locale(language)) + "\n");
+        email.set("start_msg_part1",
+                messageSource.getMessage("email.start.message.part1", null, new Locale(language)) + " ");
+        email.set("start_msg_part2", messageSource.getMessage("email.start.message.part2", null, new Locale(language)));
+        email.set("name_msg",
+                messageSource.getMessage("email.user.name", null, new Locale(language)) + ": " + userName + "\n");
+        email.set("email_msg",
+                messageSource.getMessage("email.user.email", null, new Locale(language)) + ": " + userEmail + "\n");
+        email.set("uid_msg", messageSource.getMessage("email.user.id", null, new Locale(language)) + ": " + uid + "\n");
+        if (!StringUtils.isEmpty(userOrg)) {
+            email.set("org_msg",
+                    messageSource.getMessage("email.user.org", null, new Locale(language)) + ": " + userOrg + "\n");
+        } else {
+            email.set("org_msg", "");
         }
-        email.set("org_msg", "User Organization: " + userOrg + "\n");
         email.set("provider_msg", "");
-        email.set("user_id", uid);
+        email.set("manage_msg", messageSource.getMessage("email.manage.message", null, new Locale(language)));
+        email.set("sent_msg_part1", messageSource.getMessage("email.sent.message.part1", null, new Locale(language)));
+        email.set("sent_msg_part2",
+                messageSource.getMessage("email.sent.message.part2", null, new Locale(language)) + "\n");
         email.send(reallySend);
     }
 
@@ -202,13 +219,23 @@ public class EmailFactory {
                 this.emailHtml, userEmail, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
-        email.set("name", userName);
-        email.set("email", userEmail);
+        email.set("welcome_msg", messageSource.getMessage("email.welcome.message", null, new Locale(language)) + "\n");
+        email.set("start_msg_part1",
+                messageSource.getMessage("email.start.message.part1", null, new Locale(language)) + " ");
+        email.set("start_msg_part2", messageSource.getMessage("email.start.message.part2", null, new Locale(language)));
+        email.set("name_msg",
+                messageSource.getMessage("email.user.name", null, new Locale(language)) + ": " + userName + "\n");
+        email.set("email_msg",
+                messageSource.getMessage("email.user.email", null, new Locale(language)) + ": " + userEmail + "\n");
         email.set("uid_msg", "");
         email.set("org_msg", "");
-        email.set("provider_msg", "Provider : " + provider + "\n");
+        email.set("provider_msg",
+                messageSource.getMessage("email.user.provider", null, new Locale(language)) + ": " + provider + "\n");
+        email.set("manage_msg", messageSource.getMessage("email.manage.message", null, new Locale(language)));
+        email.set("sent_msg_part1", messageSource.getMessage("email.sent.message.part1", null, new Locale(language)));
+        email.set("sent_msg_part2",
+                messageSource.getMessage("email.sent.message.part2", null, new Locale(language)) + "\n");
         email.set("oauth2", "OAuth 2 ");
-        email.set("user_id", userEmail);
         email.send(reallySend);
     }
 
@@ -258,6 +285,10 @@ public class EmailFactory {
 
     public void setGeorConfig(GeorchestraConfiguration georConfig) {
         this.georConfig = georConfig;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public void setAccountWasCreatedEmailFile(String accountWasCreatedEmailFile) {
