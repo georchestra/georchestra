@@ -81,7 +81,9 @@ public class RabbitmqEventsListener implements MessageListener {
             try {
                 String username = jsonObj.getString("username");
                 String email = jsonObj.getString("email");
-                String provider = jsonObj.getString("provider");
+                String organization = jsonObj.getString("organization");
+                String providerName = jsonObj.getString("providerName");
+                String providerUid = jsonObj.getString("providerUid");
                 System.out.println(this.roleDao.findByCommonName("SUPERUSER"));
                 List<String> superUserAdmins = this.roleDao.findByCommonName("SUPERUSER").getUserList().stream()
                         .map(user -> {
@@ -92,8 +94,8 @@ public class RabbitmqEventsListener implements MessageListener {
                             }
                         }).collect(Collectors.toList());
 
-                this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, username, email, provider,
-                        true);
+                this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, username, email, organization,
+                        providerName, providerUid,true);
 
                 synReceivedMessageUid.add(uid);
                 logUtils.createOAuth2Log(email, AdminLogType.OAUTH2_USER_CREATED, null);

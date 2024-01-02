@@ -213,8 +213,8 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String userName, String userEmail,
-            String provider, boolean reallySend) throws MessagingException {
+    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String userName, String userEmail, String userOrg,
+            String providerName, String providerUid, boolean reallySend) throws MessagingException {
 
         Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
                 this.emailHtml, userEmail, // Reply-to
@@ -228,10 +228,15 @@ public class EmailFactory {
                 messageSource.getMessage("email.user.name", null, new Locale(language)) + ": " + userName + "\n");
         email.set("email_msg",
                 messageSource.getMessage("email.user.email", null, new Locale(language)) + ": " + userEmail + "\n");
-        email.set("uid_msg", "");
-        email.set("org_msg", "");
+        email.set("uid_msg", messageSource.getMessage("email.user.id", null, new Locale(language)) + ": " + providerUid + "\n");
+        if (!StringUtils.isEmpty(userOrg)) {
+            email.set("org_msg",
+                    messageSource.getMessage("email.user.org", null, new Locale(language)) + ": " + userOrg + "\n");
+        } else {
+            email.set("org_msg", "");
+        }
         email.set("provider_msg",
-                messageSource.getMessage("email.user.provider", null, new Locale(language)) + ": " + provider + "\n");
+                messageSource.getMessage("email.user.provider", null, new Locale(language)) + ": " + providerName + "\n");
         email.set("manage_msg", messageSource.getMessage("email.manage.message", null, new Locale(language)));
         email.set("sent_msg_part1", messageSource.getMessage("email.sent.message.part1", null, new Locale(language)));
         email.set("sent_msg_part2",
