@@ -209,6 +209,7 @@ public class EmailFactory {
         email.set("sent_msg_part1", messageSource.getMessage("email.sent.message.part1", null, new Locale(language)));
         email.set("sent_msg_part2",
                 messageSource.getMessage("email.sent.message.part2", null, new Locale(language)) + "\n");
+        email.set("user_id", uid);
         email.send(reallySend);
     }
 
@@ -236,6 +237,7 @@ public class EmailFactory {
         email.set("sent_msg_part2",
                 messageSource.getMessage("email.sent.message.part2", null, new Locale(language)) + "\n");
         email.set("oauth2", "OAuth 2 ");
+        email.set("user_id", userEmail);
         email.send(reallySend);
     }
 
