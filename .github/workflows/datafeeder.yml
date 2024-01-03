@@ -78,8 +78,8 @@ jobs:
     - name: "Update Datafeeder Docker Hub Description"
       uses: peter-evans/dockerhub-description@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/datafeeder
         readme-filepath: ./datafeeder/DOCKER_HUB.md
         short-description: 'Datafeeder backend module for geOrchestra SDI'
@@ -87,8 +87,8 @@ jobs:
     - name: "Update Datafeeder-UI Docker Hub Description"
       uses: peter-evans/dockerhub-description@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/datafeeder-frontend
         readme-filepath: ./datafeeder-ui/DOCKER_HUB.md
         short-description: 'Datafeeder frontend module for geOrchestra SDI'

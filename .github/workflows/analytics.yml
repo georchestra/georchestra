@@ -62,8 +62,8 @@ jobs:
     - name: "Update Docker Hub Description"
       uses: peter-evans/dockerhub-description@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/analytics
         readme-filepath: ./analytics/DOCKER_HUB.md
         short-description: 'Analytics module for geOrchestra SDI'
