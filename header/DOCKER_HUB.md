@@ -4,7 +4,8 @@
       [Georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [Georchestra Github repo](https://github.com/georchestra/georchestra), [Geonetwork-UI repo](https://github.com/geonetwork/geonetwork-ui/), [Matrix chat](https://matrix.to/#/#georchestra:libera.chat), Stack Overflow
+     the [Georchestra Github repo](https://github.com/georchestra/georchestra), [Matrix chat](https://matrix.to/#/#georchestra:libera.chat), Stack Overflow
+
 
 # Featured tags
 
@@ -12,21 +13,18 @@
 
 # Quick reference
 
-- **Where to file issues**: 
-  - [https://github.com/georchestra/georchestra/issues](https://github.com/georchestra/georchestra/issues)
-  - [Geonetwork-ui upstream](https://github.com/geonetwork/geonetwork-ui/)
+-	**Where to file issues**:  
+     [https://github.com/georchestra/georchestra/issues](https://github.com/georchestra/georchestra/issues)
 
 -	**Supported architectures**:   
      [`amd64`](https://hub.docker.com/r/amd64/docker/)
 
 -	**Source of this description**:  
-     [docs repo's `datafeeder-ui/` directory](https://github.com/georchestra/georchestra/blob/master/datafeeder-ui/DOCKER_HUB.md)
+     [docs repo's `header/` directory](https://github.com/georchestra/georchestra/blob/master/header/DOCKER_HUB.md)
 
-# What is `georchestra/datafeeder-frontend`
+# What is `georchestra/header`
 
-**Datafeeder-frontend** is geOrchestra's frontend UI service provides the wizard-like user interface to interact with the [backend](https://hub.docker.com/r/georchestra/datafeeder), it aims to upload file based datasets and publish them to GeoServer and GeoNetwork in one shot.
-
-**Datafeeder-frontend** is a fork of [geonetwork-ui/datafeeder](https://github.com/geonetwork/geonetwork-ui/) Angular app.
+**Header** is a module for geOrchestra which offers a dynamic header, which is by default incorporated into every geOrchestra webapp.
 
 # How to use this image
 
@@ -34,13 +32,13 @@ As for every other geOrchestra webapp, its configuration resides in the data dir
 
 You can run the image using :
 ```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/datafeeder-frontend:latest
+docker run -v georchestra_datadir:/etc/georchestra georchestra/header:latest
 ```
 
 Or with `docker compose`:
 ```yaml
-  import:
-    image: georchestra/datafeeder-frontend:latest
+  header:
+    image: georchestra/header:latest
     depends_on:
       envsubst:
         condition: service_completed_successfully
@@ -52,9 +50,7 @@ A full configuration example is available in [georchestra/docker](https://github
 
 ## Where is it built
 
-This image is build using maven : `../mvnw package docker:build -Pdocker` in `georchestra` repo `analytics/` folder.
-
-It pulls `georchestra-datafeeder` branch from [georchestra/geonetwork-ui](https://github.com/georchestra/geonetwork-ui/tree/georchestra-datafeeder) repo.
+This image is build using maven : `../mvnw package docker:build -Pdocker` in `georchestra` repo `header/` folder.
 
 # License
 
