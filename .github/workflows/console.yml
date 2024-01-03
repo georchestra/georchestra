@@ -66,6 +66,15 @@ jobs:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
+    - name: "Update Docker Hub Description"
+      uses: peter-evans/dockerhub-description@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        repository: georchestra/console
+        readme-filepath: ./console/DOCKER_HUB.md
+        short-description: 'Console module for geOrchestra SDI'
+
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |

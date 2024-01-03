@@ -19,51 +19,56 @@
      [`amd64`](https://hub.docker.com/r/amd64/docker/)
 
 -	**Source of this description**:  
-     [docs repo's `analytics/` directory](https://github.com/georchestra/georchestra/blob/master/analytics/DOCKER_HUB.md)
+     [docs repo's `console/` directory](https://github.com/georchestra/georchestra/blob/master/console/DOCKER_HUB.md)
 
-# What is `georchestra/analytics`
+# What is `georchestra/console`
 
-**Analytics** is a module for geOrchestra which offers
-- services which are used by the console
-- a GUI which displays **monthly** and **global** statistics on platform usage, through OGC web services monitoring.
+**Console** is a module for geOrchestra which allow:
+- public users to create accounts/reset their passwords.
+- administrators to manage users, organisations and roles.
+- registered users to edit their account details.
 
-It relies on the [ogc-server-statistics](ogc-server-statistics/README.md) module (which is embedded into the security-proxy) to collect figures in a database:
-- service type, layer name, request type (getmap/getfeature/getcapabilities/...), hits
-- username, number of requests
-- organisation, number of requests
-
-Each table can be exported to CSV for easy offline use.
+A [complete description](https://github.com/georchestra/georchestra/blob/master/console/README.md) is available on github .
 
 # How to use this image
 
-As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
+As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a console sub-directory.
 
 You can run the image using :
 ```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/analytics:latest
+docker run -v georchestra_datadir:/etc/georchestra georchestra/console:latest
 ```
 
-Or with `docker compose`:
+Or with `docker compose`: 
 ```yaml
-  analytics:
-    image: georchestra/analytics:latest
+  console:
+    image: georchestra/console:latest
     healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
     depends_on:
+      ldap:
+        condition: service_healthy
       database:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     volumes:
       - georchestra_datadir:/etc/georchestra
+    environment:
+      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
+      - XMS=256M
+      - XMX=1G
+    restart: always
 ```
 
 A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
 
 ## Where is it built
 
-This image is build using maven : `../mvnw package docker:build -Pdocker` in `georchestra` repo `analytics/` folder.
+This image is build using maven : `../mvnw package docker:build -Pdocker` in `georchestra` repo `console/` folder.
 
 # License
 
