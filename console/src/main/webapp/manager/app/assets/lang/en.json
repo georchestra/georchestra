@@ -115,6 +115,7 @@
   "org.note"              : "Internal Notes",
   "org.cities"            : "Area",
   "org.orgType"           : "Organisation type",
+  "org.maxdesc"           : "255 chars max",
   "imageinput.label"      : "Upload logo",
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
