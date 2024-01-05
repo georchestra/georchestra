@@ -114,6 +114,7 @@
   "org.note"              : "Interno Notas",
   "org.cities"            : "Zona",
   "org.orgType"           : "Organisation type",
+  "org.maxdesc"           : "255 caracteres max",
   "imageinput.label"      : "Subir un logo",
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",

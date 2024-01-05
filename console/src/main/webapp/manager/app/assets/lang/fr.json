@@ -114,6 +114,7 @@
   "org.note"              : "Notes Internes",
   "org.cities"            : "Aire de compétence",
   "org.orgType"           : "Type d'organisme",
+  "org.maxdesc"           : "255 caractères max",
   "imageinput.label"      : "Charger un logo",
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",

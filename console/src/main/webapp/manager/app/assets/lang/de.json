@@ -114,6 +114,7 @@
   "org.note"              : "Aufzeichnungen",
   "org.cities"            : "Bereich",
   "org.orgType"           : "Organisationstyp",
+  "org.maxdesc"           : "255 Zeichen max",
   "imageinput.label"      : "Logo laden",
   "roles.title_plural"    : "Rollen",
   "roles.title_one"       : "Rolle",
