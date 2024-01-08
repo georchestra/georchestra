@@ -18,6 +18,7 @@ on:
 
 jobs:
   build:
+    if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
