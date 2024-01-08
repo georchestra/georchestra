@@ -274,6 +274,7 @@
     <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="newaccount-notification-template.txt"/>
+    <property name="newOAuth2AccountNotificationEmailFile" value="new-oauth2-account-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
     <property name="newOAuth2AccountNotificationEmailSubject" value="${subject.new.oauth2account.notification:[${instanceName}] New OAuth2 account created}"/>
     <property name="publicUrl" value="https://${domainName}"/>
