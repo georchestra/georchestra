@@ -31,26 +31,7 @@ The separate front-end UI ([georchestra/datafeeder-frontend](https://hub.docker.
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
 
-You can run the image using :
-```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/datafeeder:latest
-```
-
-Or with `docker compose`:
-```yaml
-  datafeeder:
-    image: georchestra/datafeeder:latest
-    depends_on:
-      database:
-        condition: service_healthy
-      postgis:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-      - datafeeder_uploads:/tmp/datafeeder
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `datafeeder` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 # License
 

@@ -27,24 +27,7 @@
 
 # How to use this image
 
-You can run the image using :
-```shell
-docker run georchestra/database:latest
-```
-
-Or with `docker compose`:
-```yaml
-  database:
-    image: georchestra/database:latest
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    volumes:
-      - postgresql_data:/var/lib/postgresql/data
-    restart: always
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `database` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 

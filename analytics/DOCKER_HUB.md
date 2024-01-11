@@ -38,28 +38,7 @@ Each table can be exported to CSV for easy offline use.
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
 
-You can run the image using :
-```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/analytics:latest
-```
-
-Or with `docker compose`:
-```yaml
-  analytics:
-    image: georchestra/analytics:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/analytics/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `analytics` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 

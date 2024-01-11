@@ -34,37 +34,7 @@ A [complete description](https://github.com/georchestra/georchestra/blob/master/
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a console sub-directory.
 
-You can run the image using :
-```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/console:latest
-```
-
-Or with `docker compose`: 
-```yaml
-  console:
-    image: georchestra/console:latest
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s -f http://localhost:8080/console/account/new >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-    depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    environment:
-      - JAVA_OPTIONS=-Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
-      - XMS=256M
-      - XMX=1G
-    restart: always
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `console` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 

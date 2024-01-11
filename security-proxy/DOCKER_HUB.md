@@ -33,26 +33,7 @@
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
 
-You can run the image using :
-```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/security-proxy:latest
-```
-
-Or with `docker compose`:
-```yaml
-  proxy:
-    image: georchestra/security-proxy:latest
-    depends_on:
-      ldap:
-        condition: service_healthy
-      database:
-        condition: service_healthy
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-    restart: always
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `proxy` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 

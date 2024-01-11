@@ -32,23 +32,7 @@
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
 
-You can run the image using :
-```shell
-docker run -v georchestra_datadir:/etc/georchestra georchestra/datafeeder-frontend:latest
-```
-
-Or with `docker compose`:
-```yaml
-  import:
-    image: georchestra/datafeeder-frontend:latest
-    depends_on:
-      envsubst:
-        condition: service_completed_successfully
-    volumes:
-      - georchestra_datadir:/etc/georchestra
-```
-
-A full configuration example is available in [georchestra/docker](https://github.com/georchestra/docker) repo.
+See the section `import` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 
