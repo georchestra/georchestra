@@ -38,7 +38,7 @@ import org.testcontainers.utility.DockerImageName;
 public class GeorchestraConsoleContainer extends GenericContainer<GeorchestraConsoleContainer> {
 
     public GeorchestraConsoleContainer() {
-        this(DockerImageName.parse("georchestra/console:23.0x"));
+        this(DockerImageName.parse("georchestra/console:23.0.x"));
     }
 
     GeorchestraConsoleContainer(final DockerImageName dockerImageName) {
