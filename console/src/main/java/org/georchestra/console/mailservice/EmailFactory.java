@@ -170,22 +170,22 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg) throws MessagingException {
-        sendNewAccountNotificationEmail(servletContext, recipients, userName, uid, userEmail, userOrg, true);
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg) throws MessagingException {
+        sendNewAccountNotificationEmail(servletContext, recipients, fullName, uid, emailAddress, userOrg, true);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg, boolean reallySend) throws MessagingException {
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg, boolean reallySend) throws MessagingException {
 
         Email email = new Email(recipients, this.newAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, userEmail, // Reply-to
+                this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
                 this.instanceName);
-        email.set("name", userName);
+        email.set("name", fullName);
         email.set("uid", uid);
-        email.set("email", userEmail);
+        email.set("email", emailAddress);
         if (userOrg == null) {
             userOrg = "";
         }
@@ -193,22 +193,23 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String userName, String userEmail,
-            String providerName, String providerUid, String userOrg, boolean reallySend) throws MessagingException {
+    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String fullName, String localUid,
+            String emailAddress, String providerName, String providerUid, String userOrg, boolean reallySend)
+            throws MessagingException {
 
         Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, userEmail, // Reply-to
+                this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newOAuth2AccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
-        email.set("name", userName);
-        email.set("email", userEmail);
+        email.set("name", fullName);
+        email.set("uid", localUid);
+        email.set("email", emailAddress);
         if (userOrg == null) {
             userOrg = "";
         }
         email.set("org", userOrg);
         email.set("providerName", providerName);
-        email.set("uid", providerUid);
-        email.set("userId", userEmail);
+        email.set("providerUid", providerUid);
         email.send(reallySend);
     }
 
