@@ -31,7 +31,9 @@ The separate front-end UI ([georchestra/datafeeder-frontend](https://hub.docker.
 
 As for every other geOrchestra webapp, its configuration resides in the data directory ([datadir](https://github.com/georchestra/datadir)), typically something like /etc/georchestra, where it expects to find a analytics sub-directory.
 
-See the section `datafeeder` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
+It is recommended to use the official docker composition: https://github.com/georchestra/docker.
+
+For this specific component, see the section `datafeeder` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 # License
 

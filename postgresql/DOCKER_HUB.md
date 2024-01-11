@@ -27,7 +27,9 @@
 
 # How to use this image
 
-See the section `database` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
+It is recommended to use the official docker composition: https://github.com/georchestra/docker.
+
+For this specific component, see the section `database` in the [`georchestra/docker/docker-compose.yml`](https://github.com/georchestra/docker/blob/master/docker-compose.yml) file.
 
 ## Where is it built
 
