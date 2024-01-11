@@ -1,0 +1,8 @@
+#!/bin/sh
+FILE=/etc/georchestra/geoserver/jetty-env.xml
+if [ -f "$FILE" ]; then
+    echo "Copying jetty-env.xml"
+    cp $FILE /var/lib/jetty/webapps/geoserver/WEB-INF/jetty-env.xml
+else
+    echo "jetty-env.xml not found, ignoring."
+fi
