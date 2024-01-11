@@ -38,6 +38,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -144,6 +146,10 @@ public final class NewAccountFormController {
 
     public void setEmailFactory(EmailFactory emailFactory) {
         this.emailFactory = emailFactory;
+    }
+
+    public void setPasswordUtils(PasswordUtils passwordUtils) {
+        this.passwordUtils = passwordUtils;
     }
 
     public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
@@ -286,8 +292,7 @@ public final class NewAccountFormController {
             final ServletContext servletContext = request.getSession().getServletContext();
 
             // List of recipients for notification email
-            List<String> recipients = accountDao.findByRole("SUPERUSER").stream().map(Account::getEmail)
-                    .collect(Collectors.toCollection(LinkedList::new));
+            List<String> recipients = getSuperUserEmailAddresses();
 
             // Retrieve emails of delegated admin if org is specified
             if (!formBean.getOrg().equals("-")) {
@@ -340,6 +345,11 @@ public final class NewAccountFormController {
 
             throw new IOException(e);
         }
+    }
+
+    public @VisibleForTesting List<String> getSuperUserEmailAddresses() throws DataServiceException {
+        return accountDao.findByRole("SUPERUSER").stream().map(Account::getEmail).filter(StringUtils::isNotEmpty)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     private void validateFields(@ModelAttribute AccountFormBean formBean, BindingResult result) {
