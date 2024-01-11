@@ -39,7 +39,7 @@ import org.testcontainers.utility.DockerImageName;
 public class GeorchestraLdapContainer extends GenericContainer<GeorchestraLdapContainer> {
 
     public GeorchestraLdapContainer() {
-        this(DockerImageName.parse("georchestra/ldap:latest"));
+        this(DockerImageName.parse("georchestra/ldap:23.0.x"));
     }
 
     GeorchestraLdapContainer(final DockerImageName dockerImageName) {

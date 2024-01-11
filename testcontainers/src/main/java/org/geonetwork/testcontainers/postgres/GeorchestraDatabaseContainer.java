@@ -44,7 +44,7 @@ import org.testcontainers.utility.DockerImageName;
 public class GeorchestraDatabaseContainer extends GenericContainer<GeorchestraDatabaseContainer> {
 
     public GeorchestraDatabaseContainer() {
-        this(DockerImageName.parse("georchestra/database:latest"));
+        this(DockerImageName.parse("georchestra/database:23.0.x"));
     }
 
     GeorchestraDatabaseContainer(final DockerImageName dockerImageName) {
