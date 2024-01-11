@@ -76,6 +76,7 @@ jobs:
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Update Datafeeder Docker Hub Description"
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       uses: peter-evans/dockerhub-description@v3
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -85,6 +86,7 @@ jobs:
         short-description: 'Datafeeder backend module for geOrchestra SDI'
 
     - name: "Update Datafeeder-UI Docker Hub Description"
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       uses: peter-evans/dockerhub-description@v3
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}

@@ -60,6 +60,7 @@ jobs:
         docker push georchestra/analytics:latest
         
     - name: "Update Docker Hub Description"
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       uses: peter-evans/dockerhub-description@v3
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
