@@ -1,0 +1,22 @@
+name: Backport
+
+permissions:
+  contents: write
+  pull-requests: write  
+
+on:
+  pull_request:
+    types:
+      - closed
+      - labeled
+
+jobs:
+  backport:
+    runs-on: ubuntu-22.04
+    name: Backport
+    timeout-minutes: 5
+
+    steps:
+      - uses: camptocamp/backport-action@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
