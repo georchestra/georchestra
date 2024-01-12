@@ -1,9 +1,5 @@
 name: Backport
 
-permissions:
-  contents: write
-  pull-requests: write  
-
 on:
   pull_request:
     types:
@@ -12,11 +8,7 @@ on:
 
 jobs:
   backport:
-    runs-on: ubuntu-22.04
-    name: Backport
-    timeout-minutes: 5
-
+    runs-on: ubuntu-latest
+    name: Backport closed pull request
     steps:
-      - uses: camptocamp/backport-action@master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: syndesisio/backport-action@v1
