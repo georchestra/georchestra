@@ -25,10 +25,10 @@ RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.5/libjpeg-t
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
-# add a tweaked configuration. First use case is support of OPTIONS.
-ADD web.xml /var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
-
 USER jetty
+
+# add a tweaked configuration. First use case is support of OPTIONS.
+COPY --chown=jetty:jetty web.xml /var/lib/jetty/webapps/geoserver/WEB-INF/web.xml
 
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/mnt/geoserver_native_libs", "/tmp", "/run/jetty" ]
 
