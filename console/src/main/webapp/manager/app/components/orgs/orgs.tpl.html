@@ -18,7 +18,7 @@
     <input type="text" class="filter-table form-control pull-right" ng-model="orgs.q" placeholder="{{'orgs.filter_orgs' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="orgs.q != ''" ng-click="orgs.q = ''"></i>
     <h3 class="roles-title">
-    <ng-pluralize count="orgs.orgs.length"
+    <ng-pluralize count="orgs.simplifiedOrgs.length"
                   when="{'0': '{{ &quot;orgs.title_none&quot; | translate }}',
                          '1': '{} {{ &quot;orgs.title_one&quot; | translate }}',
                          'other': '{} {{ &quot;orgs.title_plural&quot; | translate }}'}">
@@ -34,7 +34,7 @@
       </thead>
 
       <tbody>
-        <tr dir-paginate="org in orgs.orgs | filter:orgs.q | filter: {pending: orgs.org==='pending'} | itemsPerPage: orgs.itemsPerPage">
+        <tr dir-paginate="org in orgs.simplifiedOrgs | filter:orgs.q | filter: {pending: orgs.org==='pending'} | itemsPerPage: orgs.itemsPerPage">
           <td>
             <a ng-link="org({org: org.id, tab: 'infos'})" ng-class="{pending: org.status !== 'REGISTERED'}">
               {{::org.name}}

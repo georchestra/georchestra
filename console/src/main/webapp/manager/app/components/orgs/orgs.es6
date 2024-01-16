@@ -19,6 +19,9 @@ class OrgsController {
         org.membersCount = org.members.length
         delete org.members
       })
+      this.simplifiedOrgs = this.orgs.map((org) => {
+        return { id: org.id, name: org.name, shortName: org.shortName, membersCount: org.membersCount, pending: org.pending, status: org.status }
+      })
     })
 
     this.q = ''
