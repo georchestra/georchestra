@@ -65,6 +65,8 @@ public class EmailFactory {
 
     private String newAccountNotificationEmailFile;
 
+    private String newOAuth2AccountNotificationEmailFile;
+
     private String newAccountNotificationEmailSubject;
 
     private String newOAuth2AccountNotificationEmailSubject;
@@ -168,47 +170,46 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg) throws MessagingException {
-        sendNewAccountNotificationEmail(servletContext, recipients, userName, uid, userEmail, userOrg, true);
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg) throws MessagingException {
+        sendNewAccountNotificationEmail(servletContext, recipients, fullName, uid, emailAddress, userOrg, true);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg, boolean reallySend) throws MessagingException {
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg, boolean reallySend) throws MessagingException {
 
         Email email = new Email(recipients, this.newAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, userEmail, // Reply-to
+                this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
                 this.instanceName);
-
-        email.set("oauth2", "");
-        email.set("name", userName);
-        email.set("uid_msg", "User ID: " + uid + "\n");
-        email.set("email", userEmail);
+        email.set("name", fullName);
+        email.set("uid", uid);
+        email.set("email", emailAddress);
         if (userOrg == null) {
             userOrg = "";
         }
-        email.set("org_msg", "User Organization: " + userOrg + "\n");
-        email.set("provider_msg", "");
-        email.set("user_id", uid);
+        email.set("org", userOrg);
         email.send(reallySend);
     }
 
-    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String userName, String userEmail,
-            String provider, boolean reallySend) throws MessagingException {
+    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String fullName, String localUid,
+            String emailAddress, String providerName, String providerUid, String userOrg, boolean reallySend)
+            throws MessagingException {
 
         Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, userEmail, // Reply-to
+                this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
-                this.newAccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
-        email.set("name", userName);
-        email.set("email", userEmail);
-        email.set("uid_msg", "");
-        email.set("org_msg", "");
-        email.set("provider_msg", "Provider : " + provider + "\n");
-        email.set("oauth2", "OAuth 2 ");
-        email.set("user_id", userEmail);
+                this.newOAuth2AccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
+        email.set("name", fullName);
+        email.set("uid", localUid);
+        email.set("email", emailAddress);
+        if (userOrg == null) {
+            userOrg = "";
+        }
+        email.set("org", userOrg);
+        email.set("providerName", providerName);
+        email.set("providerUid", providerUid);
         email.send(reallySend);
     }
 
@@ -302,6 +303,10 @@ public class EmailFactory {
 
     public void setNewAccountNotificationEmailFile(String newAccountNotificationEmailFile) {
         this.newAccountNotificationEmailFile = newAccountNotificationEmailFile;
+    }
+
+    public void setNewOAuth2AccountNotificationEmailFile(String newOAuth2AccountNotificationEmailFile) {
+        this.newOAuth2AccountNotificationEmailFile = newOAuth2AccountNotificationEmailFile;
     }
 
     public void setNewAccountNotificationEmailSubject(String newAccountNotificationEmailSubject) {

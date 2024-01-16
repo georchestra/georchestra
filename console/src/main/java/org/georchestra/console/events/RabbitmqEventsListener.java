@@ -79,10 +79,15 @@ public class RabbitmqEventsListener implements MessageListener {
 
         if (subject.equals("OAUTH2-ACCOUNT-CREATION") && !synReceivedMessageUid.stream().anyMatch(s -> s.equals(uid))) {
             try {
-                String username = jsonObj.getString("username");
+                String fullName = jsonObj.getString("fullName");
+                String localUid = jsonObj.getString("localUid");
                 String email = jsonObj.getString("email");
-                String provider = jsonObj.getString("provider");
-                System.out.println(this.roleDao.findByCommonName("SUPERUSER"));
+                String providerName = jsonObj.getString("providerName");
+                String providerUid = jsonObj.getString("providerUid");
+                String organization = null;
+                if (jsonObj.has("organization")) {
+                    organization = jsonObj.getString("organization");
+                }
                 List<String> superUserAdmins = this.roleDao.findByCommonName("SUPERUSER").getUserList().stream()
                         .map(user -> {
                             try {
@@ -92,8 +97,8 @@ public class RabbitmqEventsListener implements MessageListener {
                             }
                         }).collect(Collectors.toList());
 
-                this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, username, email, provider,
-                        true);
+                this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, fullName, localUid, email,
+                        providerName, providerUid, organization, true);
 
                 synReceivedMessageUid.add(uid);
                 logUtils.createOAuth2Log(email, AdminLogType.OAUTH2_USER_CREATED, null);
