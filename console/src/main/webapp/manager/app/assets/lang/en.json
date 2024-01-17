@@ -48,7 +48,7 @@
   "user.postalAddress"    : "Address",
   "user.org"              : "Organization",
   "user.description"      : "Description",
-  "user.manager"          : "Manager",
+  "user.manager"          : "Referent",
   "user.expire"           : "Expire",
   "user.reset"            : "Reset",
   "user.password"         : "Local Password",
