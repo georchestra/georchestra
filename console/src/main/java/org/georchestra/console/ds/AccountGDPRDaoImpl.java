@@ -91,22 +91,30 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
      */
     public @Override DeletedRecords deleteAccountRecords(@NonNull Account account) throws DataServiceException {
         try (Connection conn = ds.getConnection()) {
+            int metadataRecords;
+            int ogcStatsRecords = 0;
             conn.setAutoCommit(false);
             try {
-                int metadataRecords;
-                int ogcStatsRecords;
                 metadataRecords = deleteUserMetadataRecords(conn, account);
-                ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
                 conn.commit();
-                DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, ogcStatsRecords);
-                log.info("Deleted records: {}", ret);
-                return ret;
             } catch (SQLException e) {
                 conn.rollback();
                 throw new DataServiceException(e);
             } finally {
                 conn.setAutoCommit(true);
             }
+            conn.setAutoCommit(false);
+            try {
+                ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+            } finally {
+                conn.setAutoCommit(true);
+            }
+            DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, ogcStatsRecords);
+            log.info("Deleted records: {}", ret);
+            return ret;
         } catch (SQLException e) {
             throw new DataServiceException(e);
         }
