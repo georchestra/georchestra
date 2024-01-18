@@ -803,7 +803,7 @@ public class UsersController {
 
         Account a = AccountFactory.createFull(uuid, uid, commonName, surname, givenName, email, title, phone,
                 description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "",
-                "", manager, note, context, org, sshKeysA, saslUser, null);
+                "", manager, note, context, org, sshKeysA, saslUser, null, null);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {

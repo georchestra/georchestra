@@ -63,7 +63,7 @@ public class GeorchestraConsoleUsersApiImpl implements UsersApi {
     }
 
     @Override
-    public Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId) {
+    public Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
         return Optional.empty();
     }
 

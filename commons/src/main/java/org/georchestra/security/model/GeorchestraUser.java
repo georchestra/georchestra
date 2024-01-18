@@ -86,8 +86,11 @@ public class GeorchestraUser implements Serializable {
     /** Provided by request header {@code sec-ldap-remaining-days} */
     private String ldapRemainingDays;
 
-    /** Maps to Account.getOAuth2ProviderId */
-    private String oAuth2ProviderId;
+    /** Maps to Account.getOAuth2Provider */
+    private String oAuth2Provider;
+
+    /** Maps to Account.getOAuth2Uid */
+    private String oAuth2Uid;
 
     public void setRoles(List<String> roles) {
         this.roles = roles == null ? new ArrayList<>() : roles;

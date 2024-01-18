@@ -67,13 +67,15 @@ public interface AccountDao {
     /**
      * Returns the account that contains the OAuth2 provider provided as parameter.
      *
-     * @param oAuth2ProviderId
+     * @param oAuth2Provider
+     * @param oAuth2Uid
      * @return {@link Account}
      *
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
-    Account findByOAuth2ProviderId(final String oAuth2ProviderId) throws DataServiceException, NameNotFoundException;
+    Account findByOAuth2Uid(final String oAuth2Provider, final String oAuth2Uid)
+            throws DataServiceException, NameNotFoundException;
 
     /**
      * Returns a list of account that have specified role.

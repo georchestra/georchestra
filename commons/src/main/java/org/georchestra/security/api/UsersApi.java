@@ -39,7 +39,7 @@ public interface UsersApi {
         return Optional.empty();
     };
 
-    default Optional<GeorchestraUser> findByOAuth2ProviderId(String oauth2ProviderId) {
+    default Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
         return Optional.empty();
     };
 
