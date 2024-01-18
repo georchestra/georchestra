@@ -295,13 +295,13 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Account findByOAuth2ProviderId(final String oAuth2ProviderId)
+    public Account findByOAuth2Uid(final String oAuth2Provider, final String oAuth2Uid)
             throws DataServiceException, NameNotFoundException {
-        List<Account> accountList = new AccountSearcher()
-                .and(new EqualsFilter(UserSchema.OAUTH2_PROVIDER_ID_KEY, oAuth2ProviderId))
-                .getActiveOrPendingAccounts();
+        List<Account> accountList = new AccountSearcher().and(new EqualsFilter(UserSchema.OAUTH2_UID_KEY, oAuth2Uid))
+                .and(new EqualsFilter(UserSchema.OAUTH2_PROVIDER_KEY, oAuth2Provider)).getActiveOrPendingAccounts();
         if (accountList.isEmpty()) {
-            throw new NameNotFoundException("There is no user with this oAuth2ProviderId: " + oAuth2ProviderId);
+            throw new NameNotFoundException(
+                    "There is no user with this oAuth2Provider: " + oAuth2Provider + " and oAuth2Uid: " + oAuth2Uid);
         }
         return accountList.get(0);
     }
@@ -515,7 +515,8 @@ public class AccountDaoImpl implements AccountDao {
             setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
         }
 
-        setAccountField(context, UserSchema.OAUTH2_PROVIDER_ID_KEY, account.getOAuth2ProviderId());
+        setAccountField(context, UserSchema.OAUTH2_PROVIDER_KEY, account.getOAuth2Provider());
+        setAccountField(context, UserSchema.OAUTH2_UID_KEY, account.getOAuth2Uid());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -577,7 +578,8 @@ public class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
                     sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null,
-                    context.getStringAttribute(UserSchema.OAUTH2_PROVIDER_ID_KEY));
+                    context.getStringAttribute(UserSchema.OAUTH2_PROVIDER_KEY),
+                    context.getStringAttribute(UserSchema.OAUTH2_UID_KEY));
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {

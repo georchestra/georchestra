@@ -162,7 +162,7 @@ public class EditUserDetailsFormController {
         if (!org.equals("")) {
             formBean.setOrg(orgsDao.findByCommonName(org).getName());
         }
-        formBean.setIsOAuth2(account.getOAuth2ProviderId() != null);
+        formBean.setIsOAuth2(account.getOAuth2Provider() != null);
 
         return formBean;
     }
