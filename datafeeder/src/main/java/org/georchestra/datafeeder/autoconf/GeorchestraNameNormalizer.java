@@ -23,6 +23,7 @@ import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
 
 import lombok.NonNull;
+import org.springframework.util.StringUtils;
 
 public class GeorchestraNameNormalizer {
 
@@ -59,8 +60,9 @@ public class GeorchestraNameNormalizer {
      * first data store with a given name even if it's not the one that belongs to
      * the requested workspace.
      */
-    public String resolveDataStoreName(String workspaceName) {
-        return String.format("datafeeder_%s", workspaceName);
+    public String resolveDataStoreName(String workspaceName, String storeNameConfig) {
+        return !StringUtils.isEmpty(storeNameConfig) && !storeNameConfig.equals("<storename>") ? storeNameConfig
+                : String.format("datafeeder_%s", workspaceName);
     }
 
     /**

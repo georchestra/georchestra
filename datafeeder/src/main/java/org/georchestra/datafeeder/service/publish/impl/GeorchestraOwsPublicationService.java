@@ -61,6 +61,7 @@ import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 /**
  * {@link OWSPublicationService} relying on {@link GeoServerRemoteService} to
@@ -102,8 +103,9 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(publishing.getImportedName(),
                 "importedName is required to resolve the native feature type name");
 
-        final String workspaceName = resolveWorkspace(user);
-        final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName);
+        final Map<String, String> geoserverConfig = this.configProperties.getPublishing().getBackend().getGeoserver();
+        final String workspaceName = resolveWorkspace(user, geoserverConfig.get("workspacename"));
+        final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName, geoserverConfig.get("storename"));
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
 
         Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
@@ -152,7 +154,8 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(publishing);
 
         final String workspace = publishing.getPublishedWorkspace();
-        final String dataStore = nameResolver.resolveDataStoreName(workspace);
+        final String dataStore = nameResolver.resolveDataStoreName(workspace,
+                this.configProperties.getPublishing().getBackend().getGeoserver().get("storename"));
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
@@ -294,9 +297,11 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return layerName;
     }
 
-    private String resolveWorkspace(@NonNull UserInfo user) {
+    private String resolveWorkspace(@NonNull UserInfo user, String workspaceNameConfig) {
         final @NonNull String orgName = user.getOrganization().getShortName();
-        final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
+        final String workspaceName = !StringUtils.isEmpty(workspaceNameConfig)
+                && !workspaceNameConfig.equals("<workspacename>") ? workspaceNameConfig
+                        : nameResolver.resolveWorkspaceName(orgName);
         String baseNamespaceURI = this.configProperties.getPublishing().getGeoserver().getBaseNamespaceURI();
         String namespaceURI = URI.create(baseNamespaceURI + "/" + workspaceName).normalize().toString();
         WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName, namespaceURI);
