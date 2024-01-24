@@ -88,3 +88,13 @@ jobs:
       if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         find .m2/repository -name "*SNAPSHOT*" -type d | xargs rm -rf {}
+
+    - name: "Update Docker Hub Description"
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
+      uses: peter-evans/dockerhub-description@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        repository: georchestra/geoserver
+        readme-filepath: ./geoserver/DOCKER_HUB.md
+        short-description: 'Geoserver module for geOrchestra SDI'
