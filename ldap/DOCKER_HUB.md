@@ -4,7 +4,7 @@
       [georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [Georchestra Github repo](https://github.com/georchestra/georchestra), [Matrix chat](https://matrix.to/#/#georchestra:libera.chat), Stack Overflow
+     the [Georchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://kiwiirc.com/nextclient/irc.libera.chat/georchestra), Stack Overflow
 
 # Featured tags
 
