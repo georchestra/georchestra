@@ -60,7 +60,7 @@
         <entry key="headerUrl" value="${headerUrl}" />
         <entry key="headerScript" value="${headerScript}" />
         <entry key="logoUrl" value="${logoUrl}" />
-        <entry key="georchestraStylesheet" value="${georchestraStylesheet}" />
+        <entry key="georchestraStylesheet" value="${georchestraStylesheet:}" />
         <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>

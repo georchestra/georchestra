@@ -53,7 +53,7 @@
           <td><abbr ng-bind-html="log.date | dateFormat"></abbr></td>
           <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
           <!--Target-->
-          <td>
+          <td style="max-width: 20vw" class="break-word">
             <!--user or user's role modification-->
             <a ng-if="logger.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})">
               {{::log.target}}

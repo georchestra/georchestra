@@ -121,7 +121,7 @@
 
       <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid}">
         <label class="col-sm-4" for="uid" translate>user.login</label>
-        <div class="col-sm-8" ng-if="!view.edit_login">
+        <div class="col-sm-8 break-word" ng-if="!view.edit_login">
           {{model.uid}} (<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)
         </div>
         <div class="col-sm-8" ng-if="view.edit_login">
