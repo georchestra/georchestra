@@ -5,4 +5,5 @@
   <Call name="addAliasCheck">
     <Arg><New class="org.eclipse.jetty.server.handler.AllowSymLinkAliasChecker"/></Arg>
   </Call>
+  <Set name="maxFormContentSize">5000000</Set>
 </Configure>
