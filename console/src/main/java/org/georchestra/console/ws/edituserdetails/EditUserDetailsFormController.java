@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.edituserdetails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.io.IOException;
@@ -113,7 +114,10 @@ public class EditUserDetailsFormController {
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         try {
             String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            boolean isExternalAuth = Boolean
+                    .parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
             Account userAccount = this.accountDao.findByUID(username);
+            userAccount.setIsExternalAuth(isExternalAuth);
             model.addAttribute(createForm(userAccount));
             Org org = orgsDao.findByUser(userAccount);
             model.addAttribute("org", orgToJson(org));
@@ -158,6 +162,7 @@ public class EditUserDetailsFormController {
         formBean.setFacsimile(account.getFacsimile());
         formBean.setDescription(account.getDescription());
         formBean.setPostalAddress(account.getPostalAddress());
+        formBean.setIsExternalAuth(account.getIsExternalAuth());
         String org = account.getOrg();
         if (!org.equals("")) {
             formBean.setOrg(orgsDao.findByCommonName(org).getName());

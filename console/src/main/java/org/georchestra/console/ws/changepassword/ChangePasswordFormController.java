@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.changepassword;
 
+import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
@@ -39,7 +40,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
 
 /**
  * This controller is responsible of manage the user interactions required for
@@ -84,11 +89,13 @@ public class ChangePasswordFormController {
      * @throws DataServiceException
      */
     @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
-    public String setupForm(Model model) throws DataServiceException {
+    public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model)
+            throws DataServiceException {
         Optional<String> uid = getUsername();
         if (uid.isPresent()) {
-
-            if (isUserAuthenticatedBySASL(uid.get())) {
+            boolean isExternalAuth = Boolean
+                    .parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
+            if (isUserAuthenticatedBySASL(uid.get()) || isExternalAuth) {
                 return "userManagedBySASL";
             }
 

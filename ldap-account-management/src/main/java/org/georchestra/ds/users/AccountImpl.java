@@ -166,6 +166,7 @@ public class AccountImpl implements Serializable, Account {
     // Json export is defined on the getter getOrg()
     private String org;
     private boolean pending;
+    private boolean isExternalAuth;
 
     @Override
     public String toString() {
@@ -618,5 +619,15 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setOAuth2Uid(String oAuth2Uid) {
         this.oAuth2Uid = oAuth2Uid;
+    }
+
+    @Override
+    public boolean getIsExternalAuth() {
+        return this.isExternalAuth;
+    }
+
+    @Override
+    public void setIsExternalAuth(boolean isExternalAuth) {
+        this.isExternalAuth = isExternalAuth;
     }
 }

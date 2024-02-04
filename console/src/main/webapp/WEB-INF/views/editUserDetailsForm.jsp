@@ -147,7 +147,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
       </t:textarea>
     </fieldset>
 
-    <c:if test="${!editUserDetailsFormBean.isOAuth2}">
+    <c:if test="${!editUserDetailsFormBean.isOAuth2 && !editUserDetailsFormBean.isExternalAuth}">
       <fieldset>
         <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
         <div class="form-group">
