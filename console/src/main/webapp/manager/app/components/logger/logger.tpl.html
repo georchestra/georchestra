@@ -51,7 +51,7 @@
     <tbody>
         <tr dir-paginate="log in logger.logs | logs: logger.type:logger.admin:logger.target:logger.date | orderBy: '-date' | itemsPerPage: logger.itemsPerPage">
           <td><abbr ng-bind-html="log.date | dateFormat"></abbr></td>
-          <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
+          <td style="max-width: 20vw" class="break-word"><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
           <!--Target-->
           <td style="max-width: 20vw" class="break-word">
             <!--user or user's role modification-->
