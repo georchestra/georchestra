@@ -67,7 +67,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/analytics
         readme-filepath: ./analytics/DOCKER_HUB.md
-        short-description: 'Analytics module for geOrchestra SDI'
+        short-description: 'Analytics module for the geOrchestra SDI'
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'

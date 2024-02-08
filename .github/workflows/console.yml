@@ -74,7 +74,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/console
         readme-filepath: ./console/DOCKER_HUB.md
-        short-description: 'Console module for geOrchestra SDI'
+        short-description: 'Console module for the geOrchestra SDI'
 
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'

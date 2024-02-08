@@ -57,4 +57,4 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/ldap
         readme-filepath: ./ldap/DOCKER_HUB.md
-        short-description: 'LDAP module for geOrchestra SDI'
+        short-description: 'LDAP module for the geOrchestra SDI'

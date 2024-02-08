@@ -79,5 +79,5 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/geowebcache
         readme-filepath: ./geowebcache/DOCKER_HUB.md
-        short-description: 'Geowebcache module for geOrchestra SDI'
+        short-description: 'Geowebcache module for the geOrchestra SDI'
 

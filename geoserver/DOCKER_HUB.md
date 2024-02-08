@@ -4,7 +4,7 @@
       [georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [Georchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://kiwiirc.com/nextclient/irc.libera.chat/georchestra), Stack Overflow
+     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://kiwiirc.com/nextclient/irc.libera.chat/georchestra), Stack Overflow
 
 # Featured tags
 
@@ -40,7 +40,7 @@ For this specific component, see the section `geoserver` in the [`georchestra/do
 
 ## Where is it built
 
-This image is build using maven : `./mvnw -Pdocker package docker:build` in [`georchestra`](https://github.com/georchestra/georchestra) repo.
+This image is built using maven : `./mvnw -Pdocker package docker:build` in [`georchestra`](https://github.com/georchestra/georchestra) repo.
 
 # License
 
@@ -50,4 +50,4 @@ As with all Docker images, these likely also contain other software which may be
 
 [//]: # (Some additional license information which was able to be auto-detected might be found in [the `repo-info` repository's georchestra/ directory]&#40;&#41;.)
 
-As for any pre-built image usage, it is the image user's responsibility to ensure that any use of this image complies with any relevant licenses for all software contained within.
+As for any docker image, it is the user's responsibility to ensure that usages of this image comply with any relevant licenses for all software contained within.

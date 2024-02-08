@@ -97,4 +97,4 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
         repository: georchestra/geoserver
         readme-filepath: ./geoserver/DOCKER_HUB.md
-        short-description: 'Geoserver module for geOrchestra SDI'
+        short-description: 'Geoserver module for the geOrchestra SDI'
