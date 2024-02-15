@@ -68,7 +68,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegratio
 
     public @Rule @Autowired IntegrationTestSupport support;
 
-    private @Autowired DataSource ds;
+    private @Autowired DataSource dataSource;
 
     private @Value("${dataSource.maxPoolSize}") int maxPoolSize;
 
@@ -110,7 +110,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegratio
         List<Connection> consumeAll = new ArrayList<>();
         for (int i = 0; i < maxPoolSize; i++) {
             try {
-                Connection connection = ds.getConnection();
+                Connection connection = dataSource.getConnection();
                 consumeAll.add(connection);
                 if (i == 0) {
                     testConnection = connection;

@@ -39,9 +39,6 @@ import javax.sql.DataSource;
 
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKBReader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -77,31 +74,39 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     private static final String DELETE_OGCSTATS_RECORDS = "update ogcstatistics.ogc_services_log set user_name = ? where user_name = ?";
 
     @Autowired
-    private DataSource ds;
+    private DataSource dataSource;
+
+    @Autowired
+    private DataSource dataSourceGeonetwork;
 
     public void setDataSource(DataSource dataSource) {
-        this.ds = dataSource;
+        this.dataSource = dataSource;
+    }
+
+    public void setDataSourceGN(DataSource dataSource) {
+        this.dataSourceGeonetwork = dataSource;
     }
 
     /**
-     * Deletes (obfuscates) all GDPR sensitive records for the given account and
+     * s Deletes (obfuscates) all GDPR sensitive records for the given account and
      * returns a summary of records affected. Deleting here means making the records
      * untraceable to the account owner, but keep them under a "ghost" user name
      * ({@code _deleted_account_}) for statistical purposes.
      */
     public @Override DeletedRecords deleteAccountRecords(@NonNull Account account) throws DataServiceException {
-        try (Connection conn = ds.getConnection()) {
+        try (Connection conn = dataSource.getConnection(); Connection connGN = dataSourceGeonetwork.getConnection()) {
             int metadataRecords;
             int ogcStatsRecords = 0;
             conn.setAutoCommit(false);
+            connGN.setAutoCommit(false);
             try {
-                metadataRecords = deleteUserMetadataRecords(conn, account);
-                conn.commit();
+                metadataRecords = deleteUserMetadataRecords(connGN, account);
+                connGN.commit();
             } catch (SQLException e) {
-                conn.rollback();
+                connGN.rollback();
                 throw new DataServiceException(e);
             } finally {
-                conn.setAutoCommit(true);
+                connGN.setAutoCommit(true);
             }
             conn.setAutoCommit(false);
             try {
@@ -168,9 +173,9 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         final String userName = owner.getUid();
         try {
             int reccount = visitRecords(QUERY_OGCSTATS_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createOgcStatisticsRecord, consumer);
+                    AccountGDPRDaoImpl::createOgcStatisticsRecord, consumer, dataSource.getConnection());
             log.info("Extracted {} OGC statistics records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
+        } catch (DataServiceException | SQLException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -180,9 +185,9 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         final String userName = owner.getUid();
         try {
             int reccount = visitRecords(QUERY_METADATA_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createMetadataRecord, consumer);
+                    AccountGDPRDaoImpl::createMetadataRecord, consumer, dataSourceGeonetwork.getConnection());
             log.info("Extracted {} metadata records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
+        } catch (DataServiceException | SQLException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -193,9 +198,9 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     }
 
     private <R> int visitRecords(String psQuery, PreparedStatementBuilder psBuilder, Function<ResultSet, R> mapper,
-            @NonNull Consumer<R> consumer) throws DataServiceException {
+            @NonNull Consumer<R> consumer, Connection c) throws DataServiceException {
 
-        try (Connection c = ds.getConnection(); PreparedStatement ps = c.prepareStatement(psQuery)) {
+        try (PreparedStatement ps = c.prepareStatement(psQuery)) {
 
             psBuilder.accept(ps);
 
