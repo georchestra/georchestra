@@ -1,0 +1,8 @@
+dn: cn=IMPORT,ou=roles,dc=georchestra,dc=org
+objectClass: georchestraRole
+objectClass: top
+objectClass: groupOfMembers
+cn: IMPORT
+description: This role grants access to datafeeder app (import)
+-
+
