@@ -3,6 +3,6 @@ objectClass: georchestraRole
 objectClass: top
 objectClass: groupOfMembers
 cn: IMPORT
-description: This role grants access to datafeeder app (import)
+description:  This role grants access to import functionnality through datafeeder application.
 -
 
