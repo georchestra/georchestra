@@ -64,3 +64,9 @@ This role allows user to have access to the import tool (datafeeder).
 
 By default, users couldn't use datafeeder application.
 
+
+## Gateway
+
+The `gateway` service has been added to the geOrchestra stack. It replaces the old `proxy` service.
+
+
