@@ -1,1 +1,1 @@
-../node_modules/save-svg-as-png/saveSvgAsPng.js
+../node_modules/save-svg-as-png/lib/saveSvgAsPng.js
