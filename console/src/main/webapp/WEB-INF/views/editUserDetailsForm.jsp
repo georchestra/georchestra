@@ -239,9 +239,11 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
         </li>
       </ul>
 
-      <h4><s:message code="editUserDetailsForm.areaOfCompetence"/></h4>
-      <areas item="org" readonly="'true'"></areas>
-      <br>
+      <c:if test="${competenceAreaEnabled}">
+        <h4><s:message code="editUserDetailsForm.areaOfCompetence"/></h4>
+        <areas item="org" readonly="'true'"></areas>
+        <br>
+      </c:if>
 
       <h4><s:message code="editUserDetailsForm.members"/> <span
           class="badge">{{ users.length }}</span></h4>

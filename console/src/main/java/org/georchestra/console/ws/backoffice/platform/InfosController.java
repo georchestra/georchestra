@@ -51,6 +51,11 @@ public class InfosController {
     @Setter
     private boolean extractorappEnabled;
 
+    @Value("${competenceAreaEnabled:false}")
+    @Getter
+    @Setter
+    private boolean competenceAreaEnabled;
+
     @Value("${useLegacyHeader:false}")
     private boolean useLegacyHeader;
 
@@ -78,6 +83,7 @@ public class InfosController {
         ret.put("saslServer", saslServer);
         ret.put("analyticsEnabled", analyticsEnabled);
         ret.put("extractorappEnabled", extractorappEnabled);
+        ret.put("competenceAreaEnabled", competenceAreaEnabled);
         ret.put("useLegacyHeader", useLegacyHeader);
         ret.put("headerUrl", headerUrl);
         ret.put("headerHeight", headerHeight);
