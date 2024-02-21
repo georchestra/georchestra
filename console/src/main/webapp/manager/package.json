@@ -81,6 +81,7 @@
   },
   "scripts": {
     "lint": "./node_modules/.bin/standard app/**/*.{js,es6}",
+    "format": "./node_modules/.bin/standard app/**/*.{js,es6} --fix",
     "serve": "./node_modules/.bin/brunch watch",
     "postinstall": "./node_modules/.bin/standard app/**/*.{js,es6} && ./node_modules/.bin/brunch build"
   }
