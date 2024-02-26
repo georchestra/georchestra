@@ -48,7 +48,7 @@
   "user.postalAddress"    : "Adres",
   "user.org"              : "Organisatie",
   "user.description"      : "Beschrijving",
-  "user.manager"          : "Manager",
+  "user.manager"          : "Referent",
   "user.expire"           : "Vervaldatum",
   "user.reset"            : "Regenereren",
   "user.password"         : "Wachtwoord",
