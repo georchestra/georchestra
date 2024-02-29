@@ -4,16 +4,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserChangeFilter implements Filter {
@@ -25,10 +20,12 @@ public class UserChangeFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .map(s -> s.replaceFirst("ROLE_", "")).collect(Collectors.toList());
+        Set<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
 
-        if (((HttpServletRequest) request).getHeader("sec-roles").split(";").length != roles.size()) {
+        // Check if the user has the same roles as the ones in the session
+        Set<String> sessionRoles = Set.of(((HttpServletRequest) request).getHeader("sec-roles").split(";"));
+        if (!sessionRoles.equals(roles)) {
             ((HttpServletRequest) request).getSession().invalidate();
             ((HttpServletResponse) response).setStatus(419);
         } else {
