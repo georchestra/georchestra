@@ -166,7 +166,9 @@
 
                     <div ng-app="manager" ng-strict-di ng-controller="StandaloneController">
                       <imageinput target="'#orgLogo'" class="form-group"></imageinput>
-                      <areas item="org"></areas>
+                        <c:if test="${competenceAreaEnabled}">
+                            <areas item="org"></areas>
+                        </c:if>
                     </div>
 
                 </div>

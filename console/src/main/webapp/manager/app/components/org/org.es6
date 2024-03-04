@@ -12,7 +12,10 @@ class OrgController {
 
     this.q = ''
 
-    this.tabs = ['infos', 'area', 'users', 'manage']
+    $injector.get('PlatformInfos').get().$promise.then((platformInfos) => {
+      this.tabs = platformInfos.competenceAreaEnabled ? ['infos', 'area', 'users', 'manage'] : ['infos', 'users', 'manage']
+    })
+
     this.tab = $routeParams.tab
 
     this.itemsPerPage = 15
