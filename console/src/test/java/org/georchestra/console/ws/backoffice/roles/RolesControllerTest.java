@@ -142,6 +142,22 @@ public class RolesControllerTest {
     }
 
     @Test
+    public void testFindByCNTemp() throws Exception {
+        Role retTemp = RoleFactory.create("TEMPORARY", "Virtual role that contains all temporary users", false);
+        when(roleDao.findByCommonName(eq("TEMPORARY"))).thenReturn(retTemp);
+        Role res = roleCtrl.findByCN("TEMPORARY");
+        assertEquals(res, retTemp);
+    }
+
+    @Test
+    public void testFindByCNExpired() throws Exception {
+        Role retExpired = RoleFactory.create("EXPIRED", "Virtual role that contains all expired users", false);
+        when(roleDao.findByCommonName(eq("EXPIRED"))).thenReturn(retExpired);
+        Role res = roleCtrl.findByCN("EXPIRED");
+        assertEquals(res, retExpired);
+    }
+
+    @Test
     public void testCreateDuplicateRole() throws Exception {
         Role myRole = RoleFactory.create("MYROLE", "test role", false);
         when(roleDao.findByCommonName(eq("MYROLE"))).thenReturn(myRole);
