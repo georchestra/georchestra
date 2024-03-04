@@ -265,7 +265,7 @@ objectClass: georchestraRole
 objectClass: groupOfMembers
 objectClass: top
 cn: IMPORT
-description: This role grants access to import functionnality through datafeeder application.
+description: This role allows users to publish data with the importer application.
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=idatafeeder,ou=users,dc=georchestra,dc=org
