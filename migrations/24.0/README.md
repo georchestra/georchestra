@@ -64,3 +64,12 @@ This role allows user to have access to the import tool (datafeeder).
 
 By default, users couldn't use datafeeder application.
 
+## ⚠️ Console : Area of competence 
+
+By default the `Area of competence` in console is now disabled.
+
+The functionnality can be enabled in `console.properties` with the line : 
+```
+competenceAreaEnabled=true
+```
+
