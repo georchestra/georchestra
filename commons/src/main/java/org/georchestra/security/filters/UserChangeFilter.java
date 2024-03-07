@@ -1,4 +1,4 @@
-package org.georchestra.console.filters;
+package org.georchestra.security.filters;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,17 +17,21 @@ public class UserChangeFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Set<String> roles = auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
+        // TODO check username too
         // Check if the user has the same roles as the ones in the session
-        Set<String> sessionRoles = Set.of(((HttpServletRequest) request).getHeader("sec-roles").split(";"));
+        Set<String> sessionRoles = Set.of(request.getHeader("sec-roles").split(";"));
         if (!sessionRoles.equals(roles)) {
-            ((HttpServletRequest) request).getSession().invalidate();
-            ((HttpServletResponse) response).setStatus(419);
+            request.getSession().invalidate();
+            response.setStatus(419);
         } else {
             chain.doFilter(request, response);
         }

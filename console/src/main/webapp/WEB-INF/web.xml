@@ -98,7 +98,7 @@
     </filter-mapping>
     <filter>
         <filter-name>UserChangeFilter</filter-name>
-        <filter-class>org.georchestra.console.filters.UserChangeFilter</filter-class>
+        <filter-class>org.georchestra.security.filters.UserChangeFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>UserChangeFilter</filter-name>
