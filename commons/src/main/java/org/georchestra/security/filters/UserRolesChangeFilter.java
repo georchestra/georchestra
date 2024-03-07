@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class UserChangeFilter implements Filter {
+public class UserRolesChangeFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
