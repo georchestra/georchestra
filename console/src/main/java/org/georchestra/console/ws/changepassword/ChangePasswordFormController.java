@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
@@ -93,8 +94,8 @@ public class ChangePasswordFormController {
             throws DataServiceException {
         Optional<String> uid = getUsername();
         if (uid.isPresent()) {
-            boolean isExternalAuth = Boolean
-                    .parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
+            boolean isExternalAuth = !Objects.isNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
+                    && Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
             if (isUserAuthenticatedBySASL(uid.get()) || isExternalAuth) {
                 return "userManagedBySASL";
             }
