@@ -92,6 +92,9 @@ public class GeorchestraUser implements Serializable {
     /** Maps to Account.getOAuth2Uid */
     private String oAuth2Uid;
 
+    /** Provided by request header {@code sec-external-authentication} */
+    private Boolean isExternalAuth = false;
+
     public void setRoles(List<String> roles) {
         this.roles = roles == null ? new ArrayList<>() : roles;
     }

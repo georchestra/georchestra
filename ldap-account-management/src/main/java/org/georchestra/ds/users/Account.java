@@ -188,4 +188,8 @@ public interface Account extends Comparable<Account> {
     String getOAuth2Uid();
 
     void setOAuth2Uid(String oAuth2Uid);
+
+    boolean getIsExternalAuth();
+
+    void setIsExternalAuth(boolean isExternalAuth);
 }

@@ -58,13 +58,17 @@ public class SecurityHeaders {
     public static final String SEC_LASTNAME = "sec-lastname";
     public static final String SEC_EMAIL = "sec-email";
     public static final String SEC_TEL = "sec-tel";
-
+    public static final String SEC_ADDRESS = "sec-address";
+    public static final String SEC_TITLE = "sec-title";
+    public static final String SEC_NOTES = "sec-notes";
     public static final String SEC_ORG = "sec-org";
     public static final String SEC_ORGID = "sec-orgid";
     public static final String SEC_ORGNAME = "sec-orgname";
     public static final String SEC_ORG_LASTUPDATED = "sec-org-lastupdated";
     public static final String IMP_ROLES = "imp-roles";
     public static final String IMP_USERNAME = "imp-username";
+    public static final String SEC_LDAP_REMAINING_DAYS = "sec-ldap-remaining-days";
+    public static final String SEC_EXTERNAL_AUTHENTICATION = "sec-external-authentication";
 
     /**
      * @return the decoded header value, if it contains multiple values separated by
