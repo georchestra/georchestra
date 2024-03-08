@@ -115,7 +115,7 @@ public class EditUserDetailsFormController {
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         try {
             String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
-            boolean isExternalAuth = !Objects.isNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
+            boolean isExternalAuth = Objects.nonNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
                     && Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
             Account userAccount = this.accountDao.findByUID(username);
             userAccount.setIsExternalAuth(isExternalAuth);

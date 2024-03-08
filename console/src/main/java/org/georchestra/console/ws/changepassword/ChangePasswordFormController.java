@@ -94,7 +94,7 @@ public class ChangePasswordFormController {
             throws DataServiceException {
         Optional<String> uid = getUsername();
         if (uid.isPresent()) {
-            boolean isExternalAuth = !Objects.isNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
+            boolean isExternalAuth = Objects.nonNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
                     && Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
             if (isUserAuthenticatedBySASL(uid.get()) || isExternalAuth) {
                 return "userManagedBySASL";
