@@ -210,7 +210,7 @@ public class UploadAnalysisJobConfigurationTest {
     }
 
     @Test
-    public void dataUploadAnalysisService_analyzeCsvTest() throws URISyntaxException {
+    public void dataUploadAnalysisService_analyzeCsvTest() throws Exception {
         String testCsvPath = Paths.get(this.getClass().getResource("basic.csv").toURI()).toString();
 
         Map params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
@@ -219,7 +219,7 @@ public class UploadAnalysisJobConfigurationTest {
     }
 
     @Test
-    public void dataUploadAnalysisService_analyzeCsvNoHeaderTest() throws URISyntaxException {
+    public void dataUploadAnalysisService_analyzeCsvNoHeaderTest() throws Exception {
         String testCsvPath = Paths.get(this.getClass().getResource("covoit-mel-noheader.csv").toURI()).toString();
 
         Map params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
@@ -228,7 +228,7 @@ public class UploadAnalysisJobConfigurationTest {
     }
 
     @Test
-    public void dataUploadAnalysisService_analyzeCsvAsB64Test() throws URISyntaxException {
+    public void dataUploadAnalysisService_analyzeCsvAsB64Test() throws Exception {
         String testCsvPath = Paths.get(this.getClass().getResource("covoit-mel.csv").toURI()).toString();
 
         Map<String, String> params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);

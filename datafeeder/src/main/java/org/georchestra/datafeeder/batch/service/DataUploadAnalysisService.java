@@ -166,7 +166,7 @@ public class DataUploadAnalysisService {
         return item;
     }
 
-    private Map<String, String> options(DatasetUploadState item) {
+    private Map<String, String> options(DatasetUploadState item) throws Exception {
         if (item.getFormat() == DataSourceMetadata.DataSourceType.CSV) {
             return analyzeCsv(item.getAbsolutePath());
         }
@@ -174,7 +174,7 @@ public class DataUploadAnalysisService {
     }
 
     @VisibleForTesting
-    public Map<String, String> analyzeCsv(String path) {
+    public Map<String, String> analyzeCsv(String path) throws Exception {
         Map<String, String> options = new HashMap<String, String>();
         CsvFormat format;
         CsvParser parser;
@@ -195,8 +195,9 @@ public class DataUploadAnalysisService {
             return options;
         } catch (Exception e) {
             log.error(String.format("an error occurred while trying to load CSV file: {}", path), e);
+            throw new Exception(e);
         }
-        return Map.of();
+
     }
 
     @VisibleForTesting
