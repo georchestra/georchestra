@@ -269,7 +269,7 @@ description: This role allows users to publish data with the importer applicatio
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=idatafeeder,ou=users,dc=georchestra,dc=org
-georchestraObjectIdentifier:: NTA0OGE3MjctZmMwYi00ODg3LWI5ZmQtMTYyMmI4NzEyZT
+georchestraObjectIdentifier: 2a6fb334-5b93-4b4b-9f48-f39b6a04376c
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org
