@@ -31,7 +31,8 @@ angular.module('manager')
       'PENDING',
       'EXPIRED',
       'REFERENT',
-      'TEMPORARY'
+      'TEMPORARY',
+      'IMPORT'
     ]
     return () => adminRoles
   }]).factory('readonlyRoleList', [() => {
