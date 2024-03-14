@@ -37,6 +37,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -68,7 +69,8 @@ public class DataPublishingApiController implements DataPublishingApi {
 
         String gsUrl = props.getPublishing().getGeoserver().getPublicUrl().toString();
         String gnUrl = props.getPublishing().getGeonetwork().getPublicUrl().toString();
-        String ogcApiUrl = props.getPublishing().getOgcfeatures().getPublicUrl().toString();
+        String ogcApiUrl = props.getPublishing().getOgcfeatures().getPublicUrl() == null ? null
+                : props.getPublishing().getOgcfeatures().getPublicUrl().toString();
 
         if (dataset.getStatus() == PublishStatusEnum.DONE) {
             {// WMS entry point
@@ -110,9 +112,10 @@ public class DataPublishingApiController implements DataPublishingApi {
                 dataset.add(Link.of(htmlMdRecord, IanaLinkRelations.DESCRIBED_BY).withName("metadata")
                         .withType("text/html").withTitle("Metadata record web page"));
             }
-            {// OGC API features page TODO update link relation and don't send it if not set in app.yml
-                // e.g.
-                // http://localhost/data/ogcapi/collections/3276d285-f458-4a38-8040-1b14ea5afc9e
+            if (!StringUtils.isEmpty(ogcApiUrl)) {// OGC API features page TODO update link relation
+                                                  // in app.yml
+                                                  // e.g.
+                                                  // http://localhost/data/ogcapi/collections/3276d285-f458-4a38-8040-1b14ea5afc9e
                 String ogcApiFeature = String.format("%s/ogcapi/collections/%s", ogcApiUrl,
                         dataset.getMetadataRecordId());
                 ogcApiFeature = URI.create(ogcApiFeature).normalize().toString();

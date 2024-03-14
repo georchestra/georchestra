@@ -147,7 +147,6 @@ public @Data class DataFeederConfigurationProperties {
         private Map<String, String> geoserver = new HashMap<>();
     }
 
-
     @EqualsAndHashCode(callSuper = true)
     public static @Data class OgcApiFeaturesPublishingConfiguration extends ExternalApiConfiguration {
         private String baseNamespaceURI;

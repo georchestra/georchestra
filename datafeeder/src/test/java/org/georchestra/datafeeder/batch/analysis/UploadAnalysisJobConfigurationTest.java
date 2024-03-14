@@ -210,31 +210,13 @@ public class UploadAnalysisJobConfigurationTest {
     }
 
     @Test
-    public void dataUploadAnalysisService_analyzeCsvTest() throws Exception {
-        String testCsvPath = Paths.get(this.getClass().getResource("basic.csv").toURI()).toString();
-
-        Map params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
-
-        assertTrue("params does not contain expected key 'columnTypes'", params.containsKey("columnTypes"));
-    }
-
-    @Test
-    public void dataUploadAnalysisService_analyzeCsvNoHeaderTest() throws Exception {
-        String testCsvPath = Paths.get(this.getClass().getResource("covoit-mel-noheader.csv").toURI()).toString();
-
-        Map params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
-
-        assertTrue("params does not contain expected key 'columnTypes'", params.containsKey("columnTypes"));
-    }
-
-    @Test
     public void dataUploadAnalysisService_analyzeCsvAsB64Test() throws Exception {
         String testCsvPath = Paths.get(this.getClass().getResource("covoit-mel.csv").toURI()).toString();
 
         Map<String, String> params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
 
-        assertTrue("params does not contain expected key 'columnTypes'", params.containsKey("columnTypes"));
-        assertTrue("params does not contain expected key 'quoteChar'", params.containsKey("quoteChar"));
+        assertTrue("params contain expected key 'quoteChar'", params.containsKey("quoteChar"));
+        assertTrue("params contain expected key 'delimiter'", params.containsKey("delimiter"));
         assertTrue("base-64 encoded csv does not correspond to the expected value",
                 params.get("csv").startsWith("ImlkX2xpZXUiLCJpZF9sb2NhbCI"));
     }

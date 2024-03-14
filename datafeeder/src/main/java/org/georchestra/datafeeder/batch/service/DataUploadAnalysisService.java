@@ -19,9 +19,6 @@
 package org.georchestra.datafeeder.batch.service;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.univocity.parsers.csv.CsvFormat;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -175,28 +175,11 @@ public class DataUploadAnalysisService {
 
     @VisibleForTesting
     public Map<String, String> analyzeCsv(String path) throws Exception {
-        Map<String, String> options = new HashMap<String, String>();
-        CsvFormat format;
-        CsvParser parser;
-        try {
-            CsvParserSettings settings = new CsvParserSettings();
-            settings.detectFormatAutomatically();
-            parser = new CsvParser(settings);
-            List<String[]> parsedCsv = parser.parseAll(new File(path));
-            format = parser.getDetectedFormat();
-            List columns = Arrays.asList(parsedCsv.get(0));
-            List columnsTypes = (List) columns.stream().map(m -> {
-                return "STRING";
-            }).collect(Collectors.toList());
-
-            options.put("quoteChar", String.valueOf(format.getQuote()));
-            options.put("columnTypes", String.join(",", columnsTypes));
-            options.put("csv", csvSixLinesAsBase64(path));
-            return options;
-        } catch (Exception e) {
-            log.error(String.format("an error occurred while trying to load CSV file: {}", path), e);
-            throw new Exception(e);
-        }
+        Map<String, String> options = new HashMap<>();
+        options.put("quoteChar", "\"");
+        options.put("delimiter", ",");
+        options.put("csv", csvSixLinesAsBase64(path));
+        return options;
 
     }
 
