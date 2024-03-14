@@ -1,9 +1,9 @@
 class AppController {
   static $inject = [
-    '$scope', '$router', '$location', '$translate', '$sce', 'roleAdminList', 'Profile', 'PlatformInfos'
+    '$scope', '$router', '$location', '$translate', '$sce', 'roleAdminList', 'Profile', 'PlatformInfos', '$window'
   ]
 
-  constructor ($scope, $router, $location, $translate, $sce, roleAdminList, Profile, PlatformInfos) {
+  constructor ($scope, $router, $location, $translate, $sce, roleAdminList, Profile, PlatformInfos, $window) {
     $router.config([
       {
         path: '/',
@@ -61,11 +61,25 @@ class AppController {
 
     $scope.isSuperUser = (user) => user.adminRoles && user.adminRoles.SUPERUSER
 
-    Profile.get((p) => {
+    const profilResource = Profile.get((p) => {
       $scope.profile = p.roles.indexOf('SUPERUSER') === -1
         ? 'DELEGATED' : 'SUPERUSER'
     })
-    $scope.platformInfos = PlatformInfos.get()
+
+    profilResource.$promise.then(() => {}, (error) => {
+      if (error.status === 419) {
+        $window.location.href = '/console'
+      }
+    })
+
+    $scope.platformInfos = PlatformInfos.get((pi) => {
+
+    })
+    $scope.platformInfos.$promise.then(() => {}, (error) => {
+      if (error.status === 419) {
+        $window.location.href = '/console'
+      }
+    })
 
     $scope.trustSrc = (src) => $sce.trustAsResourceUrl(src)
 
