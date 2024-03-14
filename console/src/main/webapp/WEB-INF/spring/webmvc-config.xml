@@ -155,7 +155,7 @@
     <property name="listOfprotectedRoles">
       <description>Comma separated list of one or more protected Roles</description>
         <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
-      <value>${protectedRolesList:ADMINISTRATOR,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER}</value>
+      <value>${protectedRolesList:ADMINISTRATOR,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER,IMPORT}</value>
     </property>
   </bean>
 

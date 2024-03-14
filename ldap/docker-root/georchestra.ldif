@@ -260,6 +260,16 @@ description: This role allows to use the emailProxy webservice from the console
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 georchestraObjectIdentifier: 2b5150f7-6451-4bd7-8ecb-b44ffa39fa08
 
+dn: cn=IMPORT,ou=roles,dc=georchestra,dc=org
+objectClass: georchestraRole
+objectClass: groupOfMembers
+objectClass: top
+cn: IMPORT
+description: This role allows users to publish data with the importer application.
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+member: uid=idatafeeder,ou=users,dc=georchestra,dc=org
+georchestraObjectIdentifier:: NTA0OGE3MjctZmMwYi00ODg3LWI5ZmQtMTYyMmI4NzEyZT
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org
