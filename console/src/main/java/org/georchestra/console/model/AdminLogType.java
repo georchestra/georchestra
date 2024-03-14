@@ -38,6 +38,7 @@ public enum AdminLogType {
     CUSTOM_ROLE_ADDED("A custom role was added"), CUSTOM_ROLE_REMOVED("A custom role was removed"),
 
     EMAIL_SENT("Email sent"), EMAIL_RECOVERY_SENT("Email to recover password sent"),
+    EMAIL_CHANGE_EMAIL_SENT("Email to change email address sent"),
 
     ORG_ATTRIBUTE_CHANGED("Attribute was changed for an org"),
 
