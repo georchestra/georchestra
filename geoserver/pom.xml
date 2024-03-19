@@ -13,7 +13,7 @@
     <geofence.version>3.5.1</geofence.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <marlin.version>0.9.3</marlin.version>
-    <jackson.version>2.15.2</jackson.version>
+    <jackson2.version>2.15.2</jackson2.version>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <server>generic</server>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
