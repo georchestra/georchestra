@@ -169,9 +169,6 @@
                         <c:if test="${competenceAreaEnabled}">
                             <areas item="org"></areas>
                         </c:if>
-                        <c:if test="${not competenceAreaEnabled}">
-                            <input type="hidden" value="" name="orgCities">
-                        </c:if>
                     </div>
 
                 </div>

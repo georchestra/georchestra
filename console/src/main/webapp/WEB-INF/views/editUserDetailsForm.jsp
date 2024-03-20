@@ -244,9 +244,6 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
         <areas item="org" readonly="'true'"></areas>
         <br>
       </c:if>
-      <c:if test="${not competenceAreaEnabled}">
-        <input type="hidden" value="" name="orgCities">
-      </c:if>
 
       <h4><s:message code="editUserDetailsForm.members"/> <span
           class="badge">{{ users.length }}</span></h4>
