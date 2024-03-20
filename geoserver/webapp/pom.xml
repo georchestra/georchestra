@@ -487,6 +487,12 @@
           <groupId>org.geoserver.extension</groupId>
           <artifactId>gs-sldservice</artifactId>
           <version>${gs.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
       </dependencies>
     </profile>
