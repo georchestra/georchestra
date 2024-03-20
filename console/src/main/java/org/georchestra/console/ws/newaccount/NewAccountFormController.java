@@ -219,8 +219,8 @@ public final class NewAccountFormController {
      */
     @RequestMapping(value = "/account/new", method = RequestMethod.POST)
     public String create(HttpServletRequest request, @ModelAttribute AccountFormBean formBean,
-            @RequestParam("orgCities") String orgCities, BindingResult result, SessionStatus sessionStatus, Model model)
-            throws IOException, SQLException {
+            @RequestParam(value = "orgCities", required = false, defaultValue = "") String orgCities,
+            BindingResult result, SessionStatus sessionStatus, Model model) throws IOException, SQLException {
 
         populateOrgsAndOrgTypes(model);
         model.addAttribute("moderatedSignup", this.moderatedSignup);
