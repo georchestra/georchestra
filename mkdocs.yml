@@ -52,23 +52,11 @@ extra_javascript:
 
 nav:
     - Home: index.md 
-    - User guide:
-        - Summary: user_guide/index.md
     - Technical guides:
         - Summary: technical_guides/index.md
-        - Administrate:
-            - technical_guides/administrate/index.md
         - Install:
-            - technical_guides/install/index.md
             - technical_guides/install/prerequis.md
-            - technical_guides/install/preparation.md
-            - technical_guides/install/installation.md
             - technical_guides/install/configuration.md
-            - technical_guides/install/debug.md
-            - technical_guides/install/tests.md
-        - Develop:
-            - technical_guides/develop/index.md
-            - technical_guides/develop/api.md
 
 markdown_extensions:
   - admonition
@@ -111,7 +99,6 @@ plugins:
               Technical guides: Guides techniques
               Administrate: Administrer
               Develop: Développer
-
 
   - git-revision-date-localized:
       enable_creation_date: true

@@ -1,7 +1,3 @@
 # Configuration
 
-Comment configurer le composant:
-
-- explication des différentes brique de configuration (ou et quoi)
-- liste des configurations possible
-- exemple avec des cas concret, je veux faire ça avec la réponse
+La plupart de la configuraiton geOrchestra se situe dans un même répertoire de configuration. Les explications de ce répertoire appelé "datadir" peuvent être trouvé [ici](https://github.com/georchestra/datadir/blob/master/README.md)

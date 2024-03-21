@@ -1,7 +1,5 @@
 # Configuration
 
-How to configure the component:
+Most of geOrchestra configuration are stored in a configuration folder called "datadir"
 
-- Explanation of the different configuration components (where and what).
-- List of possible configurations.
-- Example with concrete cases: I want to achieve this with the response.
+-https://github.com/georchestra/datadir/blob/master/README.md
