@@ -1,0 +1,130 @@
+site_name: Template pour la documentation d'un composant geOrchestra
+
+repo_url: https://github.com/georchestra/georchestra_documentation
+repo_name: georchestra-documentation
+
+docs_dir: docs
+edit_uri: edit/main/docs/
+
+
+theme:
+  language: fr  
+  features:
+    # - toc.integrate
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+  logo: images/georchestra-logo-white.svg
+  favicon: images/favicon.ico
+  name: material
+
+extra:
+  version:
+    provider: mike
+  generator: false
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:psc@georchestra.org
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/georchestra
+    - icon: fontawesome/brands/github
+      link: https://github.com/georchestra
+    - icon: fontawesome/brands/google
+      link: https://groups.google.com/g/georchestra?hl=en
+    - icon: fontawesome/brands/dev
+      link: https://groups.google.com/group/georchestra-dev?hl=fr
+    - icon: fontawesome/regular/comments
+      link: https://kiwiirc.com/client/irc.libera.chat/georchestra
+
+
+copyright: '© 2023 - geOrchestra'
+
+extra_css:
+    - css/extra.css
+
+extra_javascript:
+    - assets/custom_versions.js
+
+# arborescence de 1er et 2e niveau à gérer ici
+# Ces entrées correspondent au modèle de documentation
+# Here do not put .fr or .en in the name of the markdown : the i18n plugin manage this for you
+
+nav:
+    - Accueil: index.md 
+    - Guide utilisateur:
+        - Sommaire: guide_utilisateur/index.md
+        - Prendre en main: guide_utilisateur/prise_en_main.md
+        - Vue globale: guide_utilisateur/vue_globale.md
+        - Barres ou menus d''outils: guide_utilisateur/outils.md
+        - Aide syntaxe: guide_utilisateur/aide_syntaxe.md
+    - Guides techniques:
+        - Sommaire: guides_techniques/index.md
+        - Administrer:
+            - guides_techniques/administrer/index.md
+            - guides_techniques/administrer/une_page.md
+        - Installer:
+            - guides_techniques/installer/index.md
+            - guides_techniques/installer/presentation.md
+            - guides_techniques/installer/prerequis.md
+            - guides_techniques/installer/preparation.md
+            - guides_techniques/installer/installation.md
+            - guides_techniques/installer/configuration.md
+            - guides_techniques/installer/debug.md
+            - guides_techniques/installer/tests.md
+        - Développer:
+            - guides_techniques/developper/index.md
+            - guides_techniques/developper/matrice_fonctionnalites.md
+            - guides_techniques/developper/api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - callouts
+  # - toc-md:
+      # toc_page_title: Contents
+      # toc_page_description: Summary of the section
+      # header_level: 3
+      # pickup_description_meta: false
+      # pickup_description_class: false
+      # output_path: tableofcontent.md
+      # output_log: true
+      # ignore_page_pattern: index.md
+      # remove_navigation_page_pattern: index.md
+      # template_dir_path: custom_template
+  - i18n:
+        docs_structure: suffix
+        fallback_to_default: true
+        reconfigure_material: true
+        reconfigure_search: true
+        languages:
+          - locale: fr
+            default: true
+            name: Français
+            build: true
+            site_name: "Template pour la documentation d'un composant geOrchestra"
+          - locale: en
+            name: English
+            build: true
+            site_name: "Documentation template for a geOrchestra component"
+            nav_translations:
+              Accueil: "Home"
+              Guide utilisateur: "User guide"
+              Sommaire: "Summary"
+              Prendre en main: "Getting started"
+              Guides techniques: "Technical guides"
+              Vue globale: "Global overview"
+              Barres ou menus d''outils: "Tool menu"
+              Aide syntaxe: "Help syntaxe"
+              Administrer: "Administrate"
+              Installer: "Install"
+              Développer: "Contribute"
+
+
+  - git-revision-date-localized:
+      enable_creation_date: true
+
