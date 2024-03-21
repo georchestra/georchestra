@@ -1,14 +1,14 @@
-site_name: Template pour la documentation d'un composant geOrchestra
+site_name: geOrchestra main documentation
 
-repo_url: https://github.com/georchestra/georchestra_documentation
-repo_name: georchestra-documentation
+repo_url: https://github.com/georchestra/georchestra
+repo_name: georchestra
 
 docs_dir: docs
 edit_uri: edit/main/docs/
 
 
 theme:
-  language: fr  
+  language: en
   features:
     # - toc.integrate
     - navigation.indexes
@@ -38,7 +38,7 @@ extra:
       link: https://kiwiirc.com/client/irc.libera.chat/georchestra
 
 
-copyright: '© 2023 - geOrchestra'
+copyright: '© 2024 - geOrchestra'
 
 extra_css:
     - css/extra.css
@@ -51,31 +51,24 @@ extra_javascript:
 # Here do not put .fr or .en in the name of the markdown : the i18n plugin manage this for you
 
 nav:
-    - Accueil: index.md 
-    - Guide utilisateur:
-        - Sommaire: guide_utilisateur/index.md
-        - Prendre en main: guide_utilisateur/prise_en_main.md
-        - Vue globale: guide_utilisateur/vue_globale.md
-        - Barres ou menus d''outils: guide_utilisateur/outils.md
-        - Aide syntaxe: guide_utilisateur/aide_syntaxe.md
-    - Guides techniques:
-        - Sommaire: guides_techniques/index.md
-        - Administrer:
-            - guides_techniques/administrer/index.md
-            - guides_techniques/administrer/une_page.md
-        - Installer:
-            - guides_techniques/installer/index.md
-            - guides_techniques/installer/presentation.md
-            - guides_techniques/installer/prerequis.md
-            - guides_techniques/installer/preparation.md
-            - guides_techniques/installer/installation.md
-            - guides_techniques/installer/configuration.md
-            - guides_techniques/installer/debug.md
-            - guides_techniques/installer/tests.md
-        - Développer:
-            - guides_techniques/developper/index.md
-            - guides_techniques/developper/matrice_fonctionnalites.md
-            - guides_techniques/developper/api.md
+    - Home: index.md 
+    - User guide:
+        - Summary: user_guide/index.md
+    - Technical guides:
+        - Summary: technical_guides/index.md
+        - Administrate:
+            - technical_guides/administrate/index.md
+        - Install:
+            - technical_guides/install/index.md
+            - technical_guides/install/prerequis.md
+            - technical_guides/install/preparation.md
+            - technical_guides/install/installation.md
+            - technical_guides/install/configuration.md
+            - technical_guides/install/debug.md
+            - technical_guides/install/tests.md
+        - Develop:
+            - technical_guides/develop/index.md
+            - technical_guides/develop/api.md
 
 markdown_extensions:
   - admonition
@@ -102,27 +95,22 @@ plugins:
         reconfigure_material: true
         reconfigure_search: true
         languages:
-          - locale: fr
-            default: true
-            name: Français
-            build: true
-            site_name: "Template pour la documentation d'un composant geOrchestra"
           - locale: en
             name: English
+            default: true
             build: true
-            site_name: "Documentation template for a geOrchestra component"
+            site_name: "geOrchestra main documentation"
+          - locale: fr
+            name: Français
+            build: true
+            site_name: "Documentation principale de geOrchestra"
             nav_translations:
-              Accueil: "Home"
-              Guide utilisateur: "User guide"
-              Sommaire: "Summary"
-              Prendre en main: "Getting started"
-              Guides techniques: "Technical guides"
-              Vue globale: "Global overview"
-              Barres ou menus d''outils: "Tool menu"
-              Aide syntaxe: "Help syntaxe"
-              Administrer: "Administrate"
-              Installer: "Install"
-              Développer: "Contribute"
+              Home: Accueil
+              Summary: Sommaire
+              User guide: Guide utilisateur
+              Technical guides: Guides techniques
+              Administrate: Administrer
+              Develop: Développer
 
 
   - git-revision-date-localized:
