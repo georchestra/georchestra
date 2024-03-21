@@ -20,8 +20,8 @@ theme:
   name: material
 
 extra:
-  version:
-    provider: mike
+  # version:
+  #  provider: mike
   generator: false
   social:
     - icon: fontawesome/solid/paper-plane
