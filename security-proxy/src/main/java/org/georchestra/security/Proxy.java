@@ -22,6 +22,7 @@ package org.georchestra.security;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,11 +45,13 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.ds.DataServiceException;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
+import org.georchestra.security.api.UsersApi;
+import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +60,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -84,7 +86,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -143,6 +144,10 @@ public class Proxy {
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
+
+    @Autowired
+    @Setter
+    private UsersApi usersApi;
 
     /**
      * Data source to set on {@link OGCServicesAppender#setDataSource}
@@ -358,21 +363,36 @@ public class Proxy {
      */
     @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public String whoami(HttpServletRequest request) {
+    public String whoami(HttpServletRequest request) throws DataServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        JSONArray roles = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collector.of(JSONArray::new, // init
-                JSONArray::put, // processing each element
-                JSONArray::put // confluence 2 accumulators in parallel execution
-        ));
-        JSONObject user = new JSONObject();
-        user.put("username", authName);
-        user.put("roles", roles);
+        Optional<GeorchestraUser> usr = usersApi.findByUsername(authName);
 
-        JSONObject ret = new JSONObject();
-        ret.put("GeorchestraUser", user);
+        final JSONObject ret = new JSONObject();
+        final JSONObject georUsr = new JSONObject();
+        if (usr.isPresent()) {
+            GeorchestraUser finalUser = usr.get();
+            georUsr.put("username", finalUser.getUsername());
+            georUsr.put("roles", finalUser.getRoles());
+            georUsr.put("organization", finalUser.getOrganization());
+            georUsr.put("id", finalUser.getId());
+            georUsr.put("lastUpdated", finalUser.getLastUpdated());
+            georUsr.put("firstName", finalUser.getFirstName());
+            georUsr.put("lastName", finalUser.getLastName());
+            georUsr.put("email", finalUser.getEmail());
+            georUsr.put("postalAddress", finalUser.getPostalAddress());
+            georUsr.put("telephoneNumber", finalUser.getTelephoneNumber());
+            georUsr.put("title", finalUser.getTitle());
+            georUsr.put("notes", finalUser.getNotes());
+            georUsr.put("ldapWarn", finalUser.getLdapWarn());
+            georUsr.put("ldapRemainingDays", finalUser.getLdapRemainingDays());
+            georUsr.put("oauth2Provider", finalUser.getOAuth2Provider());
+            georUsr.put("oauth2Uid", finalUser.getOAuth2Uid());
+            ret.put("GeorchestraUser", georUsr);
+        } else {
+            ret.put("GeorchestraUser", JSONObject.NULL);
+        }
         return ret.toString();
     }
 
