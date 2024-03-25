@@ -585,3 +585,28 @@ The following variables are resolved against the job's user, dataset, or publish
 Additionally, any other <code>${property}</code> will be resolved against the application context
 (for example, any property specified in `default.properties` or `datafeeder.properties`).
 
+
+## Payload
+
+To publish a (CSV) job:
+
+```
+curl 'https://georchestra-127-0-1-1.traefik.me/datafeeder/upload/cbc00cdd-5e5d-4c40-aa76-ea44998a66ec/publish' \
+  -H 'authority: georchestra-127-0-1-1.traefik.me' \
+  -H 'accept: application/json' \
+  -H 'accept-language: en' \
+  -H 'content-type: application/json' \
+  -H 'cookie: JSESSIONID=node01ukm3k9zb1uz5e9emt72uz5y60.node0' \
+  -H 'dnt: 1' \
+  -H 'origin: https://georchestra-127-0-1-1.traefik.me' \
+  -H 'referer: https://georchestra-127-0-1-1.traefik.me/import/cbc00cdd-5e5d-4c40-aa76-ea44998a66ec/confirm' \
+  -H 'sec-ch-ua: "Not_A Brand";v="8", "Chromium";v="120"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "Linux"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' \
+  --data-raw '{"datasets":[{"nativeName":"covoit-mel","srs":"EPSG:4326","metadata":{"title":"aaa","abstract":"aaa","tags":["Soil"],"creationDate":"2024-01-16T13:07:37.094Z","scale":10000,"creationProcessDescription":"aaa"}}]}' \
+  --compressed
+```

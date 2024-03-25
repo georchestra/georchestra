@@ -50,7 +50,7 @@ public class UploadPackage {
     private static final Pattern ARCHIVE_FILENAME_PATTERN = Pattern
             .compile(".+(\\.(?i)(zip|gz|bz2|tar|tgz|tar\\.gz|tar\\.bz2))$");
 
-    private static final Pattern DATASET_FILENAME_PATTERN = Pattern.compile(".+(\\.(?i)(shp|gpkg|geojson))$");
+    private static final Pattern DATASET_FILENAME_PATTERN = Pattern.compile(".+(\\.(?i)(shp|gpkg|geojson|csv))$");
 
     public UploadPackage(@NonNull FileStorageService service, @NonNull UUID id) throws IOException {
         this.service = service;

@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import lombok.Getter;
 import org.georchestra.datafeeder.api.FileUploadApiController;
 import org.georchestra.datafeeder.batch.service.DataUploadAnalysisService;
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
@@ -49,7 +50,7 @@ import lombok.NonNull;
 public class DataUploadService {
 
     private @Autowired DataUploadJobRepository repository;
-    private @Autowired DataUploadAnalysisService analysisService;
+    private @Autowired @Getter DataUploadAnalysisService analysisService;
     private @Autowired DatasetsService datasetsService;
     private @Autowired FileStorageService storageService;
 

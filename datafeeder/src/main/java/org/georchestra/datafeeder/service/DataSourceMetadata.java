@@ -31,7 +31,8 @@ public class DataSourceMetadata {
         SHAPEFILE, //
         GEOJSON, //
         GEOPACKAGE, //
-        POSTGIS//
+        POSTGIS, //
+        CSV//
     }
 
     private DataSourceType type;

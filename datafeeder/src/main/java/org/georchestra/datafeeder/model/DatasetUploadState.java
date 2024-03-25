@@ -20,27 +20,15 @@ package org.georchestra.datafeeder.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import org.georchestra.datafeeder.service.DataSourceMetadata;
 
 @Data
 @EqualsAndHashCode(exclude = { "job" })
@@ -94,10 +82,21 @@ public class DatasetUploadState {
     @Column(name = "inferred_encoding")
     private String encoding;
 
+    @Column(name = "format")
+    private DataSourceMetadata.DataSourceType format;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dataset_sample_properties")
     private List<SampleProperty> sampleProperties = new ArrayList<>();
 
-    @Embedded
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "dataset_options", joinColumns = { //
+            @JoinColumn(name = "dataset_id", referencedColumnName = "id")//
+    })
+    @MapKeyColumn(name = "name")
+    @Column(name = "value", columnDefinition = "TEXT")
+    private Map<String, String> options;
+
     private PublishSettings publishing = new PublishSettings();
+
 }

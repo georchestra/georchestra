@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.georchestra.config.security.DatafeederAuthenticationTestSupport;
@@ -42,12 +43,14 @@ import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.service.DataSourceMetadata;
 import org.georchestra.datafeeder.service.DatasetsService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraDataBackendService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.georchestra.datafeeder.test.TestData;
 import org.geotools.data.DataStore;
 import org.geotools.data.Query;
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.util.NullProgressListener;
 import org.geotools.referencing.CRS;
@@ -56,6 +59,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +109,7 @@ public class GeorchestraDataBackendServiceIT {
         job = new DataUploadJob();
         dataset = new DatasetUploadState();
         dataset.setJob(job);
+        dataset.setFormat(DataSourceMetadata.DataSourceType.SHAPEFILE);
         publishing = new PublishSettings();
         dataset.setPublishing(publishing);
     }
@@ -333,4 +338,78 @@ public class GeorchestraDataBackendServiceIT {
             targetds.dispose();
         }
     }
+
+    public @Test void importDataSetCsv_attributes_only_strategy() throws Exception {
+
+        Path path = multipartSupport.datafeederTestFile("covoiturage.csv");
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("covoiturage");
+        dataset.setFormat(DataSourceMetadata.DataSourceType.CSV);
+
+        CoordinateReferenceSystemMetadata crs = datasetsService.describe(path).getDatasets().get(0).getNativeBounds()
+                .getCrs();
+        assertNull("CRS expected to be null", crs);
+
+        dataset.getPublishing().setSrs("EPSG:4326");
+
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
+
+        DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
+        String typeName = dataset.getName();
+        try {
+            SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);
+            SimpleFeatureSource imported = targetds.getFeatureSource(typeName);
+            assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+            CoordinateReferenceSystem origCRS = orig.getSchema().getCoordinateReferenceSystem();
+            CoordinateReferenceSystem importedCRS = imported.getSchema().getCoordinateReferenceSystem();
+            assertNull(origCRS);
+            assertNull(importedCRS);
+        } finally {
+            sourceds.dispose();
+            targetds.dispose();
+        }
+    }
+
+    public @Test void importDataSetCsv_provide_lat_long_columns() throws Exception {
+
+        Path path = multipartSupport.datafeederTestFile("covoiturage.csv");
+        dataset.setAbsolutePath(path.toString());
+        dataset.setName("covoiturage");
+        dataset.setFormat(DataSourceMetadata.DataSourceType.CSV);
+        PublishSettings publishSettings = new PublishSettings();
+        publishSettings.setOptions(Map.of("latField", "Ylat", //
+                "lngField", "Xlong", //
+                "quoteChar", "\"", //
+                "delimiter", ","//
+        ));
+        dataset.setPublishing(publishSettings);
+
+        CoordinateReferenceSystemMetadata crs = datasetsService.describe(path).getDatasets().get(0).getNativeBounds()
+                .getCrs();
+        assertNull("CRS expected to be null", crs);
+
+        dataset.getPublishing().setSrs("EPSG:4326");
+
+        service.prepareBackend(job, user);
+        service.importDataset(dataset, user, importProgressListener);
+
+        DataStore sourceds = datasetsService.resolveSourceDataStore(dataset);
+        DataStore targetds = datasetsService.loadDataStore(service.resolveConnectionParams(user));
+        String typeName = dataset.getName();
+        try {
+            SimpleFeatureSource orig = sourceds.getFeatureSource(typeName);
+            SimpleFeatureSource imported = targetds.getFeatureSource(typeName);
+            assertEquals(orig.getCount(Query.ALL), imported.getCount(Query.ALL));
+            SimpleFeatureIterator fi = orig.getFeatures().features();
+            SimpleFeature feat = fi.next();
+            Object geom = feat.getDefaultGeometry();
+            assertNotNull("expected non-null geometry from the CSV", geom);
+        } finally {
+            sourceds.dispose();
+            targetds.dispose();
+        }
+    }
+
 }
