@@ -17,7 +17,7 @@
     <roo.version>1.1.5.RELEASE</roo.version>
     <context.name>${project.artifactId}</context.name>
     <json.version>20210307</json.version>
-    <gt.version>27.2</gt.version>
+    <gt.version>28.2</gt.version>
   </properties>
   <dependencies>
     <!-- geOrchestra libraries -->
