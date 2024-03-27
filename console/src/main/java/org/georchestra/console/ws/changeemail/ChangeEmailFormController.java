@@ -19,10 +19,12 @@
 
 package org.georchestra.console.ws.changeemail;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
@@ -30,10 +32,12 @@ import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.PasswordType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -68,6 +72,7 @@ public class ChangeEmailFormController {
     private final AccountDao accountDao;
     private EmailFactory emailFactory;
     private final UserTokenDao userTokenDao;
+    private Validation validation;
 
     @Autowired
     protected LogUtils logUtils;
@@ -79,10 +84,12 @@ public class ChangeEmailFormController {
     private String publicUrl;
 
     @Autowired
-    public ChangeEmailFormController(AccountDao accountDao, EmailFactory emailFactory, UserTokenDao userTokenDao) {
+    public ChangeEmailFormController(AccountDao accountDao, EmailFactory emailFactory, UserTokenDao userTokenDao,
+            Validation validation) {
         this.accountDao = accountDao;
         this.emailFactory = emailFactory;
         this.userTokenDao = userTokenDao;
+        this.validation = validation;
     }
 
     @InitBinder
@@ -91,8 +98,9 @@ public class ChangeEmailFormController {
     }
 
     /**
-     * Initializes the {@link ChangeEmailFormBean} with the email address provided as
-     * parameter. The {@link ChangeEmailFormBean} view is provided as result of this method.
+     * Initializes the {@link ChangeEmailFormBean} with the email address provided
+     * as parameter. The {@link ChangeEmailFormBean} view is provided as result of
+     * this method.
      *
      * @param model
      *
@@ -123,13 +131,29 @@ public class ChangeEmailFormController {
      */
     @RequestMapping(value = "/account/changeEmail", method = RequestMethod.POST)
     public String changeEmail(HttpServletRequest request, @ModelAttribute ChangeEmailFormBean formBean,
-                              SessionStatus sessionStatus) throws DataServiceException, IOException {
+            BindingResult result, SessionStatus sessionStatus) throws DataServiceException, IOException {
+
+        // email validation
+        if (validation.validateUserFieldWithSpecificMsg("newAddress", formBean.getNewAddress(), result)
+                && !EmailValidator.getInstance().isValid(formBean.getNewAddress())) {
+            result.rejectValue("newAddress", "email.error.invalidFormat", "Invalid Format");
+            return "changeEmailForm";
+        }
 
         Account account = getAccount();
         String uid = account.getUid();
         String newAddress = formBean.getNewAddress();
         if (isUserAuthenticatedBySASL(account)) {
             return "userManagedBySASL";
+        }
+
+        try {
+            this.accountDao.findByEmail(newAddress);
+            result.rejectValue("newAddress", "email.error.exist",
+                    new String[] { String.format("%s%s", publicContextPath, "/account/changeEmail") },
+                    "there is a user with this e-mail");
+            return "changeEmailForm";
+        } catch (NameNotFoundException e) {
         }
 
         String token = UUID.randomUUID().toString();
@@ -168,8 +192,8 @@ public class ChangeEmailFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/validateEmail", method = RequestMethod.GET)
-    public void validateEmail(@RequestParam(name = "token", required = false) String token, HttpServletResponse response,
-            SessionStatus sessionStatus) throws IOException {
+    public void validateEmail(@RequestParam(name = "token", required = false) String token,
+            HttpServletResponse response, SessionStatus sessionStatus) throws IOException {
         try {
             final String newAddress = this.userTokenDao.findUserByToken(token);
             Account account = getAccount();
@@ -186,7 +210,8 @@ public class ChangeEmailFormController {
         } catch (DuplicatedEmailException e) {
         }
 
-        response.sendRedirect(UriComponentsBuilder.fromPath(publicContextPath).path("/account/userdetails").toUriString());
+        response.sendRedirect(
+                UriComponentsBuilder.fromPath(publicContextPath).path("/account/userdetails").toUriString());
     }
 
     @ModelAttribute("changeEmailFormBean")
