@@ -19,6 +19,8 @@
 
 package org.georchestra.console.ws.changeemail;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -29,7 +31,6 @@ import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.DuplicatedEmailException;
-import org.georchestra.ds.users.PasswordType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.NameNotFoundException;
@@ -68,6 +69,8 @@ import java.util.UUID;
 @Controller
 @SessionAttributes(types = ChangeEmailFormBean.class)
 public class ChangeEmailFormController {
+
+    protected static final Log LOG = LogFactory.getLog(ChangeEmailFormController.class.getName());
 
     private final AccountDao accountDao;
     private EmailFactory emailFactory;
@@ -110,11 +113,6 @@ public class ChangeEmailFormController {
      */
     @RequestMapping(value = "/account/changeEmail", method = RequestMethod.GET)
     public String setupForm(Model model) throws DataServiceException {
-        Account account = getAccount();
-        if (isUserAuthenticatedBySASL(account)) {
-            return "userManagedBySASL";
-        }
-
         ChangeEmailFormBean formBean = new ChangeEmailFormBean();
         model.addAttribute(formBean);
         return "changeEmailForm";
@@ -140,12 +138,7 @@ public class ChangeEmailFormController {
             return "changeEmailForm";
         }
 
-        Account account = getAccount();
-        String uid = account.getUid();
         String newAddress = formBean.getNewAddress();
-        if (isUserAuthenticatedBySASL(account)) {
-            return "userManagedBySASL";
-        }
 
         try {
             this.accountDao.findByEmail(newAddress);
@@ -156,13 +149,15 @@ public class ChangeEmailFormController {
         } catch (NameNotFoundException e) {
         }
 
+        Account account = getAccount();
+        String uid = account.getUid();
         String token = UUID.randomUUID().toString();
 
-        if (this.userTokenDao.exist(newAddress)) {
-            this.userTokenDao.delete(newAddress);
+        if (this.userTokenDao.exist(uid)) {
+            this.userTokenDao.delete(uid);
         }
 
-        this.userTokenDao.insertToken(newAddress, token);
+        this.userTokenDao.insertToken(uid, token, newAddress);
 
         String url = makeChangeEmailURL(publicUrl, publicContextPath, token);
 
@@ -195,21 +190,20 @@ public class ChangeEmailFormController {
     public void validateEmail(@RequestParam(name = "token", required = false) String token,
             HttpServletResponse response, SessionStatus sessionStatus) throws IOException {
         try {
-            final String newAddress = this.userTokenDao.findUserByToken(token);
             Account account = getAccount();
+            String uid = account.getUid();
+            final String newAddress = this.userTokenDao.findAdditionalInfo(uid, token);
 
             account.setEmail(newAddress);
             this.accountDao.update(account);
-
-            this.userTokenDao.delete(newAddress);
-
-            sessionStatus.setComplete();
-
+            this.userTokenDao.delete(uid);
+            logUtils.createLog(uid, AdminLogType.USER_EMAIL_CHANGED, null);
         } catch (DataServiceException e) {
             throw new IOException(e);
-        } catch (DuplicatedEmailException e) {
+        } catch (DuplicatedEmailException | NameNotFoundException e) {
         }
 
+        sessionStatus.setComplete();
         response.sendRedirect(
                 UriComponentsBuilder.fromPath(publicContextPath).path("/account/userdetails").toUriString());
     }
@@ -224,12 +218,6 @@ public class ChangeEmailFormController {
         return this.accountDao.findByUID(user.getUsername());
     }
 
-    private boolean isUserAuthenticatedBySASL(Account account) throws DataServiceException {
-        // check if the user is managed by an external service. if so, then forbid
-        // access to change password.
-        return account.getPasswordType() == PasswordType.SASL;
-    }
-
     /**
      * Create the URL to change the email address based on the provided token
      *
@@ -239,9 +227,9 @@ public class ChangeEmailFormController {
         String url = UriComponentsBuilder.fromHttpUrl(publicUrl).path(contextPath).path("/account/validateEmail")
                 .query("token={token}").buildAndExpand(token).toUriString();
 
-//        if (logUtils.isDebugEnabled()) {
-//            logUtils.debug("generated url:" + url);
-//        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generated url:" + url);
+        }
 
         return url;
     }

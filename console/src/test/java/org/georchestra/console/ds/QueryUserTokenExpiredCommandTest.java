@@ -43,8 +43,10 @@ public class QueryUserTokenExpiredCommandTest {
 
         when(pstmt.executeQuery()).thenReturn(resultSet);
 
-        Mockito.when(resultSet.getString(Mockito.anyString())).thenReturn("uid", "token");
+        Mockito.when(resultSet.getString(DatabaseSchema.UID_COLUMN)).thenReturn("uid");
+        Mockito.when(resultSet.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("token");
         Mockito.when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
+        Mockito.when(resultSet.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo");
         Mockito.when(resultSet.next()).thenReturn(true, false);
 
         query = new QueryUserTokenExpiredCommand();
@@ -69,10 +71,11 @@ public class QueryUserTokenExpiredCommandTest {
 
         Map<String, Object> ret = query.getRow(resultSet);
 
-        assertEquals(ret.size(), 3);
+        assertEquals(ret.size(), 4);
         assertEquals(ret.get(DatabaseSchema.UID_COLUMN), "uid");
         assertEquals(ret.get(DatabaseSchema.TOKEN_COLUMN), "token");
         assertEquals(0L, ((Timestamp) ret.get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
+        assertEquals(ret.get(DatabaseSchema.ADDITIONAL_INFO), "additionalInfo");
 
     }
 
@@ -100,7 +103,8 @@ public class QueryUserTokenExpiredCommandTest {
         assertEquals(0L, ((Timestamp) ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
         assertEquals(ret.get(0).get(DatabaseSchema.UID_COLUMN), "uid");
         assertEquals(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN), "token");
-        assertEquals(ret.get(0).size(), 3);
+        assertEquals(ret.get(0).get(DatabaseSchema.ADDITIONAL_INFO), "additionalInfo");
+        assertEquals(ret.get(0).size(), 4);
     }
 
 }

@@ -42,10 +42,8 @@ import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -60,6 +58,7 @@ public class ChangeEmailControllerTest {
 
     public static final String NEW_ADDRESS = "new@address.com";
     public static final String OLD_EMAIL = "old@address.com";
+    public static final String ACCOUNT_UID = "pmauduit";
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
     private EmailFactory efi = Mockito.mock(EmailFactory.class);
     private UserTokenDao userTokenDao = Mockito.mock(UserTokenDao.class);
@@ -69,7 +68,6 @@ public class ChangeEmailControllerTest {
     private SessionStatus status = Mockito.mock(SessionStatus.class);
     private LogUtils logUtils = Mockito.mock(LogUtils.class);
 
-//    private ChangePasswordFormController ctrlToTest;
     private LdapTemplate ldapTemplate;
     private Model model;
     private ChangeEmailFormBean formBean;
@@ -93,7 +91,6 @@ public class ChangeEmailControllerTest {
         dao.setPendingUserSearchBaseDN("ou=pending");
         Validation validation = new Validation("");
         ctrlToTest = new ChangeEmailFormController(accountDao, efi, userTokenDao, validation);
-//        ctrlToTest.passwordUtils = new PasswordUtils();
         ctrlToTest.setPublicUrl("https://georchestra.mydomain.org");
         ctrlToTest.setPublicContextPath("/console");
         ctrlToTest.logUtils = logUtils;
@@ -101,8 +98,6 @@ public class ChangeEmailControllerTest {
         model = mock(Model.class);
         formBean = new ChangeEmailFormBean();
         result = new MapBindingResult(new HashMap<>(), "errors");
-
-//        ctrlToTest.logUtils = mock(LogUtils.class);
 
         // reset any spring security context that may have been set in previous test.
         SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
@@ -123,16 +118,6 @@ public class ChangeEmailControllerTest {
         String ret = ctrlToTest.setupForm(model);
         assertEquals("changeEmailForm", ret);
     }
-    /*
-     * @Test public void changePasswordFormInvalid() throws Exception {
-     * userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-     * formBean.setNewAddress("monkey12");
-     * when(result.hasErrors()).thenReturn(true);
-     *
-     * String ret = ctrlToTest.changePassword(model, formBean, result);
-     *
-     * assertEquals("changePasswordForm", ret); }
-     */
 
     private void prepareLegitRequest() throws Exception {
         prepareLegitRequest(false);
@@ -141,17 +126,17 @@ public class ChangeEmailControllerTest {
     private void prepareLegitRequest(boolean isPending) throws Exception {
         request = new MockHttpServletRequest();
         Account account = Mockito.mock(Account.class);
-        Mockito.when(account.getUid()).thenReturn("1");
+        Mockito.when(account.getUid()).thenReturn(ACCOUNT_UID);
         Mockito.when(account.isPending()).thenReturn(isPending);
         Mockito.when(accountDao.findByEmail(Mockito.anyString())).thenReturn(account);
         Mockito.when(accountDao.findByUID(Mockito.anyString())).thenReturn(account);
-        Mockito.when(userTokenDao.findUserByToken(Mockito.anyString())).thenReturn(NEW_ADDRESS);
+        Mockito.when(userTokenDao.findAdditionalInfo(Mockito.anyString(), Mockito.anyString())).thenReturn(NEW_ADDRESS);
     }
 
     @Test
     public void testSetupForm() throws Exception {
         prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
         Model model = Mockito.mock(Model.class);
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -164,7 +149,7 @@ public class ChangeEmailControllerTest {
     @Test
     public void changeEmailSuccess() throws Exception {
         prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
         formBean.setNewAddress(NEW_ADDRESS);
         when(accountDao.findByEmail(any())).thenThrow(new NameNotFoundException(""));
@@ -176,31 +161,18 @@ public class ChangeEmailControllerTest {
         assertEquals("emailWasSentForNewEmail", ret);
 
         ArgumentCaptor<String> tokenUid = ArgumentCaptor.forClass(String.class);
-        verify(userTokenDao).insertToken(tokenUid.capture(), Mockito.anyString());
-        assertEquals(NEW_ADDRESS, tokenUid.getValue());
+        ArgumentCaptor<String> tokenInfo = ArgumentCaptor.forClass(String.class);
+        verify(userTokenDao).insertToken(tokenUid.capture(), Mockito.anyString(), tokenInfo.capture());
+        assertEquals(ACCOUNT_UID, tokenUid.getValue());
+        assertEquals(NEW_ADDRESS, tokenInfo.getValue());
 
         verify(accountDao, Mockito.never()).update(Mockito.any());
     }
 
     @Test
-    public void validateEmailSuccess() throws Exception {
-        prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-
-        ctrlToTest.validateEmail("token", response, status);
-
-        assertEquals(HttpServletResponse.SC_FOUND, response.getStatus());
-        assertEquals("/console/account/userdetails", response.getHeader("location"));
-
-        ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(accountDao).update(accountArgumentCaptor.capture());
-        verify(accountArgumentCaptor.getValue()).setEmail(NEW_ADDRESS);
-    }
-
-    @Test
     public void changeEmailToAlreadyUsed() throws Exception {
         prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
         formBean.setNewAddress(NEW_ADDRESS);
         Account account = Mockito.mock(Account.class);
@@ -219,7 +191,7 @@ public class ChangeEmailControllerTest {
     @Test
     public void changeEmailToWrongFormat() throws Exception {
         prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
         formBean.setNewAddress("wrong_format");
         String ret = ctrlToTest.changeEmail(request, formBean, result, status);
@@ -232,9 +204,39 @@ public class ChangeEmailControllerTest {
     }
 
     @Test
+    public void validateEmailSuccess() throws Exception {
+        prepareLegitRequest();
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
+
+        ctrlToTest.validateEmail("token", response, status);
+
+        assertEquals(HttpServletResponse.SC_FOUND, response.getStatus());
+        assertEquals("/console/account/userdetails", response.getHeader("location"));
+
+        ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
+        verify(accountDao).update(accountArgumentCaptor.capture());
+        verify(accountArgumentCaptor.getValue()).setEmail(NEW_ADDRESS);
+    }
+
+    @Test
+    public void validateEmailWrongToken() throws Exception {
+        prepareLegitRequest();
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
+        Mockito.when(userTokenDao.findAdditionalInfo(Mockito.anyString(), Mockito.anyString()))
+                .thenThrow(new NameNotFoundException(""));
+
+        ctrlToTest.validateEmail("token", response, status);
+
+        assertEquals(HttpServletResponse.SC_FOUND, response.getStatus());
+        assertEquals("/console/account/userdetails", response.getHeader("location"));
+
+        verify(accountDao, Mockito.never()).update(Mockito.any());
+    }
+
+    @Test
     public void testMakeChangePasswordURLOk() throws Exception {
         prepareLegitRequest();
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+        userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
         String res = ctrlToTest.makeChangeEmailURL("https://georchestra.org", "console", "1234");
         assertEquals(res, "https://georchestra.org/console/account/validateEmail?token=1234");
     }

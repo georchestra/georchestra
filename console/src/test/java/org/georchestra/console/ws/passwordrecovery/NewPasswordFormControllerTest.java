@@ -62,7 +62,8 @@ public class NewPasswordFormControllerTest {
     @Test
     public void testSetupFormUserTokenNotFound() throws Exception {
         Model model = Mockito.mock(Model.class);
-        Mockito.when(userTokenDao.findUserByToken(Mockito.anyString())).thenThrow(NameNotFoundException.class);
+        Mockito.when(userTokenDao.findUidWithoutAdditionalInfo(Mockito.anyString()))
+                .thenThrow(NameNotFoundException.class);
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getSession()).thenReturn(Mockito.mock(HttpSession.class));
 
@@ -74,7 +75,7 @@ public class NewPasswordFormControllerTest {
     public void testSetupFormDataServiceException() throws Exception {
         Model model = Mockito.mock(Model.class);
         Mockito.doThrow(new DataServiceException("Error while accessing db")).when(userTokenDao)
-                .findUserByToken(Mockito.anyString());
+                .findUidWithoutAdditionalInfo(Mockito.anyString());
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getSession()).thenReturn(Mockito.mock(HttpSession.class));
 
