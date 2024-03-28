@@ -1,0 +1,105 @@
+site_name: geOrchestra main documentation
+
+repo_url: https://github.com/georchestra/georchestra
+repo_name: georchestra
+
+docs_dir: docs
+edit_uri: edit/main/docs/
+
+
+theme:
+  language: en
+  features:
+    # - toc.integrate
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+  logo: images/georchestra-logo-white.svg
+  favicon: images/favicon.ico
+  name: material
+
+extra:
+  # version:
+  #  provider: mike
+  generator: false
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:psc@georchestra.org
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/georchestra
+    - icon: fontawesome/brands/github
+      link: https://github.com/georchestra
+    - icon: fontawesome/brands/google
+      link: https://groups.google.com/g/georchestra?hl=en
+    - icon: fontawesome/brands/dev
+      link: https://groups.google.com/group/georchestra-dev?hl=fr
+    - icon: fontawesome/regular/comments
+      link: https://kiwiirc.com/client/irc.libera.chat/georchestra
+
+
+copyright: '© 2024 - geOrchestra'
+
+extra_css:
+    - css/extra.css
+
+extra_javascript:
+    - assets/custom_versions.js
+
+# arborescence de 1er et 2e niveau à gérer ici
+# Ces entrées correspondent au modèle de documentation
+# Here do not put .fr or .en in the name of the markdown : the i18n plugin manage this for you
+
+nav:
+    - Home: index.md 
+    - Technical guides:
+        - Summary: technical_guides/index.md
+        - Install:
+            - technical_guides/install/prerequis.md
+            - technical_guides/install/configuration.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - callouts
+  # - toc-md:
+      # toc_page_title: Contents
+      # toc_page_description: Summary of the section
+      # header_level: 3
+      # pickup_description_meta: false
+      # pickup_description_class: false
+      # output_path: tableofcontent.md
+      # output_log: true
+      # ignore_page_pattern: index.md
+      # remove_navigation_page_pattern: index.md
+      # template_dir_path: custom_template
+  - i18n:
+        docs_structure: suffix
+        fallback_to_default: true
+        reconfigure_material: true
+        reconfigure_search: true
+        languages:
+          - locale: en
+            name: English
+            default: true
+            build: true
+            site_name: "geOrchestra main documentation"
+          - locale: fr
+            name: Français
+            build: true
+            site_name: "Documentation principale de geOrchestra"
+            nav_translations:
+              Home: Accueil
+              Summary: Sommaire
+              User guide: Guide utilisateur
+              Technical guides: Guides techniques
+              Administrate: Administrer
+              Develop: Développer
+
+  - git-revision-date-localized:
+      enable_creation_date: true
+
