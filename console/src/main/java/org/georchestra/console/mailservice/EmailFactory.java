@@ -60,6 +60,9 @@ public class EmailFactory {
     private String changePasswordEmailFile;
     private String changePasswordEmailSubject;
 
+    private String changeEmailAddressEmailFile;
+    private String changeEmailAddressEmailSubject;
+
     private String accountUidRenamedEmailFile;
     private String accountUidRenamedEmailSubject;
 
@@ -147,6 +150,23 @@ public class EmailFactory {
         Email email = new Email(singletonList(recipient), this.changePasswordEmailSubject, this.smtpHost, this.smtpPort,
                 this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.changePasswordEmailFile, servletContext, this.georConfig, this.publicUrl, this.instanceName);
+        email.set("name", userName);
+        email.set("uid", uid);
+        email.set("url", url);
+        email.send(reallySend);
+    }
+
+    public void sendChangeEmailAddressEmail(ServletContext servletContext, String recipient, String userName,
+            String uid, String url) throws MessagingException {
+        sendChangeEmailAddressEmail(servletContext, recipient, userName, uid, url, true);
+    }
+
+    public void sendChangeEmailAddressEmail(ServletContext servletContext, String recipient, String userName,
+            String uid, String url, boolean reallySend) throws MessagingException {
+        Email email = new Email(singletonList(recipient), this.changeEmailAddressEmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+                this.templateEncoding, this.changeEmailAddressEmailFile, servletContext, this.georConfig,
+                this.publicUrl, this.instanceName);
         email.set("name", userName);
         email.set("uid", uid);
         email.set("url", url);
@@ -291,6 +311,14 @@ public class EmailFactory {
 
     public void setChangePasswordEmailSubject(String changePasswordEmailSubject) {
         this.changePasswordEmailSubject = changePasswordEmailSubject;
+    }
+
+    public void setChangeEmailAddressEmailFile(String changePasswordEmailFile) {
+        this.changeEmailAddressEmailFile = changePasswordEmailFile;
+    }
+
+    public void setChangeEmailAddressEmailSubject(String changePasswordEmailSubject) {
+        this.changeEmailAddressEmailSubject = changePasswordEmailSubject;
     }
 
     public void setAccountUidRenamedEmailFile(String accountUidRenamedEmailFile) {

@@ -36,7 +36,8 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand {
 
     private static final String SQL_INSERT = "INSERT INTO " + DatabaseSchema.SCHEMA_NAME + "."
             + DatabaseSchema.TABLE_USER_TOKEN + " (" + DatabaseSchema.UID_COLUMN + "," + DatabaseSchema.TOKEN_COLUMN
-            + "," + DatabaseSchema.CREATION_DATE_COLUMN + ") VALUES (?, ?, ?)";
+            + "," + DatabaseSchema.CREATION_DATE_COLUMN + "," + DatabaseSchema.ADDITIONAL_INFO
+            + ") VALUES (?, ?, ?, ?)";
 
     private Map<String, Object> rowValues;
 
@@ -47,7 +48,7 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand {
      */
     public void setRowValues(final Map<String, Object> row) {
 
-        assert row.keySet().size() == 3;
+        assert row.keySet().size() == 4;
 
         this.rowValues = row;
     }
@@ -59,6 +60,7 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand {
         pStmt.setString(1, (String) this.rowValues.get(DatabaseSchema.UID_COLUMN));
         pStmt.setString(2, (String) this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));
         pStmt.setTimestamp(3, (Timestamp) this.rowValues.get(DatabaseSchema.CREATION_DATE_COLUMN));
+        pStmt.setString(4, (String) this.rowValues.get(DatabaseSchema.ADDITIONAL_INFO));
 
         return pStmt;
     }

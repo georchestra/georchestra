@@ -267,6 +267,7 @@
   "logs.emailrecoverysent": "E-Mail zur Passwortwiederherstellung gesendet",
   "logs.rolecreated"      : "Rolle erstellt",
   "logs.noresults"        : "Keine Einträge für ausgewählte Filter",
+  "logs.useremailchanged" : "E-Mail-Adresse geändert",
   "analytics.title"       : "Statistiken",
   "analytics.all"         : "Alle",
   "analytics.requests"    : "Anzahl der Anfragen",

@@ -18,6 +18,7 @@ public class ValidationTest {
         Set<String> requiredUserFields = new HashSet<String>();
 
         requiredUserFields.add("email");
+        requiredUserFields.add("newAddress");
         requiredUserFields.add("uid");
         requiredUserFields.add("password");
         requiredUserFields.add("confirmPassword");

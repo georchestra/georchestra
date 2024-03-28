@@ -12,7 +12,8 @@ SET search_path TO console,public,pg_catalog;
 CREATE TABLE user_token (
     uid character varying NOT NULL,
     token character varying,
-    creation_date timestamp with time zone
+    creation_date timestamp with time zone,
+    additional_info character varying
 );
 
 ALTER TABLE ONLY user_token
