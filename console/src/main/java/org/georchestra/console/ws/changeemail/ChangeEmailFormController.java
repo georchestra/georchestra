@@ -171,7 +171,7 @@ public class ChangeEmailFormController {
             throw new IOException(e);
         }
 
-        logUtils.createLog(account.getUid(), AdminLogType.EMAIL_CHANGE_EMAIL_SENT, "");
+        LOG.debug(AdminLogType.EMAIL_CHANGE_EMAIL_SENT + " for " + account.getUid() + " to " + newAddress);
 
         return "emailWasSentForNewEmail";
     }

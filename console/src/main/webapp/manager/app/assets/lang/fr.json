@@ -267,6 +267,7 @@
   "logs.rolecreated"      : "Role créé",
   "logs.oauth2usercreated": "Utilisateur OAuth2 créé",
   "logs.noresults"        : "Aucune entrée pour les filtres sélectionnés",
+  "logs.useremailchanged" : "Email modifié",
   "analytics.title"       : "Statistiques",
   "analytics.all"         : "Tout le monde",
   "analytics.requests"    : "Nombre de requêtes",

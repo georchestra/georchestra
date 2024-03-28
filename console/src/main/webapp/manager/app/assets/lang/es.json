@@ -267,6 +267,7 @@
   "logs.emailrecoverysent": "Correo electrónico de recuperación de contraseña enviado",
   "logs.rolecreated"      : "Rol creado",
   "logs.noresults"        : "No hay entradas para los filtros seleccionados",
+  "logs.useremailchanged" : "Correo electrónico cambiado",
   "analytics.title"       : "Estadísticas",
   "analytics.all"         : "Todo el mundo",
   "analytics.requests"    : "Número de consultas",

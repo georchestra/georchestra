@@ -41,7 +41,6 @@ import org.springframework.util.StringUtils;
  * Maintains the tokens generated when the "Lost password use case" is executed.
  *
  * @author Mauricio Pazos
- *
  */
 public class UserTokenDao {
 
@@ -86,12 +85,11 @@ public class UserTokenDao {
     }
 
     /**
-     * Searches the uid which match with the provided token
-     * and has no additional information.
+     * Searches the uid which match with the provided token and has no additional
+     * information.
      *
      * @param token
      * @return uid
-     *
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
@@ -104,11 +102,11 @@ public class UserTokenDao {
     }
 
     /**
-     * Searches the additional information which match with the provided uid and token
+     * Searches the additional information which match with the provided uid and
+     * token
      *
      * @param token
      * @return uid
-     *
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
