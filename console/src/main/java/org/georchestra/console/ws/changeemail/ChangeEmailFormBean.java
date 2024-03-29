@@ -24,18 +24,18 @@ import java.io.Serializable;
 public class ChangeEmailFormBean implements Serializable {
 
     private static final long serialVersionUID = -153576513543313510L;
-    private String newAddress;
+    private String newEmail;
 
     @Override
     public String toString() {
-        return "ChangeEmailFormBean [newAddress=" + newAddress + "]";
+        return "ChangeEmailFormBean [newEmail=" + newEmail + "]";
     }
 
-    public String getNewAddress() {
-        return newAddress;
+    public String getNewEmail() {
+        return newEmail;
     }
 
-    public void setNewAddress(String newAddress) {
-        this.newAddress = newAddress;
+    public void setNewEmail(String newEmail) {
+        this.newEmail = newEmail;
     }
 }

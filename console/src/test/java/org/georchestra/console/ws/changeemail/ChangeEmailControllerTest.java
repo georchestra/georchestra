@@ -2,13 +2,8 @@ package org.georchestra.console.ws.changeemail;
 
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.mailservice.EmailFactory;
-import org.georchestra.console.ws.changepassword.ChangePasswordFormBean;
-import org.georchestra.console.ws.changepassword.ChangePasswordFormController;
-import org.georchestra.console.ws.passwordrecovery.NewPasswordFormController;
 import org.georchestra.console.ws.utils.LogUtils;
-import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
-import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.Account;
@@ -20,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.verification.VerificationMode;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -56,7 +50,7 @@ import static org.mockito.Mockito.when;
 
 public class ChangeEmailControllerTest {
 
-    public static final String NEW_ADDRESS = "new@address.com";
+    public static final String NEW_EMAIL = "new@address.com";
     public static final String OLD_EMAIL = "old@address.com";
     public static final String ACCOUNT_UID = "pmauduit";
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
@@ -108,7 +102,7 @@ public class ChangeEmailControllerTest {
         WebDataBinder dataBinder = new WebDataBinder(getClass());
         ctrlToTest.initForm(dataBinder);
 
-        assertTrue(Arrays.asList(dataBinder.getAllowedFields()).contains("newAddress"));
+        assertTrue(Arrays.asList(dataBinder.getAllowedFields()).contains("newEmail"));
     }
 
     @Test
@@ -130,7 +124,7 @@ public class ChangeEmailControllerTest {
         Mockito.when(account.isPending()).thenReturn(isPending);
         Mockito.when(accountDao.findByEmail(Mockito.anyString())).thenReturn(account);
         Mockito.when(accountDao.findByUID(Mockito.anyString())).thenReturn(account);
-        Mockito.when(userTokenDao.findAdditionalInfo(Mockito.anyString(), Mockito.anyString())).thenReturn(NEW_ADDRESS);
+        Mockito.when(userTokenDao.findAdditionalInfo(Mockito.anyString(), Mockito.anyString())).thenReturn(NEW_EMAIL);
     }
 
     @Test
@@ -151,20 +145,20 @@ public class ChangeEmailControllerTest {
         prepareLegitRequest();
         userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
-        formBean.setNewAddress(NEW_ADDRESS);
+        formBean.setNewEmail(NEW_EMAIL);
         when(accountDao.findByEmail(any())).thenThrow(new NameNotFoundException(""));
         when(ldapTemplate.lookupContext((Name) any())).thenReturn(mock(DirContextOperations.class));
 
         String ret = ctrlToTest.changeEmail(request, formBean, result, status);
 
         assertEquals(false, result.hasErrors());
-        assertEquals("emailWasSentForNewEmail", ret);
+        assertEquals("emailWasSentForEmailChange", ret);
 
         ArgumentCaptor<String> tokenUid = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> tokenInfo = ArgumentCaptor.forClass(String.class);
         verify(userTokenDao).insertToken(tokenUid.capture(), Mockito.anyString(), tokenInfo.capture());
         assertEquals(ACCOUNT_UID, tokenUid.getValue());
-        assertEquals(NEW_ADDRESS, tokenInfo.getValue());
+        assertEquals(NEW_EMAIL, tokenInfo.getValue());
 
         verify(accountDao, Mockito.never()).update(Mockito.any());
     }
@@ -174,7 +168,7 @@ public class ChangeEmailControllerTest {
         prepareLegitRequest();
         userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
-        formBean.setNewAddress(NEW_ADDRESS);
+        formBean.setNewEmail(NEW_EMAIL);
         Account account = Mockito.mock(Account.class);
         when(accountDao.findByEmail(any())).thenReturn(account);
         when(ldapTemplate.lookupContext((Name) any())).thenReturn(mock(DirContextOperations.class));
@@ -193,7 +187,7 @@ public class ChangeEmailControllerTest {
         prepareLegitRequest();
         userIsSpringSecurityAuthenticatedAndExistInLdap(ACCOUNT_UID);
 
-        formBean.setNewAddress("wrong_format");
+        formBean.setNewEmail("wrong_format");
         String ret = ctrlToTest.changeEmail(request, formBean, result, status);
 
         assertEquals(true, result.hasErrors());
@@ -215,7 +209,7 @@ public class ChangeEmailControllerTest {
 
         ArgumentCaptor<Account> accountArgumentCaptor = ArgumentCaptor.forClass(Account.class);
         verify(accountDao).update(accountArgumentCaptor.capture());
-        verify(accountArgumentCaptor.getValue()).setEmail(NEW_ADDRESS);
+        verify(accountArgumentCaptor.getValue()).setEmail(NEW_EMAIL);
     }
 
     @Test

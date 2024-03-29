@@ -63,7 +63,7 @@ public class Validation {
 
         // Add mandatory fields for user
         this.requiredUserFields.add("email");
-        this.requiredUserFields.add("newAddress");
+        this.requiredUserFields.add("newEmail");
         this.requiredUserFields.add("uid");
         this.requiredUserFields.add("password");
         this.requiredUserFields.add("confirmPassword");

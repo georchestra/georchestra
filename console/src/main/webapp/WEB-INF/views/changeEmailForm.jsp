@@ -69,7 +69,7 @@
 
 			<fieldset>
 				<legend><s:message code="changeEmailForm.fieldset.email"/></legend>
-				<t:input path="newAddress" required="true">
+				<t:input path="newEmail" required="true">
 					<jsp:attribute name="label"><s:message code="email.label" /></jsp:attribute>
 				</t:input>
 			</fieldset>

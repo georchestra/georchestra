@@ -97,7 +97,7 @@ public class ChangeEmailFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields("newAddress");
+        dataBinder.setAllowedFields("newEmail");
     }
 
     /**
@@ -132,17 +132,17 @@ public class ChangeEmailFormController {
             BindingResult result, SessionStatus sessionStatus) throws DataServiceException, IOException {
 
         // email validation
-        if (validation.validateUserFieldWithSpecificMsg("newAddress", formBean.getNewAddress(), result)
-                && !EmailValidator.getInstance().isValid(formBean.getNewAddress())) {
-            result.rejectValue("newAddress", "email.error.invalidFormat", "Invalid Format");
+        if (validation.validateUserFieldWithSpecificMsg("newEmail", formBean.getNewEmail(), result)
+                && !EmailValidator.getInstance().isValid(formBean.getNewEmail())) {
+            result.rejectValue("newEmail", "email.error.invalidFormat", "Invalid Format");
             return "changeEmailForm";
         }
 
-        String newAddress = formBean.getNewAddress();
+        String newEmail = formBean.getNewEmail();
 
         try {
-            this.accountDao.findByEmail(newAddress);
-            result.rejectValue("newAddress", "email.error.exist",
+            this.accountDao.findByEmail(newEmail);
+            result.rejectValue("newEmail", "email.error.exist",
                     new String[] { String.format("%s%s", publicContextPath, "/account/changeEmail") },
                     "there is a user with this e-mail");
             return "changeEmailForm";
@@ -157,13 +157,13 @@ public class ChangeEmailFormController {
             this.userTokenDao.delete(uid);
         }
 
-        this.userTokenDao.insertToken(uid, token, newAddress);
+        this.userTokenDao.insertToken(uid, token, newEmail);
 
         String url = makeChangeEmailURL(publicUrl, publicContextPath, token);
 
         try {
             ServletContext servletContext = request.getSession().getServletContext();
-            this.emailFactory.sendChangeEmailAddressEmail(servletContext, newAddress, account.getCommonName(),
+            this.emailFactory.sendChangeEmailAddressEmail(servletContext, newEmail, account.getCommonName(),
                     account.getUid(), url);
             sessionStatus.setComplete();
 
@@ -171,9 +171,9 @@ public class ChangeEmailFormController {
             throw new IOException(e);
         }
 
-        LOG.debug(AdminLogType.EMAIL_CHANGE_EMAIL_SENT + " for " + account.getUid() + " to " + newAddress);
+        LOG.debug(AdminLogType.EMAIL_CHANGE_EMAIL_SENT + " from " + account.getUid() + " to " + newEmail);
 
-        return "emailWasSentForNewEmail";
+        return "emailWasSentForEmailChange";
     }
 
     /**
@@ -192,9 +192,9 @@ public class ChangeEmailFormController {
         try {
             Account account = getAccount();
             String uid = account.getUid();
-            final String newAddress = this.userTokenDao.findAdditionalInfo(uid, token);
+            String newEmail = this.userTokenDao.findAdditionalInfo(uid, token);
 
-            account.setEmail(newAddress);
+            account.setEmail(newEmail);
             this.accountDao.update(account);
             this.userTokenDao.delete(uid);
             logUtils.createLog(uid, AdminLogType.USER_EMAIL_CHANGED, null);

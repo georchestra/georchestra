@@ -40,7 +40,7 @@
 	<div class="jumbotron">
 		<div class="container">
 			<h1><s:message code="emailWasSent.title" /></h1>
-			<p><s:message code="emailWasSentForNewEmail.body" /></p>
+			<p><s:message code="emailWasSentForEmailChange.body" /></p>
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
