@@ -4,6 +4,7 @@ You asked to change your e-mail address on {publicUrl}/.
 If you did not request any e-mail address update, just ignore this e-mail, you're safe.
 
 To validate your new e-mail address, go to {url}.
+You will be asked to log in if you are not already.
 
 Caution: this e-mail is personal, don't forward it.
 
