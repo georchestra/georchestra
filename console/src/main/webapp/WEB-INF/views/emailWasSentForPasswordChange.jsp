@@ -40,7 +40,7 @@
 	<div class="jumbotron">
 		<div class="container">
 			<h1><s:message code="emailWasSent.title" /></h1>
-			<p><s:message code="emailWasSent.body" /></p>
+			<p><s:message code="emailWasSentForPasswordChange.body" /></p>
 		</div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>

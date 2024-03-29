@@ -89,7 +89,7 @@ public class NewPasswordFormController {
             HttpServletRequest request) throws IOException {
         model.addAttribute("recaptchaActivated", reCaptchaActivated);
         try {
-            final String uid = this.userTokenDao.findUserByToken(token);
+            final String uid = this.userTokenDao.findUidWithoutAdditionalInfo(token);
 
             NewPasswordFormBean formBean = new NewPasswordFormBean();
 

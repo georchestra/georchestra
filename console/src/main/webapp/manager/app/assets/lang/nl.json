@@ -267,6 +267,7 @@
   "logs.emailrecoverysent": "Password recovery email sent",
   "logs.rolecreated"      : "Role created",
   "logs.noresults"        : "Geen invoer voor geselecteerde filters",
+  "logs.useremailchanged" : "Email changed",
   "analytics.title"       : "Statistieken",
   "analytics.all"         : "Iedereen",
   "analytics.requests"    : "Aantal queries",

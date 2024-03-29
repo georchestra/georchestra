@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.NameNotFoundException;
 
 public class UserTokenDaoTest {
 
@@ -70,18 +71,72 @@ public class UserTokenDaoTest {
     }
 
     @Test
-    public void findUserByTokenTest() throws Exception {
+    public void findUidTest() throws Exception {
         ResultSet rs = Mockito.mock(ResultSet.class);
         when(rs.next()).thenReturn(true, true, false);
         when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
         when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
         when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn(null, "additionalInfo");
         when(preparedStatement.executeQuery()).thenReturn(rs);
 
-        String ret = userTokenDao.findUserByToken("abcde");
+        String ret = userTokenDao.findUidWithoutAdditionalInfo("abcde");
 
         assertTrue(ret.equals("pmauduit"));
+    }
 
+    @Test(expected = NameNotFoundException.class)
+    public void findUidUnexpectedAdditionalInfoTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        when(rs.next()).thenReturn(true, true, false);
+        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", "additionalInfo");
+        when(preparedStatement.executeQuery()).thenReturn(rs);
+
+        userTokenDao.findUidWithoutAdditionalInfo("abcde");
+    }
+
+    @Test
+    public void findAdditionalInfoTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        when(rs.next()).thenReturn(true, true, false);
+        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
+        when(preparedStatement.executeQuery()).thenReturn(rs);
+
+        String ret = userTokenDao.findAdditionalInfo("pmauduit", "abcde");
+
+        assertTrue(ret.equals("additionalInfo"));
+    }
+
+    @Test(expected = NameNotFoundException.class)
+    public void findAdditionalInfoWrongUidTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        when(rs.next()).thenReturn(true, true, false);
+        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
+        when(preparedStatement.executeQuery()).thenReturn(rs);
+
+        userTokenDao.findAdditionalInfo("wrong_uid", "abcde");
+    }
+
+    @Test(expected = NameNotFoundException.class)
+    public void findAdditionalInfoMissingInfoTest() throws Exception {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        when(rs.next()).thenReturn(true, true, false);
+        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn(null, null);
+        when(preparedStatement.executeQuery()).thenReturn(rs);
+
+        userTokenDao.findAdditionalInfo("pmauduit", "abcde");
     }
 
     @Test
@@ -92,16 +147,19 @@ public class UserTokenDaoTest {
         when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("1", "2");
         when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
         when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
         when(preparedStatement.executeQuery()).thenReturn(rs);
 
         List<Map<String, Object>> ret = userTokenDao.findBeforeDate(new Date());
-        assertTrue(ret.get(0).size() == 3);
+        assertTrue(ret.get(0).size() == 4);
         assertTrue(ret.get(0).get(DatabaseSchema.UID_COLUMN).equals("1"));
         assertTrue(ret.get(1).get(DatabaseSchema.UID_COLUMN).equals("2"));
         assertTrue(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN).equals("mytoken1"));
         assertTrue(ret.get(1).get(DatabaseSchema.TOKEN_COLUMN).equals("mytoken2"));
         assertTrue(ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN).equals(new Timestamp(1234)));
         assertTrue(ret.get(1).get(DatabaseSchema.CREATION_DATE_COLUMN).equals(new Timestamp(5678)));
+        assertTrue(ret.get(0).get(DatabaseSchema.ADDITIONAL_INFO).equals("additionalInfo"));
+        assertTrue(ret.get(1).get(DatabaseSchema.ADDITIONAL_INFO) == null);
 
     }
 
@@ -112,6 +170,7 @@ public class UserTokenDaoTest {
         when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("1", "2");
         when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
         when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
         when(preparedStatement.executeQuery()).thenReturn(rs);
 
         boolean ret = userTokenDao.exist("42");

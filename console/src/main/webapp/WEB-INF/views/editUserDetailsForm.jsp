@@ -111,6 +111,9 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
           <p class="form-control-static">
               ${editUserDetailsFormBean.email}
           </p>
+          <a href='<c:out value="${publicContextPath}/account/changeEmail" />'>
+            <s:message code="editUserDetailsForm.changeEmail.link"/>
+          </a>
         </div>
       </div>
       <t:input path="phone" required="${phoneRequired}">

@@ -195,12 +195,12 @@ public class PasswordRecoveryFormController {
             // log role deleted
             logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
 
-            return "emailWasSent";
+            return "emailWasSentForPasswordChange";
 
         } catch (DataServiceException | MessagingException e) {
             throw new IOException(e);
         } catch (NameNotFoundException e) {
-            return "emailWasSent";
+            return "emailWasSentForPasswordChange";
         }
     }
 

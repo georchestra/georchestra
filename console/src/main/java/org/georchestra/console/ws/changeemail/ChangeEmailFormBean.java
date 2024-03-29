@@ -17,23 +17,25 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ds;
+package org.georchestra.console.ws.changeemail;
 
-/**
- * Provide information about the database schema
- *
- * @author Mauricio Pazos
- *
- */
-interface DatabaseSchema {
+import java.io.Serializable;
 
-    final static String TABLE_USER_TOKEN = "user_token";
-    final static String SCHEMA_NAME = "console";
+public class ChangeEmailFormBean implements Serializable {
 
-    // columns
-    final static String UID_COLUMN = "uid";
-    final static String TOKEN_COLUMN = "token";
-    final static String ADDITIONAL_INFO = "additional_info";
-    final static String CREATION_DATE_COLUMN = "creation_date";
+    private static final long serialVersionUID = -153576513543313510L;
+    private String newEmail;
 
+    @Override
+    public String toString() {
+        return "ChangeEmailFormBean [newEmail=" + newEmail + "]";
+    }
+
+    public String getNewEmail() {
+        return newEmail;
+    }
+
+    public void setNewEmail(String newEmail) {
+        this.newEmail = newEmail;
+    }
 }

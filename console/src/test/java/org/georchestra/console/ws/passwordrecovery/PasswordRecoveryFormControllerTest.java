@@ -114,7 +114,7 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
 
         String ret = ctrl.generateToken(request, formBean, result, status);
-        assertEquals("emailWasSent", ret);
+        assertEquals("emailWasSentForPasswordChange", ret);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class PasswordRecoveryFormControllerTest {
         prepareLegitRequest();
 
         String ret = ctrl.generateToken(request, formBean, result, status);
-        assertEquals("emailWasSent", ret);
+        assertEquals("emailWasSentForPasswordChange", ret);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        assertEquals("emailWasSent", ret);
+        assertEquals("emailWasSentForPasswordChange", ret);
     }
 
     @Test
