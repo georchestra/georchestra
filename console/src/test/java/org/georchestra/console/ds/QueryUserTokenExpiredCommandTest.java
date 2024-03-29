@@ -43,11 +43,11 @@ public class QueryUserTokenExpiredCommandTest {
 
         when(pstmt.executeQuery()).thenReturn(resultSet);
 
-        Mockito.when(resultSet.getString(DatabaseSchema.UID_COLUMN)).thenReturn("uid");
-        Mockito.when(resultSet.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("token");
-        Mockito.when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
-        Mockito.when(resultSet.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo");
-        Mockito.when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getString(DatabaseSchema.UID_COLUMN)).thenReturn("uid");
+        when(resultSet.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("token");
+        when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
+        when(resultSet.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo");
+        when(resultSet.next()).thenReturn(true, false);
 
         query = new QueryUserTokenExpiredCommand();
         query.setDataSource(mockDS);
