@@ -15,7 +15,7 @@ ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh,ppolicy
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-        slapd=${OPENLDAP_VERSION}* ldap-utils procps && \
+        slapd=${OPENLDAP_VERSION}* ldap-utils procps sasl2-bin && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
