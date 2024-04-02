@@ -35,10 +35,6 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByUsername(String username);
 
-    default Optional<GeorchestraUser> findByEmail(String username) {
-        return Optional.empty();
-    };
-
     default Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
         return Optional.empty();
     };
