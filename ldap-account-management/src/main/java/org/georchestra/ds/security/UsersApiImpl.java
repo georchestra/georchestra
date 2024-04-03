@@ -84,19 +84,6 @@ public class UsersApiImpl implements UsersApi {
     }
 
     @Override
-    public Optional<GeorchestraUser> findByEmail(String email) {
-        try {
-            return Optional.of(this.accountsDao.findByEmail(email))//
-                    .filter(notPending().and(notProtected()))//
-                    .map(mapper::map);
-        } catch (NameNotFoundException e) {
-            return Optional.empty();
-        } catch (DataServiceException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
         try {
             return Optional.of(this.accountsDao.findByOAuth2Uid(oauth2Provider, oauth2Uid))//
