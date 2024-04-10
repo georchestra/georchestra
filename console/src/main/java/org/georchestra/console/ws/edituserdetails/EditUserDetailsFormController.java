@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
@@ -78,6 +79,9 @@ public class EditUserDetailsFormController {
 
     @Autowired
     protected LogUtils logUtils;
+
+    @Autowired
+    protected PasswordUtils passwordUtils;
 
     public void setGdprAllowAccountDeletion(Boolean gdprAllowAccountDeletion) {
         this.gdprAllowAccountDeletion = gdprAllowAccountDeletion;
@@ -220,6 +224,7 @@ public class EditUserDetailsFormController {
             accountDao.update(account);
 
             model.addAttribute("success", true);
+            model.addAttribute("pwdUtils", passwordUtils);
             Org org = orgsDao.findByUser(account);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(account));

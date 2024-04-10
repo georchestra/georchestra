@@ -188,6 +188,7 @@ public final class NewAccountFormController {
         model.addAttribute("privacyPolicyAgreementUrl", this.privacyPolicyAgreementUrl);
 
         model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
+        model.addAttribute("pwdUtils", passwordUtils);
 
         session.setAttribute("reCaptchaPublicKey", reCaptchaParameters.getPublicKey());
         for (String f : validation.getRequiredUserFields()) {
@@ -224,6 +225,7 @@ public final class NewAccountFormController {
 
         populateOrgsAndOrgTypes(model);
         model.addAttribute("moderatedSignup", this.moderatedSignup);
+        model.addAttribute("pwdUtils", passwordUtils);
         validateFields(formBean, result);
 
         if (result.hasErrors()) {

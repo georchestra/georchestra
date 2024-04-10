@@ -75,6 +75,28 @@
 				</t:password>
 			</fieldset>
 			<fieldset>
+			<div>
+				<small>
+					<p><strong><s:message code="password.policy"/>:</strong></p>
+					<div style="padding-left: 15px">
+						<p><s:message code="password.error.sizeError" arguments="${pwdUtils.minimumLength}"/></p>
+						<c:if test="${pwdUtils.requireLowers}" >
+							<p><s:message code="password.error.requireLowers"/></p>
+						</c:if>
+						<c:if test="${pwdUtils.requireUppers}" >
+							<p><s:message code="password.error.requireUppers"/></p>
+						</c:if>
+						<c:if test="${pwdUtils.requireDigits}" >
+							<p><s:message code="password.error.requireDigits"/></p>
+						</c:if>
+						<c:if test="${pwdUtils.requireSpecials}" >
+							<p><s:message code="password.error.requireSpecials"/></p>
+						</c:if>
+					</div>
+				</small>
+			</div>
+		</fieldset>
+			<fieldset>
 				<div class="form-group">
 					<div class="col-lg-8 col-lg-offset-4 text-right">
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>

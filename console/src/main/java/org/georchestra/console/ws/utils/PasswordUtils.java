@@ -19,6 +19,8 @@
 
 package org.georchestra.console.ws.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -40,34 +42,24 @@ public final class PasswordUtils {
     @Autowired
     private Validation validation;
 
+    @Getter
+    @Setter
     private int minimumLength = 8;
+    @Getter
+    @Setter
     private boolean requireLowers = false;
+    @Getter
+    @Setter
     private boolean requireUppers = false;
+    @Getter
+    @Setter
     private boolean requireDigits = false;
+    @Getter
+    @Setter
     private boolean requireSpecials = false;
 
     public void setValidation(Validation validation) {
         this.validation = validation;
-    }
-
-    public void setMinimumLength(int minimumLength) {
-        this.minimumLength = minimumLength;
-    }
-
-    public void setRequireLowers(boolean requireLowers) {
-        this.requireLowers = requireLowers;
-    }
-
-    public void setRequireUppers(boolean requireUppers) {
-        this.requireUppers = requireUppers;
-    }
-
-    public void setRequireDigits(boolean requireDigits) {
-        this.requireDigits = requireDigits;
-    }
-
-    public void setRequireSpecials(boolean requireSpecials) {
-        this.requireSpecials = requireSpecials;
     }
 
     public void validate(final String password, final String confirmPassword, Errors errors) {
