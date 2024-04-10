@@ -331,5 +331,4 @@
     <constructor-arg value="${AreasUrl:cities.geojson}"/>
   </bean>
 
-  <import resource="classpath:spring/rabbit-context-${enableRabbitmqEvents:false}.xml"/>
 </beans>

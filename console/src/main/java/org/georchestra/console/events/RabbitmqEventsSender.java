@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public class RabbitmqEventsSender {
     public static final String OAUTH2_ACCOUNT_CREATION_RECEIVED = "OAUTH2-ACCOUNT-CREATION-RECEIVED";
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Autowired
     private AmqpTemplate eventTemplate;
