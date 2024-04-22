@@ -21,6 +21,7 @@ import org.georchestra.ds.users.AccountDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -58,15 +59,16 @@ public class PasswordRecoveryFormControllerTest {
     }
 
     private void prepareLegitRequest() throws Exception {
-        prepareLegitRequest(false);
+        prepareLegitRequest(false, false);
     }
 
-    private void prepareLegitRequest(boolean isPending) throws Exception {
+    private void prepareLegitRequest(boolean isPending, boolean isOAuth2) throws Exception {
         request = new MockHttpServletRequest();
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
         Account account = Mockito.mock(Account.class);
         Mockito.when(account.getUid()).thenReturn("1");
         Mockito.when(account.isPending()).thenReturn(isPending);
+        Mockito.when(account.getOAuth2Provider()).thenReturn(isOAuth2 ? "provider" : null);
         Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
         Mockito.when(utd.exist(Mockito.anyString())).thenReturn(true);
     }
@@ -105,6 +107,7 @@ public class PasswordRecoveryFormControllerTest {
             assertTrue(e instanceof IOException);
         }
 
+        Mockito.verifyZeroInteractions(efi);
     }
 
     @Test
@@ -114,6 +117,8 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
 
         String ret = ctrl.generateToken(request, formBean, result, status);
+
+        Mockito.verifyZeroInteractions(efi);
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
@@ -124,6 +129,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
+        Mockito.verifyZeroInteractions(efi);
         assertEquals("passwordRecoveryForm", ret);
     }
 
@@ -132,6 +138,9 @@ public class PasswordRecoveryFormControllerTest {
         prepareLegitRequest();
 
         String ret = ctrl.generateToken(request, formBean, result, status);
+
+        Mockito.verify(efi).sendChangePasswordEmail(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any());
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
@@ -143,6 +152,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
+        Mockito.verifyZeroInteractions(efi);
         assertEquals("passwordRecoveryForm", ret);
     }
 
@@ -170,10 +180,27 @@ public class PasswordRecoveryFormControllerTest {
      */
     @Test
     public void testPasswordRecoveryWithPendingUser() throws Exception {
-        prepareLegitRequest(true);
+        prepareLegitRequest(true, false);
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
+        Mockito.verifyZeroInteractions(efi);
+        assertEquals("emailWasSentForPasswordChange", ret);
+    }
+
+    /**
+     * test for recovery password when user is an OAuth2 user
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testPasswordRecoveryWithOAuth2User() throws Exception {
+        prepareLegitRequest(false, true);
+        Mockito.when(result.hasErrors()).thenReturn(false);
+        String ret = ctrl.generateToken(request, formBean, result, status);
+
+        Mockito.verify(efi).sendChangePasswordOAuth2Email(Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.eq("provider"));
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
