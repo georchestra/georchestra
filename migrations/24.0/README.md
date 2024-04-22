@@ -54,6 +54,8 @@ using the url : `/geonetwork/srv/eng/admin.console?debug#/tools`
 
 ⚠️ Important info about Harvesters :
 - Simple URL Harvester must now have their `Element for the UUID of each record` prefixed with a slash.
+- XSL transformations must be updated, e.g. :
+    - `iso19115-3.2018:convert/fromJsonLdEsri` becomes `schema:iso19115-3.2018:convert/fromJsonLdEsri`
 
 ## Elasticsearch
 
