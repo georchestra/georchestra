@@ -101,6 +101,7 @@ public class ChangePasswordFormController {
 
             ChangePasswordFormBean formBean = new ChangePasswordFormBean();
             model.addAttribute(formBean);
+            model.addAttribute("pwdUtils", passwordUtils);
             return "changePasswordForm";
         }
         return "forbidden";
@@ -128,7 +129,7 @@ public class ChangePasswordFormController {
             }
 
             passwordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
-
+            model.addAttribute("pwdUtils", passwordUtils);
             if (result.hasErrors()) {
                 return "changePasswordForm";
             }
