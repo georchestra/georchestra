@@ -60,16 +60,6 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
      * */
     private String georchestraStylesheet = "";
 
-    /** used for legacy header */
-    private String georHeaderInclude = "<html>" + "  <head>" + "    <title>GeoWebCache - @instanceName@</title>"
-            + "    <style type=\"text/css\">" + "      body, td {"
-            + "        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
-            + "        font-size: 0.85em;" + "        vertical-align: top;" + "      }" + "      a#logo {"
-            + "        display:none;" + "      }" + "    </style>" + "  </head>" + "  <body>"
-            + "    <!-- geOrchestra header -->" + "    <div id=\"go_head\">"
-            + "      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
-            + "    </div>" + "    <!-- end of geOrchestra header -->";
-
     private String newGeorHeaderInclude = "<html>\n"
             + "  <head>\n"
             + "    <title>GeoWebCache - @instanceName@</title>\n"
@@ -117,19 +107,14 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
     }
 
     public @Override void afterPropertiesSet() throws IOException {
-        if (useLegacyHeader) {
-            Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
-            Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized");
-            Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
-
-            georHeaderInclude = georHeaderInclude.replace("@instanceName@", this.instanceName);
-            georHeaderInclude = georHeaderInclude.replace("@headerHeight@", this.headerHeight);
-            georHeaderInclude = georHeaderInclude.replace("@headerUrl@", this.headerUrl);
-        } else {
             Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
             Objects.requireNonNull(this.headerScript, "property 'headerScript' not initialized");
             Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
             Objects.requireNonNull(this.logoUrl, "property 'logoUrl' not initialized");
+
+            if (this.useLegacyHeader) {
+                Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized, but useLegacyHeader is true");
+            }
 
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@instanceName@", this.instanceName);
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerScript@", this.headerScript);
@@ -138,9 +123,6 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerHeight@", this.headerHeight);
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@logoUrl@", this.logoUrl);
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@georchestraStylesheet@", this.georchestraStylesheet);
-
-        }
-
     }
 
     @Override
@@ -226,12 +208,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
         final String bodyTag = "<body>";
         final String htmlBody = html.substring(html.indexOf(bodyTag) + bodyTag.length());
 
-        StringBuilder builder = new StringBuilder();
-        if (useLegacyHeader) {
-            builder.append(georHeaderInclude);
-        } else {
-            builder.append(newGeorHeaderInclude);
-        }
+        StringBuilder builder = new StringBuilder(newGeorHeaderInclude);
+
         builder.append(htmlBody);
         final byte[] bytes = builder.toString().getBytes("UTF-8");
         response.setContentLength(bytes.length);
