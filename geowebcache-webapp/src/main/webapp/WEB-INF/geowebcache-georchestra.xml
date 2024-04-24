@@ -49,6 +49,8 @@
     <property name="useLegacyHeader" value="${useLegacyHeader}" />
     <property name="headerScript" value="${headerScript}" />
     <property name="headerHeight" value="${headerHeight}" />
+    <property name="georchestraStylesheet" value="${georchestraStylesheet:''}" />
+    <property name="logoUrl" value="${logoUrl}" />
   </bean>
 
   <!-- Override gwcURLMangler defined in core-context.xml -->
