@@ -30,6 +30,8 @@ public class RabbitMqAutoconfigurationIT extends ConsoleIntegrationTest {
         assertNotNull("expected the RabbitMq eventsSender bean",
                 context.getBean(org.georchestra.console.events.RabbitmqEventsSender.class));
 
+        assertNotNull("expected the LogUtils bean", context.getBean(org.georchestra.console.ws.utils.LogUtils.class));
+
         CachingConnectionFactory rabbitFactory = (CachingConnectionFactory) context.getBean("connectionFactory");
         assertEquals(rabbitFactory.getHost(), "my-rabbit");
         assertEquals(rabbitFactory.getPort(), 1234);
