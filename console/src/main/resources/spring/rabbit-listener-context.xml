@@ -6,7 +6,8 @@
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:property-placeholder location="file:${georchestra.datadir}/default.properties,
-     file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+     file:${georchestra.datadir}/console/console.properties,
+     file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <rabbit:connection-factory id="connectionFactory" host="${rabbitmqHost}" port="${rabbitmqPort}" username="${rabbitmqUser}" password="${rabbitmqPassword}" />
     <rabbit:admin connection-factory="connectionFactory" />
@@ -19,14 +20,10 @@
         </rabbit:bindings>
     </rabbit:topic-exchange>
     <!-- instantiate eventsListener -->
-    <bean id="eventsListener" class="org.georchestra.console.events.RabbitmqEventsListener" depends-on="logUtils">
-        <property name="logUtils" ref="logUtils"/>
-        <property name="roleDao" ref="roleDao"/>
-        <property name="accountDao" ref="accountDao"/>
-        <property name="emailFactory" ref="emailFactory"/>
-        <property name="rabbitmqEventsSender" ref="rabbitmqEventsSender"/>
-    </bean>
+    <bean id="eventsListener" class="org.georchestra.console.events.RabbitmqEventsListener" />
+
     <!-- glue the listener and OAuth2Queue to the container-->
     <rabbit:listener-container id="EventListenerContainer" connection-factory="connectionFactory">
-        <rabbit:listener ref="eventsListener" queues="OAuth2Queue" /></rabbit:listener-container>
+        <rabbit:listener ref="eventsListener" queues="OAuth2Queue" />
+    </rabbit:listener-container>
 </beans>

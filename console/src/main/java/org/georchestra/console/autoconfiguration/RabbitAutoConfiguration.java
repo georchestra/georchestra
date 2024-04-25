@@ -7,5 +7,6 @@ import org.springframework.context.annotation.*;
         "file:${georchestra.datadir}/console/console.properties}" }, ignoreResourceNotFound = true)
 @Conditional(IsRabbitMqEnabled.class)
 @ImportResource({ "classpath:/spring/rabbit-listener-context.xml", "classpath:/spring/rabbit-sender-context.xml" })
+
 public class RabbitAutoConfiguration {
 }
