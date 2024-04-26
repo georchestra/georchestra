@@ -21,6 +21,8 @@
     <property name="newAccountRequiresModerationEmailSubject" value="[georTest]] New account waiting for validation"/>
     <property name="changePasswordEmailFile" value="changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="[georTest] Update your password}"/>
+    <property name="changePasswordOAuth2EmailFile" value="changepasswordoauth2-email-template.txt"/>
+    <property name="changePasswordOAuth2EmailSubject" value="[georTest] Update your password}"/>
     <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="[georTest] New login for your account" />
     <property name="newAccountNotificationEmailFile" value="newaccount-notification-template.txt"/>

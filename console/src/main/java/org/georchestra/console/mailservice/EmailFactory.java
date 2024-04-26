@@ -60,6 +60,9 @@ public class EmailFactory {
     private String changePasswordEmailFile;
     private String changePasswordEmailSubject;
 
+    private String changePasswordOAuth2EmailFile;
+    private String changePasswordOAuth2EmailSubject;
+
     private String changeEmailAddressEmailFile;
     private String changeEmailAddressEmailSubject;
 
@@ -153,6 +156,21 @@ public class EmailFactory {
         email.set("name", userName);
         email.set("uid", uid);
         email.set("url", url);
+        email.send(reallySend);
+    }
+
+    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName)
+            throws MessagingException {
+        sendChangePasswordOAuth2Email(servletContext, recipient, userName, true);
+    }
+
+    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName,
+            boolean reallySend) throws MessagingException {
+        Email email = new Email(singletonList(recipient), this.changePasswordOAuth2EmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+                this.templateEncoding, this.changePasswordOAuth2EmailFile, servletContext, this.georConfig,
+                this.publicUrl, this.instanceName);
+        email.set("name", userName);
         email.send(reallySend);
     }
 
@@ -311,6 +329,14 @@ public class EmailFactory {
 
     public void setChangePasswordEmailSubject(String changePasswordEmailSubject) {
         this.changePasswordEmailSubject = changePasswordEmailSubject;
+    }
+
+    public void setChangePasswordOAuth2EmailSubject(String changePasswordOAuth2EmailSubject) {
+        this.changePasswordOAuth2EmailSubject = changePasswordOAuth2EmailSubject;
+    }
+
+    public void setChangePasswordOAuth2EmailFile(String changePasswordOAuth2EmailFile) {
+        this.changePasswordOAuth2EmailFile = changePasswordOAuth2EmailFile;
     }
 
     public void setChangeEmailAddressEmailFile(String changePasswordEmailFile) {

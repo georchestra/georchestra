@@ -272,6 +272,8 @@
     <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[${instanceName}] New account waiting for validation}"/>
     <property name="changePasswordEmailFile" value="changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="${subject.change.password:[${instanceName}] Update your password}"/>
+    <property name="changePasswordOAuth2EmailFile" value="changepasswordoauth2-email-template.txt"/>
+    <property name="changePasswordOAuth2EmailSubject" value="${subject.change.password-oauth2:[${instanceName}] Update your password}"/>
     <property name="changeEmailAddressEmailFile" value="changeemail-email-template.txt"/>
     <property name="changeEmailAddressEmailSubject" value="${subject.change.email:[${instanceName}] Update your e-mail address}"/>
     <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
