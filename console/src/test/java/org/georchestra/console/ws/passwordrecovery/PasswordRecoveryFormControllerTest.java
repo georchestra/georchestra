@@ -199,8 +199,7 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verify(efi).sendChangePasswordOAuth2Email(Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.eq("provider"));
+        Mockito.verify(efi).sendChangePasswordOAuth2Email(Mockito.any(), Mockito.any(), Mockito.any());
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 

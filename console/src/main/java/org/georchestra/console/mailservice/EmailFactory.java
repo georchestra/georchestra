@@ -159,19 +159,18 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName,
-            String providerId) throws MessagingException {
-        sendChangePasswordOAuth2Email(servletContext, recipient, userName, providerId, true);
+    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName)
+            throws MessagingException {
+        sendChangePasswordOAuth2Email(servletContext, recipient, userName, true);
     }
 
     public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName,
-            String providerId, boolean reallySend) throws MessagingException {
+            boolean reallySend) throws MessagingException {
         Email email = new Email(singletonList(recipient), this.changePasswordOAuth2EmailSubject, this.smtpHost,
                 this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
                 this.templateEncoding, this.changePasswordOAuth2EmailFile, servletContext, this.georConfig,
                 this.publicUrl, this.instanceName);
         email.set("name", userName);
-        email.set("provider", providerId);
         email.send(reallySend);
     }
 
