@@ -1,5 +1,6 @@
 package org.georchestra.console.events;
 
+import lombok.Setter;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.georchestra.console.model.AdminLogType;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.mail.MessagingException;
 import java.util.Collections;
@@ -19,55 +21,15 @@ import java.util.stream.Collectors;
 
 public class RabbitmqEventsListener implements MessageListener {
 
-    private LogUtils logUtils;
+    private @Autowired @Setter LogUtils logUtils;
 
-    private RoleDao roleDao;
+    private @Autowired @Setter RoleDao roleDao;
 
-    private AccountDao accountDao;
+    private @Autowired @Setter AccountDao accountDao;
 
-    private EmailFactory emailFactory;
+    private @Autowired @Setter EmailFactory emailFactory;
 
-    private RabbitmqEventsSender rabbitmqEventsSender;
-
-    public void setLogUtils(LogUtils logUtils) {
-        this.logUtils = logUtils;
-    }
-
-    public LogUtils getLogUtils() {
-        return this.logUtils;
-    }
-
-    public void setRoleDao(RoleDao roleDao) {
-        this.roleDao = roleDao;
-    }
-
-    public RoleDao getRoleDao() {
-        return this.roleDao;
-    }
-
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
-    }
-
-    public AccountDao getAccountDao() {
-        return this.accountDao;
-    }
-
-    public void setEmailFactory(EmailFactory emailFactory) {
-        this.emailFactory = emailFactory;
-    }
-
-    public EmailFactory getEmailFactory() {
-        return this.emailFactory;
-    }
-
-    public void setRabbitmqEventsSender(RabbitmqEventsSender rabbitmqEventsSender) {
-        this.rabbitmqEventsSender = rabbitmqEventsSender;
-    }
-
-    public RabbitmqEventsSender getRabbitmqEventsSender() {
-        return this.rabbitmqEventsSender;
-    }
+    private @Autowired @Setter RabbitmqEventsSender rabbitmqEventsSender;
 
     private static Set<String> synReceivedMessageUid = Collections.synchronizedSet(new HashSet<String>());
 
