@@ -339,7 +339,7 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("consentAgreed").getDefaultMessage());
 
-        assertEquals(9, resultErrors.getFieldErrorCount());
+        assertEquals(10, resultErrors.getFieldErrorCount());
     }
 
     @Test
