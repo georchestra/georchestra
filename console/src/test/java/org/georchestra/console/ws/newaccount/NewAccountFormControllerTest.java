@@ -119,6 +119,7 @@ public class NewAccountFormControllerTest {
         assertTrue(allowedField.contains("confirmPassword"));
         assertTrue(allowedField.contains("recaptcha_response_field"));
         assertTrue(allowedField.contains("privacyPolicyAgreed"));
+        assertTrue(allowedField.contains("consentAgreed"));
     }
 
     @Test
@@ -277,6 +278,7 @@ public class NewAccountFormControllerTest {
         t.setTitle("software engineer");
         t.setUid("123123-21465456-3434");
         t.setPrivacyPolicyAgreed(false);
+        t.setConsentAgreed(false);
 
         assertTrue(t.getConfirmPassword().equals("test"));
         assertTrue(t.getDescription().equals("testing account"));
@@ -293,7 +295,8 @@ public class NewAccountFormControllerTest {
                 + "firstName=Test, surname=testmaster, org=geOrchestra, "
                 + "title=software engineer, email=test@localhost.com, "
                 + "phone=+331234567890, description=testing account, " + "password=monkey123, confirmPassword=test, "
-                + "privacyPolicyAgreed=false, " + "recaptcha_response_field=wrong]", t.toString());
+                + "privacyPolicyAgreed=false, " + "consentAgreed=false, " + "recaptcha_response_field=wrong]",
+                t.toString());
     }
 
     /**
@@ -317,6 +320,7 @@ public class NewAccountFormControllerTest {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType");
         toTest.reCaptchaActivated = true;
         toTest.privacyPolicyAgreementActivated = true;
+        toTest.consentAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setPassword("");
         formBean.setConfirmPassword("");
@@ -333,6 +337,7 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("password").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("confirmPassword").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("consentAgreed").getDefaultMessage());
 
         assertEquals(9, resultErrors.getFieldErrorCount());
     }
@@ -341,12 +346,14 @@ public class NewAccountFormControllerTest {
     public void specialValidators() throws IOException, SQLException {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType,phone,title,description");
         toTest.privacyPolicyAgreementActivated = true;
+        toTest.consentAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setUid("I am no compliant !!!!");
         formBean.setEmail("I am no compliant !!!!");
         formBean.setPassword("Pré$ident");
         formBean.setConfirmPassword("lapinmalin");
         formBean.setPrivacyPolicyAgreed(false);
+        formBean.setConsentAgreed(false);
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
 
         toTest.create(request, formBean, "", resultErrors, status, UiModel);
@@ -358,6 +365,7 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("title").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("description").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("consentAgreed").getDefaultMessage());
     }
 
     @Test

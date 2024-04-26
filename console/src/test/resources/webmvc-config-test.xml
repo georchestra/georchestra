@@ -76,6 +76,14 @@
     <constructor-arg value="${privacy.policy.agreement.url:}" />
   </bean>
 
+  <bean id="consentAgreementActivated" class="java.lang.Boolean">
+    <constructor-arg value="${consent.agreement.activated:false}" />
+  </bean>
+
+  <bean id="consentAgreementUrl" class="java.lang.String">
+    <constructor-arg value="${consent.agreement.url:}" />
+  </bean>
+
   <!-- LDAP connection -->
   <bean id="singleContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>

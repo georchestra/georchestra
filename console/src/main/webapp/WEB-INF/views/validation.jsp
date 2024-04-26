@@ -93,6 +93,15 @@ function testPrivacyPolicyAgreed(){
     return true;
 }
 
+function testConsentAgreed(){
+    removeError("consentAgreed");
+    if(!$('#consentAgreed').is(':checked')){
+        addError("consentAgreed", "<s:message code="consentAgreed.error.notChecked" />");
+        return false;
+    }
+    return true;
+}
+
 /**
  * First verification, be sure g-recaptcha-response textarea is not empty
  */

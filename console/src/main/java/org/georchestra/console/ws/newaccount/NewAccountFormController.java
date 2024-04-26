@@ -120,6 +120,12 @@ public final class NewAccountFormController {
     protected String privacyPolicyAgreementUrl;
 
     @Autowired
+    protected boolean consentAgreementActivated;
+
+    @Autowired
+    protected String consentAgreementUrl;
+
+    @Autowired
     protected LogUtils logUtils;
 
     @Autowired
@@ -172,8 +178,8 @@ public final class NewAccountFormController {
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
-                "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName", "orgShortName",
-                "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
+                "password", "confirmPassword", "privacyPolicyAgreed", "consentAgreed", "createOrg", "orgName",
+                "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
                 "recaptcha_response_field");
     }
 
@@ -186,6 +192,9 @@ public final class NewAccountFormController {
 
         model.addAttribute("privacyPolicyAgreementActivated", this.privacyPolicyAgreementActivated);
         model.addAttribute("privacyPolicyAgreementUrl", this.privacyPolicyAgreementUrl);
+
+        model.addAttribute("consentAgreementActivated", this.consentAgreementActivated);
+        model.addAttribute("consentAgreementUrl", this.consentAgreementUrl);
 
         model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
         model.addAttribute("pwdUtils", passwordUtils);
@@ -388,7 +397,11 @@ public final class NewAccountFormController {
 
         // Check if the user has agreed to the privacy policy
         if (privacyPolicyAgreementActivated) {
-            validation.validatePrivacyPolicyAgreedField(formBean.getPrivacyPolicyAgreed(), result);
+            validation.validateAgreedField(formBean.getPrivacyPolicyAgreed(), result, "privacyPolicyAgreed");
+        }
+
+        if (consentAgreementActivated) {
+            validation.validateAgreedField(formBean.getConsentAgreed(), result, "consentAgreed");
         }
 
         // Validate remaining fields
