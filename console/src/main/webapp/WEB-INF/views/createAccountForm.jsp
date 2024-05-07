@@ -231,17 +231,17 @@
             </c:if>
 
             <c:if test="${consentAgreementActivated}">
-                <fieldset>
-                    <legend><s:message code="createAccountForm.fieldset.consentAgreement"/></legend>
-                    <t:privacyPolicyAgreement path="consentAgreed" required="true">
+            <fieldset>
+                <legend><s:message code="createAccountForm.fieldset.consentAgreement"/></legend>
+                <t:privacyPolicyAgreement path="consentAgreed" required="true">
                     <jsp:attribute name="label">
                         <s:message code="consentAgreed.label" />
                     </jsp:attribute>
-                        <jsp:attribute name="checkboxLabel">
+                    <jsp:attribute name="checkboxLabel">
                         <s:message code="consentAgreed.checkboxLabel" arguments="${consentAgreementUrl}" />
                     </jsp:attribute>
-                    </t:privacyPolicyAgreement>
-                </fieldset>
+                </t:privacyPolicyAgreement>
+            </fieldset>
             </c:if>
 
             <c:if test="${recaptchaActivated}">
