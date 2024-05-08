@@ -230,6 +230,20 @@
             </fieldset>
             </c:if>
 
+            <c:if test="${consentAgreementActivated}">
+            <fieldset>
+                <legend><s:message code="createAccountForm.fieldset.consentAgreement"/></legend>
+                <t:privacyPolicyAgreement path="consentAgreed" required="true">
+                    <jsp:attribute name="label">
+                        <s:message code="consentAgreed.label" />
+                    </jsp:attribute>
+                    <jsp:attribute name="checkboxLabel">
+                        <s:message code="consentAgreed.checkboxLabel" arguments="${consentAgreementUrl}" />
+                    </jsp:attribute>
+                </t:privacyPolicyAgreement>
+            </fieldset>
+            </c:if>
+
             <c:if test="${recaptchaActivated}">
             <fieldset>
                 <t:recaptcha path="g-recaptcha" />
@@ -297,6 +311,7 @@
         if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() &
                <c:if test="${recaptchaActivated}"> testRecaptcha() & </c:if>
                <c:if test="${privacyPolicyAgreementActivated}"> testPrivacyPolicyAgreed() & </c:if>
+               <c:if test="${consentAgreementActivated}"> testConsentAgreed() & </c:if>
                testField("phone") & testField("title") & testField("description") & testOrg()
         ) {
             return true;
