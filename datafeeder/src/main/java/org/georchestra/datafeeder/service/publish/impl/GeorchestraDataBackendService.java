@@ -159,7 +159,9 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private String resolveTargetTypeName(@NonNull DatasetUploadState dataset, Map<String, String> connectionParams)
             throws IOException {
 
-        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getName());
+        // 60 cause postgis table name cannot be more than 63 characters
+        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getPublishing().getTitle().substring(0,
+                Math.min(60, dataset.getPublishing().getTitle().length())));
         String resolvedTypeName = typeName;
         DataStore targetStore = datasetsService.loadDataStore(connectionParams);
         try {

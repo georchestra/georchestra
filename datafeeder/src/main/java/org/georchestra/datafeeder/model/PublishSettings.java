@@ -20,16 +20,9 @@ package org.georchestra.datafeeder.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 import lombok.Data;
 
@@ -88,6 +81,14 @@ public class PublishSettings {
             @AttributeOverride(name = "miny", column = @Column(name = "md_geog_miny")), //
             @AttributeOverride(name = "maxy", column = @Column(name = "md_geog_maxy")) })
     private Envelope geographicBoundingBox;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "publishsettings_options", joinColumns = { //
+            @JoinColumn(name = "dataset_id", referencedColumnName = "id")//
+    })
+    @MapKeyColumn(name = "name")
+    @Column(name = "value", columnDefinition = "TEXT")
+    private Map<String, String> options;
 
     public boolean getPublish() {
         return this.publish == null ? false : this.publish.booleanValue();

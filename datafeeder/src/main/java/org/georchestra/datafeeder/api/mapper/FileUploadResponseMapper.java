@@ -32,6 +32,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.Map;
+
 @Mapper(componentModel = "spring", uses = CRSMapper.class, unmappedSourcePolicy = ReportingPolicy.WARN, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface FileUploadResponseMapper {
 

@@ -42,6 +42,7 @@ import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.service.DataSourceMetadata;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.georchestra.datafeeder.service.publish.impl.GeorchestraMetadataPublicationService;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
@@ -82,7 +83,7 @@ public class GeorchestraMetadataPublicationServiceIT {
     private DatasetUploadState shpDataset;
 
     private static final String NATIVE_LAYERNAME = "public_layer";
-    private static final String PULISHED_LAYERNAME = "PublicLayer";
+    private static final String PUBLISHED_LAYERNAME = "PublicLayer";
 
     public @Before void setup() {
         shpDataset = buildShapefileDatasetFromDefaultGeorchestraDataDirectory();
@@ -93,6 +94,8 @@ public class GeorchestraMetadataPublicationServiceIT {
         params.clear();
         params.put(ShapefileDataStoreFactory.FILE_TYPE.key, "shapefile");
         params.put(ShapefileDataStoreFactory.URLP.key, "file:data/automated_tests");
+        shpDataset.setFormat(DataSourceMetadata.DataSourceType.SHAPEFILE);
+        shpDataset.setSampleGeometryWKT("POINT(123 456)");
     }
 
     private DatasetUploadState buildShapefileDatasetFromDefaultGeorchestraDataDirectory() {
@@ -112,7 +115,7 @@ public class GeorchestraMetadataPublicationServiceIT {
 
         PublishSettings publishing = new PublishSettings();
         dset.setPublishing(publishing);
-        publishing.setPublishedName(PULISHED_LAYERNAME);
+        publishing.setPublishedName(PUBLISHED_LAYERNAME);
         publishing.setKeywords(Arrays.asList("tag1", "tag 2"));
         publishing.setSrs("EPSG:4326");
         return dset;
@@ -139,7 +142,7 @@ public class GeorchestraMetadataPublicationServiceIT {
         publishing.setGeographicBoundingBox(bounds);
 
         publishing.setKeywords(Arrays.asList("keyword 1", "key2"));
-        publishing.setPublishedName(PULISHED_LAYERNAME);
+        publishing.setPublishedName(PUBLISHED_LAYERNAME);
         publishing.setSrs("EPSG:4326");
 
         service.publish(shpDataset, authSupport.buildUser());
@@ -182,8 +185,8 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
 
         final String title = publishing.getTitle();
-        assertOnlineResource(dom, "OGC:WMS", PULISHED_LAYERNAME, title + " - WMS");
-        assertOnlineResource(dom, "OGC:WFS", PULISHED_LAYERNAME, title + " - WFS");
+        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title + " - WMS");
+        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title + " - WFS");
 
         URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
         final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
@@ -261,6 +264,103 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom, dataIdentXpath
                 + "/resourceMaintenance/MD_MaintenanceInformation/maintenanceAndUpdateFrequency/MD_MaintenanceFrequencyCode[@codeListValue='asNeeded']");
 
+        assertResponsibleParty(dom);
+        assertPointOfContact(dom);
+    }
+
+    @Test
+    public void testPublishGeoCsv() {
+        DatasetUploadState csvDataset = new DatasetUploadState();
+        csvDataset.setFormat(DataSourceMetadata.DataSourceType.CSV);
+        PublishSettings publishing = new PublishSettings();
+        final LocalDate datasetCreationDate = LocalDate.now();
+        publishing.setDatasetCreationDate(datasetCreationDate);
+        csvDataset.setPublishing(publishing);
+        publishing.setPublishedName(PUBLISHED_LAYERNAME);
+        publishing.setKeywords(Arrays.asList("flup", "top"));
+        publishing.setSrs("EPSG:4326");
+        publishing.setTitle("Test Title");
+        publishing.setAbstract("Test abstract");
+        csvDataset.setSampleGeometryWKT("POINT(123 456)");
+        publishing.setEncoding("UTF-8");
+        Envelope env = new Envelope();
+        env.setMinx(-180.0);
+        env.setMaxx(180.0);
+        env.setMiny(-90.0);
+        env.setMaxy(90.0);
+        publishing.setGeographicBoundingBox(env);
+        publishing.setDatasetCreationProcessDescription("Test process description");
+        publishing.setScale(50_000);
+
+        service.publish(csvDataset, authSupport.buildUser());
+
+        final String createdMdId = publishing.getMetadataRecordId();
+        assertNotNull(createdMdId);
+        final String publishedRecord = geonetwork.getRecordById(createdMdId);
+        assertNotNull(publishedRecord);
+        log.debug("published record returned from GN: {}", publishedRecord);
+        Document dom;
+        try {
+            dom = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(publishedRecord)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail("Published record not returned as valid XML");
+            return;
+        }
+        // metadata uuid, computed
+        assertXpath(dom, "MD_Metadata/fileIdentifier/CharacterString[text() = '%s']", createdMdId);
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/title/CharacterString[text() = 'Test Title']");
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/abstract/CharacterString[text() = 'Test abstract']");
+
+        String keyword = "MD_Metadata/identificationInfo/MD_DataIdentification/descriptiveKeywords/MD_Keywords/keyword/CharacterString[text()='%s']";
+        for (String kw : publishing.getKeywords()) {
+            assertXpath(dom, keyword, kw);
+        }
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/citation/CI_Citation/date/CI_Date/date/Date[text() = '%s']",
+                datasetCreationDate);
+        assertXpath(dom,
+                "MD_Metadata/dataQualityInfo/DQ_DataQuality/lineage/LI_Lineage/statement/CharacterString[text() = 'Test process description']");
+        assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
+        final String title = publishing.getTitle();
+        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title + " - WMS");
+        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title + " - WFS");
+        URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
+        final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
+        assertXpath(dom,
+                "//MD_DataIdentification/citation/CI_Citation/identifier/MD_Identifier/code/CharacterString[text()='%s']",
+                uniqueResourceIdentifier);
+        assertXpath(dom, "MD_Metadata/characterSet/MD_CharacterSetCode[@codeListValue='utf8']");
+        assertXpath(dom,
+                "MD_Metadata/identificationInfo/MD_DataIdentification/spatialRepresentationType/MD_SpatialRepresentationTypeCode[@codeListValue='vector']");
+        String bbox = "MD_Metadata/identificationInfo/MD_DataIdentification/extent/EX_Extent/geographicElement/EX_GeographicBoundingBox/%s/Decimal[text()='%s']";
+        assertXpath(dom, bbox, "westBoundLongitude", "-180.0");
+        assertXpath(dom, bbox, "eastBoundLongitude", "180.0");
+        assertXpath(dom, bbox, "southBoundLatitude", "-90.0");
+        assertXpath(dom, bbox, "northBoundLatitude", "90.0");
+        String crs = "MD_Metadata/referenceSystemInfo/MD_ReferenceSystem/referenceSystemIdentifier/RS_Identifier/code/CharacterString[text()='%s']";
+        assertXpath(dom, crs, "EPSG:4326");
+        final String dataIdentXpath = "MD_Metadata/identificationInfo/MD_DataIdentification";
+        final LocalDate today = LocalDate.now();
+        final String dateBase = dataIdentXpath + "/citation/CI_Citation";
+        assertXpath(dom, dateBase + "/date[1]/CI_Date/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "/date[1]/CI_Date/dateType/CI_DateTypeCode[@codeListValue='creation']");
+        assertXpath(dom, dateBase + "/date[2]/CI_Date/date/Date[text()='%s']", today);
+        assertXpath(dom, dateBase + "/date[2]/CI_Date/dateType/CI_DateTypeCode[@codeListValue='publication']");
+        String spatialRes = dataIdentXpath
+                + "/spatialResolution/MD_Resolution/equivalentScale/MD_RepresentativeFraction/denominator/Integer[text()='%s']";
+        assertXpath(dom, spatialRes, publishing.getScale());
+        String legalXpath = dataIdentXpath + "/resourceConstraints/MD_LegalConstraints";
+        assertXpath(dom, legalXpath + "/accessConstraints/MD_RestrictionCode[@codeListValue='otherRestrictions']");
+        assertXpath(dom, legalXpath + "/useConstraints/MD_RestrictionCode[@codeListValue='license']");
+        assertXpath(dom, "MD_Metadata/dateStamp/DateTime");
+        assertXpath(dom, "MD_Metadata/language/LanguageCode[@codeListValue='eng']");
+        assertXpath(dom, dataIdentXpath + "/graphicOverview");
+        assertXpath(dom, dataIdentXpath
+                + "/resourceMaintenance/MD_MaintenanceInformation/maintenanceAndUpdateFrequency/MD_MaintenanceFrequencyCode[@codeListValue='asNeeded']");
         assertResponsibleParty(dom);
         assertPointOfContact(dom);
     }

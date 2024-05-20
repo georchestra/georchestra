@@ -18,7 +18,11 @@
  */
 package org.georchestra.datafeeder.service;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.georchestra.datafeeder.api.DataPublishingApiController;
 import org.georchestra.datafeeder.api.DatasetMetadata;
@@ -65,9 +69,11 @@ public class DataPublishingService {
             publishing.setPublish(true);
             String requestedPublishedName = dreq.getPublishedName() == null ? nativeName : dreq.getPublishedName();
             publishing.setPublishedName(requestedPublishedName);
-            String srs = resolvePublishSRS(dset.getNativeBounds().getCrs(), dreq.getSrs());
-            publishing.setSrs(srs);
-            publishing.setSrsReproject(dreq.getSrsReproject());
+            if (dset.getFormat() != DataSourceMetadata.DataSourceType.CSV) {
+                String srs = resolvePublishSRS(dset.getNativeBounds().getCrs(), dreq.getSrs());
+                publishing.setSrs(srs);
+                publishing.setSrsReproject(dreq.getSrsReproject());
+            }
             String encoding = dreq.getEncoding();
             if (null == encoding) {
                 encoding = dset.getEncoding();
@@ -82,10 +88,20 @@ public class DataPublishingService {
             publishing.setKeywords(md.getTags());
             Integer scale = md.getScale() == null ? 25_000 : md.getScale();
             publishing.setScale(scale);
+
+            Map<String, Object> originalOpts = md.getOptions();
+            publishing.setOptions(morphOptions(originalOpts));
         }
         publishingBatchService.save(job);
-
         publishingBatchService.runJob(uploadId, user);
+    }
+
+    Map<String, String> morphOptions(Map<String, Object> options) {
+        Map<String, String> opts = null;
+        if (options != null) {
+            opts = options.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().toString()));
+        }
+        return opts;
     }
 
     /**

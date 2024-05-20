@@ -310,6 +310,8 @@ components:
     AnalysisStatusEnum:
       type: string
       enum: [PENDING, ANALYZING, DONE, ERROR]
+      description: aggregate of status of all datasets in the upload package. If any dataset status is PENDING, ANALYZING, or ERROR, that's the job's status.
+        If at least one dataset status is ERROR, then the job status is ERROR. If no datasets where recognized in the upload, status is ERROR.
     PublishStatusEnum:
       type: string
       enum: [PENDING, RUNNING, DONE, ERROR]
@@ -334,8 +336,6 @@ components:
           default: 0.0
         status:
           $ref: '#/components/schemas/AnalysisStatusEnum'
-          description: aggregate of status of all datasets in the upload package. If any dataset status is PENDING, ANALYZING, or ERROR, that's the job's status.
-                       If at least one dataset status is ERROR, then the job status is ERROR. If no datasets where recognized in the upload, status is ERROR. 
         error:
           type: string
           description: short description of the error that prevents the job to complete successfully
@@ -365,6 +365,13 @@ components:
         encoding:
           type: string
           description: detected charset
+        options:
+            type: object
+            additionalProperties: true
+            description: Extra options provided for the dataset
+        format:
+          type: string
+          description: either SHP or CSV
     
     Property:
       type: object
@@ -375,6 +382,7 @@ components:
           type: string
         type:
           type: string
+
 
     CRS:
       type: object
@@ -446,6 +454,10 @@ components:
           type: string
           description: textual description of dataset lineage
           maxLength: 4096
+        options:
+          type: object
+          additionalProperties: true
+          description: optional, extra options on the file format, mainly used for CSV.
 
     DatasetPublishRequest:
       type: object

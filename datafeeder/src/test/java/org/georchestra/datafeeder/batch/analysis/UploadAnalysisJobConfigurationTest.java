@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -206,6 +207,18 @@ public class UploadAnalysisJobConfigurationTest {
             assertNotNull(dset.getFileName());
             assertNotNull(dset.getName());
         }
+    }
+
+    @Test
+    public void dataUploadAnalysisService_analyzeCsvAsB64Test() throws Exception {
+        String testCsvPath = Paths.get(this.getClass().getResource("covoit-mel.csv").toURI()).toString();
+
+        Map<String, String> params = uploadService.getAnalysisService().analyzeCsv(testCsvPath);
+
+        assertTrue("params contain expected key 'quoteChar'", params.containsKey("quoteChar"));
+        assertTrue("params contain expected key 'delimiter'", params.containsKey("delimiter"));
+        assertTrue("base-64 encoded csv does not correspond to the expected value",
+                params.get("csv").startsWith("ImlkX2xpZXUiLCJpZF9sb2NhbCI"));
     }
 
     private JobExecution readUploadPack(UUID uploadId) {

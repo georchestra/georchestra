@@ -19,7 +19,7 @@
     <java.version>1.8</java.version>
     <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
 
-    <gt.version>26.4</gt.version>
+    <gt.version>29.0</gt.version>
     <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
     <mapstruct.version>1.4.1.Final</mapstruct.version>
     <lombok.version>1.18.22</lombok.version>
@@ -119,6 +119,11 @@
       <dependency>
         <groupId>org.geotools</groupId>
         <artifactId>gt-shapefile</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-csv</artifactId>
         <version>${gt.version}</version>
       </dependency>
       <!--
@@ -270,6 +275,10 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-csv</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -767,6 +776,25 @@
               <skipTests>false</skipTests>
               <skipITs>${skipITs}</skipITs>
             </configuration>
+          </plugin>
+          <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>0.8.11</version>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>prepare-agent</goal>
+                      </goals>
+                  </execution>
+                  <execution>
+                      <id>report</id>
+                      <phase>prepare-package</phase>
+                      <goals>
+                          <goal>report</goal>
+                      </goals>
+                  </execution>
+              </executions>
           </plugin>
         </plugins>
       </build>
