@@ -9,11 +9,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
@@ -27,6 +30,7 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
+import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 /**
@@ -85,6 +89,36 @@ public class AccountGDPRDaoTest {
         TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(date);
         // Making sure the date has correctly been parsed
         assertTrue(parsed.get(ChronoField.DAY_OF_MONTH) == 11 && parsed.get(ChronoField.SECOND_OF_MINUTE) == 38);
+    }
+
+    public @Test(expected = DateTimeParseException.class) void testParseISO8601Date() {
+        String date = "2024-04-09T11:38:57.658245Z";
+
+        GEONETWORK_DATE_FORMAT.parse(date);
+    }
+
+    public @Test void testCreateMetadataRecord_iso8601date() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("2024-04-09T11:38:57.658245Z");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 9 && record.getCreatedDate().getYear() == 2024);
+    }
+
+    public @Test void testCreateMetadataRecord_geonetworkdate() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("2019-09-11T12:41:38");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
+    }
+
+    public @Test(expected = RuntimeException.class) void testCreateMetadataRecord_invaliddate() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
     }
 
     // Test resiliency to unexpected null values, see GSHDF-291

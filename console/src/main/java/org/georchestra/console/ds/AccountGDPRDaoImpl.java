@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AccountGDPRDaoImpl implements AccountGDPRDao {
 
     /**
-     * DatTimeFormatter to parse timestamps we they come in geonetworks' text column
+     * DatTimeFormatter to parse timestamps as they come in geonetworks' text column
      */
     @VisibleForTesting
     public static final DateTimeFormatter GEONETWORK_DATE_FORMAT = new DateTimeFormatterBuilder()//
@@ -222,9 +223,21 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             builder.id(rs.getLong("id"));
             // createdate character varying(30)
             // e.g. "2019-05-07T00:05:56"
+            // or "2024-04-09T11:38:57.658245Z" in newer versions of GN
             String createDateString = rs.getString("createdate");
             LocalDateTime dateTime = ifNonNull(createDateString, value -> {
-                TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(value);
+                TemporalAccessor parsed;
+                try {
+                    parsed = DateTimeFormatter.ISO_DATE_TIME.parse(value);
+                } catch (DateTimeParseException e) {
+                    try {
+                        // trying the former "geonetwork" date format
+                        parsed = GEONETWORK_DATE_FORMAT.parse(value);
+                    } catch (DateTimeParseException e2) {
+                        // giving up ...
+                        throw new RuntimeException(e);
+                    }
+                }
                 return LocalDateTime.from(parsed);
             });
 
