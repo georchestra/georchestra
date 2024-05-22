@@ -89,9 +89,6 @@ Cas server can be upgraded to 6.6.0 and configuration must be updated accordingl
 -cas.authn.oidc.jwks.jwks-file=file:///tmp/keystore.jwksdown
 +cas.authn.oidc.jwks.file-system.jwks-file=file:///tmp/keystore.jwksdown
 
--cas.authn.saml-idp.core.entity-id=https://${FQDN}/idp
-+cas.authn.saml-idp.core.entity-id=https://georchestra.dev.craig.fr/idp
-
 -cas.authn.saml-idp.metadata.location=file:///tmp/
 +cas.authn.saml-idp.metadata.file-system.location=file:///tmp/
 ```
