@@ -78,3 +78,26 @@ The functionnality can be enabled in `console.properties` with the line :
 competenceAreaEnabled=true
 ```
 
+## Cas server
+
+Cas server can be upgraded to 6.6.0 and configuration must be updated accordingly.
+
+```diff
+-cas.service-registry.initFromJson=false
++cas.service-registry.core.init-from-json=false
+
+-cas.authn.oidc.jwks.jwks-file=file:///tmp/keystore.jwksdown
++cas.authn.oidc.jwks.file-system.jwks-file=file:///tmp/keystore.jwksdown
+
+-cas.authn.saml-idp.core.entity-id=https://${FQDN}/idp
++cas.authn.saml-idp.core.entity-id=https://georchestra.dev.craig.fr/idp
+
+-cas.authn.saml-idp.metadata.location=file:///tmp/
++cas.authn.saml-idp.metadata.file-system.location=file:///tmp/
+```
+
+## Data-api
+
+A new application has been introduced in 24.0.x : [georchestra/data-api](https://github.com/georchestra/data-api).
+
+This application is used to provide a REST API complicant to OGC API Features - Part 1 to access data stored in geOrchestra.
