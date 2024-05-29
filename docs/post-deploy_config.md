@@ -27,6 +27,9 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 ```
 ... and don't forget to submit the form.
 
+### In case of trouble with geoserver UI
+
+See [docs/setup/tomcat.md#in-case-of-troubles-with-the-geoserver-ui](https://github.com/georchestra/georchestra/blob/master/docs/setup/tomcat.md#in-case-of-troubles-with-the-geoserver-ui)
 
 ## GeoNetwork
 
