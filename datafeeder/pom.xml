@@ -16,7 +16,7 @@
     <context.name>${project.artifactId}</context.name>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
 
     <gt.version>29.0</gt.version>
