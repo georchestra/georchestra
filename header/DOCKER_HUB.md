@@ -9,7 +9,7 @@
 
 # Featured tags
 
-- `latest`, `23.0.x`
+- `latest`, `24.0.x`, `23.0.x`
 
 # Quick reference
 
@@ -25,6 +25,12 @@
 # What is `georchestra/header`
 
 **Header** is a module for geOrchestra which offers a dynamic header, which is by default incorporated into every geOrchestra webapp.
+
+# Usage notice 
+
+In geOrchestra 24, the header has been replaced by default with a [new one](https://github.com/georchestra/header) based on web-components.
+
+To use this legacy header, edit the `default.properties` file in the data [datadir](https://github.com/georchestra/datadir). 
 
 # How to use this image
 

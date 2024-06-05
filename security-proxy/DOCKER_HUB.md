@@ -9,7 +9,7 @@
 
 # Featured tags
 
-- `latest`, `23.0.x`
+- `latest`, `24.0.x`, `23.0.x`
 
 # Quick reference
 
@@ -28,6 +28,10 @@
 
 * handles user sessions
 * routes requests to webapps (except CAS)
+
+# Deprecation notes
+
+**Security-proxy** is deprecated in favor of [**Gateway**](https://github.com/georchestra/georchestra-gateway). It is still maintained for now, but will be removed in future versions.
 
 # How to use this image
 

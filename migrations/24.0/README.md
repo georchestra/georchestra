@@ -93,6 +93,14 @@ Cas server can be upgraded to 6.6.0 and configuration must be updated accordingl
 +cas.authn.saml-idp.metadata.file-system.location=file:///tmp/
 ```
 
+## Datafeeder 
+
+Datafeeder now supports CSV geographic and non-geographic files.  
+
+⚠️ Users must have the `IMPORT` role to use datafeeder.
+
+⚠️ The table name now use the title provided during process steps instead of the file name. 
+
 ## Data-api
 
 A new application has been introduced in 24.0.x : [georchestra/data-api](https://github.com/georchestra/data-api).

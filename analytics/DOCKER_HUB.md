@@ -8,7 +8,7 @@
 
 # Featured tags
 
-- `latest`, `23.0.x`
+- `latest`, `24.0.x`, `23.0.x`
 
 # Quick reference
 
