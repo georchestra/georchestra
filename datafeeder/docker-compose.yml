@@ -15,7 +15,7 @@ services:
     restart: always
 
   database:
-    image: georchestra/database:23.0.x
+    image: georchestra/database:24.0.x
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -31,7 +31,7 @@ services:
         - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
 
   console:
-    image: georchestra/console:23.0.x
+    image: georchestra/console:24.0.x
     depends_on:
       - ldap
       - database
@@ -45,7 +45,7 @@ services:
       - "38080:8080"
 
   geoserver:
-    image: georchestra/geoserver:23.0.x
+    image: georchestra/geoserver:24.0.x
     healthcheck:
       test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1" ]
       interval: 30s
@@ -62,7 +62,7 @@ services:
       - "18080:8080"
 
   geonetwork:
-    image: georchestra/geonetwork:23.0.x
+    image: georchestra/geonetwork:24.0.x
     healthcheck:
       test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1" ]
       interval: 30s
