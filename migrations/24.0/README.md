@@ -59,15 +59,15 @@ using the url : `/geonetwork/srv/eng/admin.console?debug#/tools`
 
 ## Elasticsearch
 
-Elasticsearch can be upgraded to 7.17.15.
+Elasticsearch has been upgraded to 7.17.15.
 
 ## LDAP
 
-The `IMPORT` user was added to the ldap schema.
+The `IMPORT` role was added to the ldap schema.
 
 This role allows user to have access to the import tool (datafeeder).
 
-By default, users couldn't use datafeeder application.
+By default, users can't use datafeeder application.
 
 ## ⚠️ Console : Area of competence 
 
@@ -80,7 +80,7 @@ competenceAreaEnabled=true
 
 ## Cas server
 
-Cas server can be upgraded to 6.6.0 and configuration must be updated accordingly.
+Cas server has been upgraded to 6.6.15 and [configuration must be updated accordingly](https://github.com/georchestra/datadir/blob/docker-master/cas/config/cas.properties).
 
 ```diff
 -cas.service-registry.initFromJson=false
