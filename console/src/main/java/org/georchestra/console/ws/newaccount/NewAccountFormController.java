@@ -428,9 +428,13 @@ public final class NewAccountFormController {
         model.addAttribute("orgTypes", getOrgTypes());
     }
 
+    /**
+     * Create a linked Map of organization types, same order as it is in the String
+     * array orgDao.getOrgTypeValues()
+     */
     private Map<String, String> getOrgTypes() {
         return Arrays.stream(orgDao.getOrgTypeValues())
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
+                .collect(Collectors.toMap(Function.identity(), Function.identity(), (x, y) -> x, LinkedHashMap::new));
     }
 
     /**
