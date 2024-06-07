@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>23.0.7-SNAPSHOT</version>
+    <version>23.0.7</version>
   </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
-  <version>23.0.7-SNAPSHOT</version>
+  <version>23.0.7</version>
 
   <packaging>jar</packaging>
   <name>geOrchestra GeoWebCache Web Application</name>
@@ -50,7 +50,7 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-core</artifactId>
