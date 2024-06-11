@@ -374,7 +374,8 @@ public class Proxy {
         if (usr.isPresent()) {
             GeorchestraUser finalUser = usr.get();
             georUsr.put("username", finalUser.getUsername());
-            georUsr.put("roles", finalUser.getRoles());
+            georUsr.put("roles", finalUser.getRoles().stream().map(r -> r.startsWith("ROLE_") ? r : "ROLE_".concat(r))
+                    .collect(Collectors.toList()));
             georUsr.put("organization", finalUser.getOrganization());
             georUsr.put("id", finalUser.getId());
             georUsr.put("lastUpdated", finalUser.getLastUpdated());
