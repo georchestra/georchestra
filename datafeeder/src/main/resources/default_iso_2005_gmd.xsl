@@ -130,28 +130,30 @@ Default template to apply MetadataRecordProperties.java properties to a record t
 
   <xsl:template
     match="//gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox">
+    <xsl:if test="$props//showExtent='true'">
     <gmd:EX_GeographicBoundingBox>
-      <gmd:westBoundLongitude>
-        <gco:Decimal>
-          <xsl:value-of select="$props//westBoundLongitude" />
-        </gco:Decimal>
-      </gmd:westBoundLongitude>
-      <gmd:eastBoundLongitude>
-        <gco:Decimal>
-          <xsl:value-of select="$props//eastBoundLongitude" />
-        </gco:Decimal>
-      </gmd:eastBoundLongitude>
-      <gmd:southBoundLatitude>
-        <gco:Decimal>
-          <xsl:value-of select="$props//southBoundLatitude" />
-        </gco:Decimal>
-      </gmd:southBoundLatitude>
-      <gmd:northBoundLatitude>
-        <gco:Decimal>
-          <xsl:value-of select="$props//northBoundLatitude" />
-        </gco:Decimal>
-      </gmd:northBoundLatitude>
-    </gmd:EX_GeographicBoundingBox>
+        <gmd:westBoundLongitude>
+          <gco:Decimal>
+            <xsl:value-of select="$props//westBoundLongitude" />
+          </gco:Decimal>
+        </gmd:westBoundLongitude>
+        <gmd:eastBoundLongitude>
+          <gco:Decimal>
+            <xsl:value-of select="$props//eastBoundLongitude" />
+          </gco:Decimal>
+        </gmd:eastBoundLongitude>
+        <gmd:southBoundLatitude>
+          <gco:Decimal>
+            <xsl:value-of select="$props//southBoundLatitude" />
+          </gco:Decimal>
+        </gmd:southBoundLatitude>
+        <gmd:northBoundLatitude>
+          <gco:Decimal>
+            <xsl:value-of select="$props//northBoundLatitude" />
+          </gco:Decimal>
+        </gmd:northBoundLatitude>
+      </gmd:EX_GeographicBoundingBox>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template
@@ -361,5 +363,16 @@ Default template to apply MetadataRecordProperties.java properties to a record t
   <xsl:template match="gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory">
     <xsl:call-template name="inspire_topic_category"/>
   </xsl:template>
-  
+
+
+  <!--
+   Generate one gmd:MD_Format for each distributionFormat in the metadata properties
+  -->
+  <xsl:template match="gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributionFormat/gmd:MD_Format/gmd:name">
+    <gmd:name>
+      <gco:CharacterString><xsl:value-of select="$props//distributionFormat" /></gco:CharacterString>
+    </gmd:name>
+  </xsl:template>
+
+
 </xsl:stylesheet>

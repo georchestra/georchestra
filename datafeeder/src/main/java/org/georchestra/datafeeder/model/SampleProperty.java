@@ -22,6 +22,7 @@ import javax.persistence.Basic;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import javax.persistence.Column;
 
 import lombok.Data;
 
@@ -29,6 +30,7 @@ import lombok.Data;
 @Embeddable
 public class SampleProperty {
 
+    @Column(length = 4096)
     private String name;
     @Lob
     @Basic(fetch = FetchType.EAGER)

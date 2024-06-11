@@ -38,6 +38,7 @@ import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.service.DataSourceMetadata;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
@@ -240,22 +241,22 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         // ft.setKeywords(buildKeywords(publishing.getKeywords()));
 
         String importedSRS = publishing.getSrs();
-        Objects.requireNonNull(importedSRS, "Dataset imported SRS not provided in PublishSettings");
-        ft.setSrs(importedSRS);
-
-        BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
-        if (nativeBounds != null) {
-            EnvelopeInfo envelopeInfo = buildEnvelope(nativeBounds);
-            envelopeInfo.setCrs(importedSRS);
-            ft.setNativeBoundingBox(envelopeInfo);
-            ft.setNativeCRS(importedSRS);
+        if (dataset.getFormat() != DataSourceMetadata.DataSourceType.CSV) {
+            Objects.requireNonNull(importedSRS, "Dataset imported SRS not provided in PublishSettings");
+            ft.setSrs(importedSRS);
+            BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
+            if (nativeBounds != null) {
+                EnvelopeInfo envelopeInfo = buildEnvelope(nativeBounds);
+                envelopeInfo.setCrs(importedSRS);
+                ft.setNativeBoundingBox(envelopeInfo);
+                ft.setNativeCRS(importedSRS);
+            }
+            if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
+                ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
+            } else {
+                ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
+            }
         }
-        if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
-            ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
-        } else {
-            ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
-        }
-
         // make the layer cacheable
         final Integer cacheSeconds = this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds();
         if (cacheSeconds == null || cacheSeconds.intValue() <= 0) {

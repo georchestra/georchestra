@@ -37,6 +37,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -68,6 +69,8 @@ public class DataPublishingApiController implements DataPublishingApi {
 
         String gsUrl = props.getPublishing().getGeoserver().getPublicUrl().toString();
         String gnUrl = props.getPublishing().getGeonetwork().getPublicUrl().toString();
+        String ogcApiUrl = props.getPublishing().getOgcfeatures().getPublicUrl() == null ? null
+                : props.getPublishing().getOgcfeatures().getPublicUrl().toString();
 
         if (dataset.getStatus() == PublishStatusEnum.DONE) {
             {// WMS entry point
@@ -82,7 +85,7 @@ public class DataPublishingApiController implements DataPublishingApi {
                 dataset.add(Link.of(wfsUrl, IanaLinkRelations.SERVICE).withName("WFS")
                         .withTitle("Web Feature Service entry point where the layer is published"));
             }
-            {// OpenLayers map preview
+            {// OpenLayers map preview TODO don't set it if non geo dataset
                 String layerPreviewUrl = String.format(
                         "%s/%s/wms/reflect?LAYERS=%s&width=800&format=application/openlayers", gsUrl,
                         dataset.getPublishedWorkspace(), dataset.getPublishedName());
@@ -108,6 +111,15 @@ public class DataPublishingApiController implements DataPublishingApi {
                 htmlMdRecord = URI.create(htmlMdRecord).normalize().toString();
                 dataset.add(Link.of(htmlMdRecord, IanaLinkRelations.DESCRIBED_BY).withName("metadata")
                         .withType("text/html").withTitle("Metadata record web page"));
+            }
+            if (!StringUtils.isEmpty(ogcApiUrl)) {// OGC API features page TODO update link relation
+                                                  // in app.yml
+                                                  // e.g.
+                                                  // http://localhost/data/ogcapi/collections/3276d285-f458-4a38-8040-1b14ea5afc9e/items
+                String ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl, dataset.getPublishedName());
+                ogcApiFeature = URI.create(ogcApiFeature).normalize().toString();
+                dataset.add(Link.of(ogcApiFeature, IanaLinkRelations.HOSTS).withName("features")
+                        .withType("application/json").withTitle("OGC API Feature JSON web page"));
             }
         }
     }

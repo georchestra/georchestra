@@ -28,14 +28,21 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.georchestra.datafeeder.model.BoundingBoxMetadata;
+import org.georchestra.datafeeder.model.DatasetUploadState;
+import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.DataSourceMetadata.DataSourceType;
 import org.georchestra.datafeeder.service.DatasetsService.FeatureResult;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.georchestra.datafeeder.test.TestData;
 import org.geotools.data.DataStore;
+import org.geotools.data.csv.CSVDataStore;
+import org.geotools.data.csv.parse.CSVAttributesOnlyStrategy;
+import org.geotools.data.csv.parse.CSVLatLonStrategy;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -338,6 +345,57 @@ public class DatasetsServiceTest {
         assertTrue(result.isReprojected());
         assertEquals(targetSrs, result.getCrs().getSrs());
         assertEquals(nativeSrsOverride, result.getNativeCrs().getSrs());
+    }
+
+    @Test
+    public void testResolveDataStore_csv() throws Exception {
+        Path path = Paths
+                .get(this.getClass().getResource("/org/georchestra/datafeeder/batch/analysis/basic.csv").toURI());
+        DatasetUploadState state = new DatasetUploadState();
+        state.setFileName(path.getFileName().toString());
+        state.setFormat(DataSourceType.CSV);
+        state.setAbsolutePath(path.toString());
+
+        DataStore toTest = service.resolveSourceDataStore(state);
+
+        assertTrue("Expected a CSV Datastore", toTest instanceof CSVDataStore);
+        assertTrue("Expected a 'Attributes only' CSV strategy",
+                ((CSVDataStore) toTest).getCSVStrategy() instanceof CSVAttributesOnlyStrategy);
+    }
+
+    @Test
+    public void testResolveConnectionParameters_csv() throws Exception {
+        Path path = Paths
+                .get(this.getClass().getResource("/org/georchestra/datafeeder/batch/analysis/basic.csv").toURI());
+
+        Map<String, String> toTest = service.resolveConnectionParameters(path);
+
+        assertEquals("wrong number of parameters, expected 2", toTest.size(), 2);
+    }
+
+    @Test
+    public void testResolveSourceDatastore_csv() throws Exception {
+        Path path = Paths
+                .get(this.getClass().getResource("/org/georchestra/datafeeder/batch/analysis/covoit-mel.csv").toURI());
+        DatasetUploadState state = new DatasetUploadState();
+        PublishSettings publishSettings = new PublishSettings();
+        publishSettings.setOptions(Map.of("latField", "lat", //
+                "lngField", "lon", //
+                "quoteChar", "`", "delimiter", "|"));
+        state.setFileName(path.getFileName().toString());
+        state.setFormat(DataSourceType.CSV);
+        state.setAbsolutePath(path.toString());
+        state.setPublishing(publishSettings);
+
+        DataStore toTest = service.resolveSourceDataStore(state);
+
+        assertTrue("Expected a CSVDataStore", toTest instanceof CSVDataStore);
+        assertTrue("Expected a CSVLatLonStrategy for parsing CSV file",
+                ((CSVDataStore) toTest).getCSVStrategy() instanceof CSVLatLonStrategy);
+        assertEquals("Expected a '|' as field separator / delimiter",
+                ((CSVDataStore) toTest).getCSVStrategy().getSeparator(), '|');
+        assertEquals("Expected a '`' as quote char", ((CSVDataStore) toTest).getCSVStrategy().getQuotechar(), '`');
+
     }
 
 }

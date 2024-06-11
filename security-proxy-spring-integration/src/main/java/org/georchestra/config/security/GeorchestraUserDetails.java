@@ -119,6 +119,8 @@ public class GeorchestraUserDetails implements UserDetails {
     }
 
     private String addRolePrefix(String roleName) {
+        if (roleName.startsWith("ROLE_"))
+            return roleName;
         return "ROLE_" + roleName;
     }
 

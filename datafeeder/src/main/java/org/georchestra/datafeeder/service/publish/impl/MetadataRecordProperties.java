@@ -110,6 +110,8 @@ public class MetadataRecordProperties {
 
     String updateFequency = "asNeeded";
 
+    Boolean showExtent = true;
+
     public static @Data class OnlineResource {
         URI linkage;
         String protocol;

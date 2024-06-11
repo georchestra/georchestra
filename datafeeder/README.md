@@ -585,3 +585,29 @@ The following variables are resolved against the job's user, dataset, or publish
 Additionally, any other <code>${property}</code> will be resolved against the application context
 (for example, any property specified in `default.properties` or `datafeeder.properties`).
 
+
+## Payload
+
+To publish a (CSV) job:
+
+```
+curl -H 'sec-proxy: true' -H 'sec-org: test' -H 'sec-orgname: Test Org' -H 'sec-username: testadmin' -H 'sec-roles: ROLE_ADMINISTRATOR' 'https://localhost:8080/datafeeder/upload/cbc00cdd-5e5d-4c40-aa76-ea44998a66ec/publish'
+{
+  "datasets": [
+    {
+      "nativeName": "covoit-mel",
+      "srs": "EPSG:4326",
+      "metadata": {
+        "title": "My dataset title",
+        "abstract": "Description of the dataset",
+        "tags": [
+          "Soil"
+        ],
+        "creationDate": "2024-01-16T13:07:37.094Z",
+        "scale": 10000,
+        "creationProcessDescription": "My creation process description"
+      }
+    }
+  ]
+}
+```
