@@ -167,7 +167,7 @@ public class AccountFactory {
         a.setSASLUser(saslUser);
         a.setOAuth2Provider(oAuth2Provider);
         a.setOAuth2Uid(oAuth2Uid);
-
+        a.setIsExternalAuth(oAuth2Provider != null && !oAuth2Provider.isEmpty());
         return a;
     }
 
