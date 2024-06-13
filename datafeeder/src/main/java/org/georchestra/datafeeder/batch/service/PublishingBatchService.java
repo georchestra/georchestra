@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.transaction.Transactional;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetProgress;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetPublishingStep;
@@ -40,6 +42,7 @@ import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
 import org.georchestra.datafeeder.service.publish.DataBackendService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
+import org.geoserver.restconfig.client.ServerException;
 import org.geotools.data.util.DefaultProgressListener;
 import org.opengis.util.ProgressListener;
 import org.springframework.batch.core.Step;
@@ -217,13 +220,24 @@ public class PublishingBatchService {
                 try {
                     consumer.accept(dataset);
                 } catch (RuntimeException e) {
+
                     // we need to leave the spring-batch job complete normally or the
                     // publishStatus/error won't be persisted, as spring-batch and our JPA
                     // repositories share the same entity manager. If a publish process failed and
                     // the exception was re-thrown, spring-batch would abort the current
                     // transaction.
+
+                    // org.geoserver.restconfig.client.ServerException can be too verbose
+                    // when calling getMessage().
+                    //
+                    // Keeping the first 2 lines of the error should be sufficient, as it
+                    // includes only the http response code and the first line of the request,
+                    // without the request headers.
                     String error = e.getMessage();
-                    log.error(error, e);
+                    if (e instanceof ServerException) {
+                        error = formatGsClientServerExceptionMessage(error);
+                    }
+                    log.error(error);
                     dataset.setPublishStatus(JobStatus.ERROR);
                     dataset.setError(error);
                     errors.add(e);
@@ -237,6 +251,11 @@ public class PublishingBatchService {
                 }
             }
         }
+    }
+
+    @VisibleForTesting
+    String formatGsClientServerExceptionMessage(String message) {
+        return message.lines().limit(2).reduce("", String::concat);
     }
 
     public DataUploadJob summarize(@NonNull UUID jobId) {
