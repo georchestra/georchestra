@@ -119,10 +119,11 @@
 
       <hr>
 
-      <div class="form-group" ng-if="model.$promise && !model.isExternalAuth" ng-class="{required: required.uid}">
-        <label class="col-sm-4" for="uid" translate>user.login</label>
+      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid && !model.isExternalAuth}">
+        <label class="col-sm-4" for="uid" ng-if="!model.isExternalAuth" translate>user.login</label>
+        <label class="col-sm-4" for="uid" ng-if="model.isExternalAuth" translate>account.external</label>
         <div class="col-sm-8 break-word" ng-if="!view.edit_login">
-          {{model.uid}} (<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)
+          {{model.uid}} <span ng-if="!model.isExternalAuth">(<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)</span>
         </div>
         <div class="col-sm-8" ng-if="view.edit_login">
           <!-- Server validation is in java/org/georchestra/console/ws/newaccount/NewAccountFormController.java -->
