@@ -293,5 +293,6 @@
   "sasl.remote.user"      : "Externe gebruiker op",
   "sasl.tooltip"          : "Dit veld wordt gebruikt om de gebruikersnaam op het externe systeem te definiëren. Vul dit veld in om gebruikersverificatie op afstand in te schakelen. Maak het veld leeg voor lokale authenticatie (opnieuw genereren van wachtwoord is vereist).",
   "editUserDetailsForm.deleteConfirm" : "Wil je je account echt verwijderen?",
-  "editUserDetailsForm.deleteFail" : "Account verwijderen is mislukt"
+  "editUserDetailsForm.deleteFail" : "Account verwijderen is mislukt",
+  "account.external"      : "Extern account"
 }
