@@ -1,0 +1,28 @@
+.rst-versions.rst-badge {
+    display: none !important;
+}
+
+:root {
+ --md-primary-fg-color:#85127e;
+ --md-primary-fg-color--light:#85127e;
+ --md-primary-fg-color--dark:#85127e;
+ --md-primary-bg-color:#fff;
+ --md-primary-bg-color--light:#ffffffb3;
+ --md-accent-fg-color:#526cfe;
+ --md-accent-fg-color--transparent:#526cfe1a;
+ --md-accent-bg-color:#fff;
+ --md-accent-bg-color--light:#ffffffb3
+}
+
+h1, h2, h3 {
+  color:rgb(133, 18, 126)!important;
+  font-weight:600!important;
+}
+
+.md-typeset {
+  font-size: .75rem;
+}
+
+footer {
+  background-color: #500b4c!important;
+}
