@@ -52,11 +52,23 @@ extra_javascript:
 
 nav:
     - Home: index.md 
+    - Administrator guide:
+        - Summary: admin_guide/index.md
+        - User Management:
+          - admin_guide/users_management/index.md
+          - admin_guide/users_management/users.md
+          - admin_guide/users_management/organizations.md
+          - admin_guide/users_management/roles.md
+          - Rights management:
+            - admin_guide/users_management/rights_management/index.md
+            - admin_guide/users_management/rights_management/acl-geoserver.md
     - Technical guides:
         - Summary: technical_guides/index.md
         - Install:
-            - technical_guides/install/prerequis.md
-            - technical_guides/install/configuration.md
+          - technical_guides/install/prerequis.md
+          - technical_guides/install/configuration.md
+        - Manage access rights:
+          - technical_guides/rights_management/index.md
 
 markdown_extensions:
   - admonition
