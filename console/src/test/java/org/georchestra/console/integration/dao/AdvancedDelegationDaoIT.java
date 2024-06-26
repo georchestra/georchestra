@@ -57,7 +57,7 @@ public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
 
     private @Autowired AdvancedDelegationDao delegate;
 
-    private @Autowired ComboPooledDataSource ds;
+    private @Autowired ComboPooledDataSource dataSource;
 
     private @Value("${dataSource.maxPoolSize:10}") int maxConnections;
     private @Value("${dataSource.timeout:1000}") int timeoutMillis;
@@ -77,7 +77,7 @@ public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
     private boolean exhaustConnectionPool() {
         List<Connection> allConnections = IntStream.range(0, maxConnections).mapToObj(i -> {
             try {
-                return ds.getConnection();
+                return dataSource.getConnection();
             } catch (SQLException e) {
                 return null;
             }
@@ -86,7 +86,7 @@ public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
         // upgrading the spring version.
         assertTrue(allConnections.size() == maxConnections || allConnections.size() == maxConnections - 1);
         try {
-            ds.getConnection();
+            dataSource.getConnection();
         } catch (SQLException expected) {
             allConnections.forEach(t -> {
                 try {
