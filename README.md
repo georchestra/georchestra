@@ -1,4 +1,8 @@
-# geOrchestra
+<p align="center" width="100%">
+    <img width="50%" src="georchestra-logo.svg"> 
+</p>
+
+--------
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cd93d7fdbd3a44e48991f3146251c79e)](https://www.codacy.com/gh/georchestra/georchestra/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=georchestra/georchestra&amp;utm_campaign=Badge_Grade)
 

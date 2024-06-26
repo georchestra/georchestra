@@ -89,11 +89,11 @@
   </bean>
 
   <bean id="consentAgreementActivated" class="java.lang.Boolean">
-    <constructor-arg value="${consent.agreement.activated:false}" />
+    <constructor-arg value="${data.processing.agreement.activated:false}" />
   </bean>
 
   <bean id="consentAgreementUrl" class="java.lang.String">
-    <constructor-arg value="${consent.agreement.url:}" />
+    <constructor-arg value="${data.processing.agreement.url:}" />
   </bean>
 
   <!-- LDAP connection -->
@@ -106,7 +106,7 @@
 
   <bean id="ldapContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator">
   </bean>
-  
+
   <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" destroy-method="destroy">
     <property name="contextSource" ref="singleContextSource"/>
     <property name="dirContextValidator" ref="ldapContextValidator"/>
@@ -117,7 +117,7 @@
     <property name="maxTotal" value="${ldap.pool.maxTotal:-1}"/>
     <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
   </bean>
-  
+
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
     <constructor-arg ref="contextSource"/>
   </bean>

@@ -1,0 +1,108 @@
+# From 23.x to 24.0.x
+
+## Header
+
+By default, geOrchestra uses the new header https://github.com/georchestra/header.
+
+Some variables must be set in datadir's `default.properties` file.
+
+```properties
+# Variable use to keep the old iframe header.
+# Set headerUrl accordingly
+# Default false
+useLegacyHeader=false
+
+# Header script for web component header
+# https://github.com/georchestra/header
+headerScript=https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js
+
+# Logo URL
+# Used to set header's logo.
+logoUrl=https://www.georchestra.org/public/georchestra-logo.svg
+
+# Stylesheet used to override default colors of header
+# More design can be set by overriding default classes & styles
+# Default empty string
+# georchestraStylesheet=http://my-domain-name/stylesheet.css
+```
+
+To edit colors and some other CSS properties, you can override the default stylesheet by setting the `georchestraStylesheet` variable.
+
+```css
+/* Example of custom stylesheet */
+header {
+    --georchestra-header-primary: #e20714;
+    --georchestra-header-secondary: white;
+    --georchestra-header-primary-light: white;
+    --georchestra-header-secondary-light: #eee;
+}
+.admin-dropdown>li.active {
+    background-color: red;
+    color: white;
+}
+```
+This header can be totally customized by creating a fork of the header repository and setting the `headerScript` variable accordingly.
+
+
+## GeoNetwork 4.2.4 to 4.2.8 migration notes
+
+After the upgrade :
+- Delete index and reindex .
+- JS and CSS cache must be cleared.
+
+using the url : `/geonetwork/srv/eng/admin.console?debug#/tools`
+
+⚠️ Important info about Harvesters :
+- Simple URL Harvester must now have their `Element for the UUID of each record` prefixed with a slash.
+- XSL transformations must be updated, e.g. :
+    - `iso19115-3.2018:convert/fromJsonLdEsri` becomes `schema:iso19115-3.2018:convert/fromJsonLdEsri`
+
+## Elasticsearch
+
+Elasticsearch has been upgraded to 7.17.15.
+
+## LDAP
+
+The `IMPORT` role was added to the ldap schema.
+
+This role allows user to have access to the import tool (datafeeder).
+
+By default, users can't use datafeeder application.
+
+## ⚠️ Console : Area of competence 
+
+By default the `Area of competence` in console is now disabled.
+
+The functionnality can be enabled in `console.properties` with the line : 
+```
+competenceAreaEnabled=true
+```
+
+## Cas server
+
+Cas server has been upgraded to 6.6.15 and [configuration must be updated accordingly](https://github.com/georchestra/datadir/blob/docker-master/cas/config/cas.properties).
+
+```diff
+-cas.service-registry.initFromJson=false
++cas.service-registry.core.init-from-json=false
+
+-cas.authn.oidc.jwks.jwks-file=file:///tmp/keystore.jwksdown
++cas.authn.oidc.jwks.file-system.jwks-file=file:///tmp/keystore.jwksdown
+
+-cas.authn.saml-idp.metadata.location=file:///tmp/
++cas.authn.saml-idp.metadata.file-system.location=file:///tmp/
+```
+
+## Datafeeder 
+
+Datafeeder now supports CSV geographic and non-geographic files.  
+
+⚠️ Users must have the `IMPORT` role to use datafeeder.
+
+⚠️ The table name now use the title provided during process steps instead of the file name. 
+
+## Data-api
+
+A new application has been introduced in 24.0.x : [georchestra/data-api](https://github.com/georchestra/data-api).
+
+This application is used to provide a REST API complicant to OGC API Features - Part 1 to access data stored in geOrchestra.
