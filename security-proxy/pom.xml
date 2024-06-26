@@ -14,7 +14,7 @@
     <maven.test.skip>false</maven.test.skip>
     <server>generic</server>
     <context.name>ROOT</context.name>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>24.0</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>

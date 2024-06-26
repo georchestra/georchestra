@@ -22,7 +22,7 @@
     <gwc.version>1.16.2</gwc.version>
     <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>24.0</packageDatadirScmVersion>
 
   </properties>
 
@@ -50,7 +50,7 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-core</artifactId>
