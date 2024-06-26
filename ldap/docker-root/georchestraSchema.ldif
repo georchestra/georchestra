@@ -42,16 +42,3 @@ olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
     SUP top
     AUXILIARY
     MAY (georchestraObjectIdentifier))
-olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.4
-    NAME 'georchestraOAuth2Provider'
-    DESC 'OAuth2 provider object class for external identity provider users'
-    SUP top
-    AUXILIARY
-    MAY (oAuth2Provider))
-olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.5
-    NAME 'georchestraOAuth2Uid'
-    DESC 'OAuth2 UID object class for external identity provider users'
-    SUP top
-    AUXILIARY
-    MAY (oAuth2Uid))
-
