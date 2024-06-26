@@ -1,7 +1,7 @@
 # Docker related targets
 
 GEOSERVER_EXTENSION_PROFILES=wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,jp2k,authkey,mapstore2,mbstyle,web-resource,sldservice,geopkg-output
-BTAG=latest
+BTAG=24.0.x
 
 docker-pull-jetty:
 	docker pull jetty:9-jre11
@@ -10,7 +10,7 @@ docker-build-ldap:
 	docker pull debian:bookworm
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
-	
+
 docker-build-ldap-withrotation:
 	docker pull debian:bookworm
 	cd ldap; \

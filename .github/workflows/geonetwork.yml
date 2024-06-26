@@ -82,7 +82,7 @@ jobs:
         docker push georchestra/geonetwork:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
+      if: contains(github.ref, 'refs/heads/24.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/geonetwork:${{ steps.version.outputs.VERSION }}
 
