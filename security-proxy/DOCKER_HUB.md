@@ -4,12 +4,12 @@
      [georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://kiwiirc.com/nextclient/irc.libera.chat/georchestra), Stack Overflow
+     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://matrix.to/#/#georchestra:osgeo.org), Stack Overflow
 
 
 # Featured tags
 
-- `latest`, `23.0.x`
+- `latest`, `24.0.x`, `23.0.x`
 
 # Quick reference
 
@@ -28,6 +28,10 @@
 
 * handles user sessions
 * routes requests to webapps (except CAS)
+
+# Deprecation notes
+
+**Security-proxy** is deprecated in favor of [**Gateway**](https://github.com/georchestra/georchestra-gateway). It is still maintained for now, but will be removed in future versions.
 
 # How to use this image
 

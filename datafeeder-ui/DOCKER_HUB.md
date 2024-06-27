@@ -4,11 +4,11 @@
       [georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [Geonetwork-UI repo](https://github.com/geonetwork/geonetwork-ui/), [IRC chat](https://kiwiirc.com/nextclient/irc.libera.chat/georchestra), Stack Overflow
+     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [Geonetwork-UI repo](https://github.com/geonetwork/geonetwork-ui/), [IRC chat](https://matrix.to/#/#georchestra:osgeo.org), Stack Overflow
 
 # Featured tags
 
-- `latest`, `23.0.x`
+- `latest`, `24.0.x`, `23.0.x`
 
 # Quick reference
 
@@ -38,9 +38,9 @@ For this specific component, see the section `import` in the [`georchestra/docke
 
 ## Where is it built
 
-This image is built using maven : `../mvnw package docker:build -Pdocker` in `georchestra` repo `analytics/` folder.
+This image is built using maven : `../mvnw clean package docker:build -Pdocker` in `georchestra` repo `datafeeder-ui/` folder.
 
-It pulls `georchestra-datafeeder` branch from [georchestra/geonetwork-ui](https://github.com/georchestra/geonetwork-ui/tree/georchestra-datafeeder) repo.
+It pulls associated branch from [georchestra/geonetwork-ui](https://github.com/georchestra/geonetwork-ui/tree/georchestra-datafeeder) repo.
 
 # License
 
