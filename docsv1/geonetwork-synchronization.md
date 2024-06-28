@@ -36,14 +36,3 @@ to tell the synchronization process to use the `roles` of the LDAP and set the `
 +geonetwork.syncRolesFilter=EL_(.*)
 ```
 
-There is a current known limitation in the way the synchronization is working in geOrchestra's Geonetwork, when configured to synchronize against the roles. 
-Every members of each roles in the LDAP will only grant you RegisteredUser privileges to the said roles. 
-As an example, being member of the GN_EDITOR role will grant Geonetwork's Editor role ([see roles mapping](https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L42-L47)), 
-and even if it will grant you the editor privilege globally, user won't  have any role in Geonetwork's group. 
-E.g : User John Doe has the `GN_EDITOR` and the `EL_group1` roles in the LDAP/console, John Doe will have the Geonetwork's Editor role but won't have any role in the `EL_group1` group in Geonetwork.
-
-Issues behind this:
-- If `syncRolesFilter` is set ot `.*` but we don't want to synchronize all geOrchestra's roles, we end up with a complex regex : see [#4202](https://github.com/georchestra/georchestra/issues/4202)
-
-- LDAP side, we have no means of translating the geonetwork user's profile along with the role membership, so we are using RegisteredUser by default when affecting the user to a GN group. 
-It would be more relevant to use the GN_* membership (e.g. giving GN_EDITOR to each group the user belongs to, if the user is member of the GN_EDITOR role).
