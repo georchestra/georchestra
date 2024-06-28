@@ -10,7 +10,7 @@ docker-build-ldap:
 	docker pull debian:bookworm
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
-	
+
 docker-build-ldap-withrotation:
 	docker pull debian:bookworm
 	cd ldap; \
