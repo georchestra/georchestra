@@ -8,7 +8,7 @@
 
 # Featured tags
 
-- `latest`, `24.0.x`, `23.0.x`
+- `latest`, `24.0.x`, `23.1.x`
 
 # Quick reference
 
@@ -19,7 +19,7 @@
      [`amd64`](https://hub.docker.com/r/amd64/docker/)
 
 -	**Source of this description**:  
-     [docs repo's `geowebcache/` directory](https://github.com/georchestra/georchestra/blob/master/geowebcache/DOCKER_HUB.md)
+     [docs repo's `geowebcache/` directory](https://github.com/georchestra/georchestra/blob/master/geowebcache-webapp/DOCKER_HUB.md)
 
 # What is `georchestra/geowebcache`
 

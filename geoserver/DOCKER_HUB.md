@@ -8,8 +8,8 @@
 
 # Featured tags
 
-- `latest`, `24.0.x`, `23.0.x`
-- `geofence`, `24.0.x-geofence`, `23.0.x-geofence`
+- `latest`, `24.0.x`, `23.1.x`
+- `geofence`, `24.0.x-geofence`, `23.1.x-geofence`
 
 # Quick reference
 
@@ -20,7 +20,7 @@
      [`amd64`](https://hub.docker.com/r/amd64/docker/)
 
 -	**Source of this description**:  
-     [docs repo's directory](https://github.com/georchestra/geoserver/blob/master/DOCKER_HUB.md)
+     [docs repo's directory](https://github.com/georchestra/georchestra/blob/master/geoserver/DOCKER_HUB.md)
 
 # What is `georchestra/geoserver`
 

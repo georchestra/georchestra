@@ -29,4 +29,4 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  target-branch: 23.0.x
+  target-branch: 23.1.x
