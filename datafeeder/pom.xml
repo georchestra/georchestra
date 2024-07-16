@@ -7,7 +7,7 @@
 <!--     <artifactId>root</artifactId> -->
 <!--     <version>20.2-SNAPSHOT</version> -->
 <!--   </parent> -->
-  <version>23.1.1-SNAPSHOT</version>
+  <version>23.1.0</version>
   <groupId>org.georchestra</groupId>
   <artifactId>datafeeder</artifactId>
   <packaging>jar</packaging>
