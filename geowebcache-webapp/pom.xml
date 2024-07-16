@@ -17,10 +17,11 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
-    <spring.version>5.1.1.RELEASE</spring.version>
-    <spring-security.version>5.1.1.RELEASE</spring-security.version>
-    <gwc.version>1.16.2</gwc.version>
-    <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
+    <spring.version>5.3.32</spring.version>
+    <spring-security.version>5.7.11</spring-security.version>
+    <gwc.version>1.25.2</gwc.version>
+    <gt.version>31.2</gt.version><!-- must match the version used by gwc@gwc.version -->
+    <hazelcast.version>5.3.6</hazelcast.version>
     <context.name>geowebcache</context.name>
     <packageDatadirScmVersion>24.0</packageDatadirScmVersion>
 
@@ -157,6 +158,16 @@
       <artifactId>mockito-all</artifactId>
       <version>1.10.19</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast</artifactId>
+      <version>${hazelcast.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast-spring</artifactId>
+      <version>${hazelcast.version}</version>
     </dependency>
   </dependencies>
 
