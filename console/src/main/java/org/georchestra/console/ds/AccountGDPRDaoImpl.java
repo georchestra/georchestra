@@ -172,7 +172,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
                     AccountGDPRDaoImpl::createOgcStatisticsRecord, consumer);
             log.info("Extracted {} OGC statistics records for user {}", reccount, userName);
         } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
+            log.info("No OGC statistics recorded for user {}", userName);
         }
     }
 
