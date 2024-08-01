@@ -386,7 +386,7 @@
 	  <groupId>com.vladmihalcea</groupId>
 	  <artifactId>hibernate-types-52</artifactId>
 	  <version>2.10.3</version>
-	</dependency>    
+	</dependency>
 
     <dependency>
       <groupId>org.powermock</groupId>
@@ -504,14 +504,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-idea-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <dependenciesAsLibraries>true</dependenciesAsLibraries>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tomcat-maven-plugin</artifactId>
         <version>1.1</version>
@@ -592,7 +584,7 @@
           <forkCount>2</forkCount>
           <reuseForks>false</reuseForks>
         </configuration>
-      </plugin>          
+      </plugin>
     </plugins>
   </build>
   <profiles>
