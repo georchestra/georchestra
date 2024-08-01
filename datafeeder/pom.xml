@@ -157,7 +157,7 @@
       <dependency>
         <groupId>io.github.threeten-jaxb</groupId>
         <artifactId>threeten-jaxb-core</artifactId>
-        <version>1.2</version>
+        <version>2.2.0</version>
       </dependency>
       <dependency>
         <groupId>net.sf.saxon</groupId>
