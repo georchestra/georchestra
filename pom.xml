@@ -473,16 +473,6 @@
         <version>${guava.version}</version>
       </dependency>
       <dependency>
-        <groupId>net.sf.jasperreports</groupId>
-        <artifactId>jasperreports</artifactId>
-        <version>6.1.1</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sf.jasperreports</groupId>
-        <artifactId>jasperreports-fonts</artifactId>
-        <version>6.0.0</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity</artifactId>
         <version>1.7</version>
