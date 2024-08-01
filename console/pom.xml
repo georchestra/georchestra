@@ -570,8 +570,8 @@
         </executions>
         <configuration>
           <skip>${skip.npm}</skip>
-          <nodeVersion>v10.18.0</nodeVersion>
-          <npmVersion>6.13.4</npmVersion>
+          <nodeVersion>v18.17.0</nodeVersion>
+          <npmVersion>9.6.7</npmVersion>
           <installDirectory>${project.basedir}</installDirectory>
           <workingDirectory>${project.basedir}/src/main/webapp/manager</workingDirectory>
         </configuration>
