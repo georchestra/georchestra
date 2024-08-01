@@ -46,17 +46,28 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
     private final GridSetBroker gridSetBroker;
 
     private String instanceName;
+
+    private boolean useLegacyHeader;
     private String headerUrl;
     private String headerHeight;
 
-    private String georHeaderInclude = "<html>" + "  <head>" + "    <title>GeoWebCache - @instanceName@</title>"
-            + "    <style type=\"text/css\">" + "      body, td {"
-            + "        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
-            + "        font-size: 0.85em;" + "        vertical-align: top;" + "      }" + "      a#logo {"
-            + "        display:none;" + "      }" + "    </style>" + "  </head>" + "  <body>"
-            + "    <!-- geOrchestra header -->" + "    <div id=\"go_head\">"
-            + "      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
-            + "    </div>" + "    <!-- end of geOrchestra header -->";
+    private String headerScript;
+
+    private String logoUrl;
+
+    /** custom georchestra CSS stylsheet: optional, can be null
+     * See https://github.com/georchestra/datadir/blob/master/default.properties#L40-L43
+     * */
+    private String georchestraStylesheet = "";
+
+    private String newGeorHeaderInclude = "<html>\n"
+            + "  <head>\n"
+            + "    <title>GeoWebCache - @instanceName@</title>\n"
+            + "    <script src=\"@headerScript@\"></script>\n"
+            + "  </head>\n"
+            + "  <body>\n"
+            + "    <geor-header  active-app=\"geowebcache\" legacy-header=\"@useLegacyHeader@\" legacy-url=\"@headerUrl@\" style=\"width:100%;height:@headerHeight@px;border:none;\" logo-url=\"@logoUrl@\" stylesheet=\"@georchestraStylesheet@\"></geor-header>";
+
 
     /** Should be invoked through Spring. */
     public GeorchestraGeoWebCacheDispatcher(TileLayerDispatcher tileLayerDispatcher, GridSetBroker gridSetBroker,
@@ -79,14 +90,39 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
         this.headerHeight = headerHeight;
     }
 
-    public @Override void afterPropertiesSet() throws IOException {
-        Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
-        Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized");
-        Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
+    public void setUseLegacyHeader(boolean useLegacyHeader) {
+        this.useLegacyHeader = useLegacyHeader;
+    }
 
-        georHeaderInclude = georHeaderInclude.replace("@instanceName@", this.instanceName);
-        georHeaderInclude = georHeaderInclude.replace("@headerHeight@", this.headerHeight);
-        georHeaderInclude = georHeaderInclude.replace("@headerUrl@", this.headerUrl);
+    public void setHeaderScript(String headerScript) {
+        this.headerScript = headerScript;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public void setGeorchestraStylesheet(String georchestraStylesheet) {
+        this.georchestraStylesheet = georchestraStylesheet;
+    }
+
+    public @Override void afterPropertiesSet() throws IOException {
+            Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
+            Objects.requireNonNull(this.headerScript, "property 'headerScript' not initialized");
+            Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
+            Objects.requireNonNull(this.logoUrl, "property 'logoUrl' not initialized");
+
+            if (this.useLegacyHeader) {
+                Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized, but useLegacyHeader is true");
+            }
+
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@instanceName@", this.instanceName);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerScript@", this.headerScript);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@useLegacyHeader@", String.valueOf(this.useLegacyHeader));
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerUrl@", this.headerUrl);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerHeight@", this.headerHeight);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@logoUrl@", this.logoUrl);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@georchestraStylesheet@", this.georchestraStylesheet);
     }
 
     @Override
@@ -172,7 +208,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
         final String bodyTag = "<body>";
         final String htmlBody = html.substring(html.indexOf(bodyTag) + bodyTag.length());
 
-        StringBuilder builder = new StringBuilder(georHeaderInclude);
+        StringBuilder builder = new StringBuilder(newGeorHeaderInclude);
+
         builder.append(htmlBody);
         final byte[] bytes = builder.toString().getBytes("UTF-8");
         response.setContentLength(bytes.length);

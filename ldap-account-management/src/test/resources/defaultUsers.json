@@ -2,11 +2,12 @@
 	{
 		"username": "testuser",
 		"roles": [
-			"USER"
+			"USER",
+			"IMPORT"
 		],
 		"organization": "PSC",
 		"id": "048b2f38-6ee7-4eec-9bed-349cc6eb13c3",
-		"lastUpdated": "f30686969d96a5a7962aec9521a97f3493e042b79302f24c15771d90b8b99c56",
+		"lastUpdated": "cda8f14b4203ceadbc246193005aebbb87959349cbbfe9ee3d409118669816e5",
 		"firstName": "Test",
 		"lastName": "USER",
 		"email": "psc+testuser@georchestra.org",
@@ -54,15 +55,15 @@
 		"roles": [
 			"ADMINISTRATOR",
 			"SUPERUSER",
-			"EXTRACTORAPP",
 			"GN_ADMIN",
 			"USER",
 			"MAPSTORE_ADMIN",
-			"EMAILPROXY"
+			"EMAILPROXY",
+			"IMPORT"
 		],
 		"organization": "PSC",
 		"id": "0c6bb556-4ee8-46f2-892d-6116e262b489",
-		"lastUpdated": "f11307cf3afacce99976b63a5a28af92b6c772dbc20eff6f70c4bac7ace86354",
+		"lastUpdated": "9942b5348c83d8607de857f7d75ef7dfcbff699d7929d38674eb90a0bfc10ce7",
 		"firstName": "Test",
 		"lastName": "ADMIN",
 		"email": "psc+testadmin@georchestra.org",
@@ -70,6 +71,23 @@
 		"telephoneNumber": null,
 		"title": null,
 		"notes": "Internal CRM notes on testadmin"
+	},
+	{
+		"username": "idatafeeder",
+		"roles": [
+			"GN_ADMIN",
+			"IMPORT"
+		],
+		"organization": null,
+		"id": "ab18b654-b281-4b6d-b09c-a2a4a690216d",
+		"lastUpdated": "c560896a13a6d9ce7b8d46eb0a7c0460e6679aefdd220442f90d68a41ce9557f",
+		"firstName": "Datafeeder",
+		"lastName": "Import",
+		"email": "psc+idatafeeder@georchestra.org",
+		"postalAddress": null,
+		"telephoneNumber": null,
+		"title": null,
+		"notes": null
 	},
 	{
 		"username": "testdelegatedadmin",

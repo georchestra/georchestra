@@ -9,18 +9,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
-import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.integration.ds.AccountGDPRDaoIT;
@@ -29,6 +30,7 @@ import org.junit.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
+import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 /**
@@ -50,16 +52,6 @@ public class AccountGDPRDaoTest {
         ts2 = new Timestamp(ZonedDateTime.of(ldt2, zoneId).toInstant().toEpochMilli());
     }
 
-    public @Test void testGeodocRecord() throws Exception {
-        GeodocRecord expected = new GeodocRecord("SLD", "<StyledLayerDescriptor/>", "abcdef123", ldt1, ldt2, 10);
-
-        ResultSet rs = mockResultset("standard", "SLD", "raw_file_content", "<StyledLayerDescriptor/>", "file_hash",
-                "abcdef123", "created_at", ts1, "last_access", ts2, "access_count", 10);
-        GeodocRecord record = AccountGDPRDaoImpl.createGeodocRecord(rs);
-        assertNotNull(record);
-        assertEquals(expected, record);
-    }
-
     public @Test void testOgcStatisticsRecord() throws Exception {
         String service = "WFS";
         String layer = "roads";
@@ -71,33 +63,6 @@ public class AccountGDPRDaoTest {
                 "roles", roles.toArray(new String[roles.size()]));
 
         OgcStatisticsRecord record = AccountGDPRDaoImpl.createOgcStatisticsRecord(rs);
-        assertNotNull(record);
-        assertEquals(expected, record);
-    }
-
-    public @Test void testExtractorRecord() throws Exception {
-        Geometry bbox = new WKTReader().read("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))");
-        LocalDateTime creationDate = ldt1;
-        Time duration = new Time(10_000L);
-        List<String> roles = Arrays.asList("ROLE_ADMINISTRATOR", "ROLE_USER");
-        String org = "geOrchestra";
-        String projection = "EPSG:4326";
-        Integer resolution = 1000;
-        String format = "TIFF";
-        String owstype = "WCS";
-        String owsurl = "http://localhost/geoserver/wcs?";
-        String layerName = "some_coverage";
-        boolean success = true;
-
-        ExtractorRecord expected = new ExtractorRecord(creationDate, duration, roles, org, projection, resolution,
-                format, bbox, owstype, owsurl, layerName, success);
-
-        ResultSet rs = mockResultset("creation_date", ts1, "duration", duration, "roles",
-                roles.toArray(new String[roles.size()]), "org", org, "projection", projection, "resolution", resolution,
-                "format", format, "bbox", bbox, "owstype", owstype, "owsurl", owsurl, "layer_name", layerName,
-                "is_successful", success);
-
-        ExtractorRecord record = AccountGDPRDaoImpl.createExtractorRecord(rs);
         assertNotNull(record);
         assertEquals(expected, record);
     }
@@ -126,11 +91,39 @@ public class AccountGDPRDaoTest {
         assertTrue(parsed.get(ChronoField.DAY_OF_MONTH) == 11 && parsed.get(ChronoField.SECOND_OF_MINUTE) == 38);
     }
 
+    public @Test(expected = DateTimeParseException.class) void testParseISO8601Date() {
+        String date = "2024-04-09T11:38:57.658245Z";
+
+        GEONETWORK_DATE_FORMAT.parse(date);
+    }
+
+    public @Test void testCreateMetadataRecord_iso8601date() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("2024-04-09T11:38:57.658245Z");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 9 && record.getCreatedDate().getYear() == 2024);
+    }
+
+    public @Test void testCreateMetadataRecord_geonetworkdate() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("2019-09-11T12:41:38");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
+    }
+
+    public @Test(expected = RuntimeException.class) void testCreateMetadataRecord_invaliddate() throws SQLException {
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
+        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+
+        assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
+    }
+
     // Test resiliency to unexpected null values, see GSHDF-291
     public @Test void testParsingNullResiliency() {
         ResultSet rs = nullsMockResultset();
-        assertNotNull(AccountGDPRDaoImpl.createExtractorRecord(rs));
-        assertNotNull(AccountGDPRDaoImpl.createGeodocRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createMetadataRecord(rs));
         assertNotNull(AccountGDPRDaoImpl.createOgcStatisticsRecord(rs));
     }

@@ -57,7 +57,7 @@ public class MetadataRecordProperties {
 
     String lineage;
 
-    String resourceType = "series";
+    String resourceType = "dataset";
 
     @XmlElementWrapper(name = "onlineResources")
     @XmlElement(name = "onlineResource")
@@ -109,6 +109,8 @@ public class MetadataRecordProperties {
     URI graphicOverview;// provided by template?
 
     String updateFequency = "asNeeded";
+
+    Boolean showExtent = true;
 
     public static @Data class OnlineResource {
         URI linkage;

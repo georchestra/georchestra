@@ -15,7 +15,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>22.1-SNAPSHOT</version>
+  <version>24.1-SNAPSHOT</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -43,7 +43,7 @@
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
     <gt.version>28.2</gt.version>
-    <guava.version>28.2-jre</guava.version>
+    <guava.version>33.2.1-jre</guava.version>
     <lombok.version>1.18.22</lombok.version>
     <postgres.version>42.4.3</postgres.version>
     <json.version>20180813</json.version>
@@ -719,8 +719,8 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-idea-plugin</artifactId>
-          <version>2.2</version>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -878,13 +878,10 @@
         </plugins>
       </build>
       <modules>
-        <module>extractorapp</module>
         <module>console</module>
-        <module>mapfishapp</module>
         <module>security-proxy</module>
         <module>analytics</module>
         <module>header</module>
-        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -893,32 +890,23 @@
         <file>
           <!-- this is added so that all will be the default profile -->
           <!-- one can build only a specific project by doing -->
-          <!-- -P-all,extractorapp -->
+          <!-- -P-all,geoserver -->
           <missing>hack_to_make_all_enabled_by_default</missing>
         </file>
       </activation>
       <modules>
-        <module>extractorapp</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
         <module>commons</module>
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
-        <module>mapfishapp</module>
-        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>analytics</module>
         <module>header</module>
         <module>datafeeder</module>
         <module>datafeeder-ui</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>atlas</id>
-      <modules>
-        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -931,12 +919,6 @@
       <id>header</id>
       <modules>
         <module>header</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>extractorapp</id>
-      <modules>
-        <module>extractorapp</module>
       </modules>
     </profile>
     <profile>
@@ -961,12 +943,6 @@
       <id>console</id>
       <modules>
         <module>console</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>mapfishapp</id>
-      <modules>
-        <module>mapfishapp</module>
       </modules>
     </profile>
     <profile>

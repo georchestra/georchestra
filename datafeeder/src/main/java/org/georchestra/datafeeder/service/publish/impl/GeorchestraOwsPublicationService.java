@@ -38,6 +38,7 @@ import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.Organization;
 import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.model.UserInfo;
+import org.georchestra.datafeeder.service.DataSourceMetadata;
 import org.georchestra.datafeeder.service.geoserver.GeoServerRemoteService;
 import org.georchestra.datafeeder.service.publish.MetadataPublicationService;
 import org.georchestra.datafeeder.service.publish.OWSPublicationService;
@@ -61,6 +62,7 @@ import org.springframework.http.MediaType;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 /**
  * {@link OWSPublicationService} relying on {@link GeoServerRemoteService} to
@@ -102,8 +104,9 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(publishing.getImportedName(),
                 "importedName is required to resolve the native feature type name");
 
-        final String workspaceName = resolveWorkspace(user);
-        final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName);
+        final Map<String, String> geoserverConfig = this.configProperties.getPublishing().getBackend().getGeoserver();
+        final String workspaceName = resolveWorkspace(user, geoserverConfig.get("workspacename"));
+        final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName, geoserverConfig.get("storename"));
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
 
         Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
@@ -152,7 +155,8 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         requireNonNull(publishing);
 
         final String workspace = publishing.getPublishedWorkspace();
-        final String dataStore = nameResolver.resolveDataStoreName(workspace);
+        final String dataStore = nameResolver.resolveDataStoreName(workspace,
+                this.configProperties.getPublishing().getBackend().getGeoserver().get("storename"));
         final String layerName = publishing.getPublishedName();
         final String metadataRecordId = publishing.getMetadataRecordId();
 
@@ -237,22 +241,22 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         // ft.setKeywords(buildKeywords(publishing.getKeywords()));
 
         String importedSRS = publishing.getSrs();
-        Objects.requireNonNull(importedSRS, "Dataset imported SRS not provided in PublishSettings");
-        ft.setSrs(importedSRS);
-
-        BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
-        if (nativeBounds != null) {
-            EnvelopeInfo envelopeInfo = buildEnvelope(nativeBounds);
-            envelopeInfo.setCrs(importedSRS);
-            ft.setNativeBoundingBox(envelopeInfo);
-            ft.setNativeCRS(importedSRS);
+        if (dataset.getFormat() != DataSourceMetadata.DataSourceType.CSV) {
+            Objects.requireNonNull(importedSRS, "Dataset imported SRS not provided in PublishSettings");
+            ft.setSrs(importedSRS);
+            BoundingBoxMetadata nativeBounds = dataset.getNativeBounds();
+            if (nativeBounds != null) {
+                EnvelopeInfo envelopeInfo = buildEnvelope(nativeBounds);
+                envelopeInfo.setCrs(importedSRS);
+                ft.setNativeBoundingBox(envelopeInfo);
+                ft.setNativeCRS(importedSRS);
+            }
+            if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
+                ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
+            } else {
+                ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
+            }
         }
-        if (Boolean.TRUE.equals(publishing.getSrsReproject())) {
-            ft.setProjectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED);
-        } else {
-            ft.setProjectionPolicy(ProjectionPolicy.FORCE_DECLARED);
-        }
-
         // make the layer cacheable
         final Integer cacheSeconds = this.configProperties.getPublishing().getGeoserver().getLayerClientCacheSeconds();
         if (cacheSeconds == null || cacheSeconds.intValue() <= 0) {
@@ -294,9 +298,11 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         return layerName;
     }
 
-    private String resolveWorkspace(@NonNull UserInfo user) {
+    private String resolveWorkspace(@NonNull UserInfo user, String workspaceNameConfig) {
         final @NonNull String orgName = user.getOrganization().getShortName();
-        final String workspaceName = nameResolver.resolveWorkspaceName(orgName);
+        final String workspaceName = !StringUtils.isEmpty(workspaceNameConfig)
+                && !workspaceNameConfig.equals("<workspacename>") ? workspaceNameConfig
+                        : nameResolver.resolveWorkspaceName(orgName);
         String baseNamespaceURI = this.configProperties.getPublishing().getGeoserver().getBaseNamespaceURI();
         String namespaceURI = URI.create(baseNamespaceURI + "/" + workspaceName).normalize().toString();
         WorkspaceInfo ws = geoserver.getOrCreateWorkspace(workspaceName, namespaceURI);

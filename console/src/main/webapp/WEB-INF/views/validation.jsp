@@ -68,8 +68,8 @@ function testUid() {
 function testPassword() {
 	var password = document.form.password.value;
 	removeError("password");
-	if (!isPasswordValid(password)) {
-		addError("password", "<s:message code="password.error.sizeError" />");
+	if (!isNotEmpty(password) && isFieldRequired("password")) {
+		addError("uid", "<s:message code="password.error.required" />");
 		return false;
 	}
 	return true;
@@ -89,6 +89,15 @@ function testPrivacyPolicyAgreed(){
     if(!$('#privacyPolicyAgreed').is(':checked')){
 	addError("privacyPolicyAgreed", "<s:message code="privacyPolicyAgreed.error.notChecked" />");
 	return false;
+    }
+    return true;
+}
+
+function testConsentAgreed(){
+    removeError("consentAgreed");
+    if(!$('#consentAgreed').is(':checked')){
+        addError("consentAgreed", "<s:message code="consentAgreed.error.notChecked" />");
+        return false;
     }
     return true;
 }
@@ -272,11 +281,7 @@ function isNotEmpty(str) {
  * @returns {boolean}
  */
 function isPasswordValid(password) {
-	if (!password || password.length < 8){
-		return false;
-	} else {
-		return true;
-	}
+    return true;
 }
 
 /**

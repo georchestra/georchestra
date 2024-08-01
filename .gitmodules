@@ -1,24 +1,8 @@
-[submodule "mapfishapp/src/main/webapp/lib/externals/geoext"]
-	path = mapfishapp/src/main/webapp/lib/externals/geoext
-	url = https://github.com/georchestra/geoext.git
-	branch = georchestra-16.12
-[submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
-	path = mapfishapp/src/main/webapp/lib/externals/openlayers
-	url = https://github.com/georchestra/openlayers.git
-	branch = georchestra-16.12
 [submodule "geonetwork"]
 	path = geonetwork
 	url = https://github.com/georchestra/geonetwork.git
-	branch = georchestra-gn4-4.0.6
-[submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
-	path = mapfishapp/src/main/webapp/lib/externals/styler
-	url = https://github.com/georchestra/styler.git
-	branch = master
-[submodule "mapfishapp/src/main/webapp/lib/externals/ext"]
-	path = mapfishapp/src/main/webapp/lib/externals/ext
-	url = https://github.com/georchestra/extjs.git
-	branch = 3.x
+	branch = georchestra-gn4.4.x
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
-	branch = 2.22.2-georchestra
+	branch = 2.25.x-georchestra

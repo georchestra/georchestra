@@ -90,7 +90,7 @@ public class DelegationController {
     }
 
     @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+            + "/{uid:.*}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     @ResponseBody
     public String findByUid(@PathVariable String uid) throws JSONException {
 
@@ -100,7 +100,7 @@ public class DelegationController {
     }
 
     @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+            + "/{uid:.*}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
     @ResponseBody
     public String add(HttpServletRequest request, @PathVariable String uid)
             throws JSONException, IOException, DataServiceException {
@@ -129,7 +129,7 @@ public class DelegationController {
     }
 
     @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
+            + "/{uid:.*}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
     @ResponseBody
     public String delete(HttpServletRequest request, @PathVariable String uid)
             throws JSONException, IOException, DataServiceException {

@@ -4,7 +4,7 @@
 
 This folder holds the required files to configure and populate an OpenLDAP directory before installing the [geOrchestra](http://www.georchestra.org) SDI.
 
-Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/docs/setup/openldap.md) for instructions.
+Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/docsv1/setup/openldap.md) for instructions.
 
 ## groupofmembers.ldif
 
@@ -37,7 +37,7 @@ The basic users:
  * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
  * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**.
  * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**.
- * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explained in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
+ * ```geoserver_privileged_user``` is a required user. It is internally used by the geofence module. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explained in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
  * ```testpendinguser``` is inside the pending users organizational unit, which means an admin has to validate it. The password is **testpendinguser**.
 
 Please note that `test*` users should be deleted before going into production !
@@ -45,7 +45,6 @@ Please note that `test*` users should be deleted before going into production !
 The roles:
  * ```SUPERUSER``` grants access to the console webapp (where one can manage users and roles),
  * ```ADMINISTRATOR``` is for GeoServer administrators,
- * ```EXTRACTORAPP``` grants access to the extractor application,
  * ```GN_ADMIN``` is for GeoNetwork administrators,
  * ```GN_EDITOR``` is for metadata editors,
  * ```GN_REVIEWER``` is for metadata reviewers,
@@ -147,4 +146,63 @@ ldapsearch -x -LLL \
    -H "ldap://ldap:389" \
    -D "cn=admin,dc=georchestra,dc=org" \
    -w "secret"
+```
+
+## About the password policy
+
+If the `SLAPD_PASSWORD_MGT_POLICY` env var is set to "rotation" when starting the initial LDAP container startup (on an empty configuration volume), three LDIF files are loaded, which enforce password rotation.
+
+These three files are:
+ * rotationpolicyoverlay.ldif - sets up the `pwpolicy` password policy for regular users
+ * pwd_no_expire.ldif - sets up a `a pwd-no-expire` policy
+ * pwd_no_expire_users.ldif - sets a `pwd-no-expire` management policy to internal users
+
+
+The `rotationpolicyoverlay.ldif` file has two key variables which define the password policy.
+
+
+**pwdMaxAge** - Password validity time (expressed in seconds) - when this delay is expired, user will not be able to login anymore. 
+
+
+The default value is `31536000`, which corresponds to 365 days.
+
+It can be updated with the following command:
+
+```
+ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<EOF
+dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
+changetype: modify
+delete: pwdMaxAge
+-
+add: pwdMaxAge
+pwdMaxAge: 18396000
+-
+EOF
+```
+
+
+**pwdExpireWarning** is the number of seconds before the password expires. Users are kindly remembered to change password. 
+
+To sum up: pwdExpireWarning + "time without warning" = pwdMaxAge.
+
+The default value is `2592000`, which corresponds to 30 days.
+
+geOrchestra's default password policy will:
+
+* warn users 335 days after their last password change
+* prevent users from logging in 365 days after their last password change
+
+
+You can update it with the following command:
+
+```
+ldapmodify -x -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" <<EOF
+dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
+changetype: modify
+delete: pwdExpireWarning
+-
+add: pwdExpireWarning
+pwdExpireWarning: 2628000
+-
+EOF
 ```

@@ -77,18 +77,43 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
 
     <fieldset>
       <legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
-      <t:input path="firstName" required="${firstNameRequired}">
-        <jsp:attribute name="label"><s:message code="firstName.label"/></jsp:attribute>
-      </t:input>
-      <t:input path="surname" required="${surnameRequired}">
-        <jsp:attribute name="label"><s:message code="surname.label"/></jsp:attribute>
-      </t:input>
+      <c:choose>
+        <c:when test="${editUserDetailsFormBean.isOAuth2}">
+          <div class="form-group">
+            <label class="col-lg-4 control-label"><s:message code="firstName.label"/></label>
+            <div class="col-lg-8">
+              <p class="form-control-static">
+                  ${editUserDetailsFormBean.firstName}
+              </p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-4 control-label"><s:message code="surname.label"/></label>
+            <div class="col-lg-8">
+              <p class="form-control-static">
+                  ${editUserDetailsFormBean.surname}
+              </p>
+            </div>
+          </div>
+        </c:when>
+        <c:otherwise>
+          <t:input path="firstName" required="${firstNameRequired}">
+            <jsp:attribute name="label"><s:message code="firstName.label"/></jsp:attribute>
+          </t:input>
+          <t:input path="surname" required="${surnameRequired}">
+            <jsp:attribute name="label"><s:message code="surname.label"/></jsp:attribute>
+          </t:input>
+        </c:otherwise>
+      </c:choose>
       <div class="form-group">
         <label class="col-lg-4 control-label"><s:message code="email.label"/></label>
         <div class="col-lg-8">
           <p class="form-control-static">
               ${editUserDetailsFormBean.email}
           </p>
+          <a href='<c:out value="${publicContextPath}/account/changeEmail" />'>
+            <s:message code="editUserDetailsForm.changeEmail.link"/>
+          </a>
         </div>
       </div>
       <t:input path="phone" required="${phoneRequired}">
@@ -125,27 +150,29 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
       </t:textarea>
     </fieldset>
 
-    <fieldset>
-      <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
-      <div class="form-group">
-        <label class="col-lg-4 control-label"><s:message code="uid.label"/></label>
-        <div class="col-lg-8">
-          <p class="form-control-static">
-              ${editUserDetailsFormBean.uid}
-          </p>
+    <c:if test="${!editUserDetailsFormBean.isOAuth2 && !editUserDetailsFormBean.isExternalAuth}">
+      <fieldset>
+        <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
+        <div class="form-group">
+          <label class="col-lg-4 control-label"><s:message code="uid.label"/></label>
+          <div class="col-lg-8">
+            <p class="form-control-static">
+                ${editUserDetailsFormBean.uid}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label class="col-lg-4 control-label"><s:message code="password.label"/></label>
-        <div class="col-lg-8">
-          <p class="form-control-static">
-            <a href='<c:out value="${publicContextPath}/account/changePassword" />'>
-              <s:message code="editUserDetailsForm.changePassword.link"/>
-            </a>
-          </p>
+        <div class="form-group">
+          <label class="col-lg-4 control-label"><s:message code="password.label"/></label>
+          <div class="col-lg-8">
+            <p class="form-control-static">
+              <a href='<c:out value="${publicContextPath}/account/changePassword" />'>
+                <s:message code="editUserDetailsForm.changePassword.link"/>
+              </a>
+            </p>
+          </div>
         </div>
-      </div>
-    </fieldset>
+      </fieldset>
+    </c:if>
 
     <fieldset>
       <div class="form-group">
@@ -215,9 +242,11 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
         </li>
       </ul>
 
-      <h4><s:message code="editUserDetailsForm.areaOfCompetence"/></h4>
-      <areas item="org" readonly="'true'"></areas>
-      <br>
+      <c:if test="${competenceAreaEnabled}">
+        <h4><s:message code="editUserDetailsForm.areaOfCompetence"/></h4>
+        <areas item="org" readonly="'true'"></areas>
+        <br>
+      </c:if>
 
       <h4><s:message code="editUserDetailsForm.members"/> <span
           class="badge">{{ users.length }}</span></h4>

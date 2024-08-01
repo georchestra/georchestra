@@ -57,4 +57,9 @@ public class GeorchestraConsoleUsersApiImpl implements UsersApi {
         return client.get("/console/internal/users/username/{name}", GeorchestraUser.class, username);
     }
 
+    @Override
+    public Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
+        return Optional.empty();
+    }
+
 }

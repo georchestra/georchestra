@@ -19,10 +19,12 @@
 
 package org.georchestra.console.ws.edituserdetails;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpSession;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
@@ -78,6 +81,9 @@ public class EditUserDetailsFormController {
     @Autowired
     protected LogUtils logUtils;
 
+    @Autowired
+    protected PasswordUtils passwordUtils;
+
     public void setGdprAllowAccountDeletion(Boolean gdprAllowAccountDeletion) {
         this.gdprAllowAccountDeletion = gdprAllowAccountDeletion;
     }
@@ -113,7 +119,10 @@ public class EditUserDetailsFormController {
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         try {
             String username = SecurityHeaders.decode(request.getHeader(SEC_USERNAME));
+            boolean isExternalAuth = Objects.nonNull(request.getHeader(SEC_EXTERNAL_AUTHENTICATION))
+                    && Boolean.parseBoolean(SecurityHeaders.decode(request.getHeader(SEC_EXTERNAL_AUTHENTICATION)));
             Account userAccount = this.accountDao.findByUID(username);
+            userAccount.setIsExternalAuth(isExternalAuth);
             model.addAttribute(createForm(userAccount));
             Org org = orgsDao.findByUser(userAccount);
             model.addAttribute("org", orgToJson(org));
@@ -158,10 +167,12 @@ public class EditUserDetailsFormController {
         formBean.setFacsimile(account.getFacsimile());
         formBean.setDescription(account.getDescription());
         formBean.setPostalAddress(account.getPostalAddress());
+        formBean.setIsExternalAuth(account.getIsExternalAuth());
         String org = account.getOrg();
         if (!org.equals("")) {
             formBean.setOrg(orgsDao.findByCommonName(org).getName());
         }
+        formBean.setIsOAuth2(account.getOAuth2Provider() != null);
 
         return formBean;
     }
@@ -214,6 +225,7 @@ public class EditUserDetailsFormController {
             accountDao.update(account);
 
             model.addAttribute("success", true);
+            model.addAttribute("pwdUtils", passwordUtils);
             Org org = orgsDao.findByUser(account);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(account));

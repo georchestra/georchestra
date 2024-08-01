@@ -82,6 +82,12 @@ EOF
             slapadd -n0 -F /etc/ldap/slapd.d -l "/etc/ldap/schema/${schema}.ldif"
         done
     fi
+    
+    if [ "$SLAPD_PASSWORD_MGT_POLICY" == 'rotation' ]; then
+    	cp /etc/ldap/modules/ppolicy-rotation.ldif /etc/ldap/modules/ppolicy.ldif
+    else 
+    	cp /etc/ldap/modules/ppolicy-default.ldif /etc/ldap/modules/ppolicy.ldif
+    fi
 
     if [[ -n "$SLAPD_ADDITIONAL_MODULES" ]]; then
         IFS=","; declare -a modules=($SLAPD_ADDITIONAL_MODULES); unset IFS

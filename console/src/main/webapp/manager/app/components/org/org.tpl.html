@@ -97,7 +97,7 @@
         <div class="alert alert-danger clearfix">
           <i class="glyphicon glyphicon-exclamation-sign"></i>
           <span translate>org.warning</span>
-          <button  ng-click="org.delete()" class="btn btn-danger" translate>org.delete</button>
+          <button ng-confirm-click="{{ 'org.delete' | translate}} ?" confirmed-click="org.delete()" class="btn btn-danger" translate>org.delete</button>
         </div>
       </div>
 

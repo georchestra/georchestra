@@ -125,8 +125,14 @@ public class PasswordRecoveryFormController {
                 return "userManagedBySASL";
             }
         }
-
         HttpSession session = request.getSession();
+
+        String errmsg = (String) session.getAttribute("errmsg");
+        if ("bad.token".equals(errmsg)) {
+            session.removeAttribute("errmsg");
+            model.addAttribute("badtoken", true);
+        }
+
         PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
         formBean.setEmail(email);
 
@@ -170,33 +176,35 @@ public class PasswordRecoveryFormController {
                 throw new NameNotFoundException("User is pending");
             }
 
-            String token = UUID.randomUUID().toString();
-
-            // if there is a previous token it is removed
-            if (this.userTokenDao.exist(account.getUid())) {
-                this.userTokenDao.delete(account.getUid());
-            }
-
-            this.userTokenDao.insertToken(account.getUid(), token);
-
-            String url = makeChangePasswordURL(publicUrl, publicContextPath, token);
-
             ServletContext servletContext = request.getSession().getServletContext();
-            this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),
-                    account.getUid(), url);
-            sessionStatus.setComplete();
+            if ((account.getOAuth2Provider() == null) && !account.getIsExternalAuth()) {
+                String token = UUID.randomUUID().toString();
 
-            // log role deleted
-            logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
+                // if there is a previous token it is removed
+                if (this.userTokenDao.exist(account.getUid())) {
+                    this.userTokenDao.delete(account.getUid());
+                }
 
-            return "emailWasSent";
+                this.userTokenDao.insertToken(account.getUid(), token);
 
+                String url = makeChangePasswordURL(publicUrl, publicContextPath, token);
+
+                this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),
+                        account.getUid(), url);
+                sessionStatus.setComplete();
+
+                // log role deleted
+                logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
+            } else {
+                this.emailFactory.sendChangePasswordOAuth2Email(servletContext, account.getEmail(),
+                        account.getCommonName());
+            }
         } catch (DataServiceException | MessagingException e) {
             throw new IOException(e);
         } catch (NameNotFoundException e) {
-            resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
-            return "passwordRecoveryForm";
         }
+
+        return "emailWasSentForPasswordChange";
     }
 
     /**

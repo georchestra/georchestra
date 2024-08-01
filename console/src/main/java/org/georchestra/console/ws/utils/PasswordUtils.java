@@ -19,9 +19,13 @@
 
 package org.georchestra.console.ws.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
+
+import java.util.regex.Pattern;
 
 /**
  *
@@ -30,10 +34,29 @@ import org.springframework.validation.Errors;
  */
 public final class PasswordUtils {
 
-    public static final int SIZE = 8;
+    private Pattern LOWERS_PATTERN = Pattern.compile("[a-z]");
+    private Pattern UPPERS_PATTERN = Pattern.compile("[A-Z]");
+    private Pattern DIGITS_PATTERN = Pattern.compile("[0-9]");
+    private Pattern SPECIALS_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
 
     @Autowired
     private Validation validation;
+
+    @Getter
+    @Setter
+    private int minimumLength = 8;
+    @Getter
+    @Setter
+    private boolean requireLowers = false;
+    @Getter
+    @Setter
+    private boolean requireUppers = false;
+    @Getter
+    @Setter
+    private boolean requireDigits = false;
+    @Getter
+    @Setter
+    private boolean requireSpecials = false;
 
     public void setValidation(Validation validation) {
         this.validation = validation;
@@ -54,12 +77,25 @@ public final class PasswordUtils {
             if (!pwd1.equals(pwd2)) {
                 errors.rejectValue("confirmPassword", "confirmPassword.error.pwdNotEquals",
                         "These passwords don't match");
-            } else {
-                if (pwd1.length() < SIZE)
-                    errors.rejectValue("password", "password.error.sizeError",
-                            "The password does have at least 8 characters");
+            }
+            if (pwd1.length() < minimumLength) {
+                errors.rejectValue("password", "password.error.sizeError",
+                        new String[] { Integer.toString(minimumLength) },
+                        String.format("%s%s%s", "The password must have at least ", minimumLength, " characters"));
+            }
+            if (requireLowers && !LOWERS_PATTERN.matcher(pwd1).find()) {
+                errors.rejectValue("password", "password.error.requireLowers", "The password must contain lower cases");
+            }
+            if (requireUppers && !UPPERS_PATTERN.matcher(pwd1).find()) {
+                errors.rejectValue("password", "password.error.requireUppers", "The password must contain upper cases");
+            }
+            if (requireDigits && !DIGITS_PATTERN.matcher(pwd1).find()) {
+                errors.rejectValue("password", "password.error.requireDigits", "The password must contain digits");
+            }
+            if (requireSpecials && !SPECIALS_PATTERN.matcher(pwd1).find()) {
+                errors.rejectValue("password", "password.error.requireSpecials",
+                        "The password must contain special characters");
             }
         }
     }
-
 }

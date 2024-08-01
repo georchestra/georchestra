@@ -53,6 +53,7 @@ public class AccountFactory {
      * @param description
      * @return
      */
+
     public static Account createBrief(String uid, String password, String firstName, String surname, String email,
             String phone, String title, String description) {
 
@@ -67,6 +68,30 @@ public class AccountFactory {
         account.setTitle(title);
         account.setDescription(description);
         account.setSshKeys(new String[0]);
+        return account;
+    }
+
+    /**
+     * Brief data
+     *
+     * @param uid
+     * @param password
+     * @param firstName
+     * @param surname
+     * @param email
+     * @param phone
+     * @param description
+     * @param oAuth2Provider
+     * @param oAuth2Uid
+     * @return
+     */
+
+    public static Account createBrief(String uid, String password, String firstName, String surname, String email,
+            String phone, String title, String description, String oAuth2Provider, String oAuth2Uid) {
+
+        Account account = createBrief(uid, password, firstName, surname, email, phone, title, description);
+        account.setOAuth2Provider(oAuth2Provider);
+        account.setOAuth2Uid(oAuth2Uid);
         return account;
     }
 
@@ -100,6 +125,8 @@ public class AccountFactory {
      * @param org
      * @param sshKeys
      * @param saslUser
+     * @param oAuth2Provider
+     * @param oAuth2Uid
      *
      * @return {@link Account}
      */
@@ -108,7 +135,7 @@ public class AccountFactory {
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
             String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys,
-            String saslUser) {
+            String saslUser, String oAuth2Provider, String oAuth2Uid) {
 
         Account a = new AccountImpl();
         a.setUniqueIdentifier(uuid);
@@ -138,7 +165,9 @@ public class AccountFactory {
         a.setOrg(org);
         a.setSshKeys(sshKeys);
         a.setSASLUser(saslUser);
-
+        a.setOAuth2Provider(oAuth2Provider);
+        a.setOAuth2Uid(oAuth2Uid);
+        a.setIsExternalAuth(oAuth2Provider != null && !oAuth2Provider.isEmpty());
         return a;
     }
 
@@ -183,6 +212,8 @@ public class AccountFactory {
         a.setPending(o.isPending());
         a.setSshKeys(o.getSshKeys());
         a.setSASLUser(o.getSASLUser());
+        a.setOAuth2Provider(o.getOAuth2Provider());
+        a.setOAuth2Uid(o.getOAuth2Uid());
         return a;
     }
 

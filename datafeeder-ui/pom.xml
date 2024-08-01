@@ -5,7 +5,7 @@
     <parent>
       <groupId>org.georchestra</groupId>
       <artifactId>root</artifactId>
-      <version>22.1-SNAPSHOT</version>
+      <version>24.1-SNAPSHOT</version>
     </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>datafeeder-ui</artifactId>
@@ -54,7 +54,7 @@
               <configuration>
                   <checkoutDirectory>${project.build.directory}/datafeeder-ui</checkoutDirectory>
                   <connectionUrl>scm:git:https://github.com/georchestra/geonetwork-ui.git</connectionUrl>
-                  <scmVersion>georchestra-datafeeder</scmVersion>
+                  <scmVersion>master</scmVersion>
                   <scmVersionType>branch</scmVersionType>
                   <pushChanges>false</pushChanges>
               </configuration>
@@ -91,24 +91,23 @@
                       </configuration>
                   </execution>
                   <execution>
-                      <id>npm run build</id>
+                      <id>build</id>
                       <goals>
-                          <goal>npm</goal>
+                          <goal>npx</goal>
                       </goals>
                       <configuration>
-                          <arguments>run build datafeeder -- --base-href=/import/</arguments>
+                          <arguments>nx build datafeeder -- --base-href=/import/</arguments>
                       </configuration>
                   </execution>
               </executions>
               <configuration>
-                  <nodeVersion>v12.22.1</nodeVersion>
+                  <nodeVersion>v18.15.0</nodeVersion>
                   <workingDirectory>${project.build.directory}/datafeeder-ui</workingDirectory>
               </configuration>
           </plugin>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-war-plugin</artifactId>
-              <version>2.5</version>
               <configuration>
                   <webResources>
                       <resource>
@@ -170,7 +169,7 @@
               <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>28.2-jre</version>
+                <version>33.2.1-jre</version>
               </dependency>
             </dependencies>
           </plugin>

@@ -60,11 +60,22 @@ public class EmailFactory {
     private String changePasswordEmailFile;
     private String changePasswordEmailSubject;
 
+    private String changePasswordOAuth2EmailFile;
+    private String changePasswordOAuth2EmailSubject;
+
+    private String changeEmailAddressEmailFile;
+    private String changeEmailAddressEmailSubject;
+
     private String accountUidRenamedEmailFile;
     private String accountUidRenamedEmailSubject;
 
     private String newAccountNotificationEmailFile;
+
+    private String newOAuth2AccountNotificationEmailFile;
+
     private String newAccountNotificationEmailSubject;
+
+    private String newOAuth2AccountNotificationEmailSubject;
 
     private String publicUrl;
     private String instanceName;
@@ -148,6 +159,38 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
+    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName)
+            throws MessagingException {
+        sendChangePasswordOAuth2Email(servletContext, recipient, userName, true);
+    }
+
+    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName,
+            boolean reallySend) throws MessagingException {
+        Email email = new Email(singletonList(recipient), this.changePasswordOAuth2EmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+                this.templateEncoding, this.changePasswordOAuth2EmailFile, servletContext, this.georConfig,
+                this.publicUrl, this.instanceName);
+        email.set("name", userName);
+        email.send(reallySend);
+    }
+
+    public void sendChangeEmailAddressEmail(ServletContext servletContext, String recipient, String userName,
+            String uid, String url) throws MessagingException {
+        sendChangeEmailAddressEmail(servletContext, recipient, userName, uid, url, true);
+    }
+
+    public void sendChangeEmailAddressEmail(ServletContext servletContext, String recipient, String userName,
+            String uid, String url, boolean reallySend) throws MessagingException {
+        Email email = new Email(singletonList(recipient), this.changeEmailAddressEmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+                this.templateEncoding, this.changeEmailAddressEmailFile, servletContext, this.georConfig,
+                this.publicUrl, this.instanceName);
+        email.set("name", userName);
+        email.set("uid", uid);
+        email.set("url", url);
+        email.send(reallySend);
+    }
+
     public void sendAccountUidRenamedEmail(ServletContext servletContext, String recipient, String userName, String uid)
             throws MessagingException {
         sendAccountUidRenamedEmail(servletContext, recipient, userName, uid, true);
@@ -165,26 +208,46 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg) throws MessagingException {
-        sendNewAccountNotificationEmail(servletContext, recipients, userName, uid, userEmail, userOrg, true);
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg) throws MessagingException {
+        sendNewAccountNotificationEmail(servletContext, recipients, fullName, uid, emailAddress, userOrg, true);
     }
 
-    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail, String userOrg, boolean reallySend) throws MessagingException {
+    public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String fullName,
+            String uid, String emailAddress, String userOrg, boolean reallySend) throws MessagingException {
 
         Email email = new Email(recipients, this.newAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, userEmail, // Reply-to
+                this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
                 this.instanceName);
-        email.set("name", userName);
+        email.set("name", fullName);
         email.set("uid", uid);
-        email.set("email", userEmail);
+        email.set("email", emailAddress);
         if (userOrg == null) {
             userOrg = "";
         }
         email.set("org", userOrg);
+        email.send(reallySend);
+    }
+
+    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String fullName, String localUid,
+            String emailAddress, String providerName, String providerUid, String userOrg, boolean reallySend)
+            throws MessagingException {
+
+        Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
+                this.emailHtml, emailAddress, // Reply-to
+                this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
+                this.newOAuth2AccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
+        email.set("name", fullName);
+        email.set("uid", localUid);
+        email.set("email", emailAddress);
+        if (userOrg == null) {
+            userOrg = "";
+        }
+        email.set("org", userOrg);
+        email.set("providerName", providerName);
+        email.set("providerUid", providerUid);
         email.send(reallySend);
     }
 
@@ -268,6 +331,22 @@ public class EmailFactory {
         this.changePasswordEmailSubject = changePasswordEmailSubject;
     }
 
+    public void setChangePasswordOAuth2EmailSubject(String changePasswordOAuth2EmailSubject) {
+        this.changePasswordOAuth2EmailSubject = changePasswordOAuth2EmailSubject;
+    }
+
+    public void setChangePasswordOAuth2EmailFile(String changePasswordOAuth2EmailFile) {
+        this.changePasswordOAuth2EmailFile = changePasswordOAuth2EmailFile;
+    }
+
+    public void setChangeEmailAddressEmailFile(String changePasswordEmailFile) {
+        this.changeEmailAddressEmailFile = changePasswordEmailFile;
+    }
+
+    public void setChangeEmailAddressEmailSubject(String changePasswordEmailSubject) {
+        this.changeEmailAddressEmailSubject = changePasswordEmailSubject;
+    }
+
     public void setAccountUidRenamedEmailFile(String accountUidRenamedEmailFile) {
         this.accountUidRenamedEmailFile = accountUidRenamedEmailFile;
     }
@@ -280,8 +359,16 @@ public class EmailFactory {
         this.newAccountNotificationEmailFile = newAccountNotificationEmailFile;
     }
 
+    public void setNewOAuth2AccountNotificationEmailFile(String newOAuth2AccountNotificationEmailFile) {
+        this.newOAuth2AccountNotificationEmailFile = newOAuth2AccountNotificationEmailFile;
+    }
+
     public void setNewAccountNotificationEmailSubject(String newAccountNotificationEmailSubject) {
         this.newAccountNotificationEmailSubject = newAccountNotificationEmailSubject;
+    }
+
+    public void setNewOAuth2AccountNotificationEmailSubject(String newOAuth2AccountNotificationEmailSubject) {
+        this.newOAuth2AccountNotificationEmailSubject = newOAuth2AccountNotificationEmailSubject;
     }
 
     public void setPublicUrl(String publicUrl) {

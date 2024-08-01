@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.georchestra.console.ds.AccountGDPRDao;
 import org.georchestra.console.ds.AccountGDPRDao.DeletedRecords;
-import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
-import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.ds.AccountGDPRDaoImpl;
@@ -67,16 +65,12 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     public @Test void testDeleteAccountRecords() throws DataServiceException {
         DeletedRecords summary = dao.deleteAccountRecords(user1);
         assertEquals(user1.getUid(), summary.getAccountId());
-        assertEquals(3, summary.getGeodocsRecords());
         assertEquals(3, summary.getOgcStatsRecords());
-        assertEquals(2, summary.getExtractorRecords());
         assertEquals(2, summary.getMetadataRecords());
 
         summary = dao.deleteAccountRecords(user1);
         assertEquals(user1.getUid(), summary.getAccountId());
-        assertEquals(0, summary.getGeodocsRecords());
         assertEquals(0, summary.getOgcStatsRecords());
-        assertEquals(0, summary.getExtractorRecords());
         assertEquals(0, summary.getMetadataRecords());
     }
 
@@ -109,18 +103,6 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/mapfishapp.geodocs.csv")
-    public @Test void testVisitGeodocsRecords() {
-        List<GeodocRecord> user1Records = new ArrayList<>();
-        List<GeodocRecord> user2Records = new ArrayList<>();
-        dao.visitGeodocsRecords(user1, user1Records::add);
-        dao.visitGeodocsRecords(user2, user2Records::add);
-
-        assertEquals(3, user1Records.size());
-        assertEquals(2, user2Records.size());
-    }
-
-    @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
     @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/ogcstatistics.ogc_services_log.csv")
     public @Test void testVisitOgcStatisticsRecords() {
         List<OgcStatisticsRecord> user1Records = new ArrayList<>();
@@ -130,18 +112,6 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
 
         assertEquals(3, user1Records.size());
         assertEquals(3, user2Records.size());
-    }
-
-    @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/extractorapp.extractor_log.csv")
-    public @Test void testVisitExtractorRecords() {
-        List<ExtractorRecord> user1Records = new ArrayList<>();
-        List<ExtractorRecord> user2Records = new ArrayList<>();
-        dao.visitExtractorRecords(user1, user1Records::add);
-        dao.visitExtractorRecords(user2, user2Records::add);
-
-        assertEquals(2, user1Records.size());
-        assertEquals(2, user2Records.size());
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)

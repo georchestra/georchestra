@@ -180,4 +180,16 @@ public interface Account extends Comparable<Account> {
     PasswordType getPasswordType();
 
     void setPasswordType(PasswordType passwordType);
+
+    String getOAuth2Provider();
+
+    void setOAuth2Provider(String oAuth2Provider);
+
+    String getOAuth2Uid();
+
+    void setOAuth2Uid(String oAuth2Uid);
+
+    boolean getIsExternalAuth();
+
+    void setIsExternalAuth(boolean isExternalAuth);
 }

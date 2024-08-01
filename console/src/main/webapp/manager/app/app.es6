@@ -1,9 +1,9 @@
 class AppController {
   static $inject = [
-    '$scope', '$router', '$location', '$translate', 'roleAdminList', 'Profile', 'PlatformInfos'
+    '$scope', '$router', '$location', '$translate', '$sce', 'roleAdminList', 'Profile', 'PlatformInfos', '$window'
   ]
 
-  constructor ($scope, $router, $location, $translate, roleAdminList, Profile, PlatformInfos) {
+  constructor ($scope, $router, $location, $translate, $sce, roleAdminList, Profile, PlatformInfos, $window) {
     $router.config([
       {
         path: '/',
@@ -61,11 +61,27 @@ class AppController {
 
     $scope.isSuperUser = (user) => user.adminRoles && user.adminRoles.SUPERUSER
 
-    Profile.get((p) => {
+    const profilResource = Profile.get((p) => {
       $scope.profile = p.roles.indexOf('SUPERUSER') === -1
         ? 'DELEGATED' : 'SUPERUSER'
     })
-    $scope.platformInfos = PlatformInfos.get()
+
+    profilResource.$promise.then(() => {}, (error) => {
+      if (error.status === 419) {
+        $window.location.href = '/console'
+      }
+    })
+
+    $scope.platformInfos = PlatformInfos.get((pi) => {
+
+    })
+    $scope.platformInfos.$promise.then(() => {}, (error) => {
+      if (error.status === 419) {
+        $window.location.href = '/console'
+      }
+    })
+
+    $scope.trustSrc = (src) => $sce.trustAsResourceUrl(src)
 
     $scope.isProtectedRole = role => roleAdminList().indexOf(role.cn) !== -1
     $scope.$translate = $translate
@@ -175,7 +191,20 @@ angular.module('manager', [
       const alphanum = v => v && v.match(regexp)
       ctrl.$validators.shortname = alphanum
     }
-  }))
+  })).directive('ngConfirmClick', [
+    function () {
+      return {
+        link: function (scope, element, attr) {
+          var msg = attr.ngConfirmClick || 'Are you sure?'
+          var clickAction = attr.confirmedClick
+          element.bind('click', function (event) {
+            if (window.confirm(msg)) {
+              scope.$eval(clickAction)
+            }
+          })
+        }
+      }
+    }])
 
 require('components/analytics/analytics')
 require('components/orgs/orgs')

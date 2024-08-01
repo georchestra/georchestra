@@ -91,14 +91,14 @@ javax.servlet.jsp.jstl.core.Config.set(
     new javax.servlet.jsp.jstl.fmt.LocalizationContext(bundle)
 );
 
-Boolean extractor = false;
 Boolean admin = false;
 Boolean catadmin = false;
 Boolean console = false;
 Boolean analyticsadmin = false;
-Boolean extractorappadmin = false;
 Boolean msadmin = false;
 String sec_roles = request.getHeader("sec-roles");
+String sec_remaining_days=request.getHeader("sec-ldap-remaining-days");
+
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
@@ -119,7 +119,6 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_ADMINISTRATOR")) {
             admin = true;
-            extractorappadmin = true;
         }
         if (roles[i].equals("ROLE_MAPSTORE_ADMIN")) {
             admin = true;
@@ -267,6 +266,10 @@ if(sec_roles != null) {
         #go_head .expanded > a:after {
             content: '';
         }
+        #ldap_user_alert {
+            padding-right:50px;
+            display:inline-block;
+        }
     </style>
 
 </head>
@@ -361,19 +364,7 @@ if(sec_roles != null) {
                         </c:when>
                     </c:choose>
 
-                    <c:choose>
-                        <c:when test='<%= extractorappadmin == true %>'>
-                        <c:choose>
-                            <c:when test='<%= active.equals("extractorappadmin") %>'>
-                        <li class="active"><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
-                            </c:when>
-                            <c:otherwise>
-                        <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        </c:when>
-                    </c:choose>
-
+                    <c:if test="${analyticsEnabled}">
                     <c:choose>
                         <c:when test='<%= console == true %>'>
                         <c:choose>
@@ -386,6 +377,7 @@ if(sec_roles != null) {
                         </c:choose>
                         </c:when>
                     </c:choose>
+                    </c:if>
 
                     <c:choose>
                         <c:when test='<%= console == true %>'>
@@ -408,9 +400,12 @@ if(sec_roles != null) {
 
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
-        <p class="logged">
-            <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
-        </p>
+                <p class="logged">
+                       <c:if test='<%= sec_remaining_days != null && !sec_remaining_days.equals("") %>'>
+                            <span id="ldap_user_alert" style="display:none;" ><fmt:message key="remaining_days_msg_part1"/> <%= sec_remaining_days %> <fmt:message key="remaining_days_msg_part2"/> <a href="${consolePublicContextPath}/account/changePassword"><fmt:message key="remaining_days_msg_part3"/> </a></span>
+                       </c:if>
+                    <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout" onclick="logout()"><fmt:message key="logout"/></a>
+                </p>
             </c:when>
             <c:otherwise>
         <p class="logged">
@@ -421,7 +416,19 @@ if(sec_roles != null) {
     </div>
 
     <script>
+        function logout() {
+            localStorage.removeItem("passwordChanged");
+        }
+    </script>
+    <script>
         (function(){
+            document.addEventListener('DOMContentLoaded', function() {
+                if (localStorage.getItem("passwordChanged") === null ||
+                    localStorage.getItem("passwordChanged") === undefined ||
+                    localStorage.getItem("passwordChanged") !== "true") {
+                        document.getElementById('ldap_user_alert').style.display = 'inline';
+                }
+            }, false);
             // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
             var url,
                 a = document.getElementById("login_a"),

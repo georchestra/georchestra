@@ -1,0 +1,16 @@
+dn: ou=pwpolicy,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pwpolicy
+
+dn: cn=default,ou=pwpolicy,dc=georchestra,dc=org
+objectClass: person
+objectClass: pwdPolicyChecker
+objectClass: pwdPolicy
+cn: pwpolicy
+sn: pwpolicy
+pwdAttribute: userPassword
+pwdMinAge: 0
+pwdMaxAge: 31536000
+pwdGraceAuthnLimit: 0
+pwdExpireWarning: 2592000

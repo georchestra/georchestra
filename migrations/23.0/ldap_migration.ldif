@@ -1,0 +1,23 @@
+dn: uid=idatafeeder,ou=users,dc=georchestra,dc=org
+changetype: add
+georchestraObjectIdentifier: ab18b654-b281-4b6d-b09c-a2a4a690216d
+uid: idatafeeder
+mail: psc+idatafeeder@georchestra.org
+givenName: Datafeeder
+sn: Import
+cn: Datafeeder Import
+objectClass: georchestraUser
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: top
+description: DO NOT DELETE THIS USER
+
+-
+
+dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=idatafeeder,ou=users,dc=georchestra,dc=org
+-

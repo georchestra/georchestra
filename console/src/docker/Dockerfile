@@ -5,6 +5,8 @@ FROM jetty:9-jre11
 # https://github.com/eclipse/jetty.docker/issues/10
 USER root
 RUN rm -r /usr/local/jetty/lib/mail
+RUN mkdir -p /docker-entrypoint.d
+RUN chown jetty:jetty /docker-entrypoint.d
 USER jetty
 
 ENV XMS=512M XMX=1G
@@ -12,6 +14,8 @@ ENV XMS=512M XMX=1G
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
 
 COPY --chown=jetty:jetty . /
+
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 VOLUME [ "/tmp" ]
 

@@ -43,7 +43,7 @@ public class ConfigApiControllerTest {
 
     public @Test void verifyConfiguration() {
         URI frontEndConfigFile = config.getFrontEndConfigFile();
-        assertNotNull("frontEndConfigFile");
+        assertNotNull(frontEndConfigFile);
 
         String expected = String.format("file:%s/datafeeder/frontend-config.json", datadir);
         assertEquals(URI.create(expected), frontEndConfigFile);
@@ -52,8 +52,10 @@ public class ConfigApiControllerTest {
     public @Test void getFrontendConfig() {
         ResponseEntity<Object> frontendConfig = controller.getFrontendConfig();
         assertEquals(HttpStatus.OK, frontendConfig.getStatusCode());
-        assertNotNull(frontendConfig.getBody());
-        assertThat(frontendConfig.getBody(), instanceOf(JsonNode.class));
+        Object body = frontendConfig.getBody();
+        assertNotNull(body);
+        assertThat(body, instanceOf(JsonNode.class));
+        assertEquals("5MB", ((JsonNode) body).get("maxFileUploadSize").asText());
     }
 
 }

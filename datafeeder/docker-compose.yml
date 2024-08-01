@@ -15,7 +15,7 @@ services:
     restart: always
 
   database:
-    image: georchestra/database:latest
+    image: georchestra/database:24.0.x
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -31,7 +31,7 @@ services:
         - SLAPD_LOG_LEVEL=32768 # See https://www.openldap.org/doc/admin24/slapdconfig.html#loglevel%20%3Clevel%3E
 
   console:
-    image: georchestra/console:latest
+    image: georchestra/console:24.0.x
     depends_on:
       - ldap
       - database
@@ -45,7 +45,12 @@ services:
       - "38080:8080"
 
   geoserver:
-    image: georchestra/geoserver:latest
+    image: georchestra/geoserver:24.0.x
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geoserver/gwc/service/wmts?SERVICE=WMTS&REQUEST=GetCapabilities >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
       - ldap
     volumes:
@@ -57,34 +62,28 @@ services:
       - "18080:8080"
 
   geonetwork:
-    image: georchestra/geonetwork:latest
+    image: georchestra/geonetwork:24.0.x
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -f http://localhost:8080/geonetwork/srv/eng/catalog.search >/dev/null || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
     depends_on:
       - console
       - database
-      - kibana
       - elasticsearch
     volumes:
       - config:/etc/georchestra
     environment:
       - DATA_DIR=/var/lib/geonetwork_data
-      - ES_HOST=elasticsearch
-      - ES_PROTOCOL=http
-      - ES_PORT=9200
-      - KB_URL=http://kibana:5601
       - JAVA_OPTIONS=-Duser.home=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dorg.eclipse.jetty.annotations.AnnotationParser.LEVEL=OFF
       - XMS=256M
     ports:
       - "28080:8080"
 
   elasticsearch:
-    image: elasticsearch:7.9.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
     environment:
       discovery.type: single-node
-
-  kibana:
-    image: kibana:7.9.0
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    volumes:
-      - ./src/test/resources/datadir/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
 

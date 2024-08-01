@@ -53,6 +53,9 @@ public abstract class UserMapper {
     @Mapping(target = "notes", source = "note")
     @Mapping(target = "roles", ignore = true)
     @Mapping(target = "lastUpdated", ignore = true)
+    @Mapping(target = "ldapWarn", ignore = true)
+    @Mapping(target = "ldapRemainingDays", ignore = true)
+    @Mapping(target = "isExternalAuth", ignore = true)
     protected abstract GeorchestraUser map(Account account);
 
     String map(UUID value) {

@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>22.1-SNAPSHOT</version>
+    <version>24.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>console</artifactId>
@@ -270,7 +270,16 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-amqp</artifactId>
+      <version>1.1.4.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+      <version>1.1.1.RELEASE</version>
+    </dependency>
     <!-- commons -->
     <dependency>
       <groupId>commons-digester</groupId>
@@ -377,7 +386,7 @@
 	  <groupId>com.vladmihalcea</groupId>
 	  <artifactId>hibernate-types-52</artifactId>
 	  <version>2.10.3</version>
-	</dependency>    
+	</dependency>
 
     <dependency>
       <groupId>org.powermock</groupId>
@@ -405,13 +414,6 @@
           <artifactId>slf4j-simple</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <!-- so that dbunit can write to extractorapp.extractor_layer_log's bbox column -->
-      <groupId>net.postgis</groupId>
-      <artifactId>postgis-jdbc</artifactId>
-      <version>2.5.0</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.georchestra</groupId>
@@ -502,14 +504,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-idea-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <dependenciesAsLibraries>true</dependenciesAsLibraries>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>tomcat-maven-plugin</artifactId>
         <version>1.1</version>
@@ -576,8 +570,8 @@
         </executions>
         <configuration>
           <skip>${skip.npm}</skip>
-          <nodeVersion>v10.18.0</nodeVersion>
-          <npmVersion>6.13.4</npmVersion>
+          <nodeVersion>v14.21.3</nodeVersion>
+          <npmVersion>6.14.18</npmVersion>
           <installDirectory>${project.basedir}</installDirectory>
           <workingDirectory>${project.basedir}/src/main/webapp/manager</workingDirectory>
         </configuration>
@@ -590,7 +584,7 @@
           <forkCount>2</forkCount>
           <reuseForks>false</reuseForks>
         </configuration>
-      </plugin>          
+      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -831,7 +825,7 @@
               <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>28.2-jre</version>
+                <version>33.2.1-jre</version>
               </dependency>
             </dependencies>
           </plugin>

@@ -1,30 +1,5 @@
 package org.georchestra.console.ws.newaccount;
 
-import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.BufferedInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.ReCaptchaV2;
@@ -38,11 +13,7 @@ import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
-import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDao;
-import org.georchestra.ds.users.AccountFactory;
-import org.georchestra.ds.users.DuplicatedEmailException;
-import org.georchestra.ds.users.DuplicatedUidException;
+import org.georchestra.ds.users.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +32,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({ "javax.net.ssl.*", "jdk.internal.reflect.*" })
@@ -135,6 +119,7 @@ public class NewAccountFormControllerTest {
         assertTrue(allowedField.contains("confirmPassword"));
         assertTrue(allowedField.contains("recaptcha_response_field"));
         assertTrue(allowedField.contains("privacyPolicyAgreed"));
+        assertTrue(allowedField.contains("consentAgreed"));
     }
 
     @Test
@@ -293,6 +278,7 @@ public class NewAccountFormControllerTest {
         t.setTitle("software engineer");
         t.setUid("123123-21465456-3434");
         t.setPrivacyPolicyAgreed(false);
+        t.setConsentAgreed(false);
 
         assertTrue(t.getConfirmPassword().equals("test"));
         assertTrue(t.getDescription().equals("testing account"));
@@ -309,7 +295,8 @@ public class NewAccountFormControllerTest {
                 + "firstName=Test, surname=testmaster, org=geOrchestra, "
                 + "title=software engineer, email=test@localhost.com, "
                 + "phone=+331234567890, description=testing account, " + "password=monkey123, confirmPassword=test, "
-                + "privacyPolicyAgreed=false, " + "recaptcha_response_field=wrong]", t.toString());
+                + "privacyPolicyAgreed=false, " + "consentAgreed=false, " + "recaptcha_response_field=wrong]",
+                t.toString());
     }
 
     /**
@@ -333,6 +320,7 @@ public class NewAccountFormControllerTest {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType");
         toTest.reCaptchaActivated = true;
         toTest.privacyPolicyAgreementActivated = true;
+        toTest.consentAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setPassword("");
         formBean.setConfirmPassword("");
@@ -349,20 +337,23 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("password").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("confirmPassword").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("consentAgreed").getDefaultMessage());
 
-        assertEquals(9, resultErrors.getFieldErrorCount());
+        assertEquals(10, resultErrors.getFieldErrorCount());
     }
 
     @Test
     public void specialValidators() throws IOException, SQLException {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType,phone,title,description");
         toTest.privacyPolicyAgreementActivated = true;
+        toTest.consentAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setUid("I am no compliant !!!!");
         formBean.setEmail("I am no compliant !!!!");
         formBean.setPassword("Pré$ident");
         formBean.setConfirmPassword("lapinmalin");
         formBean.setPrivacyPolicyAgreed(false);
+        formBean.setConsentAgreed(false);
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
 
         toTest.create(request, formBean, "", resultErrors, status, UiModel);
@@ -374,6 +365,7 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("title").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("description").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("consentAgreed").getDefaultMessage());
     }
 
     @Test
@@ -385,8 +377,8 @@ public class NewAccountFormControllerTest {
         formBean.setSurname("testmaster");
         formBean.setEmail("test@localhost.com");
         formBean.setUid("a123123-21465456-3434");
-        formBean.setConfirmPassword("testtest");
-        formBean.setPassword("testtest");
+        formBean.setConfirmPassword("TestTestTest123!");
+        formBean.setPassword("TestTestTest123!");
         formBean.setRecaptcha_response_field("success");
         formBean.setPrivacyPolicyAgreed(true);
         mockRecaptchaSucess();
@@ -399,6 +391,26 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("orgShortName").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("orgAddress").getDefaultMessage());
         assertEquals(4, resultErrors.getFieldErrorCount());
+    }
+
+    @Test
+    public void testGetSuperUserEmailAddresses() throws Exception {
+        NewAccountFormController toTest = new NewAccountFormController(new ReCaptchaParameters(), new Validation(""));
+        AccountDao accountDao = mock(AccountDao.class);
+        Account acc1 = new AccountImpl();
+        acc1.setEmail("pierre.martin@georchestra.org");
+        Account acc2 = new AccountImpl();
+        acc2.setEmail(null);
+        Account acc3 = new AccountImpl();
+        acc3.setEmail("");
+        Account acc4 = new AccountImpl();
+        acc4.setEmail("flup@georchestra.org");
+        when(accountDao.findByRole(anyString())).thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
+        toTest.setAccountDao(accountDao);
+
+        List<String> ret = toTest.getSuperUserEmailAddresses();
+
+        assertTrue(ret.size() == 2 && ret.contains("pierre.martin@georchestra.org"));
     }
 
     private void configureFormBean() {

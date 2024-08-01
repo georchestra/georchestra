@@ -46,6 +46,10 @@
       <map>
         <entry key="headerHeight" value="${headerHeight}" />
         <entry key="headerUrl" value="${headerUrl}" />
+        <entry key="headerScript" value="${headerScript}" />
+        <entry key="logoUrl" value="${logoUrl}" />
+        <entry key="georchestraStylesheet" value="${georchestraStylesheet:}" />
+        <entry key="competenceAreaEnabled" value="${competenceAreaEnabled:false}" />
         <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>
@@ -72,6 +76,14 @@
     <constructor-arg value="${privacy.policy.agreement.url:}" />
   </bean>
 
+  <bean id="consentAgreementActivated" class="java.lang.Boolean">
+    <constructor-arg value="${data.processing.agreement.activated:false}" />
+  </bean>
+
+  <bean id="consentAgreementUrl" class="java.lang.String">
+    <constructor-arg value="${data.processing.agreement.url:}" />
+  </bean>
+
   <!-- LDAP connection -->
   <bean id="singleContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
@@ -82,7 +94,7 @@
 
   <bean id="ldapContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator">
   </bean>
-  
+
   <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" destroy-method="destroy">
     <property name="contextSource" ref="singleContextSource"/>
     <property name="dirContextValidator" ref="ldapContextValidator"/>
@@ -120,13 +132,13 @@
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
     <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
-  
+
   <bean id="AccountGDPRDao" class="org.georchestra.console.ds.AccountGDPRDaoImpl"/>
-  
+
   <bean id="userInfoExporter" class="org.georchestra.console.ws.backoffice.users.UserInfoExporterImpl"/>
-  
+
   <bean id="GDPRAccountWorker" class="org.georchestra.console.ws.backoffice.users.GDPRAccountWorker"/>
-  
+
   <bean class="org.georchestra.ds.users.UserRule">
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
@@ -139,7 +151,7 @@
     <property name="listOfprotectedRoles">
       <description>Comma separated list of one or more protected Roles</description>
         <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
-      <value>${protectedRolesList:ADMINISTRATOR,EXTRACTORAPP,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER}</value>
+      <value>${protectedRolesList:ADMINISTRATOR,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER,IMPORT}</value>
     </property>
   </bean>
 
@@ -257,9 +269,12 @@
     <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[${instanceName}] New account waiting for validation}"/>
     <property name="changePasswordEmailFile" value="changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="${subject.change.password:[${instanceName}] Update your password}"/>
+    <property name="changePasswordOAuth2EmailFile" value="changepasswordoauth2-email-template.txt"/>
+    <property name="changePasswordOAuth2EmailSubject" value="${subject.change.password-oauth2:[${instanceName}] Update your password}"/>
     <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="newaccount-notification-template.txt"/>
+    <property name="newOAuth2AccountNotificationEmailFile" value="new-oauth2-account-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
     <property name="publicUrl" value="https://${domainName}"/>
     <property name="instanceName" value="${instanceName}"/>
@@ -286,7 +301,7 @@
   </bean>
 
   <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils"/>
-  
+
   <bean id="logUtils" class="org.georchestra.console.ws.utils.LogUtils"/>
 
   <bean id="areasService" class="org.georchestra.console.bs.areas.AreasService" init-method="initialize">

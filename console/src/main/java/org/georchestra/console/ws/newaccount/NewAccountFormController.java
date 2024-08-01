@@ -38,6 +38,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.annotations.VisibleForTesting;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -118,6 +120,12 @@ public final class NewAccountFormController {
     protected String privacyPolicyAgreementUrl;
 
     @Autowired
+    protected boolean consentAgreementActivated;
+
+    @Autowired
+    protected String consentAgreementUrl;
+
+    @Autowired
     protected LogUtils logUtils;
 
     @Autowired
@@ -146,6 +154,10 @@ public final class NewAccountFormController {
         this.emailFactory = emailFactory;
     }
 
+    public void setPasswordUtils(PasswordUtils passwordUtils) {
+        this.passwordUtils = passwordUtils;
+    }
+
     public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
         this.advancedDelegationDao = advancedDelegationDao;
     }
@@ -166,8 +178,8 @@ public final class NewAccountFormController {
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
-                "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName", "orgShortName",
-                "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo",
+                "password", "confirmPassword", "privacyPolicyAgreed", "consentAgreed", "createOrg", "orgName",
+                "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
                 "recaptcha_response_field");
     }
 
@@ -181,7 +193,11 @@ public final class NewAccountFormController {
         model.addAttribute("privacyPolicyAgreementActivated", this.privacyPolicyAgreementActivated);
         model.addAttribute("privacyPolicyAgreementUrl", this.privacyPolicyAgreementUrl);
 
+        model.addAttribute("consentAgreementActivated", this.consentAgreementActivated);
+        model.addAttribute("consentAgreementUrl", this.consentAgreementUrl);
+
         model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
+        model.addAttribute("pwdUtils", passwordUtils);
 
         session.setAttribute("reCaptchaPublicKey", reCaptchaParameters.getPublicKey());
         for (String f : validation.getRequiredUserFields()) {
@@ -213,11 +229,12 @@ public final class NewAccountFormController {
      */
     @RequestMapping(value = "/account/new", method = RequestMethod.POST)
     public String create(HttpServletRequest request, @ModelAttribute AccountFormBean formBean,
-            @RequestParam("orgCities") String orgCities, BindingResult result, SessionStatus sessionStatus, Model model)
-            throws IOException, SQLException {
+            @RequestParam(value = "orgCities", required = false, defaultValue = "") String orgCities,
+            BindingResult result, SessionStatus sessionStatus, Model model) throws IOException, SQLException {
 
         populateOrgsAndOrgTypes(model);
-
+        model.addAttribute("moderatedSignup", this.moderatedSignup);
+        model.addAttribute("pwdUtils", passwordUtils);
         validateFields(formBean, result);
 
         if (result.hasErrors()) {
@@ -240,6 +257,7 @@ public final class NewAccountFormController {
                 org.setDescription(formBean.getOrgDescription());
                 org.setUrl(formBean.getOrgUrl());
                 org.setLogo(formBean.getOrgLogo());
+                org.setMail(formBean.getOrgMail());
                 // Parse and store cities
                 orgCities = orgCities.trim();
                 if (orgCities.length() > 0)
@@ -285,8 +303,7 @@ public final class NewAccountFormController {
             final ServletContext servletContext = request.getSession().getServletContext();
 
             // List of recipients for notification email
-            List<String> recipients = accountDao.findByRole("SUPERUSER").stream().map(Account::getEmail)
-                    .collect(Collectors.toCollection(LinkedList::new));
+            List<String> recipients = getSuperUserEmailAddresses();
 
             // Retrieve emails of delegated admin if org is specified
             if (!formBean.getOrg().equals("-")) {
@@ -341,6 +358,11 @@ public final class NewAccountFormController {
         }
     }
 
+    public @VisibleForTesting List<String> getSuperUserEmailAddresses() throws DataServiceException {
+        return accountDao.findByRole("SUPERUSER").stream().map(Account::getEmail).filter(StringUtils::isNotEmpty)
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
     private void validateFields(@ModelAttribute AccountFormBean formBean, BindingResult result) {
         // uid validation
         if (validation.validateUserFieldWithSpecificMsg("uid", formBean.getUid(), result)) {
@@ -375,7 +397,11 @@ public final class NewAccountFormController {
 
         // Check if the user has agreed to the privacy policy
         if (privacyPolicyAgreementActivated) {
-            validation.validatePrivacyPolicyAgreedField(formBean.getPrivacyPolicyAgreed(), result);
+            validation.validateAgreedField(formBean.getPrivacyPolicyAgreed(), result, "privacyPolicyAgreed");
+        }
+
+        if (consentAgreementActivated) {
+            validation.validateAgreedField(formBean.getConsentAgreed(), result, "consentAgreed");
         }
 
         // Validate remaining fields
@@ -402,9 +428,13 @@ public final class NewAccountFormController {
         model.addAttribute("orgTypes", getOrgTypes());
     }
 
+    /**
+     * Create a linked Map of organization types, same order as it is in the String
+     * array orgDao.getOrgTypeValues()
+     */
     private Map<String, String> getOrgTypes() {
         return Arrays.stream(orgDao.getOrgTypeValues())
-                .collect(Collectors.toMap(Function.identity(), Function.identity()));
+                .collect(Collectors.toMap(Function.identity(), Function.identity(), (x, y) -> x, LinkedHashMap::new));
     }
 
     /**

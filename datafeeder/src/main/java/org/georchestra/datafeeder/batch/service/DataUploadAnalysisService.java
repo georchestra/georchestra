@@ -18,39 +18,28 @@
  */
 package org.georchestra.datafeeder.batch.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.georchestra.datafeeder.model.DataUploadJob;
-import org.georchestra.datafeeder.model.DatasetUploadState;
-import org.georchestra.datafeeder.model.JobStatus;
-import org.georchestra.datafeeder.model.SampleProperty;
-import org.georchestra.datafeeder.model.UserInfo;
+import com.google.common.annotations.VisibleForTesting;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.georchestra.datafeeder.model.*;
 import org.georchestra.datafeeder.repository.DataUploadJobRepository;
 import org.georchestra.datafeeder.repository.DatasetUploadStateRepository;
-import org.georchestra.datafeeder.service.DatasetMetadata;
-import org.georchestra.datafeeder.service.DatasetsService;
-import org.georchestra.datafeeder.service.FileStorageService;
-import org.georchestra.datafeeder.service.UploadPackage;
+import org.georchestra.datafeeder.service.*;
 import org.geotools.util.Converters;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Centralized service to perform uploaded dataset analysis, used by
@@ -158,6 +147,8 @@ public class DataUploadAnalysisService {
         final String typeName = item.getName();
         try {
             DatasetMetadata datasetMetadata = datasetsService.describe(path, typeName);
+            Map options = options(item);
+            item.setOptions(options);
             item.setAnalyzeStatus(JobStatus.DONE);
             item.setEncoding(datasetMetadata.getEncoding());
             item.setFeatureCount(datasetMetadata.getFeatureCount());
@@ -173,6 +164,46 @@ public class DataUploadAnalysisService {
             item.setError(e.getMessage());
         }
         return item;
+    }
+
+    private Map<String, String> options(DatasetUploadState item) throws Exception {
+        if (item.getFormat() == DataSourceMetadata.DataSourceType.CSV) {
+            return analyzeCsv(item.getAbsolutePath());
+        }
+        return Map.of();
+    }
+
+    @VisibleForTesting
+    public Map<String, String> analyzeCsv(String path) throws Exception {
+        Map<String, String> options = new HashMap<>();
+        options.put("quoteChar", "\"");
+        options.put("delimiter", ",");
+        options.put("csv", csvSixLinesAsBase64(path));
+        return options;
+
+    }
+
+    @VisibleForTesting
+    public String csvSixLinesAsBase64(String path) throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try (FileInputStream fis = new FileInputStream(path)) {
+            int numLines = 0;
+            while (true) {
+                int b = fis.read();
+                if (b == '\r') {
+                    continue;
+                }
+                if (b == '\n') {
+                    numLines++;
+                } else if (b == -1) {
+                    break;
+                }
+                os.write(b);
+                if (numLines == 6)
+                    break;
+            }
+        }
+        return Base64.getEncoder().encodeToString(os.toByteArray());
     }
 
     private void checkStatus(DatasetUploadState item, JobStatus expected) {
@@ -254,11 +285,19 @@ public class DataUploadAnalysisService {
             DatasetUploadState dataset = new DatasetUploadState();
             dataset.setName(typeName);
             dataset.setFileName(fileRelativePath);
+            dataset.setFormat(guessFormat(fileRelativePath));
             dataset.setAbsolutePath(path.toAbsolutePath().toString());
             dataset.setAnalyzeStatus(JobStatus.PENDING);
             datasets.add(dataset);
         }
         return datasets;
+    }
+
+    private DataSourceMetadata.DataSourceType guessFormat(String fileRelativePath) {
+        if (DatasetsService.isCsv(Paths.get(fileRelativePath))) {
+            return DataSourceMetadata.DataSourceType.CSV;
+        }
+        return DataSourceMetadata.DataSourceType.SHAPEFILE;
     }
 
     private DatasetUploadState createFailedDataset(String fileRelativePath, Path path, Exception e) {

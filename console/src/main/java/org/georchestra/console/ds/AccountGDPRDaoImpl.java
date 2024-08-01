@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AccountGDPRDaoImpl implements AccountGDPRDao {
 
     /**
-     * DatTimeFormatter to parse timestamps we they come in geonetworks' text column
+     * DatTimeFormatter to parse timestamps as they come in geonetworks' text column
      */
     @VisibleForTesting
     public static final DateTimeFormatter GEONETWORK_DATE_FORMAT = new DateTimeFormatterBuilder()//
@@ -72,20 +73,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     private static final String DELETE_METADATA_RECORDS = "update geonetwork.users set username = ?, name = ?, surname = ? where username = ?";
     private static final String QUERY_USER_ID_METADATA_RECORDS = "select id from geonetwork.users where username = ?";
     private static final String COUNT_USER_ID_METADATA_RECORDS = "select count(*) from geonetwork.metadata where owner = ?";
-
-    private static final String QUERY_EXTRACTORAPP_RECORDS = "select log.creation_date, log.duration, log.roles, log.org,"
-            + " layer.projection, layer.resolution, layer.format, ST_AsBinary(layer.bbox) as bbox, layer.owstype, layer.owsurl, layer.layer_name, layer.is_successful"
-            + " from extractorapp.extractor_log log left join extractorapp.extractor_layer_log layer on log.id = layer.extractor_log_id"
-            + " where log.username = ?";
-    private static final String COUNT_EXTRACTORAPP_RECORDS = "select count(*) "
-            + " from extractorapp.extractor_log log left join extractorapp.extractor_layer_log layer on log.id = layer.extractor_log_id"
-            + " where log.username = ?";
-
-    private static final String DELETE_EXTRACTORAPP_RECORDS = "update extractorapp.extractor_log set username = ? where username = ?";
-
-    private static final String QUERY_GEODOCS_RECORDS = "select standard, raw_file_content, file_hash, created_at, last_access, access_count"
-            + " from mapfishapp.geodocs where username = ?";
-    private static final String DELETE_GEODOCS_RECORDS = "update mapfishapp.geodocs set username = ? where username = ?";
 
     private static final String QUERY_OGCSTATS_RECORDS = "select date, service, layer, id, request, org, roles from ogcstatistics.ogc_services_log where user_name = ?";
     private static final String DELETE_OGCSTATS_RECORDS = "update ogcstatistics.ogc_services_log set user_name = ? where user_name = ?";
@@ -105,27 +92,30 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
      */
     public @Override DeletedRecords deleteAccountRecords(@NonNull Account account) throws DataServiceException {
         try (Connection conn = ds.getConnection()) {
+            int metadataRecords;
+            int ogcStatsRecords = 0;
             conn.setAutoCommit(false);
             try {
-                int metadataRecords;
-                int extractorRecords;
-                int geodocsRecords;
-                int ogcStatsRecords;
                 metadataRecords = deleteUserMetadataRecords(conn, account);
-                extractorRecords = deleteUserExtractorRecords(conn, account);
-                geodocsRecords = deleteUserGeodocsRecords(conn, account);
-                ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
                 conn.commit();
-                DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, extractorRecords,
-                        geodocsRecords, ogcStatsRecords);
-                log.info("Deleted records: {}", ret);
-                return ret;
             } catch (SQLException e) {
                 conn.rollback();
                 throw new DataServiceException(e);
             } finally {
                 conn.setAutoCommit(true);
             }
+            conn.setAutoCommit(false);
+            try {
+                ogcStatsRecords = deleteUserOgcStatsRecords(conn, account);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+            } finally {
+                conn.setAutoCommit(true);
+            }
+            DeletedRecords ret = new DeletedRecords(account.getUid(), metadataRecords, ogcStatsRecords);
+            log.info("Deleted records: {}", ret);
+            return ret;
         } catch (SQLException e) {
             throw new DataServiceException(e);
         }
@@ -137,34 +127,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             ps.setString(2, account.getUid());
             return ps.executeUpdate();
         }
-    }
-
-    private int deleteUserGeodocsRecords(Connection conn, @NonNull Account account) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(DELETE_GEODOCS_RECORDS)) {
-            ps.setString(1, DELETED_ACCOUNT_USERNAME);
-            ps.setString(2, account.getUid());
-            return ps.executeUpdate();
-        }
-    }
-
-    private int deleteUserExtractorRecords(Connection conn, @NonNull Account account) throws SQLException {
-        int count;
-        try (PreparedStatement ps = conn.prepareStatement(COUNT_EXTRACTORAPP_RECORDS)) {
-            ps.setString(1, account.getUid());
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    count = rs.getInt(1);
-                } else {
-                    return 0;
-                }
-            }
-        }
-        try (PreparedStatement ps = conn.prepareStatement(DELETE_EXTRACTORAPP_RECORDS)) {
-            ps.setString(1, DELETED_ACCOUNT_USERNAME);
-            ps.setString(2, account.getUid());
-            ps.executeUpdate();
-        }
-        return count;
     }
 
     private int deleteUserMetadataRecords(Connection conn, @NonNull Account account) throws SQLException {
@@ -201,18 +163,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         return count;
     }
 
-    public @Override void visitGeodocsRecords(@NonNull Account owner, @NonNull Consumer<GeodocRecord> consumer) {
-
-        final String userName = owner.getUid();
-        try {
-            int reccount = visitRecords(QUERY_GEODOCS_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createGeodocRecord, consumer);
-            log.info("Extracted {} geodocs records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     public @Override void visitOgcStatsRecords(@NonNull Account owner,
             @NonNull Consumer<OgcStatisticsRecord> consumer) {
 
@@ -222,20 +172,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
                     AccountGDPRDaoImpl::createOgcStatisticsRecord, consumer);
             log.info("Extracted {} OGC statistics records for user {}", reccount, userName);
         } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    public @Override void visitExtractorRecords(@NonNull Account owner, @NonNull Consumer<ExtractorRecord> consumer) {
-
-        final String userName = owner.getUid();
-        int reccount;
-        try {
-            reccount = visitRecords(QUERY_EXTRACTORAPP_RECORDS, ps -> ps.setString(1, userName),
-                    AccountGDPRDaoImpl::createExtractorRecord, consumer);
-            log.info("Extracted {} metadata records for user {}", reccount, userName);
-        } catch (DataServiceException e) {
-            throw new IllegalStateException(e);
+            log.info("No OGC statistics recorded for user {}", userName);
         }
     }
 
@@ -245,7 +182,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         try {
             int reccount = visitRecords(QUERY_METADATA_RECORDS, ps -> ps.setString(1, userName),
                     AccountGDPRDaoImpl::createMetadataRecord, consumer);
-            log.info("Extracted {} extractorapp records for user {}", reccount, userName);
+            log.info("Extracted {} metadata records for user {}", reccount, userName);
         } catch (DataServiceException e) {
             throw new IllegalStateException(e);
         }
@@ -286,9 +223,21 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             builder.id(rs.getLong("id"));
             // createdate character varying(30)
             // e.g. "2019-05-07T00:05:56"
+            // or "2024-04-09T11:38:57.658245Z" in newer versions of GN
             String createDateString = rs.getString("createdate");
             LocalDateTime dateTime = ifNonNull(createDateString, value -> {
-                TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(value);
+                TemporalAccessor parsed;
+                try {
+                    parsed = DateTimeFormatter.ISO_DATE_TIME.parse(value);
+                } catch (DateTimeParseException e) {
+                    try {
+                        // trying the former "geonetwork" date format
+                        parsed = GEONETWORK_DATE_FORMAT.parse(value);
+                    } catch (DateTimeParseException e2) {
+                        // giving up ...
+                        throw new RuntimeException(e);
+                    }
+                }
                 return LocalDateTime.from(parsed);
             });
 
@@ -301,53 +250,6 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static GeodocRecord createGeodocRecord(ResultSet rs) {
-        GeodocRecord.GeodocRecordBuilder builder = GeodocRecord.builder();
-        try {
-            builder.standard(rs.getString("standard"));
-            builder.rawFileContent(rs.getString("raw_file_content"));
-            builder.fileHash(rs.getString("file_hash"));
-            builder.createdAt(ifNonNull(rs.getTimestamp("created_at"), Timestamp::toLocalDateTime));
-            Timestamp lastAccess = rs.getTimestamp("last_access");
-            builder.lastAccess(lastAccess == null ? null : lastAccess.toLocalDateTime());
-            builder.accessCount(rs.getInt("access_count"));
-        } catch (SQLException e) {
-            throw new IllegalStateException(e);
-        }
-        return builder.build();
-    }
-
-    public static ExtractorRecord createExtractorRecord(ResultSet rs) {
-        ExtractorRecord.ExtractorRecordBuilder builder = ExtractorRecord.builder();
-        try {
-            byte[] bytes = rs.getBytes("bbox");
-            if (bytes != null && bytes.length > 0) {
-                WKBReader bboxReader = new WKBReader();
-                Geometry bbox = bboxReader.read(bytes);
-                builder.bbox(bbox);
-            }
-            builder.creationDate(ifNonNull(rs.getTimestamp("creation_date"), Timestamp::toLocalDateTime));
-            builder.duration(rs.getTime("duration"));
-            builder.roles(getStringArray(rs, "roles"));
-            builder.org(rs.getString("org"));
-            builder.projection(rs.getString("projection"));
-            int resolution = rs.getInt("resolution");
-            if (resolution != 0) {// resolution is nullable
-                builder.resolution(resolution);
-            }
-            builder.format(rs.getString("format"));
-            builder.owstype(rs.getString("owstype"));
-            builder.owsurl(rs.getString("owsurl"));
-            builder.layerName(rs.getString("layer_name"));
-            builder.success(rs.getBoolean("is_successful"));
-        } catch (ParseException bboxParseError) {
-            log.warn("Unable to parse bbox", bboxParseError);
-        } catch (SQLException e) {
-            throw new IllegalStateException(e);
-        }
-        return builder.build();
     }
 
     public static OgcStatisticsRecord createOgcStatisticsRecord(ResultSet rs) {

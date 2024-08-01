@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.passwordrecovery;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.UserTokenDao;
@@ -33,13 +31,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * This controller implements the interactions required to ask for a new
@@ -89,12 +85,11 @@ public class NewPasswordFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/newPassword", method = RequestMethod.GET)
-    public String setupForm(@RequestParam("token") String token, Model model) throws IOException {
-
+    public String setupForm(@RequestParam(name = "token", required = false) String token, Model model,
+            HttpServletRequest request) throws IOException {
         model.addAttribute("recaptchaActivated", reCaptchaActivated);
-
         try {
-            final String uid = this.userTokenDao.findUserByToken(token);
+            final String uid = this.userTokenDao.findUidWithoutAdditionalInfo(token);
 
             NewPasswordFormBean formBean = new NewPasswordFormBean();
 
@@ -106,9 +101,9 @@ public class NewPasswordFormController {
             return "newPasswordForm";
 
         } catch (NameNotFoundException e) {
-
-            return "passwordRecoveryForm";
-
+            model.asMap().clear();
+            request.getSession().setAttribute("errmsg", "bad.token");
+            return "redirect:/account/passwordRecovery";
         } catch (DataServiceException e) {
 
             LOG.error("cannot insert the setup the passwordRecoveryForm. " + e.getMessage());

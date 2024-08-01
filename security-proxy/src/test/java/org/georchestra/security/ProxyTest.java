@@ -1,22 +1,7 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
-
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -26,16 +11,29 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.message.BasicHttpResponse;
+import org.georchestra.security.api.UsersApi;
+import org.georchestra.security.model.GeorchestraUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -83,7 +81,7 @@ public class ProxyTest {
         targets.put("nextcloud", "http://localhost/nextcloud");
         proxy.setTargets(targets);
 
-        proxy.setDefaultTarget("/mapfishapp/");
+        proxy.setDefaultTarget("/header/");
 
     }
 
@@ -143,7 +141,7 @@ public class ProxyTest {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/");
         proxy.handleDefaultRequest(request, httpResponse);
 
-        assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
+        assertTrue(httpResponse.getRedirectedUrl().equals("/header/"));
 
     }
 
@@ -292,6 +290,28 @@ public class ProxyTest {
         testRequestEntity(RequestMethod.POST);
         testRequestEntity(RequestMethod.PUT);
         testRequestEntity(RequestMethod.PATCH);
+    }
+
+    @Test
+    public void testWhoami() throws Exception {
+        Authentication auth = new AnonymousAuthenticationToken("anonymous", "anonymousUser",
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_ANONYMOUS")));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        final GeorchestraUser toRet = new GeorchestraUser();
+        toRet.setId("anonymousUser");
+        toRet.setUsername("anonymousUser");
+        toRet.setRoles(Arrays.asList("ROLE_ANONYMOUS"));
+
+        UsersApi uapi = Mockito.mock(UsersApi.class);
+        Mockito.when(uapi.findByUsername(Mockito.anyString())).thenReturn(Optional.of(toRet));
+        proxy.setUsersApi(uapi);
+
+        request = new MockHttpServletRequest(RequestMethod.GET.toString(), "/whoami");
+        String content = proxy.whoami(request);
+
+        assertTrue(content.contains("\"username\":\"anonymousUser\"")
+                && content.contains("\"roles\":[\"ROLE_ANONYMOUS\"]"));
     }
 
     private void testRequestEntity(RequestMethod method) throws Exception {

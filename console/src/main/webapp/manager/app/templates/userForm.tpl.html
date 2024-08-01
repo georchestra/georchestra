@@ -1,6 +1,6 @@
 <form class="form-horizontal" name="adminUserForm">
 
-  <div ng-if="!model">pas de model</div>
+  <div ng-if="!model">no model</div>
 
   <div class="row user-form" ng-init="view={edit_login: false}">
 
@@ -119,19 +119,21 @@
 
       <hr>
 
-      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid}">
-        <label class="col-sm-4" for="uid" translate>user.login</label>
-        <div class="col-sm-8" ng-if="!view.edit_login">
-          {{model.uid}} (<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)
+      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid && !model.isExternalAuth}">
+        <label class="col-sm-4" for="uid" ng-if="!model.isExternalAuth" translate>user.login</label>
+        <label class="col-sm-4" for="uid" ng-if="model.isExternalAuth" translate>account.external</label>
+        <div class="col-sm-8 break-word" ng-if="!view.edit_login">
+          <div ng-if="model.isExternalAuth"><b>{{ model.oAuth2Provider }} :</b><br></div>
+          {{model.uid}} <span ng-if="!model.isExternalAuth">(<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)</span>
         </div>
         <div class="col-sm-8" ng-if="view.edit_login">
           <!-- Server validation is in java/org/georchestra/console/ws/newaccount/NewAccountFormController.java -->
           <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" ng-required="required.uid" ng-pattern="/^[a-z][a-z0-9_\\\\.\\\\-]*$/i">
         </div>
       </div>
-      <hr>
+      <hr ng-if="!model.isExternalAuth">
 
-      <div class="form-group form-group-sm" ng-if="model.$promise" ng-class="{required: required.preferredLanguage}">
+      <div class="form-group form-group-sm" ng-if="model.$promise && !model.isExternalAuth" ng-class="{required: required.preferredLanguage}">
         <label class="col-sm-4" for="givenName" translate>user.password</label>
         <a href="/console/account/passwordRecovery?email={{user.user.mail | encodeURIComponent}}"
           target="_blank" class="col-sm-8 password">
@@ -139,6 +141,7 @@
           <i class="glyphicon glyphicon-new-window"></i>
         </a>
       </div>
+
       <div ng-if="platformInfos.saslEnabled">
         <div class="form-group form-group-sm" ng-if="model.$promise">
           <label class="col-sm-4" for="saslUser">

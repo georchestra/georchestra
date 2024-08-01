@@ -26,13 +26,13 @@ angular.module('manager')
       'GN_EDITOR',
       'GN_REVIEWER',
       'ORGADMIN',
-      'EXTRACTORAPP',
       'MAPSTORE_ADMIN',
       'USER',
       'PENDING',
       'EXPIRED',
       'REFERENT',
-      'TEMPORARY'
+      'TEMPORARY',
+      'IMPORT'
     ]
     return () => adminRoles
   }]).factory('readonlyRoleList', [() => {

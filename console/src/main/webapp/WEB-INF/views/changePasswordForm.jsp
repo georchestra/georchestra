@@ -53,6 +53,15 @@
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<s:message code="changePasswordForm.success" />
 			</div>
+            <script type="text/javascript">
+                localStorage.setItem("passwordChanged", "true");
+                setTimeout(() => {
+                    $( window ).load(function() {
+                        if (window.location.href.indexOf('reload')==-1) {
+                            window.location.replace(window.location.href+'?reload');
+                    }});
+                }, 1000);
+            </script>
 			</c:if>
 
 			<s:bind path="*">
@@ -72,6 +81,28 @@
 				<t:password path="confirmPassword" required="true" onblur="confirmPasswordOnBlur();">
 					<jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
 				</t:password>
+			</fieldset>
+			<fieldset>
+				<div>
+					<small>
+						<p><strong><s:message code="password.policy"/>:</strong></p>
+						<div style="padding-left: 15px">
+							<p><s:message code="password.error.sizeError" arguments="${pwdUtils.minimumLength}"/></p>
+							<c:if test="${pwdUtils.requireLowers}" >
+								<p><s:message code="password.error.requireLowers"/></p>
+							</c:if>
+							<c:if test="${pwdUtils.requireUppers}" >
+								<p><s:message code="password.error.requireUppers"/></p>
+							</c:if>
+							<c:if test="${pwdUtils.requireDigits}" >
+								<p><s:message code="password.error.requireDigits"/></p>
+							</c:if>
+							<c:if test="${pwdUtils.requireSpecials}" >
+								<p><s:message code="password.error.requireSpecials"/></p>
+							</c:if>
+						</div>
+					</small>
+				</div>
 			</fieldset>
 			<fieldset>
 				<div class="form-group">

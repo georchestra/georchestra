@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--  first following line creates a rabbit connection factory with specified parameters -->
+    <context:property-placeholder location="file:${georchestra.datadir}/default.properties,
+     file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+
+    <rabbit:connection-factory id="connectionFactory" host="${rabbitmqHost}" port="${rabbitmqPort}" username="${rabbitmqUser}" password="${rabbitmqPassword}" />
+    <!-- obtain admin rights to create the an exchange -->
+    <rabbit:admin connection-factory="connectionFactory" />
+
+    <bean id="rabbitmqEventsSender" class="org.georchestra.console.events.RabbitmqEventsSender" depends-on="eventTemplate">
+        <property name="eventTemplate" ref="eventTemplate"/>
+    </bean>
+
+    <!-- create a bean which can send message to OAUTH2-EXCHANGE for the Java program to call -->
+    <rabbit:template id="eventTemplate" connection-factory="connectionFactory"  exchange="OAUTH2-EXCHANGE-GATEWAY"/>
+
+</beans>

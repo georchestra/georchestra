@@ -1,5 +1,6 @@
 package org.georchestra.console.ws.changepassword;
 
+import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -28,6 +29,8 @@ import org.mockito.Mockito;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +42,8 @@ import org.springframework.web.bind.WebDataBinder;
 
 public class ChangePasswordControllerTest {
 
+    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private MockHttpServletResponse response = new MockHttpServletResponse();
     private ChangePasswordFormController ctrlToTest;
     private LdapTemplate ldapTemplate;
     private Model model;
@@ -86,8 +91,19 @@ public class ChangePasswordControllerTest {
     @Test
     public void setupForm() throws Exception {
         userIsSpringSecurityAuthenticatedAndExistInLdap("me");
-        String ret = ctrlToTest.setupForm(model);
+        request.addHeader(SEC_EXTERNAL_AUTHENTICATION, "false");
+
+        String ret = ctrlToTest.setupForm(request, response, model);
         assertEquals("changePasswordForm", ret);
+    }
+
+    @Test
+    public void setupFormWithExternalAuth() throws Exception {
+        userIsSpringSecurityAuthenticatedAndExistInLdap("me");
+        request.addHeader(SEC_EXTERNAL_AUTHENTICATION, "true");
+
+        String ret = ctrlToTest.setupForm(request, response, model);
+        assertEquals("userManagedBySASL", ret);
     }
 
     @Test

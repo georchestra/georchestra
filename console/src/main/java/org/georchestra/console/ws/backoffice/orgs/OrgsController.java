@@ -481,6 +481,7 @@ public class OrgsController {
         org.setNote(json.optString(Org.JSON_NOTE));
         org.setUrl(json.optString(Org.JSON_URL));
         org.setLogo(json.optString(Org.JSON_LOGO));
+        org.setMail(json.optString(Org.JSON_MAIL));
     }
 
     /**

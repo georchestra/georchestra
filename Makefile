@@ -1,18 +1,23 @@
 # Docker related targets
 
-GEOSERVER_EXTENSION_PROFILES=wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,jp2k,authkey,mapstore2,mbstyle,web-resource,sldservice
+GEOSERVER_EXTENSION_PROFILES=wps-download,app-schema,control-flow,csw,inspire,libjpeg-turbo,monitor,pyramid,wps,css,jp2k,authkey,mapstore2,mbstyle,web-resource,sldservice,geopkg-output
 BTAG=latest
 
 docker-pull-jetty:
 	docker pull jetty:9-jre11
 
 docker-build-ldap:
-	docker pull debian:buster
+	docker pull debian:bookworm
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
 
+docker-build-ldap-withrotation:
+	docker pull debian:bookworm
+	cd ldap; \
+	docker build -t georchestra/ldap:${BTAG} --build-arg PM_POLICY=rotation .
+
 docker-build-database:
-	docker pull postgres:13
+	docker pull postgres:15
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
@@ -51,7 +56,7 @@ docker-build-datafeeder: build-deps
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,security-proxy,header,console,analytics,atlas,datafeeder
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,header,console,analytics,datafeeder
 
 docker-build: docker-build-gn docker-build-geoserver docker-build-georchestra
 
@@ -95,7 +100,7 @@ deb-build-geowebcache: war-build-geowebcache
 	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver deb-build-geowebcache
-	mvn package deb:package -pl atlas,datafeeder,datafeeder-ui,security-proxy,header,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl datafeeder,datafeeder-ui,security-proxy,header,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:

@@ -26,6 +26,7 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.security.SecurityHeaders;
@@ -53,7 +54,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EditOrgDetailsFormController {
     private OrgsDao orgsDao;
     private Validation validation;
-    private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address" };
+    private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address", "mail" };
 
     private static final Log LOG = LogFactory.getLog(EditOrgDetailsFormController.class.getName());
 
@@ -92,6 +93,7 @@ public class EditOrgDetailsFormController {
         model.addAttribute("name", org.getName());
         model.addAttribute("id", org.getId());
         model.addAttribute("logo", org.getLogo());
+        model.addAttribute("mail", org.getMail());
         HttpSession session = request.getSession();
         for (String f : FIELDS) {
             if (validation.isOrgFieldRequired(f)) {
@@ -108,6 +110,7 @@ public class EditOrgDetailsFormController {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
         validation.validateOrgField("description", formBean.getDescription(), resultErrors);
+        // TODO validate mail address for the organization ?
 
         if (resultErrors.hasErrors()) {
             return "editOrgDetailsForm";
@@ -123,6 +126,9 @@ public class EditOrgDetailsFormController {
         if (!logo.isEmpty()) {
             orgOrigin.setLogo(transformLogoFileToBase64(logo));
         }
+
+        orgOrigin.setMail(formBean.getMail());
+
         orgsDao.update(orgOrigin);
         model.addAttribute("success", true);
 
@@ -147,6 +153,7 @@ public class EditOrgDetailsFormController {
         formBean.setUrl(org.getUrl());
         formBean.setAddress(org.getAddress());
         formBean.setOrgType(org.getOrgType());
+        formBean.setMail(org.getMail());
         return formBean;
     }
 
@@ -181,6 +188,9 @@ public class EditOrgDetailsFormController {
 
         if (!org.getAddress().equals(formBean.getAddress())) {
             logUtils.createAndLogDetails(id, Org.JSON_ADDRESS, org.getAddress(), formBean.getAddress(), type);
+        }
+        if (StringUtils.isNotEmpty(org.getMail()) && !org.getMail().equals(formBean.getMail())) {
+            logUtils.createAndLogDetails(id, Org.JSON_MAIL, org.getMail(), formBean.getMail(), type);
         }
     }
 

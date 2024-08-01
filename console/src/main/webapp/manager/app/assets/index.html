@@ -14,11 +14,12 @@
 
 <body ng-app="manager" ng-strict-di ng-controller="AppController">
 
-  <iframe src="/header/?active=console" scrolling="no" frameborder="0"></iframe>
+  <geor-header legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}" style="width:100%;height:{{ platformInfos.headerHeight }}px;border:none;"  logo-url="{{ trustSrc(platformInfos.logoUrl) }}" stylesheet="{{ trustSrc(platformInfos.georchestraStylesheet) }}" active-app="console"></geor-header>
+  <script ng-src="{{ trustSrc(platformInfos.headerScript) }}"></script>
 
   <div flash-message="2000"></div>
 
-  <div class="container">
+  <div class="container" style="padding-top:20px">
 
     <div class="profile label label-{{(profile === 'SUPERUSER') ? 'info' : 'warning'}} pull-right" title="{{'index.' + profile + 'tip' | translate }}">
       {{ 'index.' + profile | translate}}
@@ -40,7 +41,7 @@
       <li role="presentation" ng-class="{'active': isActive(['delegations'])}" ng-if="profile === 'SUPERUSER'">
         <a ng-link="delegations({})" translate>nav.delegations</a>
       </li>
-      <li role="presentation" ng-class="{'active': isActive(['analytics'])}">
+      <li role="presentation" ng-class="{'active': isActive(['analytics'])}" ng-if="platformInfos.analyticsEnabled || false">
         <a ng-link="analytics({'role': 'all'})" translate>nav.analytics</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['logs'])}">

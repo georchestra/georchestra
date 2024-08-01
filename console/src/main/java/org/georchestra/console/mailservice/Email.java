@@ -151,11 +151,15 @@ public class Email {
         if (isValidEmailAddress(from)) {
             message.setFrom(new InternetAddress(from));
         }
+        InternetAddress[] recipientAddress = new InternetAddress[recipients.size()];
+        int counter = 0;
         for (String recipient : recipients) {
             if (!isValidEmailAddress(recipient))
                 throw new AddressException("Invalid recipient : " + recipient);
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+            recipientAddress[counter] = new InternetAddress(recipient.trim());
+            counter++;
         }
+        message.setRecipients(Message.RecipientType.TO, recipientAddress);
         if (isValidEmailAddress(replyTo)) {
             message.setReplyTo(new InternetAddress[] { new InternetAddress(replyTo) });
         }

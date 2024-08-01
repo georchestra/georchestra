@@ -187,6 +187,8 @@ public class RolesController {
         Role res;
         if (cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
             res = this.generateVirtualRoles().getLeft();
+        else if (cn.equals(RolesController.VIRTUAL_EXPIRED_ROLE_NAME))
+            res = this.generateVirtualRoles().getRight();
         else
             res = this.roleDao.findByCommonName(cn);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

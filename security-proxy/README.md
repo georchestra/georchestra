@@ -118,7 +118,7 @@ Client --> SP1 --> SP2  --> console
                         |
                         |----> geoserver
                         |
-                        -----> mapfishapp
+                        -----> header
 ```
 
 With this setup, every request coming from SP1 is forwarded (with untouched `sec-*` headers) by SP2.
@@ -138,5 +138,4 @@ The SP1 `targets-mapping.properties` configuration file should target SP2, eg wi
 ```properties
 geoserver=http://sp2:8080/geoserver/
 console=http://sp2:8080/console/
-mapfishapp=http://sp2:8080/mapfishapp/
 ```

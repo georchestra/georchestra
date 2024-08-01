@@ -14,6 +14,7 @@ on:
 
 jobs:
   build:
+    if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -21,7 +22,7 @@ jobs:
       uses: actions/checkout@v1
 
     - name: "Setting up Java"
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
         java-version: '11'
         distribution: 'adopt'
@@ -50,34 +51,46 @@ jobs:
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
-      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
+    - name: "Update Docker Hub Description"
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
+      uses: peter-evans/dockerhub-description@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        repository: georchestra/security-proxy
+        readme-filepath: ./security-proxy/DOCKER_HUB.md
+        short-description: 'Security-proxy module for the geOrchestra SDI'
+
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker tag georchestra/security-proxy:${{ steps.version.outputs.VERSION }} georchestra/security-proxy:latest
         docker push georchestra/security-proxy:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/heads/24.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/security-proxy:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/22.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
+      if: contains(github.ref, 'refs/tags/24.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/security-proxy:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
       run:  ./mvnw deploy -pl :security-proxy -P-all,security-proxy -DskipTests
+      if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       continue-on-error: true
       env:
         ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
         ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
 
     - name: "Remove SNAPSHOT jars from repository"
+      if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         find .m2/repository -name "*SNAPSHOT*" -type d | xargs rm -rf {}

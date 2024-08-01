@@ -159,7 +159,9 @@ public class GeorchestraDataBackendService implements DataBackendService {
     private String resolveTargetTypeName(@NonNull DatasetUploadState dataset, Map<String, String> connectionParams)
             throws IOException {
 
-        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getName());
+        // 60 cause postgis table name cannot be more than 63 characters
+        final String typeName = nameResolver.resolveDatabaseTableName(dataset.getPublishing().getTitle().substring(0,
+                Math.min(60, dataset.getPublishing().getTitle().length())));
         String resolvedTypeName = typeName;
         DataStore targetStore = datasetsService.loadDataStore(connectionParams);
         try {
@@ -181,7 +183,14 @@ public class GeorchestraDataBackendService implements DataBackendService {
             throw new IllegalStateException("Georchestra organization name not provided in job.user.organization.id");
         }
         String schema = nameResolver.resolveDatabaseSchemaName(orgName);
-        connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);
+
+        for (String k : connectionParams.keySet()) {
+            String v = connectionParams.get(k);
+            if ("<schema>".equals(v)) {
+                connectionParams.put(PostgisNGDataStoreFactory.SCHEMA.key, schema);
+            }
+        }
+
         return connectionParams;
     }
 }

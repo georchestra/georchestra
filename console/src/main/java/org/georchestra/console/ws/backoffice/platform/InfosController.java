@@ -19,6 +19,8 @@
 
 package org.georchestra.console.ws.backoffice.platform;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class InfosController {
     /**
-     * Bring general information about georchestra or console.
+     * Brings general information about geOrchestra or console.
      */
     private static final String BASE_MAPPING = "/private";
 
@@ -39,13 +41,55 @@ public class InfosController {
     @Value("${saslServer:#{null}}")
     private String saslServer;
 
+    @Value("${analyticsEnabled:true}")
+    @Getter
+    @Setter
+    private boolean analyticsEnabled;
+
+    @Value("${extractorappEnabled:false}")
+    @Getter
+    @Setter
+    private boolean extractorappEnabled;
+
+    @Value("${competenceAreaEnabled:false}")
+    @Getter
+    @Setter
+    private boolean competenceAreaEnabled;
+
+    @Value("${useLegacyHeader:false}")
+    private boolean useLegacyHeader;
+
+    @Value("${headerUrl:/header/}")
+    private String headerUrl;
+
+    @Value("${headerHeight:90}")
+    private String headerHeight;
+
+    @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
+    private String headerScript;
+
+    @Value("${logoUrl:https://www.georchestra.org/public/georchestra-logo.svg}")
+    private String logoUrl;
+
+    @Value("${georchestraStylesheet:}")
+    private String georchestraStylesheet;
+
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
-    @PreAuthorize(value = "hasRole('SUPERUSER')")
+    @PreAuthorize(value = "hasAnyRole('SUPERUSER', 'ORGADMIN')")
     @ResponseBody
     public String getPlatformInfos() {
         JSONObject ret = new JSONObject();
         ret.put("saslEnabled", saslEnabled);
         ret.put("saslServer", saslServer);
+        ret.put("analyticsEnabled", analyticsEnabled);
+        ret.put("extractorappEnabled", extractorappEnabled);
+        ret.put("competenceAreaEnabled", competenceAreaEnabled);
+        ret.put("useLegacyHeader", useLegacyHeader);
+        ret.put("headerUrl", headerUrl);
+        ret.put("headerHeight", headerHeight);
+        ret.put("headerScript", headerScript);
+        ret.put("logoUrl", logoUrl);
+        ret.put("georchestraStylesheet", georchestraStylesheet);
         return ret.toString();
     }
 }

@@ -29,7 +29,9 @@
 				</div>
 			</c:if>
 			<c:if test="${status.error}">
-				<span id="span-error" class="help-block">${status.errorMessage}</span>
+				<c:forEach items="${status.errorMessages}" var="errorMessage">
+				    <span id="span-error" class="help-block"><c:out value="${errorMessage}" /></span>
+				</c:forEach>
 			</c:if>
 			<c:if test="${not empty spanId}">
 				<span id="${spanId}" class="help-block label label-danger"></span>

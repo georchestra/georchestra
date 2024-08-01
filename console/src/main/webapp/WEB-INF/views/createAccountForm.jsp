@@ -124,6 +124,10 @@
                         <jsp:attribute name="label"><s:message code="org.creation.orgUrl"/></jsp:attribute>
                     </t:input>
 
+                    <t:input path="orgMail" required="${orgMailRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgMail"/></jsp:attribute>
+                    </t:input>
+
                     <t:textarea path="orgLogo" required="${orgLogoRequired}">
                         <jsp:attribute name="label"><s:message code="org.creation.orgLogo"/></jsp:attribute>
                     </t:textarea>
@@ -162,7 +166,9 @@
 
                     <div ng-app="manager" ng-strict-di ng-controller="StandaloneController">
                       <imageinput target="'#orgLogo'" class="form-group"></imageinput>
-                      <areas item="org"></areas>
+                        <c:if test="${competenceAreaEnabled}">
+                            <areas item="org"></areas>
+                        </c:if>
                     </div>
 
                 </div>
@@ -187,6 +193,28 @@
                     <jsp:attribute name="label"><s:message code="confirmPassword.label" /></jsp:attribute>
                 </t:password>
             </fieldset>
+            <fieldset class="col-12">
+                <div class="col-lg-8 col-lg-offset-4">
+                    <small>
+                        <p><strong><s:message code="password.policy"/>:</strong></p>
+                        <div style="padding-left: 15px">
+                            <p><s:message code="password.error.sizeError" arguments="${pwdUtils.minimumLength}"/></p>
+                            <c:if test="${pwdUtils.requireLowers}" >
+                                <p><s:message code="password.error.requireLowers"/></p>
+                            </c:if>
+                            <c:if test="${pwdUtils.requireUppers}" >
+                                <p><s:message code="password.error.requireUppers"/></p>
+                            </c:if>
+                            <c:if test="${pwdUtils.requireDigits}" >
+                                <p><s:message code="password.error.requireDigits"/></p>
+                            </c:if>
+                            <c:if test="${pwdUtils.requireSpecials}" >
+                                <p><s:message code="password.error.requireSpecials"/></p>
+                            </c:if>
+                        </div>
+                    </small>
+                </div>
+            </fieldset>
 
             <c:if test="${privacyPolicyAgreementActivated}">
             <fieldset>
@@ -197,6 +225,20 @@
                     </jsp:attribute>
                     <jsp:attribute name="checkboxLabel">
                         <s:message code="privacyPolicyAgreed.checkboxLabel" arguments="${privacyPolicyAgreementUrl}" />
+                    </jsp:attribute>
+                </t:privacyPolicyAgreement>
+            </fieldset>
+            </c:if>
+
+            <c:if test="${consentAgreementActivated}">
+            <fieldset>
+                <legend><s:message code="createAccountForm.fieldset.consentAgreement"/></legend>
+                <t:privacyPolicyAgreement path="consentAgreed" required="true">
+                    <jsp:attribute name="label">
+                        <s:message code="consentAgreed.label" />
+                    </jsp:attribute>
+                    <jsp:attribute name="checkboxLabel">
+                        <s:message code="consentAgreed.checkboxLabel" arguments="${consentAgreementUrl}" />
                     </jsp:attribute>
                 </t:privacyPolicyAgreement>
             </fieldset>
@@ -269,6 +311,7 @@
         if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() &
                <c:if test="${recaptchaActivated}"> testRecaptcha() & </c:if>
                <c:if test="${privacyPolicyAgreementActivated}"> testPrivacyPolicyAgreed() & </c:if>
+               <c:if test="${consentAgreementActivated}"> testConsentAgreed() & </c:if>
                testField("phone") & testField("title") & testField("description") & testOrg()
         ) {
             return true;

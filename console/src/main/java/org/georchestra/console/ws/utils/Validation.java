@@ -63,6 +63,7 @@ public class Validation {
 
         // Add mandatory fields for user
         this.requiredUserFields.add("email");
+        this.requiredUserFields.add("newEmail");
         this.requiredUserFields.add("uid");
         this.requiredUserFields.add("password");
         this.requiredUserFields.add("confirmPassword");
@@ -148,9 +149,9 @@ public class Validation {
         return !this.isUserFieldRequired(field) || StringUtils.hasLength(value);
     }
 
-    public void validatePrivacyPolicyAgreedField(boolean value, Errors errors) {
+    public void validateAgreedField(boolean value, Errors errors, String rejectValue) {
         if (!value)
-            errors.rejectValue("privacyPolicyAgreed", "error.required", "required");
+            errors.rejectValue(rejectValue, "error.required", "required");
     }
 
     public boolean validateOrgField(String field, JSONObject json) {

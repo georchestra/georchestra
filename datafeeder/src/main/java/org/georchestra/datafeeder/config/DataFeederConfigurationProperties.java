@@ -80,6 +80,7 @@ public @Data class DataFeederConfigurationProperties {
     public static @Data class PublishingConfiguration {
         private GeoServerPublishingConfiguration geoserver = new GeoServerPublishingConfiguration();
         private GeonetworkPublishingConfiguration geonetwork = new GeonetworkPublishingConfiguration();
+        private OgcApiFeaturesPublishingConfiguration ogcfeatures = new OgcApiFeaturesPublishingConfiguration();
         private BackendConfiguration backend = new BackendConfiguration();
     }
 
@@ -89,7 +90,7 @@ public @Data class DataFeederConfigurationProperties {
         private String templateRecordId;
         private URI templateRecord;
         private URI templateTransform;
-        private String defaultResourceType = "series";
+        private String defaultResourceType = "dataset";
     }
 
     @Data
@@ -144,6 +145,10 @@ public @Data class DataFeederConfigurationProperties {
          * geoserver it might use a JNDI resource)
          */
         private Map<String, String> geoserver = new HashMap<>();
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    public static @Data class OgcApiFeaturesPublishingConfiguration extends ExternalApiConfiguration {
     }
 
     /**

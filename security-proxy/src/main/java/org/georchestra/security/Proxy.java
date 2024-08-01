@@ -22,6 +22,7 @@ package org.georchestra.security;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,14 +45,19 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.ds.DataServiceException;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
+import org.georchestra.security.api.UsersApi;
+import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
+import org.json.JSONObject;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,6 +66,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -137,6 +144,10 @@ public class Proxy {
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
+
+    @Autowired
+    @Setter
+    private UsersApi usersApi;
 
     /**
      * Data source to set on {@link OGCServicesAppender#setDataSource}
@@ -326,7 +337,7 @@ public class Proxy {
 
     /**
      * Entry point used for security-proxified webapps. Note: the url parameter is
-     * sometimes used by the underlying webapps (e.g. mapfishapp and the mfprint
+     * sometimes used by the underlying webapps (e.g. header and the mfprint
      * configuration). hence we need to allow it in the following "params" array.*
      */
     @RequestMapping(value = "/**", params = { "!login" }, method = { GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE,
@@ -347,9 +358,49 @@ public class Proxy {
     }
 
     /**
+     * Entry point available for non security-proxified webapps to get information
+     * about current user.
+     */
+    @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public String whoami(HttpServletRequest request) throws DataServiceException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final String authName = authentication.getName();
+
+        Optional<GeorchestraUser> usr = usersApi.findByUsername(authName);
+
+        final JSONObject ret = new JSONObject();
+        final JSONObject georUsr = new JSONObject();
+        if (usr.isPresent()) {
+            GeorchestraUser finalUser = usr.get();
+            georUsr.put("username", finalUser.getUsername());
+            georUsr.put("roles", finalUser.getRoles().stream().map(r -> r.startsWith("ROLE_") ? r : "ROLE_".concat(r))
+                    .collect(Collectors.toList()));
+            georUsr.put("organization", finalUser.getOrganization());
+            georUsr.put("id", finalUser.getId());
+            georUsr.put("lastUpdated", finalUser.getLastUpdated());
+            georUsr.put("firstName", finalUser.getFirstName());
+            georUsr.put("lastName", finalUser.getLastName());
+            georUsr.put("email", finalUser.getEmail());
+            georUsr.put("postalAddress", finalUser.getPostalAddress());
+            georUsr.put("telephoneNumber", finalUser.getTelephoneNumber());
+            georUsr.put("title", finalUser.getTitle());
+            georUsr.put("notes", finalUser.getNotes());
+            georUsr.put("ldapWarn", finalUser.getLdapWarn());
+            georUsr.put("ldapRemainingDays", finalUser.getLdapRemainingDays());
+            georUsr.put("oauth2Provider", finalUser.getOAuth2Provider());
+            georUsr.put("oauth2Uid", finalUser.getOAuth2Uid());
+            ret.put("GeorchestraUser", georUsr);
+        } else {
+            ret.put("GeorchestraUser", JSONObject.NULL);
+        }
+        return ret.toString();
+    }
+
+    /**
      * Indicates whether the requested URL is a one protected by the Security-proxy
-     * or not, e.g. urlIsProtected(mapfishapp) will generally return true (unless if
-     * mapfishapp is not configured on this geOrchestra instance, which is probably
+     * or not, e.g. urlIsProtected(header) will generally return true (unless if
+     * header is not configured on this geOrchestra instance, which is probably
      * unlikely).
      *
      * @param request the HttpServletRequest
@@ -574,7 +625,7 @@ public class Proxy {
      * @param finalResponse the servlet response
      * @param sURL          the url to proxify onto
      * @param localProxy    true if the request targets a security-proxyfied webapp
-     *                      (e.g. mapfishapp, ...), false otherwise
+     *                      (e.g. header, ...), false otherwise
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL,
             boolean localProxy) {

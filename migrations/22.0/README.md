@@ -188,4 +188,4 @@ rm modify-*.ldif
 
 Existing CAS webapp sources have been removed from this repository. The new CAS webapp sources for georchestra now live in their [own one](https://github.com/georchestra/georchestra-cas-server).
 
-For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799) and [installation instructions](../../docs/setup/cas6.md).
+For more information on the upgrade from CAS 4 to CAS 6, please refer to [issue 2799](https://github.com/georchestra/georchestra/issues/2799) and [installation instructions](../../docsv1/setup/cas6.md).

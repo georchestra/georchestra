@@ -1,0 +1,40 @@
+dn: cn={7}georchestra,cn=schema,cn=config
+changetype: modify
+add: olcAttributeTypes
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.3
+    NAME 'oAuth2Provider'
+    DESC 'OAuth2 provider for external identity provider users)'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+-
+
+dn: cn={7}georchestra,cn=schema,cn=config
+changetype: modify
+add: olcAttributeTypes
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.4
+    NAME 'oAuth2Uid'
+    DESC 'OAuth2 UID for external identity provider users)'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE )
+
+-
+
+dn: cn={7}georchestra,cn=schema,cn=config
+changetype: modify
+delete: olcObjectClasses
+olcObjectClasses: {0}
+
+-
+
+dn: cn={7}georchestra,cn=schema,cn=config
+changetype: modify
+add: olcObjectClasses
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.1
+    NAME 'georchestraUser'
+    DESC 'geOrchestra user'
+    SUP top
+    AUXILIARY
+    MAY ( privacyPolicyAgreementDate $ knowledgeInformation $ georchestraObjectIdentifier $ oAuth2Provider $ oAuth2Uid))

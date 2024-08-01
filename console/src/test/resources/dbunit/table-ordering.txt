@@ -1,7 +1,4 @@
-mapfishapp.geodocs
 ogcstatistics.ogc_services_log
-extractorapp.extractor_layer_log
-extractorapp.extractor_log
 geonetwork.useraddress
 geonetwork.email
 geonetwork.metadatacateg

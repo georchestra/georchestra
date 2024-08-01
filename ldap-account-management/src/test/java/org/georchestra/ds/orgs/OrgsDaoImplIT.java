@@ -1,20 +1,6 @@
 package org.georchestra.ds.orgs;
 
-import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-
+import com.google.common.collect.Lists;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountImpl;
@@ -31,7 +17,17 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.google.common.collect.Lists;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.String.format;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
@@ -217,5 +213,24 @@ public class OrgsDaoImplIT {
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
         assertTrue("Expected 6 cities", org.getCities().size() == 6);
+    }
+
+    @Test
+    public void testOrgAttributeMapperRemovingAllCities() {
+        Org ncOrg = new Org();
+        ncOrg.setId("ncorg");
+        ncOrg.setName("ncorg");
+        ncOrg.setShortName("no cities org");
+        ncOrg.setCities(Lists.newArrayList("Paris"));
+        ncOrg.setOrgType("Non Profit");
+        dao.insert(ncOrg);
+        ncOrg = dao.findByCommonName(ncOrg.getId());
+        ncOrg.setCities(List.of());
+
+        dao.update(ncOrg);
+
+        Org updated = dao.findByCommonName(ncOrg.getId());
+        assertEquals(ncOrg, updated);
+        assertEquals(0, updated.getCities().size());
     }
 }

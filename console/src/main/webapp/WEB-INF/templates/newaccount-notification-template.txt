@@ -1,11 +1,13 @@
 Dear admin,
 
-A new user signed up on {publicUrl}/ !
+A new {oauth2} user signed up on {publicUrl}/ !
 
 User name: {name}
 User email: {email}
-User ID: {uid}
-User Organization: {org}
+{uid_msg}{org_msg}{provider_msg}
+
+You can manager {name} account parameters on {publicUrl}/console/manager/users/{user_id}/infos !
+
 
 ---
 Sent by {instanceName} ({publicUrl}/)

@@ -19,21 +19,13 @@
 		]
 	},
 	{
-		"id": "7a75bb00-6f0a-4917-96d2-41e90f7b8651",
-		"name": "EXTRACTORAPP",
-		"description": "This role allows users to extract geodata",
-		"lastUpdated": "31819308e18f275855187718f5a7967d4da659728e6b8ccff17cc81cf7c2070f",
-		"members": [
-			"testadmin"
-		]
-	},
-	{
 		"id": "ab9d8932-a17c-4767-840d-940a183654f3",
 		"name": "GN_ADMIN",
 		"description": "This role grants admin access to GeoNetwork",
-		"lastUpdated": "23d138ea682a104ef579712a308444899440c607a1c7253c3ba0760aa500ae1a",
+		"lastUpdated": "208d95ebddc7d6772babe417ade1c440af5b2d614fa3bef3bd1a8e419975f718",
 		"members": [
-			"testadmin"
+			"testadmin",
+			"idatafeeder"
 		]
 	},
 	{
@@ -61,6 +53,17 @@
 		"lastUpdated": "e769f6007949980f048f3e40aa670e4f7bb2ca227551dd4440f906cfb2cca613",
 		"members": [
 			"testadmin"
+		]
+	},
+	{
+		"id": "2a6fb334-5b93-4b4b-9f48-f39b6a04376c",
+		"name": "IMPORT",
+		"description": "This role allows users to publish data with the importer application.",
+		"lastUpdated": "71fc44b07ffd0f98806894ac6d38e780e81c4c4c2831e896d63f8ac04d03f0a4",
+		"members": [
+			"testadmin",
+			"testuser",
+			"idatafeeder"
 		]
 	},
 	{
@@ -99,6 +102,6 @@
 			"testreviewer",
 			"testadmin",
 			"testdelegatedadmin"
-        ]
+		]
 	}
 ]

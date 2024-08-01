@@ -131,7 +131,7 @@ public class HeadersManagementStrategy {
      * may modify the headers slightly
      *
      * @param localProxy        true if the request targets a security-proxyfied
-     *                          webapp (e.g. mapfishapp, ...), false otherwise
+     *                          webapp (e.g. header, ...), false otherwise
      * @param targetServiceName
      */
     public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
