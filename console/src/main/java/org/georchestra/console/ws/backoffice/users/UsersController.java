@@ -25,13 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -216,6 +210,7 @@ public class UsersController {
             res.add(simpleAccount);
         }
 
+        res.sort((a, b) -> a.getSurname().compareToIgnoreCase(b.getSurname()));
         return res;
     }
 
