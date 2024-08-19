@@ -210,7 +210,7 @@ public class UsersController {
             res.add(simpleAccount);
         }
 
-        res.sort((a, b) -> a.getSurname().compareToIgnoreCase(b.getSurname()));
+        res.sort(Comparator.comparing(User::getSurname, Comparator.nullsLast(String::compareToIgnoreCase)));
         return res;
     }
 
