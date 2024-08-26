@@ -444,6 +444,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <packagingExcludes>manager/node_modules/**</packagingExcludes>
+          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
       <plugin>
