@@ -42,10 +42,10 @@
     <skipUT>false</skipUT>
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
-    <gt.version>26.4</gt.version>
+    <gt.version>29.5</gt.version>
     <guava.version>33.2.1-jre</guava.version>
     <lombok.version>1.18.22</lombok.version>
-    <postgres.version>42.4.3</postgres.version>
+    <postgres.version>42.7.4</postgres.version>
     <json.version>20180813</json.version>
     <camel.version>2.25.0</camel.version>
     <camel-extras.version>2.14.1</camel-extras.version>
@@ -130,7 +130,7 @@
       <dependency>
         <groupId>com.mchange</groupId>
         <artifactId>c3p0</artifactId>
-        <version>0.9.5.5</version>
+        <version>0.10.1</version>
       </dependency>
       <dependency>
         <groupId>org.awaitility</groupId>
@@ -480,7 +480,7 @@
       <dependency>
         <groupId>com.itextpdf</groupId>
         <artifactId>itextpdf</artifactId>
-        <version>5.5.13.3</version>
+        <version>5.5.13.4</version>
       </dependency>
       <!-- REVISIT: are the following two the same but different versions? -->
       <dependency>
@@ -784,7 +784,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.5.2</version>
+        <version>2.7</version>
         <configuration>
           <check />
           <formats>
