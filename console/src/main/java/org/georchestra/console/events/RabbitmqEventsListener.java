@@ -63,13 +63,9 @@ public class RabbitmqEventsListener implements MessageListener {
                         providerName, providerUid, organization, true);
 
                 synReceivedMessageUid.add(uid);
-                logUtils.createOAuth2Log(email, AdminLogType.OAUTH2_USER_CREATED, null);
+                logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
                 rabbitmqEventsSender.sendAcknowledgementMessageToGateway(
                         "new OAuth2 account creation notification for " + email + " has been received by console");
-            } catch (DataServiceException e) {
-                throw new RuntimeException(e);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
