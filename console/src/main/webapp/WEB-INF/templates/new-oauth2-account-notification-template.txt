@@ -1,6 +1,6 @@
 Dear administrator,
 
-A new OAuth2 user has signed up on {instanceName} :
+A new user signed up using OAuth2 on {instanceName}:
 
 Name: {name}
 Email: {email}
