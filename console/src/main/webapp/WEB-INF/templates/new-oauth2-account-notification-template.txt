@@ -1,0 +1,15 @@
+Dear administrator,
+
+A new OAuth2 user has signed up on {instanceName} :
+
+Name: {name}
+Email: {email}
+Local identifier: {uid}
+Organization: {org}
+Identity provider: {providerName}
+Provider identifier: {providerUid}
+
+Manage this account on {publicUrl}/console/manager/users/{uid}/infos.
+
+---
+This message was sent by {instanceName} ({publicUrl}/) automatically, please do not reply.
