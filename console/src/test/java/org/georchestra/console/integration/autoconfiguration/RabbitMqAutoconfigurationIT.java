@@ -36,4 +36,5 @@ public class RabbitMqAutoconfigurationIT extends ConsoleIntegrationTest {
         assertEquals(rabbitFactory.getHost(), "my-rabbit");
         assertEquals(rabbitFactory.getPort(), 1234);
     }
+
 }
