@@ -1,7 +1,9 @@
 package org.georchestra.console.events;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.roles.RoleDao;
@@ -9,16 +11,12 @@ import org.georchestra.ds.users.AccountDao;
 import org.json.JSONObject;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
-import org.georchestra.console.model.AdminLogType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.mail.MessagingException;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class RabbitmqEventsListener implements MessageListener {
 
     private @Autowired @Setter LogUtils logUtils;
@@ -31,15 +29,13 @@ public class RabbitmqEventsListener implements MessageListener {
 
     private @Autowired @Setter RabbitmqEventsSender rabbitmqEventsSender;
 
-    private static Set<String> synReceivedMessageUid = Collections.synchronizedSet(new HashSet<String>());
-
     public void onMessage(Message message) {
         String messageBody = new String(message.getBody());
         JSONObject jsonObj = new JSONObject(messageBody);
         String uid = jsonObj.getString("uid");
         String subject = jsonObj.getString("subject");
 
-        if (subject.equals("OAUTH2-ACCOUNT-CREATION") && !synReceivedMessageUid.stream().anyMatch(s -> s.equals(uid))) {
+        if (subject.equals("OAUTH2-ACCOUNT-CREATION")) {
             try {
                 String fullName = jsonObj.getString("fullName");
                 String localUid = jsonObj.getString("localUid");
@@ -62,12 +58,12 @@ public class RabbitmqEventsListener implements MessageListener {
                 this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, fullName, localUid, email,
                         providerName, providerUid, organization, true);
 
-                synReceivedMessageUid.add(uid);
                 logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
                 rabbitmqEventsSender.sendAcknowledgementMessageToGateway(
                         "new OAuth2 account creation notification for " + email + " has been received by console");
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                log.error("Error while processing rabbitMq message, message will be discarded for future processing.",
+                        e);
             }
         }
     }
