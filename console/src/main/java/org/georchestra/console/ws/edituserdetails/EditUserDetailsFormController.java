@@ -283,8 +283,8 @@ public class EditUserDetailsFormController {
         ObjectNode jsonOrg = objectMapper.valueToTree(org);
         jsonOrg.replace("members",
                 org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
-                        () -> new ArrayNode(objectMapper.getNodeFactory()), (col, elem) -> col.add(elem),
-                        (col1, col2) -> col1.addAll(col2)));
+                        () -> new ArrayNode(objectMapper.getNodeFactory()),
+                        (col, elem) -> col.add(elem.retain("sn", "givenName")), (col1, col2) -> col1.addAll(col2)));
         return jsonOrg;
     }
 
