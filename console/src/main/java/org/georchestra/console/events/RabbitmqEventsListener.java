@@ -12,12 +12,14 @@ import org.json.JSONObject;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.ServletContextAware;
 
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class RabbitmqEventsListener implements MessageListener {
+public class RabbitmqEventsListener implements MessageListener, ServletContextAware {
 
     private @Autowired @Setter LogUtils logUtils;
 
@@ -28,6 +30,12 @@ public class RabbitmqEventsListener implements MessageListener {
     private @Autowired @Setter EmailFactory emailFactory;
 
     private @Autowired @Setter RabbitmqEventsSender rabbitmqEventsSender;
+
+    private ServletContext context;
+
+    public void setServletContext(ServletContext servletContext) {
+        this.context = servletContext;
+    }
 
     public void onMessage(Message message) {
         String messageBody = new String(message.getBody());
@@ -55,8 +63,8 @@ public class RabbitmqEventsListener implements MessageListener {
                             }
                         }).collect(Collectors.toList());
 
-                this.emailFactory.sendNewOAuth2AccountNotificationEmail(superUserAdmins, fullName, localUid, email,
-                        providerName, providerUid, organization, true);
+                this.emailFactory.sendNewOAuth2AccountNotificationEmail(context, superUserAdmins, fullName, localUid,
+                        email, providerName, providerUid, organization, true);
 
                 logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
                 rabbitmqEventsSender.sendAcknowledgementMessageToGateway(
