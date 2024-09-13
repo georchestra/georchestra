@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.Setter;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
@@ -76,17 +77,16 @@ public class EditUserDetailsFormController {
 
     private Validation validation;
 
+    @Setter
     private @Value("${gdpr.allowAccountDeletion:true}") Boolean gdprAllowAccountDeletion;
+
+    private @Value("${gdpr.displayMembersList:false}") boolean displayMembersList;
 
     @Autowired
     protected LogUtils logUtils;
 
     @Autowired
     protected PasswordUtils passwordUtils;
-
-    public void setGdprAllowAccountDeletion(Boolean gdprAllowAccountDeletion) {
-        this.gdprAllowAccountDeletion = gdprAllowAccountDeletion;
-    }
 
     @Autowired
     public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, RoleDao roleDao, Validation validation) {
@@ -282,9 +282,11 @@ public class EditUserDetailsFormController {
 
         ObjectNode jsonOrg = objectMapper.valueToTree(org);
         jsonOrg.replace("members",
-                org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
-                        () -> new ArrayNode(objectMapper.getNodeFactory()),
-                        (col, elem) -> col.add(elem.retain("sn", "givenName")), (col1, col2) -> col1.addAll(col2)));
+                displayMembersList
+                        ? org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
+                                () -> new ArrayNode(objectMapper.getNodeFactory()),
+                                (col, elem) -> col.add(elem.retain("sn", "givenName")), ArrayNode::addAll)
+                        : objectMapper.createArrayNode());
         return jsonOrg;
     }
 
