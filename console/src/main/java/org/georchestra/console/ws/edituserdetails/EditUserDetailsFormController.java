@@ -80,7 +80,7 @@ public class EditUserDetailsFormController {
     @Setter
     private @Value("${gdpr.allowAccountDeletion:true}") Boolean gdprAllowAccountDeletion;
 
-    private @Value("${gdpr.displayMemberList:false}") Boolean displayMemberList;
+    private @Value("${gdpr.displayMemberList:false}") boolean displayMemberList;
 
     @Autowired
     protected LogUtils logUtils;
