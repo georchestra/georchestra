@@ -248,9 +248,9 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
         <br>
       </c:if>
 
-      <h4><s:message code="editUserDetailsForm.members"/> <span
+      <h4 ng-if="users.length > 0"><s:message code="editUserDetailsForm.members"/> <span
           class="badge">{{ users.length }}</span></h4>
-      <ul>
+      <ul ng-if="users.length > 0">
         <li dir-paginate="user in users | itemsPerPage: 10">
           {{::user.sn}} {{::user.givenName}}
         </li>
