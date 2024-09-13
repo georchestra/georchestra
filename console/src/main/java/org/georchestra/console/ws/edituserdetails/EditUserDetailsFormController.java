@@ -80,7 +80,7 @@ public class EditUserDetailsFormController {
     @Setter
     private @Value("${gdpr.allowAccountDeletion:true}") Boolean gdprAllowAccountDeletion;
 
-    private @Value("${gdpr.displayMemberList:false}") boolean displayMemberList;
+    private @Value("${gdpr.displayMembersList:false}") boolean displayMembersList;
 
     @Autowired
     protected LogUtils logUtils;
@@ -282,7 +282,7 @@ public class EditUserDetailsFormController {
 
         ObjectNode jsonOrg = objectMapper.valueToTree(org);
         jsonOrg.replace("members",
-                displayMemberList
+                displayMembersList
                         ? org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
                                 () -> new ArrayNode(objectMapper.getNodeFactory()),
                                 (col, elem) -> col.add(elem.retain("sn", "givenName")), ArrayNode::addAll)
