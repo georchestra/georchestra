@@ -105,6 +105,10 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
                 "importedName is required to resolve the native feature type name");
 
         final Map<String, String> geoserverConfig = this.configProperties.getPublishing().getBackend().getGeoserver();
+        final String localSchema = this.configProperties.getPublishing().getBackend().getLocal().get("schema");
+        if (!Objects.equals(localSchema, geoserverConfig.get("schema"))) {
+            log.warn("Local schema {} does not match geoserver schema {}", localSchema, geoserverConfig.get("schema"));
+        }
         final String workspaceName = resolveWorkspace(user, geoserverConfig.get("workspacename"));
         final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName, geoserverConfig.get("storename"));
         final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
