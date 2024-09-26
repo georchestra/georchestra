@@ -173,8 +173,7 @@ public class GeorchestraDataBackendService implements DataBackendService {
     }
 
     public @VisibleForTesting Map<String, String> resolveConnectionParams(@NonNull UserInfo user) {
-        Map<String, String> connectionParams = new HashMap<>(
-                props.getPublishing().getBackend().getLocal());
+        Map<String, String> connectionParams = new HashMap<>(props.getPublishing().getBackend().getLocal());
         Organization org = user.getOrganization();
         String orgName = org == null ? null : org.getShortName();
         if (orgName == null) {
