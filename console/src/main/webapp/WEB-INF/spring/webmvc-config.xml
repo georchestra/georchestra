@@ -56,6 +56,7 @@
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
     <property name="attributes">
       <map>
+        <entry key="useLegacyHeader" value="${useLegacyHeader}" />
         <entry key="headerHeight" value="${headerHeight}" />
         <entry key="headerUrl" value="${headerUrl}" />
         <entry key="headerScript" value="${headerScript}" />
