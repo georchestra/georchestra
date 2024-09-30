@@ -231,14 +231,15 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String fullName, String localUid,
-            String emailAddress, String providerName, String providerUid, String userOrg, boolean reallySend)
-            throws MessagingException {
+    public void sendNewOAuth2AccountNotificationEmail(ServletContext context, List<String> recipients, String fullName,
+            String localUid, String emailAddress, String providerName, String providerUid, String userOrg,
+            boolean reallySend) throws MessagingException {
 
         Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
                 this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
-                this.newOAuth2AccountNotificationEmailFile, null, this.georConfig, this.publicUrl, this.instanceName);
+                this.newOAuth2AccountNotificationEmailFile, context, this.georConfig, this.publicUrl,
+                this.instanceName);
         email.set("name", fullName);
         email.set("uid", localUid);
         email.set("email", emailAddress);

@@ -19,6 +19,7 @@ import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,9 +113,9 @@ public class RabbitMqEventsIT extends ConsoleIntegrationTest {
         public boolean sendNewOAuth2AccountNotificationEmailCalled = false;
 
         @Override
-        public void sendNewOAuth2AccountNotificationEmail(List<String> recipients, String fullName, String localUid,
-                String emailAddress, String providerName, String providerUid, String userOrg, boolean reallySend)
-                throws MessagingException {
+        public void sendNewOAuth2AccountNotificationEmail(ServletContext context, List<String> recipients,
+                String fullName, String localUid, String emailAddress, String providerName, String providerUid,
+                String userOrg, boolean reallySend) throws MessagingException {
             sendNewOAuth2AccountNotificationEmailCalled = true;
         }
     }
