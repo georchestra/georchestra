@@ -56,7 +56,7 @@
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
     <encoding>UTF-8</encoding>
-    <log4j1.version>1.2.17</log4j1.version>
+    <log4j1.version>1.2.17.norce</log4j1.version>
     <georchestra.version>${project.version}</georchestra.version>
     <server>generic</server>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
