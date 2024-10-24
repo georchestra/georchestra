@@ -1,17 +1,9 @@
-package org.georchestra.datafeeder.autoconf;
+package org.georchestra.datafeeder.config;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.*;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(exclude = "includesBySchema")
-@ConfigurationProperties(prefix = "postgis.schemas")
 public class PostgisSchemasConfiguration implements InitializingBean {
 
     public static final String EMPTY_PREFIX = "";

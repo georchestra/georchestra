@@ -20,24 +20,19 @@ package org.georchestra.datafeeder.autoconf;
 
 import javax.annotation.PostConstruct;
 
-import org.georchestra.datafeeder.app.YamlPropertySourceFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.PropertySources;
 
 @Configuration
 @Profile("georchestra")
-@EnableConfigurationProperties(PostgisSchemasConfiguration.class)
-@PropertySources({ @PropertySource(value = { "file:${georchestra.datadir}/default.properties", //
-        "file:${georchestra.datadir}/datafeeder/datafeeder.properties" }, ignoreResourceNotFound = false),
-        @PropertySource(value = {
-                "file:${georchestra.datadir}/data-api/application.yaml" }, ignoreResourceNotFound = true, factory = YamlPropertySourceFactory.class) })
+@PropertySource(value = { //
+        "file:${georchestra.datadir}/default.properties", //
+        "file:${georchestra.datadir}/datafeeder/datafeeder.properties" }, //
+        ignoreResourceNotFound = false)
 @Slf4j(topic = "org.georchestra.datafeeder.autoconf")
 public class GeorchestraDatadirAutoConfiguration {
 
