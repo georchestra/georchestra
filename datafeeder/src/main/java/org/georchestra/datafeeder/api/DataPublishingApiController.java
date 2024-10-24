@@ -28,7 +28,7 @@ import javax.annotation.security.RolesAllowed;
 
 import org.georchestra.datafeeder.api.mapper.DataPublishingResponseMapper;
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
-import org.georchestra.datafeeder.autoconf.PostgisSchemasConfiguration;
+import org.georchestra.datafeeder.config.PostgisSchemasConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.UserInfo;
@@ -56,7 +56,7 @@ public class DataPublishingApiController implements DataPublishingApi {
     private @Autowired DataPublishingResponseMapper mapper;
     private @Autowired DataFeederConfigurationProperties props;
     private @Autowired GeorchestraNameNormalizer nameResolver;
-    private @Autowired PostgisSchemasConfiguration postgisSchemasConfiguration;
+    private @Autowired(required = false) PostgisSchemasConfiguration postgisSchemasConfiguration;
 
     @Override
     public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
@@ -122,8 +122,14 @@ public class DataPublishingApiController implements DataPublishingApi {
                                                   // http://localhost/data/ogcapi/collections/3276d285-f458-4a38-8040-1b14ea5afc9e/items
                 String schema = nameResolver
                         .resolveDatabaseSchemaName(authorizationService.getUserInfo().getOrganization().getShortName());
-                String ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl,
-                        postgisSchemasConfiguration.prefix(schema) + dataset.getPublishedName());
+                postgisSchemasConfiguration.prefix(schema);
+                String ogcApiFeature;
+                if (postgisSchemasConfiguration != null) {
+                    ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl,
+                            postgisSchemasConfiguration.prefix(schema) + dataset.getPublishedName());
+                } else {
+                    ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl, dataset.getPublishedName());
+                }
                 ogcApiFeature = URI.create(ogcApiFeature).normalize().toString();
                 dataset.add(Link.of(ogcApiFeature, IanaLinkRelations.HOSTS).withName("features")
                         .withType("application/json").withTitle("OGC API Feature JSON web page"));
