@@ -38,8 +38,8 @@ import org.springframework.context.annotation.Profile;
 @Import({ //
         GeorchestraSecurityProxyAuthenticationConfiguration.class, //
         GeorchestraBatchStoreConfiguration.class, //
-        GeorchestraPublishingServicesConfiguration.class //
-})
+        GeorchestraPublishingServicesConfiguration.class, //
+        GeorchestraDataApiConfiguration.class })
 public class GeorchestraIntegrationAutoConfiguration {
 
     @ConfigurationProperties(prefix = "datafeeder")

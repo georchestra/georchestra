@@ -4,6 +4,22 @@
 
 The separate front-end UI service provides the wizard-like user interface to interact with this backend.
 
+## Add georchestra/data-api
+
+In order to implement [geOrchestra's data-api](https://github.com/georchestra/data-api) you must implement:
+
+### For all data-api versions
+In datafeeder.properties:
+```
+datafeeder.publishing.ogcfeatures.public-url=https://${domainName}/data/ogcapi
+```
+
+### For data-api version >= 1.3:
+JVM arguments, enable data-api-schemas profile and set the additional configuration file:
+```
+-Dspring.profiles.active=georchestra,data-api-schemas -Dspring.config.additional-location=file:/etc/georchestra/data-api/application.yaml
+```
+
 ## Building
 
 Build the project:
