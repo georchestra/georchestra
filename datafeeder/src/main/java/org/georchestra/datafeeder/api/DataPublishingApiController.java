@@ -123,11 +123,12 @@ public class DataPublishingApiController implements DataPublishingApi {
                 String schema = nameResolver
                         .resolveDatabaseSchemaName(authorizationService.getUserInfo().getOrganization().getShortName());
                 String ogcApiFeature;
+                String databaseTableName = nameResolver.resolveDatabaseTableName(dataset.getTitle());
                 if (postgisSchemasConfiguration != null) {
                     ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl,
-                            postgisSchemasConfiguration.prefix(schema) + dataset.getPublishedName());
+                            postgisSchemasConfiguration.prefix(schema) + databaseTableName);
                 } else {
-                    ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl, dataset.getPublishedName());
+                    ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl, databaseTableName);
                 }
                 ogcApiFeature = URI.create(ogcApiFeature).normalize().toString();
                 dataset.add(Link.of(ogcApiFeature, IanaLinkRelations.HOSTS).withName("features")
