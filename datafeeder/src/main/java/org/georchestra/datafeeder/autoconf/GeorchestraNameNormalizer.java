@@ -38,10 +38,11 @@ public class GeorchestraNameNormalizer {
     }
 
     /**
-     * @return lower-cased {@link #normalizeName normalized} {@code featureTypeName}
+     * @return lower-cased {@link #normalizeName normalized} {@code title} 60 chars
+     *         cause postgis table name cannot be more than 63 characters
      */
-    public @NonNull String resolveDatabaseTableName(@NonNull String featureTypeName) {
-        return normalizeName(featureTypeName).toLowerCase();
+    public @NonNull String resolveDatabaseTableName(@NonNull String title) {
+        return normalizeName(title).toLowerCase().substring(0, Math.min(60, title.length()));
     }
 
     /**
