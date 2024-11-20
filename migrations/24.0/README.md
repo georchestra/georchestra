@@ -69,6 +69,7 @@ This role allows user to have access to the import tool (datafeeder).
 
 By default, users can't use datafeeder application.
 
+```
 ldapadd -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret   << EOF
 dn: cn=IMPORT,ou=roles,dc=georchestra,dc=org
 objectClass: georchestraRole
@@ -77,7 +78,7 @@ objectClass: groupOfMembers
 cn: IMPORT
 description:  This role grants access to import functionnality through datafeeder application.
 EOF
-
+```
 
 ### Migrating to Debian Bookworm
 
