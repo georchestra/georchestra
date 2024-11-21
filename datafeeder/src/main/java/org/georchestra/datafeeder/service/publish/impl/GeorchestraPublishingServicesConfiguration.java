@@ -25,12 +25,14 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.Auth;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.Auth.AuthType;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.BasicAuth;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.GeonetworkPublishingConfiguration;
+import org.georchestra.datafeeder.config.PostgisSchemasConfiguration;
 import org.georchestra.datafeeder.service.geonetwork.DefaultGeoNetworkClient;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkClient;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
@@ -43,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -69,9 +72,10 @@ public class GeorchestraPublishingServicesConfiguration {
         return new GeorchestraOwsPublicationService();
     }
 
-    public @Bean MetadataPublicationService metadataPublicationService() {
+    public @Bean MetadataPublicationService metadataPublicationService(
+            GeorchestraNameNormalizer georchestraNameResolver) {
         return new GeorchestraMetadataPublicationService(geoNetworkRemoteService(), templateMapper(),
-                config.getPublishing());
+                config.getPublishing(), georchestraNameResolver);
     }
 
     public @Bean GeoNetworkRemoteService geoNetworkRemoteService() {

@@ -29,7 +29,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
+import org.georchestra.datafeeder.config.PostgisSchemasConfiguration;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.Envelope;
 import org.georchestra.datafeeder.model.Organization;
@@ -50,20 +52,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
+
 @Slf4j
 public class GeorchestraMetadataPublicationService implements MetadataPublicationService {
 
     private GeoNetworkRemoteService geonetwork;
     private PublishingConfiguration publishingConfiguration;
     private TemplateMapper templateMapper;
+    private GeorchestraNameNormalizer nameResolver;
+    private @Autowired(required = false) PostgisSchemasConfiguration postgisSchemasConfiguration;
 
     public @Autowired GeorchestraMetadataPublicationService(//
             @NonNull GeoNetworkRemoteService geonetwork, //
             @NonNull TemplateMapper templateMapper, //
-            PublishingConfiguration publishingConfiguration) {
+            PublishingConfiguration publishingConfiguration, GeorchestraNameNormalizer nameResolver) {
         this.templateMapper = templateMapper;
         this.publishingConfiguration = publishingConfiguration;
         this.geonetwork = geonetwork;
+        this.nameResolver = nameResolver;
     }
 
     @Override
@@ -117,11 +124,17 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
             m.getOnlineResources().add(wfsOnlineResource(d));
         }
         if (publishingConfiguration.getOgcfeatures().getPublicUrl() != null) {
+            String databaseTableName = nameResolver.resolveDatabaseTableName(publishing.getTitle());
+            if (postgisSchemasConfiguration != null) {
+                String schema = nameResolver.resolveDatabaseSchemaName(user.getOrganization().getShortName());
+                databaseTableName = postgisSchemasConfiguration.prefix(schema) + databaseTableName;
+            }
+
             m.getOnlineResources()
-                    .add(onlineResource(d, fullyQualifiedLayerName(publishing), "OGC API - Features",
+                    .add(onlineResource(d, databaseTableName, "OGC API - Features",
                             publishing.getTitle() + " - OGC API Features",
                             buildUri(publishingConfiguration.getOgcfeatures().getPublicUrl(),
-                                    "/collections/" + publishing.getPublishedName(), "")));
+                                    "/collections/" + databaseTableName + "/items", "")));
         }
 
         URI uniqueResourceIdentifier = geonetwork.buildMetadataRecordIdentifier(metadataId);
