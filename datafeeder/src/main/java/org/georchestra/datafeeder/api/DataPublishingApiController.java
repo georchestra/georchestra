@@ -120,11 +120,11 @@ public class DataPublishingApiController implements DataPublishingApi {
                                                   // in app.yml
                                                   // e.g.
                                                   // http://localhost/data/ogcapi/collections/3276d285-f458-4a38-8040-1b14ea5afc9e/items
-                String schema = nameResolver
-                        .resolveDatabaseSchemaName(authorizationService.getUserInfo().getOrganization().getShortName());
                 String ogcApiFeature;
                 String databaseTableName = nameResolver.resolveDatabaseTableName(dataset.getTitle());
                 if (postgisSchemasConfiguration != null) {
+                    String schema = nameResolver.resolveDatabaseSchemaName(
+                            authorizationService.getUserInfo().getOrganization().getShortName());
                     ogcApiFeature = String.format("%s/collections/%s/items", ogcApiUrl,
                             postgisSchemasConfiguration.prefix(schema) + databaseTableName);
                 } else {
