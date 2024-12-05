@@ -52,7 +52,7 @@ Additional information can be found in the [georchestra.org](http://www.georches
 
 ## Requirements
 
-These requirements are indicatives. For any doubt, please ask [the community]([url](https://www.georchestra.org/community.html)).
+These requirements are indicatives. For any doubt, please ask [the community](https://www.georchestra.org/community.html).
 
   * Compatible with Linux-based systems. Debian stable recommended.
   * Java 11 up to Java 17. Java 21 for the gateway.
