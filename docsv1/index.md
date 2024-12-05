@@ -36,6 +36,7 @@ If you found a bug or want to propose improvements and new features, please [fil
 
 If you want to report a **security issue**, please don't fill an issue. Instead, send a mail to <psc@georchestra.org>, you will be later contacted for more details.
 
+
 ## More
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
@@ -47,3 +48,15 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md) module,
  * [console](https://github.com/georchestra/georchestra/blob/master/console/README.md): also an admin-oriented module, to manage users and groups,
  * [header](https://github.com/georchestra/georchestra/blob/master/header/README.md): the common header which is used by all modules,
+
+
+## Requirements
+
+These requirements are indicatives. For any doubt, please ask [the community]([url](https://www.georchestra.org/community.html)).
+
+  * Compatible with Linux-based systems. Debian stable recommended.
+  * Java 11 up to Java 17. Java 21 for the gateway.
+  * Tomcat 9 or Jetty 9
+  * PostreSQL 15 and higher
+
+
