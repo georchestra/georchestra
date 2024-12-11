@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gwcConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns="http://geowebcache.org/schema/1.15.0"
+                  xsi:schemaLocation="http://geowebcache.org/schema/1.15.0 http://geowebcache.org/schema/1.15.0/geowebcache.xsd">
+    <version>1.8.0</version>
+    <backendTimeout>120</backendTimeout>
+    <serviceInformation>
+        <title>GeoWebCache</title>
+        <description>GeoWebCache is an advanced tile cache for WMS servers.It supports a large variety of protocols and formats, including WMS-C, WMTS, KML, Google Maps and Virtual Earth.</description>
+        <keywords>
+            <string>TMS</string>
+            <string>WMS</string>
+            <string>WMTS</string>
+            <string>GEOWEBCACHE</string>
+        </keywords>
+        <serviceProvider>
+            <providerName>testorg</providerName>
+            <providerSite>http://example.org/</providerSite>
+            <serviceContact>
+                <individualName>Jean-Paul Martin</individualName>
+                <positionName>CTO</positionName>
+                <addressType>Work</addressType>
+                <addressStreet>38 fluptop</addressStreet>
+                <addressCity>AAAA</addressCity>
+                <addressPostalCode>1111</addressPostalCode>
+                <addressCountry>Mars Planet</addressCountry>
+                <addressEmail>jpm@example.org</addressEmail>
+            </serviceContact>
+        </serviceProvider>
+        <fees>NONE</fees>
+        <accessConstraints>NONE</accessConstraints>
+    </serviceInformation>
+    <formatModifiers>
+        <formatModifier>
+            <compressionQuality>0.99</compressionQuality>
+        </formatModifier>
+    </formatModifiers>
+    <httpUsername>flup</httpUsername>
+    <httpPassword>${FLUP}</httpPassword>
+    <layers>
+        <wmsLayer>
+            <name>test</name>
+            <metaWidthHeight>
+                <int>1</int>
+                <int>1</int>
+            </metaWidthHeight>
+            <metaInformation>
+                <title>test_raster</title>
+                <description>aaa</description>
+            </metaInformation>
+            <mimeFormats>
+                <string>image/jpeg</string>
+            </mimeFormats>
+            <gridSubsets>
+                <gridSubset>
+                    <gridSetName>EPSG:3857</gridSetName>
+                    <extent>
+                        <coords>
+                            <double>-614963.9333795947</double>
+                            <double>5052970.473926919</double>
+                            <double>1190673.273524854</double>
+                            <double>6637051.9172923295</double>
+                        </coords>
+                    </extent>
+                </gridSubset>
+                <gridSubset>
+                    <gridSetName>EPSG:3948</gridSetName>
+                    <extent>
+                        <coords>
+                            <double>982581.863834607</double>
+                            <double>6451165.3456660705</double>
+                            <double>2347950.2371804724</double>
+                            <double>7576728.090160732</double>
+                        </coords>
+                    </extent>
+                </gridSubset>
+
+                <gridSubset>
+                    <gridSetName>EPSG:2154</gridSetName>
+                    <extent>
+                        <coords>
+                            <double>-15037.23099792644</double>
+                            <double>6019285.011853603</double>
+                            <double>1345788.4991618493</double>
+                            <double>7142668.963508889</double>
+                        </coords>
+                    </extent>
+                </gridSubset>
+            </gridSubsets>
+            <expireCacheList>
+                <expirationRule minZoom="0" expiration="-2" />
+            </expireCacheList>
+            <expireClientsList>
+                <expirationRule minZoom="0" expiration="99999999" />
+            </expireClientsList>
+            <wmsUrl>
+                <string>http://example.org/geoserver/photo/ows</string>
+            </wmsUrl>
+            <wmsLayers>testLayer</wmsLayers>
+            <httpUsername>jpm</httpUsername>
+            <httpPassword>${SUPERSECRET}</httpPassword>
+        </wmsLayer>
+    </layers>
+</gwcConfiguration>
