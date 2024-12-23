@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -25,11 +26,9 @@ public class InfosControllerIT extends ConsoleIntegrationTest {
         // By default, analytics & extractorapp are enabled
         JSONObject ret = new JSONObject(infosController.getPlatformInfos());
 
-        assertTrue(ret.getBoolean("analyticsEnabled") == true && ret.getBoolean("extractorappEnabled") == false
-                && ret.getBoolean("useLegacyHeader") == false);
+        assertTrue(ret.getBoolean("analyticsEnabled") && !ret.getBoolean("extractorappEnabled"));
 
-        assertTrue(ret.getString("headerUrl").equals("/header/") && ret.getString("headerHeight").equals("90") && ret
-                .getString("headerScript").equals("https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js"));
+        assertEquals("https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js", ret.getString("headerScript"));
 
         infosController.setAnalyticsEnabled(false);
         infosController.setExtractorappEnabled(false);

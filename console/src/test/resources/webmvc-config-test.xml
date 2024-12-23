@@ -45,9 +45,8 @@
     <property name="attributes">
       <map>
         <entry key="headerHeight" value="${headerHeight}" />
-        <entry key="headerUrl" value="${headerUrl}" />
+        <entry key="headerConfigFile" value="${headerConfigFile}" />
         <entry key="headerScript" value="${headerScript}" />
-        <entry key="logoUrl" value="${logoUrl}" />
         <entry key="georchestraStylesheet" value="${georchestraStylesheet:}" />
         <entry key="competenceAreaEnabled" value="${competenceAreaEnabled:false}" />
         <entry key="readonlyUid" value="${readonlyUid:false}" />

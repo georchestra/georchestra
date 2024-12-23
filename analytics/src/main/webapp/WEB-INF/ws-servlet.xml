@@ -49,11 +49,8 @@
             <map>
                 <entry key="instanceName" value="${instanceName}"/>
                 <entry key="defaultLanguage" value="${language}"/>
-                <entry key="headerUrl" value="${headerUrl}"/>
-                <entry key="headerHeight" value="${headerHeight}"/>
-                <entry key="headerScript" value="${headerScript}" />
-                <entry key="useLegacyHeader" value="${useLegacyHeader}" />
-                <entry key="logoUrl" value="${logoUrl}" />
+                <entry key="headerHeight" value="${headerHeight}" />
+                <entry key="headerConfigFile" value="${headerConfigFile:}"/>
                 <entry key="georchestraStylesheet" value="${georchestraStylesheet}" />
             </map>
         </property>

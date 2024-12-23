@@ -4,7 +4,7 @@
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
-        <geor-header legacy-header="${useLegacyHeader}" legacy-url="${headerUrl}" style="width:100%;height:${headerHeight}px;border:none;"  logo-url="${logoUrl}" stylesheet="${georchestraStylesheet}"></geor-header>
+        <geor-header stylesheet="${georchestraStylesheet}" config-file="${headerConfigFile}" height="${headerHeight}"></geor-header>
         <script src="<c:out value="${headerScript}" />"></script>
     </div>
     </c:when>

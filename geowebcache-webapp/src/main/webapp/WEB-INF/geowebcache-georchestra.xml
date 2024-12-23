@@ -45,12 +45,10 @@
     <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder" />
     <property name="securityDispatcher" ref="gwcSecurityDispatcher" />
     <property name="instanceName" value="${instanceName}" />
-    <property name="headerUrl" value="${headerUrl}" />
-    <property name="useLegacyHeader" value="${useLegacyHeader}" />
     <property name="headerScript" value="${headerScript}" />
-    <property name="headerHeight" value="${headerHeight}" />
     <property name="georchestraStylesheet" value="${georchestraStylesheet:''}" />
-    <property name="logoUrl" value="${logoUrl}" />
+    <property name="headerConfigFile" value="${headerConfigFile}" />
+    <property name="headerHeight" value="${headerHeight}" />
   </bean>
 
   <!-- Override gwcURLMangler defined in core-context.xml -->
