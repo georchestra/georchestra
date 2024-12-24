@@ -22,12 +22,17 @@ package org.georchestra.console.ws.utils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -187,6 +192,62 @@ public class Validation {
     public boolean validateUrlFieldWithSpecificMsg(String fullyQualifiedField, String value, Errors errors) {
         if (!validateUrl(value)) {
             errors.rejectValue(fullyQualifiedField, "error.badUrl", "badUrl");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateOrgUnicityByUniqueId(OrgsDao orgDao, JSONObject changes) {
+        String orgUniqueId = "";
+        String uuid = "";
+
+        if (changes == null) {
+            return true;
+        }
+        // case - not value to verify
+        if (!changes.has("orgUniqueId")) {
+            return true;
+        }
+
+        orgUniqueId = changes.getString("orgUniqueId");
+
+        if (orgUniqueId == null || orgUniqueId.isEmpty()) {
+            return true;
+        }
+
+        // test if org with same value already exists
+        Org findByOrgUniqueId = orgDao.findByOrgUniqueId(orgUniqueId);
+        // No org exists with this field value
+        if (findByOrgUniqueId == null) {
+            return true;
+        }
+
+        // No uuid to compare means that's an org creation
+        // and at this step, an org already exists with this orgUniqueId
+        if (!changes.has("uuid")) {
+            // we can't validate this orgUniqueId that already exists
+            return false;
+        }
+
+        uuid = changes.getString("uuid");
+
+        if (uuid.isEmpty() || uuid == null) {
+            return false;
+        }
+        // Control if this is same org update
+        return Objects.equals(findByOrgUniqueId.getUniqueIdentifier(), UUID.fromString(uuid));
+    }
+
+    public boolean validateOrgUniqueIdField(OrgsDao orgDao, JSONObject changes, Errors errors) {
+        if (changes.has("orgUniqueId") && !this.validateOrgUnicityByUniqueId(orgDao, changes)) {
+            errors.rejectValue("orgUniqueId", "error.orgUniqueIdExists", "orgUniqueIdExists");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateOrgUnicity(OrgsDao orgDao, JSONObject changes) {
+        if (changes.has("orgUniqueId") && !this.validateOrgUnicityByUniqueId(orgDao, changes)) {
             return false;
         }
         return true;

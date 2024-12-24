@@ -12,4 +12,5 @@ final @Data class EditOrgDetailsFormBean implements java.io.Serializable {
     private String url;
     private String orgType;
     private String mail;
+    private String orgUniqueId;
 }

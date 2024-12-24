@@ -71,6 +71,7 @@ public class OrgsIT extends ConsoleIntegrationTest {
         support.perform(get("/private/orgs/" + orgName.replace(" ", "_")))
                 .andExpect(jsonPath("$.id").value(orgName.replace(" ", "_").toLowerCase()))
                 .andExpect(jsonPath("$.shortName").value(orgName.toLowerCase()))
+                .andExpect(jsonPath("$.orgUniqueId").value("80908401500035"))
                 .andExpect(jsonPath("$.name").value("camptocamp")).andExpect(jsonPath("$.cities").isEmpty())
                 .andExpect(jsonPath("$.members").isEmpty()).andExpect(jsonPath("$.address").value("1, rue du pont"))
                 .andExpect(jsonPath("$.orgType").value("Company")).andExpect(jsonPath("$.pending").value(false));
