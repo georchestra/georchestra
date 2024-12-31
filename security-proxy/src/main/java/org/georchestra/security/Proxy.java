@@ -385,7 +385,6 @@ public class Proxy {
             georUsr.put("postalAddress", finalUser.getPostalAddress());
             georUsr.put("telephoneNumber", finalUser.getTelephoneNumber());
             georUsr.put("title", finalUser.getTitle());
-            georUsr.put("notes", finalUser.getNotes());
             georUsr.put("ldapWarn", finalUser.getLdapWarn());
             georUsr.put("ldapRemainingDays", finalUser.getLdapRemainingDays());
             georUsr.put("oauth2Provider", finalUser.getOAuth2Provider());
