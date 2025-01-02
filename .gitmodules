@@ -5,4 +5,4 @@
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
-	branch = 2.25.x-georchestra
+	branch = 2.26.1-georchestra
