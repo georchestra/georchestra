@@ -30,7 +30,7 @@ More RAM is of course better !
 
 If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra).
 
-For help setting up your instance, or for dev-related questions, use the [#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra) IRC channel or the [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
+For help setting up your instance, or for dev-related questions, use the [#georchestra](https://matrix.to/#/#georchestra:osgeo.org) IRC channel or the [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
 
 If you found a bug or want to propose improvements and new features, please [fill a new issue](https://github.com/georchestra/georchestra/issues/new/choose) in the GitHub tracker.
 
