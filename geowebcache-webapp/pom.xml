@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>24.0.5-SNAPSHOT</version>
+    <version>24.0.5</version>
   </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
-  <version>24.0.5-SNAPSHOT</version>
+  <version>24.0.5</version>
 
   <packaging>jar</packaging>
   <name>geOrchestra GeoWebCache Web Application</name>
