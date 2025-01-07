@@ -35,7 +35,7 @@ extra:
     - icon: fontawesome/brands/dev
       link: https://groups.google.com/group/georchestra-dev?hl=fr
     - icon: fontawesome/regular/comments
-      link: https://kiwiirc.com/client/irc.libera.chat/georchestra
+      link: https://matrix.to/#/#georchestra:osgeo.org
 
 
 copyright: '© 2024 - geOrchestra'
