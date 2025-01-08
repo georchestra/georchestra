@@ -39,6 +39,7 @@ public interface OrganizationMapper {
     @Mapping(target = "linkage", source = "url")
     @Mapping(target = "postalAddress", source = "address")
     @Mapping(target = "category", source = "orgType")
+    @Mapping(target = "orgUniqueId", source = "orgUniqueId", ignore = true)
     @Mapping(target = "lastUpdated", ignore = true)
     @Mapping(target = "withId", ignore = true)
     @Mapping(target = "withShortName", ignore = true)
@@ -51,6 +52,7 @@ public interface OrganizationMapper {
     @Mapping(target = "withLastUpdated", ignore = true)
     @Mapping(target = "withMembers", ignore = true)
     @Mapping(target = "withMail", source = "mail", ignore = true)
+    @Mapping(target = "withOrgUniqueId", source = "orgUniqueId", ignore = true)
     Organization map(Org org);
 
     @AfterMapping

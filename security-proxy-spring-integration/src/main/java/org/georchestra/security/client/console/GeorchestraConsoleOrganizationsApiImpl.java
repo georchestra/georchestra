@@ -55,8 +55,12 @@ public class GeorchestraConsoleOrganizationsApiImpl implements OrganizationsApi 
     }
 
     @Override
+    public Optional<Organization> findByOrgUniqueId(String orgUniqueId) {
+        return client.get("/console/internal/organizations/unique/{id}", Organization.class, orgUniqueId);
+    }
+
+    @Override
     public Optional<byte[]> getLogo(String id) {
         return client.get("/console/internal/organizations/id/{id}/logo", byte[].class, id);
     }
-
 }

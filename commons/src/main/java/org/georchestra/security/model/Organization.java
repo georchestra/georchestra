@@ -67,6 +67,9 @@ public class Organization implements Serializable {
 
     private String mail;
 
+    /** Custom field added by georchestra.ldif file */
+    private String orgUniqueId;
+
     /**
      * String that somehow represents the current version, may be a timestamp, a
      * hash, etc. Provided by request header {@code sec-lastupdated}

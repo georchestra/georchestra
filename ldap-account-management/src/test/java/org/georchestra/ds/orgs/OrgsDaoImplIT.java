@@ -50,6 +50,7 @@ public class OrgsDaoImplIT {
         org.setShortName("tEsTOrG");
         org.setCities(Lists.newArrayList("Paris"));
         org.setOrgType("Non Profit");
+        org.setOrgUniqueId("5315431354");
 
         dao.insert(org);
 
@@ -59,6 +60,7 @@ public class OrgsDaoImplIT {
         pendingOrg.setName("Pending Org");
         pendingOrg.setPending(true);
         pendingOrg.setOrgType("For Profit");
+        pendingOrg.setOrgUniqueId("6887431324");
         dao.insert(pendingOrg);
     }
 
@@ -223,6 +225,7 @@ public class OrgsDaoImplIT {
         ncOrg.setShortName("no cities org");
         ncOrg.setCities(Lists.newArrayList("Paris"));
         ncOrg.setOrgType("Non Profit");
+        ncOrg.setOrgUniqueId("41134144731");
         dao.insert(ncOrg);
         ncOrg = dao.findByCommonName(ncOrg.getId());
         ncOrg.setCities(List.of());

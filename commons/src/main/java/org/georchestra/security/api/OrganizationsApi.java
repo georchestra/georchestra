@@ -29,6 +29,8 @@ public interface OrganizationsApi {
 
     Optional<Organization> findById(String id);
 
+    Optional<Organization> findByOrgUniqueId(String id);
+
     Optional<Organization> findByShortName(String shortName);
 
     Optional<byte[]> getLogo(String id);
