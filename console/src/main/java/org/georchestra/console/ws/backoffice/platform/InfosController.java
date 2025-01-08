@@ -56,16 +56,25 @@ public class InfosController {
     @Setter
     private boolean competenceAreaEnabled;
 
-    @Value("${headerHeight:80}")
+    @Value("${useLegacyHeader:false}")
+    private boolean useLegacyHeader;
+
+    @Value("${headerUrl:/header/}")
+    private String headerUrl;
+
+    @Value("${headerHeight:90}")
     private String headerHeight;
 
     @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
     private String headerScript;
 
+    @Value("${logoUrl:https://www.georchestra.org/public/georchestra-logo.svg}")
+    private String logoUrl;
+
     @Value("${georchestraStylesheet:}")
     private String georchestraStylesheet;
 
-    @Value("${headerConfigFile:}")
+    @Value("${headerConfigFile}")
     private String headerConfigFile;
 
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
@@ -78,8 +87,11 @@ public class InfosController {
         ret.put("analyticsEnabled", analyticsEnabled);
         ret.put("extractorappEnabled", extractorappEnabled);
         ret.put("competenceAreaEnabled", competenceAreaEnabled);
+        ret.put("useLegacyHeader", useLegacyHeader);
+        ret.put("headerUrl", headerUrl);
         ret.put("headerHeight", headerHeight);
         ret.put("headerScript", headerScript);
+        ret.put("logoUrl", logoUrl);
         ret.put("headerConfigFile", headerConfigFile);
         ret.put("georchestraStylesheet", georchestraStylesheet);
         return ret.toString();
