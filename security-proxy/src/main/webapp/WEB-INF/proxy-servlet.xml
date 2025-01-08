@@ -26,6 +26,7 @@
                 <entry key="useLegacyHeader" value="${useLegacyHeader}" />
                 <entry key="logoUrl" value="${logoUrl}" />
                 <entry key="georchestraStylesheet" value="${georchestraStylesheet}" />
+                <entry key="headerConfigFile" value="${headerConfigFile}" />
             </map>
         </property>
     </bean>
