@@ -14,7 +14,7 @@
 
 <body ng-app="manager" ng-strict-di ng-controller="AppController">
 
-  <geor-header config-file="{{ trustSrc(platformInfos.headerConfigFile) }}" legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}"  logo-url="{{ trustSrc(platformInfos.logoUrl) }}" stylesheet="{{ trustSrc(platformInfos.georchestraStylesheet) }}" active-app="console"></geor-header>
+  <geor-header config-file="{{ trustSrc(platformInfos.headerConfigFile) }}" legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}"  logo-url="{{ trustSrc(platformInfos.logoUrl) }}" stylesheet="{{ trustSrc(platformInfos.georchestraStylesheet) }}" height="{{ platformInfos.headerHeight }}" active-app="console"></geor-header>
   <script ng-src="{{ trustSrc(platformInfos.headerScript) }}"></script>
 
   <div flash-message="2000"></div>

@@ -62,7 +62,7 @@ public class InfosController {
     @Value("${headerUrl:/header/}")
     private String headerUrl;
 
-    @Value("${headerHeight:90}")
+    @Value("${headerHeight:80}")
     private String headerHeight;
 
     @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
