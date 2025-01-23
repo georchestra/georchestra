@@ -50,10 +50,9 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
     private boolean useLegacyHeader;
     private String headerUrl;
     private String headerHeight;
-
     private String headerScript;
-
     private String logoUrl;
+    private String headerConfigFile;
 
     /** custom georchestra CSS stylsheet: optional, can be null
      * See https://github.com/georchestra/datadir/blob/master/default.properties#L40-L43
@@ -66,7 +65,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
             + "    <script src=\"@headerScript@\"></script>\n"
             + "  </head>\n"
             + "  <body>\n"
-            + "    <geor-header  active-app=\"geowebcache\" legacy-header=\"@useLegacyHeader@\" legacy-url=\"@headerUrl@\" style=\"width:100%;height:@headerHeight@px;border:none;\" logo-url=\"@logoUrl@\" stylesheet=\"@georchestraStylesheet@\"></geor-header>";
+            + "    <geor-header  active-app=\"geowebcache\" config-file=\"@headerConfigFile@\" legacy-header=\"@useLegacyHeader@\" legacy-url=\"@headerUrl@\" logo-url=\"@logoUrl@\" stylesheet=\"@georchestraStylesheet@\" height=\"@headerHeight@\"></geor-header>";
 
 
     /** Should be invoked through Spring. */
@@ -102,6 +101,10 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
         this.logoUrl = logoUrl;
     }
 
+    public void setHeaderConfigFile(String headerConfigFile) {
+        this.headerConfigFile = headerConfigFile;
+    }
+
     public void setGeorchestraStylesheet(String georchestraStylesheet) {
         this.georchestraStylesheet = georchestraStylesheet;
     }
@@ -123,6 +126,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerHeight@", this.headerHeight);
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@logoUrl@", this.logoUrl);
             newGeorHeaderInclude = newGeorHeaderInclude.replace("@georchestraStylesheet@", this.georchestraStylesheet);
+            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerConfigFile@", this.headerConfigFile);
     }
 
     @Override
