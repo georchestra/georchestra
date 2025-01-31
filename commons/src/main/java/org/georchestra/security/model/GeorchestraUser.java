@@ -92,6 +92,9 @@ public class GeorchestraUser implements Serializable {
     /** Maps to Account.getOAuth2Uid */
     private String oAuth2Uid;
 
+    /** Maps to Account.getOAuth2OrgId */
+    private String oAuth2OrgId;
+
     /** Provided by request header {@code sec-external-authentication} */
     private Boolean isExternalAuth = false;
 

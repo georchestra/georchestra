@@ -626,7 +626,7 @@ public class AccountImpl implements Serializable, Account {
 
     @Override
     public String getOAuth2OrgId() {
-        return this.oAuth2Uid;
+        return this.oAuth2OrgId;
     }
 
     @Override
