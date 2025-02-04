@@ -1,4 +1,4 @@
-# Managing access rights in geOrchestra
+# Managing global access rights in geOrchestra
 
 Please read first the section of the admin guide called 
  "[Managing users and access rights in geOrchestra](../users_management/index.md)" to understand how geOrchestra uses the concepts of user, organization and roles.

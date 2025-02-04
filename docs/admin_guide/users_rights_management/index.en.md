@@ -1,4 +1,4 @@
-# Rights management
+# User rights management
 
 Rights management is done using the [roles](../roles.md) assigned to a [user](../users.md). By creating new roles, you can design more access rules.
 

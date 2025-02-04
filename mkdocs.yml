@@ -56,14 +56,14 @@ nav:
         - Summary: user_guide/index.md
     - Administration guide:
         - Summary: admin_guide/index.md
-        - User Management:
+        - Users Management:
           - admin_guide/users_management/index.md
           - admin_guide/users_management/users.md
           - admin_guide/users_management/organizations.md
           - admin_guide/users_management/roles.md
-          - Rights management:
-            - admin_guide/users_management/rights_management/index.md
-        - Rights management:
+        - User rights management:
+          - admin_guide/users_rights_management/index.md
+        - Global rights management:
           - admin_guide/rights_management/index.md
           - admin_guide/rights_management/acl-sp.md
           - admin_guide/rights_management/acl-gateway.md
@@ -72,7 +72,6 @@ nav:
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
-        - Versions: install_guide/versions.md
 
 markdown_extensions:
   - admonition
