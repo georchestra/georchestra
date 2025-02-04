@@ -38,7 +38,7 @@ extra:
       link: https://matrix.to/#/#georchestra:osgeo.org
 
 
-copyright: '© 2024 - geOrchestra'
+copyright: '© 2025 - geOrchestra'
 
 extra_css:
     - css/extra.css
@@ -64,9 +64,7 @@ nav:
             - admin_guide/users_management/rights_management/acl-geoserver.md
     - Installation guide:
         - Summary: install_guide/index.md
-        - Install:
-          - install_guide/install/prerequis.md
-          - install_guide/install/configuration.md
+        - Prerequisites: install_guide/prerequisites.md
         - Manage access rights:
           - install_guide/rights_management/index.md
 
@@ -100,15 +98,6 @@ plugins:
             default: true
             build: true
             site_name: "geOrchestra main documentation"
-          - locale: fr
-            name: Français
-            build: true
-            site_name: "Documentation principale de geOrchestra"
-            nav_translations:
-              Home: Accueil
-              Summary: Sommaire
-              Administration guide: Guide d'administration
-              Installation guide: Guide d'installation
 
   - git-revision-date-localized:
       enable_creation_date: true
