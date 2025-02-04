@@ -70,6 +70,7 @@ nav:
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
+        - Versions: install_guide/versions.md
 
 markdown_extensions:
   - admonition
