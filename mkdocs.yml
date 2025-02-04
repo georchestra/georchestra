@@ -61,12 +61,13 @@ nav:
           - admin_guide/users_management/roles.md
           - Rights management:
             - admin_guide/users_management/rights_management/index.md
-            - admin_guide/users_management/rights_management/acl-geoserver.md
+        - Rights management:
+          - admin_guide/rights_management/index.md
+          - admin_guide/rights_management/acl-sp.md
+          - admin_guide/rights_management/acl-gateway.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
-        - Manage access rights:
-          - install_guide/rights_management/index.md
 
 markdown_extensions:
   - admonition

@@ -1,9 +1,9 @@
 # Managing access rights in geOrchestra
 
 Please read first the section of the admin guide called 
- "[Managing users and access rights in geOrchestra](../../admin_guide/users_management/index.md)" to understand how geOrchestra uses the concepts of user, organization and roles.
+ "[Managing users and access rights in geOrchestra](../users_management/index.md)" to understand how geOrchestra uses the concepts of user, organization and roles.
 
- Some applications can leverage new roles automatically or from the graphical user interface. Those are documented in the admin guide: [Configure an application to use a new role](../../admin_guide/users_management/roles.md#3-configure-an-application-to-use-a-new-role)
+ Some applications can leverage new roles automatically or from the graphical user interface. Those are documented in the admin guide: [Configure an application to use a new role](../users_management/roles.md#3-configure-an-application-to-use-a-new-role)
 
  TODO: use an anchor to open the proper paragraph
 

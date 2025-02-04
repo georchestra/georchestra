@@ -12,7 +12,7 @@ Here is a list of core applications that can use new roles and how to leverage i
 - [MapStore](acl-mapstore.md)
 - [Cadastrapp](https://docs.georchestra.org/cadastrapp/latest/guides_techniques/installer/roles_ldap/)
 
-Some other core applications also can leverage new roles, but require access to the configuration files, which is more technical and usually restricted to sysadmin users. They are documented [in the technical guides](../../../technical_guides/rights_management/index.md).
+Some other core applications also can leverage new roles, but require access to the configuration files, which is more technical and usually restricted to sysadmin users. They are documented [in the technical guides](../../rights_management/index.md).
 
 
 

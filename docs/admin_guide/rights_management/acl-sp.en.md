@@ -1,4 +1,6 @@
-# Filtering the access to a path, using roles
+# Security-Proxy
+
+## Filtering the access to a path, using roles
 
 The security-proxy is able to limit the access to a given path only for people belonging to a set of roles.
 This is configured in the geOrchestra datadir, in security-proxy/security-mappings.xml.
