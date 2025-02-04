@@ -67,6 +67,8 @@ nav:
           - admin_guide/rights_management/index.md
           - admin_guide/rights_management/acl-sp.md
           - admin_guide/rights_management/acl-gateway.md
+        - Datahub:
+          - admin_guide/datahub/index.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
