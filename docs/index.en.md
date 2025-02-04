@@ -4,7 +4,5 @@ hide:
   - toc
 ---
 
-# Home of the georchestra main documentation
+# Home
 
-
-## Releases
