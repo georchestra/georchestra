@@ -56,17 +56,22 @@ nav:
         - Summary: user_guide/index.md
     - Administration guide:
         - Summary: admin_guide/index.md
-        - Users Management:
-          - admin_guide/users_management/index.md
-          - admin_guide/users_management/users.md
-          - admin_guide/users_management/organizations.md
-          - admin_guide/users_management/roles.md
-        - User rights management:
-          - admin_guide/users_rights_management/index.md
         - Global rights management:
           - admin_guide/rights_management/index.md
           - admin_guide/rights_management/acl-sp.md
           - admin_guide/rights_management/acl-gateway.md
+        - Users management:
+          - admin_guide/users_management/index.md
+          - admin_guide/users_management/users.md
+          - admin_guide/users_management/organizations.md
+          - admin_guide/users_management/roles.md
+        - Users rights management:
+          - admin_guide/users_rights_management/index.md
+          - admin_guide/users_rights_management/acl-geonetwork.md
+          - admin_guide/users_rights_management/acl-geoserver.md
+          - admin_guide/users_rights_management/acl-geofence.md
+          - admin_guide/users_rights_management/acl-mapstore.md
+          - admin_guide/users_rights_management/acl-cadastrapp.md
         - Datahub:
           - admin_guide/datahub/index.md
     - Installation guide:

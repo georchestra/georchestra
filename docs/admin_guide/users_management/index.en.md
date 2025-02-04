@@ -9,7 +9,7 @@ Users and access management relates to the following concepts:
 - [Users](users.md)
 - [Organizations](organizations.md)
 - [Roles](roles.md)
-- [Rights management](rights_management/index.md)
+- [Rights management](../users_rights_management/index.md)
 
 
 ## Behind the scenes, how does it work ?
