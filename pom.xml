@@ -892,7 +892,6 @@
         <module>testcontainers</module>
         <module>console</module>
         <module>security-proxy</module>
-        <module>geonetwork</module>
         <module>analytics</module>
         <module>header</module>
         <module>datafeeder</module>
@@ -945,12 +944,6 @@
       <id>proxy</id>
       <modules>
         <module>security-proxy</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>geonetwork</id>
-      <modules>
-        <module>geonetwork</module>
       </modules>
     </profile>
     <profile>

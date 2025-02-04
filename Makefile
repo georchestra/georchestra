@@ -21,13 +21,6 @@ docker-build-database:
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
-docker-build-gn: docker-pull-jetty
-	mvn install -pl security-proxy-spring-integration --also-make -DskipTests; \
-	cd geonetwork; \
-	mvn -DskipTests clean install; \
-	cd web; \
-	mvn -P docker -DskipTests package docker:build -DdockerImageTags=${BTAG}
-
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
@@ -55,10 +48,10 @@ docker-build-analytics: build-deps docker-pull-jetty
 docker-build-datafeeder: build-deps
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl datafeeder
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,header,console,analytics,datafeeder
 
-docker-build: docker-build-gn docker-build-geoserver docker-build-georchestra
+docker-build: docker-build-geoserver docker-build-georchestra
 
 
 # WAR related targets
@@ -78,11 +71,7 @@ war-build-geoserver-geofence: build-deps
 war-build-geowebcache: build-deps
 	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
 
-war-build-gn: build-deps
-	mvn clean install -pl testcontainers,ldap-account-management,security-proxy-spring-integration -DskipTests
-	mvn clean install -f geonetwork/pom.xml -DskipTests
-
-war-build-georchestra: war-build-gn war-build-geoserver
+war-build-georchestra: war-build-geoserver
 	mvn -Dmaven.test.skip=true -DskipTests clean install
 
 
