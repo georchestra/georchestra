@@ -9,5 +9,12 @@
 *~
 .attach_pid*
 
+
+# documentation
 venv_mkdocs/
 .venv_mkdocs/
+docs/technical_guides_to_delete/
+
+
+# mac
+.DS_STORE

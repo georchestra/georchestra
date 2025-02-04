@@ -52,7 +52,7 @@ extra_javascript:
 
 nav:
     - Home: index.md 
-    - Administrator guide:
+    - Administration guide:
         - Summary: admin_guide/index.md
         - User Management:
           - admin_guide/users_management/index.md
@@ -62,13 +62,13 @@ nav:
           - Rights management:
             - admin_guide/users_management/rights_management/index.md
             - admin_guide/users_management/rights_management/acl-geoserver.md
-    - Technical guides:
-        - Summary: technical_guides/index.md
+    - Installation guide:
+        - Summary: install_guide/index.md
         - Install:
-          - technical_guides/install/prerequis.md
-          - technical_guides/install/configuration.md
+          - install_guide/install/prerequis.md
+          - install_guide/install/configuration.md
         - Manage access rights:
-          - technical_guides/rights_management/index.md
+          - install_guide/rights_management/index.md
 
 markdown_extensions:
   - admonition
@@ -107,10 +107,8 @@ plugins:
             nav_translations:
               Home: Accueil
               Summary: Sommaire
-              User guide: Guide utilisateur
-              Technical guides: Guides techniques
-              Administrate: Administrer
-              Develop: Développer
+              Administration guide: Guide d'administration
+              Installation guide: Guide d'installation
 
   - git-revision-date-localized:
       enable_creation_date: true
