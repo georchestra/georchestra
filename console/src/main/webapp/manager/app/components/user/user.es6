@@ -1,7 +1,6 @@
 require('components/user/user.tpl')
 
 require('services/util')
-require('services/contexts')
 
 class UserController {
   static $inject = ['$routeParams', '$injector', '$location', 'User', 'Role', 'Orgs']
@@ -63,9 +62,6 @@ class UserController {
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
     switch (this.tab) {
-      case 'infos':
-        this.contexts = $injector.get('Contexts').query()
-        break
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
         this.attachments = this.$injector.get('Attachments').query()
