@@ -1,12 +1,12 @@
 # Users
 
-In order to access to functionalities beyond public consultation of the platform, you needs to login using a user account. 
+In order to access to functionalities beyond public consultation of the platform, you need to login using a user account. 
 You may already have been provided with such an account by your platform administrator. Or you can ask for the creation of a new account.
 On some platforms, you may also be offered the possibility to connect using an external identity provider like France Connect.
 
 ## Sample users
 
-On a brand new deployment, some sample users are predefined: 
+On a brand new deployment, these sample users have been automatically created:
 
  * ```testuser``` has the USER role. The password is **testuser**.
  * ```testreviewer``` has the USER & GN_REVIEWER roles. The password is **testreviewer**.
