@@ -294,7 +294,7 @@ And the for the header, if you want to style it too. [Here](https://github.com/g
 **Behavior with css variables**
 All the georchestra variables are available in [variables.less](https://github.com/georchestra/mapstore2-georchestra/blob/master/themes/default/variables.less#L97) file. Those are all who begins with `--georchestra-ms-*`.
 
-First, if `--ms-*` variables are used (set in contexts in Mapstore) then it fallbacks on `--georchestra-ms-*` ones (set in the css file). If not present, if fallback on georchestra's colors.
+First, `--ms-*` variables are used (those are set in contexts in Mapstore) then it fallbacks on `--georchestra-ms-*` ones (set in the css file). If not present, it fallback on georchestra's colors.
 
 ### Geonetwork-UI apps
 
