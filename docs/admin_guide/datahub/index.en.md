@@ -48,4 +48,8 @@ These 2 options are mutually exclusive (one only should be present in the config
 
 ## Map settings
 
+* the parameters `max_zoom`, `max_extent` and `external_viewer_open_new_tab` are obvious.
+* If a WMS web service has been declared as a resource in the dataset, it can be pushed into a map viewer (in a new tab: `external_viewer_url_template = true` ). The `external_viewer_url_template` parameter allows to define the URL to this viewer displaying the selected layer.
+
+
 ## Translations
