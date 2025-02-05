@@ -263,11 +263,19 @@ body {
   > h3 {
   display: none;
 }
-
-
 ```
 
 ## Specific apps
+
+### Header
+
+The header of geOrchestra is a webcomponent which comes from [georchestra/header](https://github.com/georchestra/header) repo and needs some configuration file.
+
+If you don't want to use a custom config which allows to change entries in the menu, you can fill only the [datadir variables](https://github.com/georchestra/datadir/blob/master/default.properties#L20-L47) which are used for editing the header.
+
+You can refer to he repo to see the full documentation.
+
+Every apps use datadir except Mapstore2 and geonetwork-ui apps (datahub, datafeeder, metadata-editor...).
 
 ### Mapstore 
 
@@ -282,3 +290,11 @@ This plugin is called `Easytheming` and should be added in `localConfig.json` in
 You need either to fill the [`stylesheetUri` here](https://github.com/georchestra/mapstore2-georchestra/blob/c204edd3de1b55b6f493673dfbb4700d221f7296/configs/localConfig.json#L21)
 
 And the for the header, if you want to style it too. [Here](https://github.com/georchestra/mapstore2-georchestra/blob/c204edd3de1b55b6f493673dfbb4700d221f7296/configs/localConfig.json#L29).
+
+### Geonetwork-UI apps
+
+Geonetwork-ui apps (Datahub, Metadata-editor, datafeeder) aren't inside georchestra repo's and in order to add the header, it should have some scripts to inject header inside HTML.
+
+You can check `georchestra/docker` or `georchestra/ansible` repos to have a glimpse of how we can do it.
+
+Datahub comes with his own configuration and can be found in the datadir : [default.toml]https://github.com/georchestra/datadir/blob/master/datahub/conf/default.toml
