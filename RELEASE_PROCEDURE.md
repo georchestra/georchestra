@@ -7,15 +7,16 @@ Buil will be done by GitAction
 
 ## Major releases
 
-In the following {RELEASE_VERSION} will be the release version we want.
-For exemple, if on  master branch we are in 24.0.1-SNAPSHOT version :
-{CURRENT_VERSION} is 24.0.1-SNAPSHOT
-{RELEASE_VERSION} will be 24.0.1 
-{NEXT_VERSION} will be 24.1.0-SNAPSHOT or 25.0.0-SNAPSHOT
-{BRANCH_VERSION} will be 24.1.x or 25.0.x
-{SCM_VERSION} will be 24.1 or 25.0
-{PREVIOUS_MAIN_VERSION} is 24.
-{MAIN_VERSION} will be 24. or 25.
+In the following `{RELEASE_VERSION}` will be the release version we want.
+
+For exemple, if on  master branch we are in 24.0.1-SNAPSHOT version :\
+- `{CURRENT_VERSION}` is 24.0.1-SNAPSHOT
+- `{RELEASE_VERSION}` will be 24.0.1 
+- `{NEXT_VERSION}` will be 24.1.0-SNAPSHOT or 25.0.0-SNAPSHOT
+- `{BRANCH_VERSION}` will be 24.1.x or 25.0.x
+- `{SCM_VERSION}` will be 24.1 or 25.0
+- `{PREVIOUS_MAIN_VERSION}` is 24.
+- `{MAIN_VERSION}` will be 24. or 25.
 
 
 ### Datadir
@@ -25,8 +26,9 @@ From [master](https://github.com/georchestra/datadir/tree/master), create a new 
 ```
 git checkout master
 git pull origin master
-git checkout -b {BRANCH_VERSION} 
+git checkout -b `{BRANCH_VERSION} 
 git push origin {BRANCH_VERSION} 
+```
 
 Same has to be done for the `docker-master` branch:
 ```
@@ -91,11 +93,13 @@ cd geonetwork
 // verify submodule is uptodate
 git checkout georchestra-gn4.4.x
 git pull origin georchestra-gn4.4.x
-
+```
 Change georchestra.version in https://github.com/georchestra/geonetwork/blob/georchestra-gn4.4.x/georchestra-integration/pom.xml#L15
+```
 <georchestra.version>{CURRENT_VERSION}</georchestra.version>
 <georchestra.version>{RELEASE_VERSION}</georchestra.version>
-
+```
+```
 git tag {RELEASE_VERSION}
 git push origin {RELEASE_VERSION}
 ```
@@ -112,7 +116,7 @@ git checkout master
 git pull -r # to get lastest commits
 git checkout -b {BRANCH_VERSION}
 
-# edit gradle.properties to replace dockerTag and datadirRef by: dockerTag=24.0.x and datadirRef=23.0
+# edit gradle.properties to replace dockerTag and datadirRef by: dockerTag={BRANCH_VERSION} and datadirRef={SCM_VERSION}`
 git add gradle.properties
 git commit -am "{BRANCH_VERSION} branch"
 git tag {RELEASE_VERSION}
@@ -189,7 +193,7 @@ git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
 
-geOrchestra {RELEASE_VERSION} is now released, congrats !
+geOrchestra `{RELEASE_VERSION}` is now released, congrats !
 
 Do not forget to :
  * update dependabot files (like https://github.com/georchestra/docker/blob/master/.github/dependabot.yml)
