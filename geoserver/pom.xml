@@ -56,8 +56,13 @@
       <id>osgeo</id>
       <name>OSGeo Nexus Release Repository</name>
       <url>https://repo.osgeo.org/repository/release/</url>
-      <snapshots><enabled>true</enabled></snapshots>
       <releases><enabled>true</enabled></releases>
+    </repository>
+    <repository>
+      <id>osgeo-gs-snapshots</id>
+      <name>OSGeo Nexus Geoserver snapshots Repository</name>
+      <url>https://repo.osgeo.org/repository/geoserver-snapshots/</url>
+      <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
 </project>
