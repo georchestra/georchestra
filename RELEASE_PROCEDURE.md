@@ -1,25 +1,39 @@
 # geOrchestra release procedure
 
 This is an attempt to write down the procedure to make a release of the geOrchestra SDI.
+Severals modules from different repository need to be release and build.
+
+Buil will be done by GitAction
 
 ## Major releases
 
+In the following {RELEASE_VERSION} will be the release version we want.
+For exemple, if on  master branch we are in 24.0.1-SNAPSHOT version :
+{CURRENT_VERSION} is 24.0.1-SNAPSHOT
+{RELEASE_VERSION} will be 24.0.1 
+{NEXT_VERSION} will be 24.1.0-SNAPSHOT or 25.0.0-SNAPSHOT
+{BRANCH_VERSION} will be 24.1.x or 25.0.x
+{SCM_VERSION} will be 24.1 or 25.0
+{PREVIOUS_MAIN_VERSION} is 24.
+{MAIN_VERSION} will be 24. or 25.
+
+
 ### Datadir
+Two branches need to be release
 
 From [master](https://github.com/georchestra/datadir/tree/master), create a new branch:
 ```
 git checkout master
 git pull origin master
-git checkout -b 24.1
-git push origin 24.1
-```
+git checkout -b {BRANCH_VERSION} 
+git push origin {BRANCH_VERSION} 
 
 Same has to be done for the `docker-master` branch:
 ```
 git checkout docker-master
 git pull origin docker-master
-git checkout -b docker-24.1
-git push origin docker-24.1
+git checkout -b docker-{BRANCH_VERSION} 
+git push origin docker-{BRANCH_VERSION} 
 ```
 
 ### Docker
@@ -28,28 +42,28 @@ From [master](https://github.com/georchestra/docker/tree/master), create a new b
 ```
 git checkout master
 git pull origin master
-git checkout -b 24.1
+git checkout -b {BRANCH_VERSION} 
 ```
 
 Update the image tags:
 ```
-sed -i 's/latest/24.1.x/g' docker-compose.yml
+sed -i 's/latest/{BRANCH_VERSION} /g' docker-compose.yml
 ```
 
-Make sure the config folder tracks the `docker-24.1` datadir branch:
+Make sure the config folder tracks the `docker-{BRANCH_VERSION} ` datadir branch:
 ```
 $ cat .gitmodules
 [submodule "config"]
 	path = config
 	url = https://github.com/georchestra/datadir.git
-	branch = docker-24.1
+	branch = docker-{BRANCH_VERSION} 
 ```
 
 Manually update the README and `.github/dependabot.yml`
 
 ```
-git commit -am "24.1 branch"
-git push origin 24.1
+git commit -am "{BRANCH_VERSION}  branch"
+git push origin {BRANCH_VERSION} 
 ```
 
 ### GeoServer minimal datadir
@@ -58,29 +72,35 @@ From [master](https://github.com/georchestra/geoserver_minimal_datadir/tree/mast
 ```
 git checkout master
 git pull origin master
-git checkout -b 24.1
-git push origin 24.1
+git checkout -b {BRANCH_VERSION} 
+git push origin {BRANCH_VERSION} 
 ```
 
 Same has to be done for the `geofence` branch:
 ```
 git checkout geofence
 git pull origin geofence
-git checkout -b 24.1-geofence
-git push origin 24.1-geofence
+git checkout -b {BRANCH_VERSION}-geofence
+git push origin {BRANCH_VERSION}-geofence
 ```
 
 ### GeoNetwork
 
 ```
 cd geonetwork
+// verify submodule is uptodate
 git checkout georchestra-gn4.4.x
 git pull origin georchestra-gn4.4.x
-git tag 24.1.0
-git push origin 24.1.0
+
+Change georchestra.version in https://github.com/georchestra/geonetwork/blob/georchestra-gn4.4.x/georchestra-integration/pom.xml#L15
+<georchestra.version>{CURRENT_VERSION}</georchestra.version>
+<georchestra.version>{RELEASE_VERSION}</georchestra.version>
+
+git tag {RELEASE_VERSION}
+git push origin {RELEASE_VERSION}
 ```
 
-Then [create a new release](https://github.com/georchestra/geonetwork/releases).
+Then [create a new release](https://github.com/georchestra/geonetwork/releases) from this tag.
 
 ### CAS
 
@@ -90,17 +110,17 @@ Then [create a new release](https://github.com/georchestra/geonetwork/releases).
 cd georchestra-cas-server
 git checkout master
 git pull -r # to get lastest commits
-git checkout -b 24.0.x
+git checkout -b {BRANCH_VERSION}
 
 # edit gradle.properties to replace dockerTag and datadirRef by: dockerTag=24.0.x and datadirRef=23.0
 git add gradle.properties
-git commit -am "24.0.x branch"
-git tag 24.0.0-georchestra
-git push --set-upstream origin 24.0.x --tag
+git commit -am "{BRANCH_VERSION} branch"
+git tag {RELEASE_VERSION}
+git push --set-upstream origin {BRANCH_VERSION} --tag
 
 ```
 
-Then [create a new release](https://github.com/georchestra/georchestra-cas-server/releases).
+Then [create a new release](https://github.com/georchestra/georchestra-cas-server/releases) from this tag.
 
 ### mapstore2-geOrchestra
 
@@ -124,54 +144,52 @@ submodule.
 
 ### geOrchestra
 
-From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `24.1.x` branch:
+From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `{BRANCH_VERSION} ` branch:
 ```
 git checkout master
 git pull origin master
-git checkout -b 24.1.x
+git checkout -b BRANCH_VERSION
 ```
 
 Update the GeoNetwork submodule to the release commit:
 ```
 cd geonetwork
 git fetch origin
-git checkout 24.1.0
+git checkout {RELEASE_VERSION}
 cd -
 ```
-
-Other tasks:
- * Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```)
- * Update the branch name for the Travis status logo
- * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `24.1`
- * Replace `99.master` by `${build.closest.tag.name}` in the root `pom.xml` so that debian packages have the right version
- * Change the `BTAG` variable in the Makefile to `24.1.x`
- * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
- * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
- * Update the [github workflow](https://github.com/georchestra/georchestra/tree/master/.github/workflows) files to change the `refs/heads/22.` to `refs/heads/23.` to push on docker hub new images versions
- * Change the default branches in github repositories
- * clean and archive old/none used branches
 
 Commit and propagate the changes:
 ```
 git add geonetwork
-git commit -am "24.1.x branch"
+git commit -am "{BRANCH_VERSION} branch"
 ```
 
-When the release is ready on branch `24.1.x`, push a tag:
+Other tasks:
+ * Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```)
+ * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `{SCM_VERSION}`
+ * Replace `99.master` by `${build.closest.tag.name}` in the root `pom.xml` so that debian packages have the right version
+ * Change the `BTAG` variable in the Makefile to `{BRANCH_VERSION}`
+ * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
+ * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
+ * Update the [github workflow](https://github.com/georchestra/georchestra/tree/master/.github/workflows) files to change the `refs/heads/{PREVIOUS_MAIN_VERSION}.` to `refs/heads/{MAIN_VERSION}.` to push on docker hub new images versions
+ * clean and archive old/none used [branches](https://github.com/georchestra/georchestra/branches/stale) can help
+
+When the release is ready on branch `{BRANCH_VERSION}`, push a tag:
 ```
-git tag 24.1.0
-git push origin 24.1.x --tags
+git tag {RELEASE_VERSION}
+git push origin {BRANCH_VERSION} --tags
 ```
 
 The master branch requires some work too:
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's#<version>24.1-SNAPSHOT</version>#<version>24.2-SNAPSHOT</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>{CURRENT_VERSION}</version>#<version>{NEXT_VERSION}</version>#' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
 
-geOrchestra 24.1.0 is now released, congrats !
+geOrchestra {RELEASE_VERSION} is now released, congrats !
 
 Do not forget to :
  * update dependabot files (like https://github.com/georchestra/docker/blob/master/.github/dependabot.yml)
