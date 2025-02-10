@@ -194,16 +194,16 @@
   </bean>
 
   <bean id="waitForDbGeonetwork" class="org.georchestra.commons.WaitForDb">
-    <property name="url" value="jdbc:postgresql://${pgsqlGNHost}:${pgsqlGNPort}/${pgsqlGNDatabase}"/>
-    <property name="username" value="${pgsqlGNUser}"/>
-    <property name="password" value="${pgsqlGNPassword}"/>
+    <property name="url" value="jdbc:postgresql://${pgsqlGNHost:${pgsqlHost}}:${pgsqlGNPort:${pgsqlPort}}/${pgsqlGNDatabase:${pgsqlDatabase}}"/>
+    <property name="username" value="${pgsqlGNUser:${pgsqlUser}}"/>
+    <property name="password" value="${pgsqlGNPassword:${pgsqlPassword}}"/>
     <property name="driverClassName" value="org.postgresql.Driver"/>
   </bean>
 
   <bean id="dataSourceGeonetwork" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDbGeonetwork">
-    <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlGNHost}:${pgsqlGNPort}/${pgsqlGNDatabase}"/>
-    <property name="user" value="${pgsqlGNUser}"/>
-    <property name="password" value="${pgsqlGNPassword}"/>
+    <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlGNHost:${pgsqlHost}}:${pgsqlGNPort:${pgsqlPort}}/${pgsqlGNDatabase:${pgsqlDatabase}}"/>
+    <property name="user" value="${pgsqlGNUser:${pgsqlUser}}"/>
+    <property name="password" value="${pgsqlGNPassword:${pgsqlPassword}}"/>
     <property name="driverClass" value="org.postgresql.Driver"/>
     <property name="initialPoolSize" value="2"/>
     <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
