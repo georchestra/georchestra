@@ -74,7 +74,7 @@ public class InfosController {
     @Value("${georchestraStylesheet:}")
     private String georchestraStylesheet;
 
-    @Value("${headerConfigFile}")
+    @Value("${headerConfigFile:}")
     private String headerConfigFile;
 
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
