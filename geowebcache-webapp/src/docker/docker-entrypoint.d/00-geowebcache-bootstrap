@@ -1,10 +1,26 @@
 #!/bin/bash
 
-if [ -f /mnt/geowebcache_datadir/geowebcache.xml ]
-then
-    echo 'Datadir already initialized'
-else
-    echo 'Initializing datadir'
+# Check if GEOWEBCACHE_CONFIG_DIR is defined and points to a valid directory
+if [ -z "$GEOWEBCACHE_CONFIG_DIR" ]; then
+    echo "Error: GEOWEBCACHE_CONFIG_DIR is not defined."
+    exit 1
+elif [ ! -d "$GEOWEBCACHE_CONFIG_DIR" ]; then
+    echo "Error: GEOWEBCACHE_CONFIG_DIR ('$GEOWEBCACHE_CONFIG_DIR') is not a directory."
+    exit 1
+fi
 
-    cp /docker-entrypoint.d/geowebcache.xml /mnt/geowebcache_datadir/
+# Check if geowebcache.xml already exists
+if [ -f "$GEOWEBCACHE_CONFIG_DIR/geowebcache.xml" ]; then
+    echo 'Datadir already initialized:' "$GEOWEBCACHE_CONFIG_DIR"
+else
+    echo 'Initializing datadir:' "$GEOWEBCACHE_CONFIG_DIR"
+
+    # Check if the directory is writable
+    if [ -w "$GEOWEBCACHE_CONFIG_DIR" ]; then
+        cp /docker-entrypoint.d/geowebcache.xml "$GEOWEBCACHE_CONFIG_DIR/"
+        echo 'Datadir initialization complete.'
+    else
+        echo "Error: Directory '$GEOWEBCACHE_CONFIG_DIR' is not writable."
+        exit 1
+    fi
 fi
