@@ -18,9 +18,7 @@ RUN chown geo:geo /docker-entrypoint.d
 USER geo
 EXPOSE 8080
 
-ENV JAVA_OPTS=
-
 ARG JAR_FILE=dummy
 ADD ${JAR_FILE} /opt/app/datafeeder.jar
 
-CMD exec java $JAVA_OPTS -jar /opt/app/datafeeder.jar
+CMD exec java -XX:MaxRAMPercentage=80 -XX:+UseParallelGC $JAVA_OPTIONS -jar /opt/app/datafeeder.jar
