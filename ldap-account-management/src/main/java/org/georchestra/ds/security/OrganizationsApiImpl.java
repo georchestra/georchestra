@@ -67,6 +67,13 @@ public class OrganizationsApiImpl implements OrganizationsApi {
     }
 
     @Override
+    public Optional<Organization> findByOrgUniqueId(String orgUniqueId) {
+        return Optional.ofNullable(orgsDao.findByOrgUniqueId(orgUniqueId))//
+                .filter(not(Org::isPending))//
+                .map(orgMapper::map);
+    }
+
+    @Override
     public Optional<byte[]> getLogo(String id) {
         UUID uuid = UUID.fromString(id);
         Org org = orgsDao.findById(uuid);

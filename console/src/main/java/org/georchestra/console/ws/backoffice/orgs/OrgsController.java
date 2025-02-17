@@ -169,6 +169,25 @@ public class OrgsController {
     }
 
     /**
+     * Retreive full information about one org as JSON document from unique
+     * organization id number (e.g french SIRET number). Following keys will be
+     * available :
+     *
+     * * 'id' (not used) * 'name' * 'shortName' * 'cities' as json array ex:
+     * [654,865498,98364,9834534,984984,6978984,98498] * 'status' * 'orgType' *
+     * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
+     *
+     */
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/uoi/{orgUniqueId:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public Org getOrgInfosFromUniqueOrgId(@PathVariable String orgUniqueId) {
+        Org orgInfos = this.orgDao.findByOrgUniqueId(orgUniqueId);
+        this.checkOrgAuthorization(orgInfos.getId());
+        return orgInfos;
+    }
+
+    /**
      * Update information of one org
      *
      * Request should contain Json formated document containing following keys :
@@ -185,6 +204,9 @@ public class OrgsController {
      * plante, 73059 Chambrille", "members": [ "testadmin", "testuser" ] }
      *
      */
+    /**
+     * TODO: Control orgUniqueId unicity
+     */
     @RequestMapping(value = REQUEST_MAPPING
             + "/{commonName:.+}", method = RequestMethod.PUT, produces = "application/json; charset=utf-8")
     @ResponseBody
@@ -195,6 +217,10 @@ public class OrgsController {
 
         // Parse Json
         JSONObject json = this.parseRequest(request);
+
+        if (!this.validation.validateOrgUnicity(orgDao, json)) {
+            throw new IOException("Organization : already exists");
+        }
 
         // Validate request against required fields for admin part
         if (!this.validation.validateOrgField("name", json)) {
@@ -257,6 +283,10 @@ public class OrgsController {
     public Org createOrg(HttpServletRequest request) throws IOException, JSONException {
         // Parse Json
         JSONObject json = this.parseRequest(request);
+
+        if (!this.validation.validateOrgUnicity(orgDao, json)) {
+            throw new IOException("An organization with this identification number already exists.");
+        }
 
         // Validate request against required fields for admin part
         if (!this.validation.validateOrgField("shortName", json)) {
@@ -482,6 +512,7 @@ public class OrgsController {
         org.setUrl(json.optString(Org.JSON_URL));
         org.setLogo(json.optString(Org.JSON_LOGO));
         org.setMail(json.optString(Org.JSON_MAIL));
+        org.setOrgUniqueId(json.optString(Org.JSON_ORG_UNIQ_ID));
     }
 
     /**

@@ -111,6 +111,7 @@
   "org.description"       : "Description",
   "org.url"               : "Website",
   "org.mail"               : "Mail",
+  "org.orgUniqueId": "Identification number",
   "org.logo"              : "Logo",
   "org.note"              : "Internal Notes",
   "org.cities"            : "Area",
