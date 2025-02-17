@@ -239,17 +239,19 @@ public class Validation {
     }
 
     public boolean validateOrgUniqueIdField(OrgsDao orgDao, JSONObject changes, Errors errors) {
+        Boolean isValid = true;
         if (changes.has("orgUniqueId") && !this.validateOrgUnicityByUniqueId(orgDao, changes)) {
             errors.rejectValue("orgUniqueId", "error.orgUniqueIdExists", "orgUniqueIdExists");
-            return false;
+            isValid = false;
         }
-        return true;
+        return isValid;
     }
 
     public boolean validateOrgUnicity(OrgsDao orgDao, JSONObject changes) {
+        Boolean isValid = true;
         if (changes.has("orgUniqueId") && !this.validateOrgUnicityByUniqueId(orgDao, changes)) {
-            return false;
+            isValid = false;
         }
-        return true;
+        return isValid;
     }
 }

@@ -20,7 +20,6 @@ import org.json.JSONObject;
 public class ValidationTest {
 
     private OrgsDao mockOrgsDao;
-    private Org mockOrg;
 
     @Test
     public void testHardCodedUserFields() {
