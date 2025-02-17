@@ -13,7 +13,7 @@
   
   <!-- The location of a static configuration file for GeoWebCache. 
        By default this lives in WEB-INF/classes/geowebcache.xml -->
-  <bean id="gwcXmlConfig" class="org.geowebcache.config.XMLConfiguration">
+  <bean id="gwcXmlConfig" class="org.georchestra.geowebcache.config.EnvironmentAwareXMLConfiguration">
     <constructor-arg ref="gwcAppCtx" />
     <constructor-arg ref="gwcDefaultStorageFinder" />
     <!-- By default GWC will look for geowebcache.xml in {GEOWEBCACHE_CACHE_DIR},
@@ -28,7 +28,7 @@
       </description>
     </property>
   </bean>
-  
+
   <!-- If you like to automatically configure GWC from a WMS Getcapabilities document,
        change the values below. The last constructor-arg lets you specify parameters 
        that are appended to every WMS request to the backed, for example: 
