@@ -881,12 +881,6 @@
       </modules>
     </profile>
     <profile>
-      <id>header</id>
-      <modules>
-        <module>header</module>
-      </modules>
-    </profile>
-    <profile>
       <id>geowebcache</id>
       <modules>
         <module>geowebcache-webapp</module>
