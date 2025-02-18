@@ -49,7 +49,6 @@ import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;

@@ -9,7 +9,7 @@
       to work well with that spring version -->
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
-    <version>1.5.19.RELEASE</version>
+    <version>2.7.18</version>
   </parent>
 
   <groupId>org.georchestra</groupId>
@@ -118,16 +118,6 @@
 	  <version>${postgres.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.mchange</groupId>
         <artifactId>c3p0</artifactId>
         <version>0.10.1</version>
@@ -137,17 +127,6 @@
         <artifactId>awaitility</artifactId>
         <version>3.1.6</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.validation</groupId>
-        <artifactId>validation-api</artifactId>
-        <version>${javax-validation.version}</version>
-        <classifier />
-      </dependency>
-      <dependency>
-        <groupId>javax.transaction</groupId>
-        <artifactId>javax.transaction-api</artifactId>
-        <version>${javax-transaction.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.el</groupId>
@@ -163,11 +142,6 @@
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>2.1</version>
-      </dependency>
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${servlet-api.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.transaction</groupId>
@@ -216,11 +190,6 @@
         <version>2.1</version>
       </dependency>
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.16.0</version>
@@ -244,11 +213,6 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>2.8.0</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-        <version>1.4</version>
       </dependency>
       <dependency>
         <groupId>org.jdom</groupId>
@@ -506,6 +470,14 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+ <dependencies>
+  <dependency>
+   <groupId>org.hamcrest</groupId>
+   <artifactId>hamcrest-junit</artifactId>
+   <version>2.0.0.0</version>
+   <scope>test</scope>
+  </dependency>
+ </dependencies>
   <build>
     <testResources>
       <testResource>
@@ -687,6 +659,23 @@
           <version>3.8.1</version>
         </plugin>
         <plugin>
+          <groupId>org.openrewrite.maven</groupId>
+          <artifactId>rewrite-maven-plugin</artifactId>
+          <version>6.1.3</version>
+          <configuration>
+            <activeRecipes>
+              <recipe>org.openrewrite.java.spring.boot2.UpgradeSpringBoot_2_7</recipe>
+            </activeRecipes>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.openrewrite.recipe</groupId>
+              <artifactId>rewrite-spring</artifactId>
+              <version>6.1.0</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.2.0</version>
@@ -694,18 +683,12 @@
         <plugin> <!-- plugin to run unit tests -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.2</version>
+          <version>3.1.2</version>
         </plugin>
         <plugin> <!-- plugin to run integration tests -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.22.2</version>
-        </plugin>
-        <plugin>
-          <!-- Note 2.8 does not work with AspectJ aspect path -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.10</version>
+          <version>3.1.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -870,8 +853,6 @@
       <modules>
         <module>console</module>
         <module>security-proxy</module>
-        <module>analytics</module>
-        <module>header</module>
       </modules>
     </profile>
     <profile>
@@ -885,18 +866,12 @@
         </file>
       </activation>
       <modules>
-        <module>geoserver</module>
         <module>geowebcache-webapp</module>
         <module>commons</module>
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
         <module>security-proxy</module>
-        <module>geonetwork</module>
-        <module>analytics</module>
-        <module>header</module>
-        <module>datafeeder</module>
-        <module>datafeeder-ui</module>
       </modules>
     </profile>
     <profile>
@@ -909,12 +884,6 @@
       <id>header</id>
       <modules>
         <module>header</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>geoserver</id>
-      <modules>
-        <module>geoserver</module>
       </modules>
     </profile>
     <profile>
@@ -945,30 +914,6 @@
       <id>proxy</id>
       <modules>
         <module>security-proxy</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>geonetwork</id>
-      <modules>
-        <module>geonetwork</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>analytics</id>
-      <modules>
-        <module>analytics</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>datafeeder</id>
-      <modules>
-        <module>datafeeder</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>datafeeder-ui</id>
-      <modules>
-        <module>datafeeder-ui</module>
       </modules>
     </profile>
     <profile>

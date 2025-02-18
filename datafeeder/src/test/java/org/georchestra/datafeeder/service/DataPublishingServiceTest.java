@@ -1,7 +1,5 @@
 package org.georchestra.datafeeder.service;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Map;
 

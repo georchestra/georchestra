@@ -1,8 +1,8 @@
 package org.georchestra.console.ws.backoffice;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assume.assumeTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,9 +21,9 @@ import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountFactory;
 import org.georchestra.ds.users.UserRule;
 import org.georchestra.ds.users.UserSchema;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ErrorCollector;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
@@ -159,7 +159,7 @@ public class UsersRolesControllerTest {
 
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         realLdapActivated = "true".equalsIgnoreCase(System.getProperty(ENV_ACTIVATED));
 

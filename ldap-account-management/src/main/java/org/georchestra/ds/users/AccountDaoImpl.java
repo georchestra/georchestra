@@ -58,7 +58,7 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
-import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 
 import lombok.NonNull;
 
@@ -385,7 +385,7 @@ public class AccountDaoImpl implements AccountDao {
         // passwords (old and new password) they will
         // be replaced by a single user password
         LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
+        String encrypted = lspe.encode(password);
 
         context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, encrypted);
 

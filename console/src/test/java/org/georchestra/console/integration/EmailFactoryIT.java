@@ -1,6 +1,6 @@
 package org.georchestra.console.integration;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,19 +11,16 @@ import javax.mail.MessagingException;
 import org.apache.commons.io.FileUtils;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.mailservice.EmailFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.google.common.io.Files;
 
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/mail-factory-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/mail-factory-test.xml" })
 public class EmailFactoryIT {
 
     @Autowired

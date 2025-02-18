@@ -34,7 +34,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.georchestra.datafeeder.autoconf.GeorchestraIntegrationAutoConfiguration;
 import org.georchestra.datafeeder.it.IntegrationTestSupport;
 import org.georchestra.datafeeder.service.DataFeederServiceConfiguration;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

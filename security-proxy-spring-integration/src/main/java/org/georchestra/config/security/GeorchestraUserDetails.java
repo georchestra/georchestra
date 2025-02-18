@@ -33,6 +33,7 @@ import org.georchestra.security.model.Organization;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -258,7 +259,7 @@ public class GeorchestraUserDetails implements UserDetails {
 
     private static List<String> extractRoles(Map<String, String> headers) {
         String rolesHeader = getHeader(headers, SEC_ROLES);
-        if (StringUtils.isEmpty(rolesHeader)) {
+        if (ObjectUtils.isEmpty(rolesHeader)) {
             return Collections.emptyList();
         }
         return Splitter.on(';').omitEmptyStrings().trimResults()//

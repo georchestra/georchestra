@@ -49,6 +49,12 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
+  <dependency>
+   <groupId>org.hamcrest</groupId>
+   <artifactId>hamcrest-junit</artifactId>
+   <version>2.0.0.0</version>
+   <scope>test</scope>
+  </dependency>
     <!-- geOrchestra commons -->
     <dependency>
       <groupId>org.georchestra</groupId>

@@ -44,7 +44,6 @@ import org.geotools.data.csv.CSVDataStore;
 import org.geotools.data.csv.parse.CSVAttributesOnlyStrategy;
 import org.geotools.data.csv.parse.CSVLatLonStrategy;
 import org.junit.Rule;
-import org.junit.Test;
 
 public class DatasetsServiceTest {
 

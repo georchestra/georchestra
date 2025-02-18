@@ -1,8 +1,8 @@
 package org.georchestra.console.ds;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,9 +18,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.georchestra.lib.sqlcommand.DataCommandException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class QueryUserTokenExpiredCommandTest {
@@ -31,7 +31,7 @@ public class QueryUserTokenExpiredCommandTest {
     private PreparedStatement pstmt;
     private ResultSet resultSet;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockDS = mock(DataSource.class);
         connection = mock(Connection.class);
@@ -54,7 +54,7 @@ public class QueryUserTokenExpiredCommandTest {
         query.setBeforeDate(new Date());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

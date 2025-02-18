@@ -40,7 +40,6 @@ import java.util.UUID;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.web.multipart.MultipartFile;
 

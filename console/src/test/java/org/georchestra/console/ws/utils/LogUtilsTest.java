@@ -1,6 +1,6 @@
 package org.georchestra.console.ws.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +20,7 @@ public class LogUtilsTest {
 
     private AdminLogEntry log;
 
-    @Before
+    @BeforeEach
     public void resetSecurityContext() {
         SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
     }

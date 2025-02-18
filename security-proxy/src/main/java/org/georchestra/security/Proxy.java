@@ -64,6 +64,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -273,7 +274,7 @@ public class Proxy {
         gateway.loadCredentialsPage(request, response);
     }
 
-    @RequestMapping(value = "/testPage", method = { GET })
+    @GetMapping("/testPage")
     public void testPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         gateway.testPage(response);
@@ -361,7 +362,7 @@ public class Proxy {
      * Entry point available for non security-proxified webapps to get information
      * about current user.
      */
-    @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/whoami", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String whoami(HttpServletRequest request) throws DataServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

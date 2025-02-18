@@ -18,13 +18,9 @@
  */
 package org.georchestra.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,8 +37,8 @@ import org.georchestra.security.api.OrganizationsApi;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -66,7 +62,7 @@ public class UserOrganizationJSONRequestHeaderProviderTest {
     private Properties headersMapping;
     private MockHttpServletRequest request = new MockHttpServletRequest();
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         GeorchestraUser user = newGeorchestraUser("testadmin");
         this.org = newOrganization(user.getOrganization(), user.getUsername());
 

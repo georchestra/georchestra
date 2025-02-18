@@ -1,6 +1,6 @@
 package org.georchestra.console.mailservice;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +16,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class EmailTest {
@@ -42,7 +42,7 @@ public class EmailTest {
 
     private Email mail;
 
-    @Before
+    @BeforeEach
     public void doSetUp() {
         this.recipients = Arrays.asList("admin@georchestra.com", "delegated@georchestra.com");
         this.emailSubject = "your account has been created";
@@ -88,16 +88,16 @@ public class EmailTest {
         for (Address address : addresses) {
             toList.add(address.toString());
         }
-        assertEquals("emails listed in TO: field", this.recipients, toList);
+        assertEquals(this.recipients, toList, "emails listed in TO: field");
 
         // Check FROM: field
-        assertEquals("email in FROM: field", this.from, message.getFrom()[0].toString());
+        assertEquals(this.from, message.getFrom()[0].toString(), "email in FROM: field");
 
         // Check Reply-To: header
-        assertEquals("email in Reply-To: header", this.replyTo, message.getReplyTo()[0].toString());
+        assertEquals(this.replyTo, message.getReplyTo()[0].toString(), "email in Reply-To: header");
 
         // Check Subject: header
-        assertEquals("email in Subject: header", this.emailSubject, message.getSubject());
+        assertEquals(this.emailSubject, message.getSubject(), "email in Subject: header");
 
         // Check email body
         String expectedBody = FileUtils.readFileToString(

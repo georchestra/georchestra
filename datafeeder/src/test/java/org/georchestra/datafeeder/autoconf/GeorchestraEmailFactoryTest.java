@@ -24,8 +24,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Test;
-
 public class GeorchestraEmailFactoryTest {
 
     private static final String TEMPLATE = "to: ${user.email}\n"//

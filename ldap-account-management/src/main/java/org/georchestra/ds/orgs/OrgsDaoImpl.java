@@ -48,6 +48,7 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -375,7 +376,7 @@ public class OrgsDaoImpl implements OrgsDao {
      */
     @Override
     public Org findByCommonName(String commonName) {
-        if (StringUtils.isEmpty(commonName)) {
+        if (ObjectUtils.isEmpty(commonName)) {
             return null;
         }
         return addExt(getOrgExtension().findById(commonName));
@@ -480,7 +481,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void linkUser(Account user) {
-        if (StringUtils.isEmpty(user.getOrg())) {
+        if (ObjectUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
@@ -491,7 +492,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void unlinkUser(Account user) {
-        if (StringUtils.isEmpty(user.getOrg())) {
+        if (ObjectUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
@@ -535,7 +536,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
         try {
-            if (StringUtils.isEmpty(value)) {
+            if (ObjectUtils.isEmpty(value)) {
                 Attribute attributeToDelete = context.getAttributes().get(fieldName);
                 if (attributeToDelete != null) {
                     Collections.list(attributeToDelete.getAll()).stream()
@@ -567,7 +568,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     private String asString(Attribute att) throws NamingException {
         String v = att == null ? null : (String) att.get();
-        return StringUtils.isEmpty(v) ? "" : v;
+        return ObjectUtils.isEmpty(v) ? "" : v;
     }
 
     private UUID asUuid(Attribute att) throws NamingException {

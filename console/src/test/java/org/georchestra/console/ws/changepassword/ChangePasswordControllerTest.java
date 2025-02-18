@@ -1,10 +1,9 @@
 package org.georchestra.console.ws.changepassword;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_EXTERNAL_AUTHENTICATION;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,8 +22,8 @@ import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.ds.users.UserSchema;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -50,7 +49,7 @@ public class ChangePasswordControllerTest {
     private ChangePasswordFormBean formBean;
     private BindingResult result;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ldapTemplate = mock(LdapTemplate.class);
 
@@ -135,23 +134,27 @@ public class ChangePasswordControllerTest {
         assertTrue((Boolean) model.asMap().get("success"));
     }
 
-    @Test(expected = DataServiceException.class)
-    public void changePasswordDataServiceException() throws Exception {
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setPassword("monkey123");
-        formBean.setConfirmPassword("monkey123");
-        when(result.hasErrors()).thenReturn(false);
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) any());
+    @Test
+    public void changePasswordDataServiceException() {
+        assertThrows(DataServiceException.class, () -> {
+            userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+            formBean.setPassword("monkey123");
+            formBean.setConfirmPassword("monkey123");
+            when(result.hasErrors()).thenReturn(false);
+            Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) any());
 
-        ctrlToTest.changePassword(model, formBean, result);
+            ctrlToTest.changePassword(model, formBean, result);
+        });
     }
 
-    @Test(expected = NullPointerException.class)
-    public void changePasswordUidMismatch() throws Exception {
-        userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
-        formBean.setPassword("monkey123");
-        formBean.setConfirmPassword("monkey123");
-        String ret = ctrlToTest.changePassword(model, formBean, result);
+    @Test
+    public void changePasswordUidMismatch() {
+        assertThrows(NullPointerException.class, () -> {
+            userIsSpringSecurityAuthenticatedAndExistInLdap("pmauduit");
+            formBean.setPassword("monkey123");
+            formBean.setConfirmPassword("monkey123");
+            String ret = ctrlToTest.changePassword(model, formBean, result);
+        });
     }
 
     @Test

@@ -3,8 +3,8 @@ package org.georchestra.console.ws.editorgdetails;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -50,7 +50,7 @@ public class EditOrgDetailsFormControllerTest {
 
     private Model model = Mockito.mock(Model.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         ctrl.logUtils = mockLogUtils;

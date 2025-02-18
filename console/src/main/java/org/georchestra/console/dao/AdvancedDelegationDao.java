@@ -56,7 +56,7 @@ public class AdvancedDelegationDao {
     public Set<String> findUsersUnderDelegation(String delegatedAdmin) {
         HashSet<String> res = new HashSet<String>();
 
-        DelegationEntry delegation = this.delegationDao.findOne(delegatedAdmin);
+        DelegationEntry delegation = this.delegationDao.findFirstByUid(delegatedAdmin);
         if (delegation == null) {
             return res;
         }

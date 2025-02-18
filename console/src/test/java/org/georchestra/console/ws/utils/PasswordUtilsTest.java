@@ -1,8 +1,8 @@
 package org.georchestra.console.ws.utils;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MapBindingResult;
 
@@ -12,7 +12,7 @@ public class PasswordUtilsTest {
 
     PasswordUtils passwordUtils = new PasswordUtils();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         passwordUtils.setValidation(new Validation(""));
         passwordUtils.setMinimumLength(16);
@@ -46,7 +46,7 @@ public class PasswordUtilsTest {
     public void differentPasswords() {
         Errors errors = new MapBindingResult(new HashMap<>(), "errors");
         passwordUtils.validate("differentPasswords123!", "differentPasswords124!", errors);
-        Assert.assertEquals(1, errors.getErrorCount());
+        Assertions.assertEquals(1, errors.getErrorCount());
     }
 
     @Test
@@ -56,12 +56,12 @@ public class PasswordUtilsTest {
 
         Errors errors = new MapBindingResult(new HashMap<>(), "errors");
         passwordUtils.validate("$valid-Password_Of(30)Symbols!", "$valid-Password_Of(30)Symbols!", errors);
-        Assert.assertEquals(false, errors.hasErrors());
+        Assertions.assertEquals(false, errors.hasErrors());
     }
 
     private void assertPasswordErrorCount(String password, int expectedErrorCount) {
         Errors errors = new MapBindingResult(new HashMap<>(), "errors");
         passwordUtils.validate(password, password, errors);
-        Assert.assertEquals(expectedErrorCount, errors.getErrorCount());
+        Assertions.assertEquals(expectedErrorCount, errors.getErrorCount());
     }
 }

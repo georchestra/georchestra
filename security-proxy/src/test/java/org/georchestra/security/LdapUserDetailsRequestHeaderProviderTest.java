@@ -24,9 +24,7 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_LASTNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ORGNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_TEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -36,8 +34,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.georchestra.commons.security.SecurityHeaders;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,7 +50,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         support = new LdapHeaderMappingsTestSupport();
         support.initMockLdapContext();
         ldapProvider = new LdapUserDetailsRequestHeaderProvider(() -> support.userSearch, support.orgSearchBaseDN);
@@ -128,7 +126,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
                 SEC_FIRSTNAME, "givenName");
 
         assertEquals(expected.keySet(), actual.keySet());
-        assertEquals("expected default headers on non service-name match", expected, actual);
+        assertEquals(expected, actual, "expected default headers on non service-name match");
     }
 
     @Test
@@ -154,7 +152,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
         assertEquals(expected.keySet(), actual.keySet());
         expected.forEach((h, v) -> {
             String returned = actual.get(h);
-            assertEquals(h, v, returned);
+            assertEquals(v, returned, h);
         });
     }
 
@@ -229,7 +227,7 @@ public class LdapUserDetailsRequestHeaderProviderTest {
 
         expected.forEach((header, value) -> {
             String mappingStr = String.format("%s=%s", header, config.get(header));
-            assertEquals(mappingStr, value, actual.get(header));
+            assertEquals(value, actual.get(header), mappingStr);
             LdapUserDetailsRequestHeaderProvider.logger.info(mappingStr + " ok: " + value);
         });
     }

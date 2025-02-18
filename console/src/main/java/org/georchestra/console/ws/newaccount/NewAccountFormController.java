@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -68,12 +68,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 /**
@@ -136,7 +131,6 @@ public final class NewAccountFormController {
     @Value("${publicContextPath:/console}")
     private String publicContextPath;
 
-    @Autowired
     public NewAccountFormController(ReCaptchaParameters reCaptchaParameters, Validation validation) {
         this.reCaptchaParameters = reCaptchaParameters;
         this.validation = validation;
@@ -183,7 +177,7 @@ public final class NewAccountFormController {
                 "recaptcha_response_field");
     }
 
-    @RequestMapping(value = "/account/new", method = RequestMethod.GET)
+    @GetMapping("/account/new")
     public String setupForm(HttpServletRequest request, Model model) throws IOException {
 
         HttpSession session = request.getSession();
@@ -227,10 +221,10 @@ public final class NewAccountFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/new", method = RequestMethod.POST)
+    @PostMapping("/account/new")
     public String create(HttpServletRequest request, @ModelAttribute AccountFormBean formBean,
-            @RequestParam(value = "orgCities", required = false, defaultValue = "") String orgCities,
-            BindingResult result, SessionStatus sessionStatus, Model model) throws IOException, SQLException {
+            @RequestParam(required = false, defaultValue = "") String orgCities, BindingResult result,
+            SessionStatus sessionStatus, Model model) throws IOException, SQLException {
 
         populateOrgsAndOrgTypes(model);
         model.addAttribute("moderatedSignup", this.moderatedSignup);

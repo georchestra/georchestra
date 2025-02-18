@@ -20,19 +20,15 @@ package org.georchestra.security;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_EMAIL;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_FIRSTNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 
 import org.georchestra.security.LdapHeaderMappings.HeaderMappings;
 import org.hamcrest.CoreMatchers;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import com.google.common.collect.ImmutableSet;
 
 public class LdapHeaderMappingsTest {
@@ -41,7 +37,7 @@ public class LdapHeaderMappingsTest {
 
     private LdapHeaderMappingsTestSupport support;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         mappings = new LdapHeaderMappings();
         support = new LdapHeaderMappingsTestSupport();
     }

@@ -25,4 +25,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DelegationDao extends PagingAndSortingRepository<DelegationEntry, String> {
+
+    DelegationEntry findFirstByUid(String uid);
 }

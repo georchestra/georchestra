@@ -1,8 +1,8 @@
 package org.georchestra.console.ws.backoffice.orgs;
 
 import static org.mockito.AdditionalMatchers.aryEq;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,8 +25,8 @@ import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,7 +45,7 @@ public class OrgsControllerTest {
     private DelegationDao delegationDaoMock;
     private LogUtils mockLogUtils;
 
-    @Before
+    @BeforeEach
     public void grantRight() {
         MockitoAnnotations.initMocks(this);
         // Set user connected through spring security

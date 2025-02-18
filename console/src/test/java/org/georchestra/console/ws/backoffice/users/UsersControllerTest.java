@@ -1,14 +1,10 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.notNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -38,9 +34,9 @@ import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.UserRule;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -70,7 +66,7 @@ public class UsersControllerTest {
     private AdvancedDelegationDao mockAdvancedDelegationDao;
     private LogUtils mockLogUtils;
 
-    @Before
+    @BeforeEach
     public void setUp() throws DataServiceException {
         dao = mock(AccountDao.class);
         roleDao = mock(RoleDao.class);
@@ -112,33 +108,41 @@ public class UsersControllerTest {
         SecurityContextHolder.setContext(securityContext);
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testFindAllException() throws DataServiceException {
-        doThrow(DataServiceException.class).when(dao).findFilterBy(any());
-        usersCtrl.findAll();
+    @Test
+    public void testFindAllException() {
+        assertThrows(DataServiceException.class, () -> {
+            doThrow(DataServiceException.class).when(dao).findFilterBy(any());
+            usersCtrl.findAll();
+        });
     }
 
-    @Test(expected = NameNotFoundException.class)
-    public void testFindByUidEmpty() throws Exception {
-        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("nonexistentuser"));
-        usersCtrl.findByUid("nonexistentuser");
+    @Test
+    public void testFindByUidEmpty() {
+        assertThrows(NameNotFoundException.class, () -> {
+            doThrow(NameNotFoundException.class).when(dao).findByUID(eq("nonexistentuser"));
+            usersCtrl.findByUid("nonexistentuser");
+        });
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void testFindByUidProtected() throws Exception {
-        usersCtrl.findByUid("geoserver_privileged_user");
+    @Test
+    public void testFindByUidProtected() {
+        assertThrows(AccessDeniedException.class, () -> usersCtrl.findByUid("geoserver_privileged_user"));
     }
 
-    @Test(expected = NameNotFoundException.class)
-    public void testFindByUidNotFound() throws Exception {
-        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("notfounduser"));
-        usersCtrl.findByUid("notfounduser");
+    @Test
+    public void testFindByUidNotFound() {
+        assertThrows(NameNotFoundException.class, () -> {
+            doThrow(NameNotFoundException.class).when(dao).findByUID(eq("notfounduser"));
+            usersCtrl.findByUid("notfounduser");
+        });
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testFindByUidDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(dao).findByUID(eq("failingUser"));
-        usersCtrl.findByUid("failingUser");
+    @Test
+    public void testFindByUidDataServiceException() {
+        assertThrows(DataServiceException.class, () -> {
+            doThrow(DataServiceException.class).when(dao).findByUID(eq("failingUser"));
+            usersCtrl.findByUid("failingUser");
+        });
     }
 
     @Test
@@ -151,47 +155,53 @@ public class UsersControllerTest {
         assertEquals(pmauduit, res);
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void testCreateProtectedUser() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("givenName", "geoserver")
-                .put("mail", "geoserver@localhost").put("telephoneNumber", "+331234567890")
-                .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
-                .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
-        request.setRequestURI("/console/users/geoserver");
-        // geoserver_privileged_user is not a valid username automatically generated
-        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user", "ggeoserverprivilegeduser" });
-        request.setContent(reqUsr.toString().getBytes());
+    @Test
+    public void testCreateProtectedUser() {
+        assertThrows(AccessDeniedException.class, () -> {
+            JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("givenName", "geoserver")
+                    .put("mail", "geoserver@localhost").put("telephoneNumber", "+331234567890")
+                    .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
+                    .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
+            request.setRequestURI("/console/users/geoserver");
+            // geoserver_privileged_user is not a valid username automatically generated
+            userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user", "ggeoserverprivilegeduser" });
+            request.setContent(reqUsr.toString().getBytes());
 
-        usersCtrl.create(request);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateIllegalArgumentException_FirstNameIsRequired() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user")
-                .put("telephoneNumber", "+331234567890").put("facsimileTelephoneNumber", "+33123456788")
-                .put("street", "Avenue des Ducs de Savoie").put("postalCode", "73000").put("l", "Chambéry")
-                .put("postOfficeBox", "1234").put("o", "GeoServer");
-        request.setRequestURI("/console/users/geoserver");
-        request.setContent(reqUsr.toString().getBytes());
-
-        usersCtrl.create(request);
-    }
-
-    @Test(expected = DuplicatedEmailException.class)
-    public void testCreateDuplicateEmailException() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
-                .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
-                .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
-                .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
-        request.setRequestURI("/console/users/geoserver");
-        request.setContent(reqUsr.toString().getBytes());
-
-        doThrow(DuplicatedEmailException.class).when(dao).insert(any());
-        usersCtrl.create(request);
+            usersCtrl.create(request);
+        });
     }
 
     @Test
-    @Ignore("not implemented")
+    public void testCreateIllegalArgumentException_FirstNameIsRequired() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user")
+                    .put("telephoneNumber", "+331234567890").put("facsimileTelephoneNumber", "+33123456788")
+                    .put("street", "Avenue des Ducs de Savoie").put("postalCode", "73000").put("l", "Chambéry")
+                    .put("postOfficeBox", "1234").put("o", "GeoServer");
+            request.setRequestURI("/console/users/geoserver");
+            request.setContent(reqUsr.toString().getBytes());
+
+            usersCtrl.create(request);
+        });
+    }
+
+    @Test
+    public void testCreateDuplicateEmailException() {
+        assertThrows(DuplicatedEmailException.class, () -> {
+            JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
+                    .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
+                    .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
+                    .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
+            request.setRequestURI("/console/users/geoserver");
+            request.setContent(reqUsr.toString().getBytes());
+
+            doThrow(DuplicatedEmailException.class).when(dao).insert(any());
+            usersCtrl.create(request);
+        });
+    }
+
+    @Test
+    @Disabled("not implemented")
     public void testCreateSaslUser() {
         JSONObject reqUsr = new JSONObject().put("sn", "geoserver privileged user").put("mail", "tomcat@localhost")
                 .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
@@ -212,7 +222,7 @@ public class UsersControllerTest {
         Account res = usersCtrl.create(request);
         assertNotNull(res);
 
-        verify(dao).insert(notNull(Account.class));
+        verify(dao).insert(notNull());
 
         assertEquals(res.getUid(), "ggeoserverprivilegeduser");
         assertEquals(res.getEmail(), "tomcat@localhost");
@@ -232,68 +242,79 @@ public class UsersControllerTest {
         assertEquals(res.getPrivacyPolicyAgreementDate(), LocalDate.of(2019, 3, 12));
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void testUpdateUserProtected() throws Exception {
-        usersCtrl.update("geoserver_privileged_user", request);
+    @Test
+    public void testUpdateUserProtected() {
+        assertThrows(AccessDeniedException.class, () -> usersCtrl.update("geoserver_privileged_user", request));
     }
 
-    @Test(expected = NameNotFoundException.class)
-    public void testUpdateUserNotFound() throws Exception {
-        doThrow(NameNotFoundException.class).when(dao).findByUID(eq("usernotfound"));
-        usersCtrl.update("usernotfound", request);
+    @Test
+    public void testUpdateUserNotFound() {
+        assertThrows(NameNotFoundException.class, () -> {
+            doThrow(NameNotFoundException.class).when(dao).findByUID(eq("usernotfound"));
+            usersCtrl.update("usernotfound", request);
+        });
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testUpdateUserDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(dao).findByUID(eq("pmauduit"));
-        usersCtrl.update("pmauduit", request);
+    @Test
+    public void testUpdateUserDataServiceException() {
+        assertThrows(DataServiceException.class, () -> {
+            doThrow(DataServiceException.class).when(dao).findByUID(eq("pmauduit"));
+            usersCtrl.update("pmauduit", request);
+        });
     }
 
-    @Test(expected = DuplicatedEmailException.class)
-    public void testUpdateDuplicatedEmailException() throws Exception {
+    @Test
+    public void testUpdateDuplicatedEmailException() {
+        assertThrows(DuplicatedEmailException.class, () -> {
 
-        final String duplicateEmail = "tomcat2@localhost";
+            final String duplicateEmail = "tomcat2@localhost";
 
-        request.setContent(new JSONObject().put("mail", duplicateEmail).toString().getBytes());
+            request.setContent(new JSONObject().put("mail", duplicateEmail).toString().getBytes());
 
-        Account originalAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
-                "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        originalAccount.setOrg("psc");
-        mockLookup(originalAccount);
+            Account originalAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
+                    "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
+            originalAccount.setOrg("psc");
+            mockLookup(originalAccount);
 
-        Account expectedModifiedAccount = AccountFactory.create(originalAccount);
-        // the clone method above does not clone pwd
-        originalAccount.setPassword(null);
-        expectedModifiedAccount.setPassword(null);
+            Account expectedModifiedAccount = AccountFactory.create(originalAccount);
+            // the clone method above does not clone pwd
+            originalAccount.setPassword(null);
+            expectedModifiedAccount.setPassword(null);
 
-        assertEquals(originalAccount, expectedModifiedAccount);
+            assertEquals(originalAccount, expectedModifiedAccount);
 
-        expectedModifiedAccount.setEmail(duplicateEmail);
+            expectedModifiedAccount.setEmail(duplicateEmail);
 
-        doThrow(DuplicatedEmailException.class).when(dao).update(eq(originalAccount), eq(expectedModifiedAccount));
-        usersCtrl.update("pmauduit", request);
+            doThrow(DuplicatedEmailException.class).when(dao).update(eq(originalAccount), eq(expectedModifiedAccount));
+            usersCtrl.update("pmauduit", request);
+        });
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
-        JSONObject reqUsr = new JSONObject().put("mail", "tomcat2@localhost");
-        request.setContent(reqUsr.toString().getBytes());
-        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
-                "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
-        mockLookup(fakedAccount);
+    @Test
+    public void testUpdateDataServiceExceptionWhileModifying() {
+        assertThrows(DataServiceException.class, () -> {
+            JSONObject reqUsr = new JSONObject().put("mail", "tomcat2@localhost");
+            request.setContent(reqUsr.toString().getBytes());
+            Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "pmauduit",
+                    "pmauduit@georchestra.org", "+33123456789", "developer & sysadmin", "dev&ops");
+            mockLookup(fakedAccount);
 
-        doThrow(DataServiceException.class).when(dao).update(eq(fakedAccount), any());
-        usersCtrl.update("pmauduit", request);
+            doThrow(DataServiceException.class).when(dao).update(eq(fakedAccount), any());
+            usersCtrl.update("pmauduit", request);
+
+        });
 
     }
 
-    @Test(expected = JSONException.class)
-    public void testUpdateBadJSON() throws Exception {
-        request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
+    @Test
+    public void testUpdateBadJSON() {
+        assertThrows(JSONException.class, () -> {
+            request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
 
-        mockLookup("pmauduit", false);
+            mockLookup("pmauduit", false);
 
-        usersCtrl.update("pmauduit", request);
+            usersCtrl.update("pmauduit", request);
+        });
     }
 
     @Test
@@ -337,7 +358,7 @@ public class UsersControllerTest {
 
         DelegationEntry toBeModified = new DelegationEntry();
         toBeModified.setUid("dummy");
-        when(mockDelegationDao.findOne("pmauduit")).thenReturn(toBeModified);
+        when(mockDelegationDao.findFirstByUid("pmauduit")).thenReturn(toBeModified);
 
         Account ret = usersCtrl.update("pmauduit", request);
 
@@ -383,11 +404,11 @@ public class UsersControllerTest {
         initialState.setOrg("psc");
         mockLookup(initialState);
 
-        when(mockDelegationDao.findOne("pmauduit")).thenReturn(null);
+        when(mockDelegationDao.findFirstByUid("pmauduit")).thenReturn(null);
 
         usersCtrl.update("pmauduit", request);
 
-        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).deleteById(anyString());
         verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
@@ -427,39 +448,46 @@ public class UsersControllerTest {
         assertEquals("pmauduit", ret.getUid());
         assertEquals("", ret.getOrg());
 
-        verify(mockDelegationDao, never()).findOne(anyString());
-        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).findFirstByUid(anyString());
+        verify(mockDelegationDao, never()).deleteById(anyString());
         verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
-    @Test(expected = AccessDeniedException.class)
-    public void testDeleteUserProtected() throws Exception {
-        Mockito.reset(mockDelegationDao);
+    @Test
+    public void testDeleteUserProtected() {
+        assertThrows(AccessDeniedException.class, () -> {
+            Mockito.reset(mockDelegationDao);
 
-        mockLookup("geoserver_privileged_user", false);
+            mockLookup("geoserver_privileged_user", false);
 
-        DelegationEntry toBeDeleted = new DelegationEntry();
-        when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
+            DelegationEntry toBeDeleted = new DelegationEntry();
+            when(mockDelegationDao.findFirstByUid("geoserver_privileged_user")).thenReturn(toBeDeleted);
 
-        usersCtrl.delete("geoserver_privileged_user", request, response);
+            usersCtrl.delete("geoserver_privileged_user", request, response);
 
-        verify(mockDelegationDao).delete(toBeDeleted);
-        verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+            verify(mockDelegationDao).delete(toBeDeleted);
+            verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+
+        });
 
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testDeleteDataServiceExDataServiceExceptionceptionCaught() throws Exception {
-        Account acc = mockLookup("pmauduit", false);
-        doThrow(DataServiceException.class).when(dao).delete(eq(acc));
-        usersCtrl.delete("pmauduit", request, response);
+    @Test
+    public void testDeleteDataServiceExDataServiceExceptionceptionCaught() {
+        assertThrows(DataServiceException.class, () -> {
+            Account acc = mockLookup("pmauduit", false);
+            doThrow(DataServiceException.class).when(dao).delete(eq(acc));
+            usersCtrl.delete("pmauduit", request, response);
+        });
     }
 
-    @Test(expected = NameNotFoundException.class)
-    public void testDeleteNotFoundExceptionCaught() throws Exception {
-        Account acc = mockLookup("pmauduitnotfound", false);
-        doThrow(NameNotFoundException.class).when(dao).delete(eq(acc));
-        usersCtrl.delete("pmauduitnotfound", request, response);
+    @Test
+    public void testDeleteNotFoundExceptionCaught() {
+        assertThrows(NameNotFoundException.class, () -> {
+            Account acc = mockLookup("pmauduitnotfound", false);
+            doThrow(NameNotFoundException.class).when(dao).delete(eq(acc));
+            usersCtrl.delete("pmauduitnotfound", request, response);
+        });
     }
 
     @Test

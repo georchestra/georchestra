@@ -29,7 +29,7 @@ import java.util.UUID;
 import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 
-import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -247,7 +247,7 @@ public class AccountImpl implements Serializable, Account {
             this.password = null;
         } else {
             LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-            String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
+            String encrypted = lspe.encode(password);
             this.password = encrypted;
         }
     }

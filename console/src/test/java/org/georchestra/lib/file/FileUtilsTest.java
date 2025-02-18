@@ -1,8 +1,6 @@
 package org.georchestra.lib.file;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,19 +14,18 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class FileUtilsTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
     private static String expectedString = "this string will be dumped into\nits own file then zipped.";
 
-    @After
+    @AfterEach
     public void tearDown() {
         folder.delete();
     }
@@ -36,13 +33,13 @@ public class FileUtilsTest {
     @Test
     public void testDelete() throws IOException {
         // Test delete on a file
-        File testDelete = folder.newFile("testDelete");
+        File testDelete = File.createTempFile("testDelete", null, folder);
         assertTrue(testDelete.exists());
         FileUtils.delete(testDelete);
         assertFalse(testDelete.exists());
 
         // Same on a directory
-        File testDeleteF = folder.newFolder("testDeleteDir");
+        File testDeleteF = newFolder(folder, "testDeleteDir");
         File testDeleteF1 = new File(testDeleteF.getAbsolutePath() + File.separator + "yetAnotherFile");
         assertFalse(testDeleteF1.exists());
         testDeleteF1.createNewFile();
@@ -55,9 +52,9 @@ public class FileUtilsTest {
 
     @Test
     public void testZipDirBadParameters() throws Exception {
-        File zipf = folder.newFile("test.zip");
-        File folder1 = folder.newFolder("folder1");
-        File folder2 = folder.newFolder("folder2");
+        File zipf = File.createTempFile("test.zip", null, folder);
+        File folder1 = newFolder(folder, "folder1");
+        File folder2 = newFolder(folder, "folder2");
         FileOutputStream zipfo = null;
         ZipOutputStream zip = null;
 
@@ -80,7 +77,7 @@ public class FileUtilsTest {
 
     private File generateSampleZip() throws Exception {
 
-        File testF = folder.newFolder("testZipDir");
+        File testF = newFolder(folder, "testZipDir");
         File testF1 = new File(testF.getAbsolutePath() + File.separator + "yetAnotherFile");
         File subDir = new File(testF.getAbsolutePath() + File.separator + "subdir");
         subDir.mkdir();
@@ -97,7 +94,7 @@ public class FileUtilsTest {
                 fo.close();
         }
 
-        File zipF = folder.newFile();
+        File zipF = File.createTempFile("junit", null, folder);
         FileOutputStream zipFo = null;
         ZipOutputStream zip = null;
         try {
@@ -145,8 +142,8 @@ public class FileUtilsTest {
 
     @Test
     public void testArchiveToZip() throws Exception {
-        File f = folder.newFolder();
-        File z = folder.newFile("test.zip");
+        File f = newFolder(folder, "junit");
+        File z = File.createTempFile("test.zip", null, folder);
 
         FileUtils.archiveToZip(f, z);
 
@@ -212,7 +209,7 @@ public class FileUtilsTest {
     }
 
     private File createSampleFile(String name) throws Exception {
-        File f = folder.newFile(name);
+        File f = File.createTempFile(name, null, folder);
         FileOutputStream fo = null;
         try {
             fo = new FileOutputStream(f);
@@ -253,6 +250,15 @@ public class FileUtilsTest {
         for (int i = 0; i < testedPaths.length; ++i) {
             assertTrue(FileUtils.toSafeFileName(testedPaths[i]).equals(expectedOutputPaths[i]));
         }
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
     }
 
 }

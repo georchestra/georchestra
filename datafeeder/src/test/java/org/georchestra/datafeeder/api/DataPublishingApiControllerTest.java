@@ -47,7 +47,6 @@ import org.georchestra.datafeeder.model.PublishSettings;
 import org.georchestra.datafeeder.service.FileStorageService;
 import org.georchestra.datafeeder.test.MultipartTestSupport;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

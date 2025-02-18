@@ -41,7 +41,6 @@ import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.JobPro
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.junit.Before;
-import org.junit.Test;
 
 public class PublishJobProgressTrackerTest {
 

@@ -46,7 +46,7 @@ docker-build-geowebcache: docker-pull-jetty
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
-docker-build-console: build-deps docker-pull-jetty
+docker-build-console: build-deps
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
 docker-build-analytics: build-deps docker-pull-jetty

@@ -34,7 +34,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.Address;
 import org.georchestra.datafeeder.service.publish.impl.MetadataRecordProperties.OnlineResource;
 import org.junit.Before;
-import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 

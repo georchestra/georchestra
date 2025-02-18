@@ -1,7 +1,6 @@
 package org.georchestra.console.ws.passwordrecovery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -18,9 +17,9 @@ import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
@@ -46,7 +45,7 @@ public class PasswordRecoveryFormControllerTest {
     private SessionStatus status = Mockito.mock(SessionStatus.class);
     private LogUtils mockLogUtils = Mockito.mock(LogUtils.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ctrl = new PasswordRecoveryFormController(dao, gdao, efi, utd, rep);
         ctrl.setPublicUrl("https://georchestra.mydomain.org");
@@ -54,7 +53,7 @@ public class PasswordRecoveryFormControllerTest {
         ctrl.logUtils = mockLogUtils;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -107,7 +106,7 @@ public class PasswordRecoveryFormControllerTest {
             assertTrue(e instanceof IOException);
         }
 
-        Mockito.verifyZeroInteractions(efi);
+        Mockito.verifyNoMoreInteractions(efi);
     }
 
     @Test
@@ -118,7 +117,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verifyZeroInteractions(efi);
+        Mockito.verifyNoMoreInteractions(efi);
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
@@ -129,7 +128,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verifyZeroInteractions(efi);
+        Mockito.verifyNoMoreInteractions(efi);
         assertEquals("passwordRecoveryForm", ret);
     }
 
@@ -152,7 +151,7 @@ public class PasswordRecoveryFormControllerTest {
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verifyZeroInteractions(efi);
+        Mockito.verifyNoMoreInteractions(efi);
         assertEquals("passwordRecoveryForm", ret);
     }
 
@@ -184,7 +183,7 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verifyZeroInteractions(efi);
+        Mockito.verifyNoMoreInteractions(efi);
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
@@ -209,8 +208,9 @@ public class PasswordRecoveryFormControllerTest {
         assertEquals(res, "https://georchestra.org/console/account/newPassword?token=1234");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testMakeChangePasswordURLWronglyformated() {
-        ctrl.makeChangePasswordURL("pompom", "https://blabla.com", "https://pompom");
+        assertThrows(IllegalArgumentException.class,
+                () -> ctrl.makeChangePasswordURL("pompom", "https://blabla.com", "https://pompom"));
     }
 }
