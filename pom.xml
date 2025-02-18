@@ -853,6 +853,7 @@
       <modules>
         <module>console</module>
         <module>security-proxy</module>
+        <module>analytics</module>
       </modules>
     </profile>
     <profile>
@@ -866,12 +867,17 @@
         </file>
       </activation>
       <modules>
+        <module>geoserver</module>
         <module>geowebcache-webapp</module>
         <module>commons</module>
         <module>ldap-account-management</module>
         <module>testcontainers</module>
         <module>console</module>
         <module>security-proxy</module>
+        <module>geonetwork</module>
+        <module>analytics</module>
+        <module>datafeeder</module>
+        <module>datafeeder-ui</module>
       </modules>
     </profile>
     <profile>
@@ -908,6 +914,60 @@
       <id>proxy</id>
       <modules>
         <module>security-proxy</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>geonetwork</id>
+      <modules>
+        <module>geonetwork</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>analytics</id>
+      <modules>
+        <module>analytics</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>datafeeder</id>
+      <modules>
+        <module>datafeeder</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>datafeeder-ui</id>
+      <modules>
+        <module>datafeeder-ui</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>geonetwork</id>
+      <modules>
+        <module>geonetwork</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>analytics</id>
+      <modules>
+        <module>analytics</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>datafeeder</id>
+      <modules>
+        <module>datafeeder</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>datafeeder-ui</id>
+      <modules>
+        <module>datafeeder-ui</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>geoserver</id>
+      <modules>
+        <module>geoserver</module>
       </modules>
     </profile>
     <profile>
