@@ -19,9 +19,9 @@
 package org.georchestra.security;
 
 import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -199,7 +199,7 @@ class LdapHeaderMappingsTestSupport {
     }
 
     public Map<String, String> asMap(String... kvps) {
-        assertTrue("Required an even number of values to create a map", kvps.length % 2 == 0);
+        assertTrue(kvps.length % 2 == 0, "Required an even number of values to create a map");
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < kvps.length - 1; i += 2) {
             map.put(kvps[i], kvps[i + 1]);

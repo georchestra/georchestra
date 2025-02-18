@@ -54,19 +54,16 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
     private String logoUrl;
     private String headerConfigFile;
 
-    /** custom georchestra CSS stylsheet: optional, can be null
-     * See https://github.com/georchestra/datadir/blob/master/default.properties#L40-L43
-     * */
+    /**
+     * custom georchestra CSS stylsheet: optional, can be null See
+     * https://github.com/georchestra/datadir/blob/master/default.properties#L40-L43
+     */
     private String georchestraStylesheet = "";
 
-    private String newGeorHeaderInclude = "<html>\n"
-            + "  <head>\n"
-            + "    <title>GeoWebCache - @instanceName@</title>\n"
-            + "    <script src=\"@headerScript@\"></script>\n"
-            + "  </head>\n"
-            + "  <body>\n"
+    private String newGeorHeaderInclude = "<html>\n" + "  <head>\n"
+            + "    <title>GeoWebCache - @instanceName@</title>\n" + "    <script src=\"@headerScript@\"></script>\n"
+            + "  </head>\n" + "  <body>\n"
             + "    <geor-header  active-app=\"geowebcache\" config-file=\"@headerConfigFile@\" legacy-header=\"@useLegacyHeader@\" legacy-url=\"@headerUrl@\" logo-url=\"@logoUrl@\" stylesheet=\"@georchestraStylesheet@\" height=\"@headerHeight@\"></geor-header>";
-
 
     /** Should be invoked through Spring. */
     public GeorchestraGeoWebCacheDispatcher(TileLayerDispatcher tileLayerDispatcher, GridSetBroker gridSetBroker,
@@ -110,23 +107,23 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
     }
 
     public @Override void afterPropertiesSet() throws IOException {
-            Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
-            Objects.requireNonNull(this.headerScript, "property 'headerScript' not initialized");
-            Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
-            Objects.requireNonNull(this.logoUrl, "property 'logoUrl' not initialized");
+        Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
+        Objects.requireNonNull(this.headerScript, "property 'headerScript' not initialized");
+        Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
+        Objects.requireNonNull(this.logoUrl, "property 'logoUrl' not initialized");
 
-            if (this.useLegacyHeader) {
-                Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized, but useLegacyHeader is true");
-            }
+        if (this.useLegacyHeader) {
+            Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized, but useLegacyHeader is true");
+        }
 
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@instanceName@", this.instanceName);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerScript@", this.headerScript);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@useLegacyHeader@", String.valueOf(this.useLegacyHeader));
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerUrl@", this.headerUrl);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerHeight@", this.headerHeight);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@logoUrl@", this.logoUrl);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@georchestraStylesheet@", this.georchestraStylesheet);
-            newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerConfigFile@", this.headerConfigFile);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@instanceName@", this.instanceName);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerScript@", this.headerScript);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@useLegacyHeader@", String.valueOf(this.useLegacyHeader));
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerUrl@", this.headerUrl);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerHeight@", this.headerHeight);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@logoUrl@", this.logoUrl);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@georchestraStylesheet@", this.georchestraStylesheet);
+        newGeorHeaderInclude = newGeorHeaderInclude.replace("@headerConfigFile@", this.headerConfigFile);
     }
 
     @Override

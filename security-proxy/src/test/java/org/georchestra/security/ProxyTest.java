@@ -13,8 +13,8 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,7 +33,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -45,7 +45,7 @@ public class ProxyTest {
 
     private Map<String, String> targets;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         response = null;
         executed = false;
@@ -184,7 +184,7 @@ public class ProxyTest {
         assertEquals(HttpStatus.FOUND.value(), httpResponse.getStatus());
         assertTrue(httpResponse.getHeaderNames().contains("Location"));
         List<String> values = httpResponse.getHeaders("Location");
-        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(1, values.size(), "Location header should have a single value, got: " + values);
         assertEquals(expected, values.get(0));
     }
 
@@ -200,7 +200,7 @@ public class ProxyTest {
         assertEquals(HttpStatus.MOVED_PERMANENTLY.value(), httpResponse.getStatus());
         assertTrue(httpResponse.getHeaderNames().contains("Location"));
         List<String> values = httpResponse.getHeaders("Location");
-        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(1, values.size(), "Location header should have a single value, got: " + values);
         assertEquals(expected, values.get(0));
     }
 
@@ -222,7 +222,7 @@ public class ProxyTest {
         assertEquals(HttpStatus.FOUND.value(), httpResponse.getStatus());
         assertTrue(httpResponse.getHeaderNames().contains("Location"));
         List<String> values = httpResponse.getHeaders("Location");
-        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(1, values.size(), "Location header should have a single value, got: " + values);
         assertEquals(expected, values.get(0));
     }
 
@@ -366,14 +366,17 @@ public class ProxyTest {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNonExistingVerb() {
-        request = new MockHttpServletRequest("NONSTANDARDVERB", "/nextcloud/plop");
-        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), "NONSTANDARDVERB worked");
-        response.setHeader("X-Test-Header", "NONSTANDARDVERB worked");
-        httpResponse = new MockHttpServletResponse();
+        assertThrows(IllegalArgumentException.class, () -> {
+            request = new MockHttpServletRequest("NONSTANDARDVERB", "/nextcloud/plop");
+            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.OK.value(), "NONSTANDARDVERB worked");
+            response.setHeader("X-Test-Header", "NONSTANDARDVERB worked");
+            httpResponse = new MockHttpServletResponse();
 
-        proxy.handleRequest(request, httpResponse);
+            proxy.handleRequest(request, httpResponse);
+
+        });
 
     }
 }

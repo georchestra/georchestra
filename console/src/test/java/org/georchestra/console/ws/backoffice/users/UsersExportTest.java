@@ -88,12 +88,9 @@ import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.Out
 import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER3;
 import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER4;
 import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.WEBPAGE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -115,8 +112,8 @@ import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.Authentication;
@@ -142,7 +139,7 @@ public class UsersExportTest {
             + "Other Address PO Box,Other City,Other State,Other Postal Code,Other Country,Callback,Car Phone,ISDN,Radio Phone,TTY/TDD Phone,Telex,"
             + "User 1,User 2,User 3,User 4,Keywords,Mileage,Hobby,Billing Information,Directory Server,Sensitivity,Priority,Private,Categories";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         AccountDao accDao = mock(AccountDao.class);
         OrgsDao orgDao = mock(OrgsDao.class);
@@ -193,10 +190,10 @@ public class UsersExportTest {
 
         String[] splitted = s.split("\r\n");
         System.err.println(splitted[1]);
-        assertFalse("The CSV contains \"null\", unexpected", s.contains("null"));
-        assertTrue("The CSV should contain \"abc@example.com\"", s.contains("abc@example.com"));
-        assertEquals("The CSV should have the headers", splitted[0], headers);
-        assertEquals("The CSV payoad should match entry data", expected, splitted[1]);
+        assertFalse(s.contains("null"), "The CSV contains \"null\", unexpected");
+        assertTrue(s.contains("abc@example.com"), "The CSV should contain \"abc@example.com\"");
+        assertEquals(splitted[0], headers, "The CSV should have the headers");
+        assertEquals(expected, splitted[1], "The CSV payoad should match entry data");
     }
 
     @Test
@@ -396,8 +393,8 @@ public class UsersExportTest {
     public void testGetUsersAsVcf() throws Exception {
         String s = us.getUsersAsVcard("[\"pmauduit\"]");
 
-        assertTrue("expected ret containing BEGIN:VCARD, not found", s.startsWith("BEGIN:VCARD"));
-        assertTrue("Expect vcard version to be 3", s.contains("VERSION:3.0"));
+        assertTrue(s.startsWith("BEGIN:VCARD"), "expected ret containing BEGIN:VCARD, not found");
+        assertTrue(s.contains("VERSION:3.0"), "Expect vcard version to be 3");
     }
 
     // TODO: these tests are never being run, refactor them as proper integration
@@ -428,8 +425,8 @@ public class UsersExportTest {
     public void testGetUsersAsVcfAgainstOpenLdap() throws Exception {
         setUpAgainstRealLdap();
         String vcf = us.getUsersAsVcard("[\"testadmin\", \"testuser\"]");
-        assertTrue("VCARD should contain both email address for testadmin and testuser",
-                vcf.contains("psc+testuser@georchestra.org") && vcf.contains("psc+testadmin@georchestra.org"));
+        assertTrue(vcf.contains("psc+testuser@georchestra.org") && vcf.contains("psc+testadmin@georchestra.org"),
+                "VCARD should contain both email address for testadmin and testuser");
     }
 
     @Test
@@ -437,8 +434,8 @@ public class UsersExportTest {
         setUpAgainstRealLdap();
         String csv = us.getUsersAsVcard("[\"testadmin\", \"testuser\"]");
 
-        assertTrue("CSV should contain both email address for testadmin and testuser",
-                csv.contains("psc+testuser@georchestra.org") && csv.contains("psc+testadmin@georchestra.org"));
-        assertEquals("CSV should contain 3 lines", 3, csv.split("\r\n").length);
+        assertTrue(csv.contains("psc+testuser@georchestra.org") && csv.contains("psc+testadmin@georchestra.org"),
+                "CSV should contain both email address for testadmin and testuser");
+        assertEquals(3, csv.split("\r\n").length, "CSV should contain 3 lines");
     }
 }

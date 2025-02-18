@@ -18,11 +18,7 @@
  */
 package org.georchestra.ds.security;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 import java.security.MessageDigest;
@@ -41,19 +37,15 @@ import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.georchestra.security.model.Role;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class InternalSecurityApiImplIT {
 
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();// .withLogToStdOut();
@@ -66,7 +58,7 @@ public class InternalSecurityApiImplIT {
     private static Map<String, Organization> expectedOrganizations;
     private static Map<String, Role> expectedRoles;
 
-    public static @BeforeClass void setup() throws Exception {
+    public static @BeforeAll void setup() throws Exception {
         Integer port = ldap.getFirstMappedPort();
         System.err.println("Running test against " + ldap.getContainerName() + " on port " + port);
 

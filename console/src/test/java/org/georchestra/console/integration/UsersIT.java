@@ -2,8 +2,8 @@ package org.georchestra.console.integration;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -19,11 +19,10 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -31,8 +30,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -42,14 +40,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
 
-@RunWith(SpringRunner.class)
 @EnableWebMvc
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
-@DBRider
 public class UsersIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
@@ -63,10 +58,10 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     private MockMvc mockMvc;
 
-    public static @BeforeClass void init() {
+    public static @BeforeAll void init() {
     }
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         // pre-flight sanity check
         assertNotNull(ldapTemplateSanityCheck.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();

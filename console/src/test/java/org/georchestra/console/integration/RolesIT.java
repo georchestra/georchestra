@@ -28,12 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -42,9 +40,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 /**
  * Integration tests for {@code /private/roles} role management API.
  */
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT extends ConsoleIntegrationTest {
     private static Logger LOGGER = Logger.getLogger(RolesIT.class);
 

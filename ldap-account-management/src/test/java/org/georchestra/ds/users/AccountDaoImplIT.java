@@ -1,7 +1,7 @@
 package org.georchestra.ds.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,22 +12,18 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import com.google.common.collect.Lists;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class AccountDaoImplIT {
 
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
@@ -37,14 +33,14 @@ public class AccountDaoImplIT {
 
     private Account account;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         account = AccountFactory.createBrief("userforittest", "monkey123", "userforrolestest", "userforrolestest123",
                 "userforrolestest@localhost", "+33123456789", "UnknownPomPom", "");
         accountDao.insert(account);
     }
 
-    @After
+    @AfterEach
     public void cleanLdap() {
         accountDao.delete(account);
     }
@@ -76,7 +72,7 @@ public class AccountDaoImplIT {
 
         accountDao.update(testadminAc);
 
-        assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
+        assertTrue(hasStillUserPassword, "No userPassword found for testadmin, expected one");
     }
 
     @Test
@@ -106,8 +102,8 @@ public class AccountDaoImplIT {
         // restoring testadmin in its initial state
         accountDao.update(newTestAdminAc, testadminAc);
 
-        assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
-        assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);
+        assertTrue(encounteredNamingEx, "Was able to find testadmin back (found some attributes), none expected");
+        assertTrue(correctlyrenamed, "Wrong uid encountered (found " + o.toString() + " instead of testadminblah");
 
     }
 

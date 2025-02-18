@@ -1,14 +1,14 @@
 package org.georchestra.console.ws;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.bs.ExpiredTokenCleanTask;
 import org.georchestra.console.bs.ExpiredTokenManagement;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -23,7 +23,7 @@ public class HomeControllerTest {
     private ExpiredTokenCleanTask tokenTask = Mockito.mock(ExpiredTokenCleanTask.class);
     private ExpiredTokenManagement expiredTokenMgmt = new ExpiredTokenManagement(tokenTask);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         expiredTokenMgmt.setDelayInDays(1);
         ctrl = new HomeController(expiredTokenMgmt);
@@ -37,10 +37,10 @@ public class HomeControllerTest {
 
         ctrl.root(request, response);
 
-        assertTrue("expected 302, got " + response.getStatus(),
-                response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
-        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
-                response.getRedirectedUrl().contains("/account/userdetails?login"));
+        assertTrue(response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY,
+                "expected 302, got " + response.getStatus());
+        assertTrue(response.getRedirectedUrl().contains("/account/userdetails?login"),
+                "bad redirectUrl, got " + response.getRedirectedUrl());
     }
 
     @Test
@@ -50,10 +50,10 @@ public class HomeControllerTest {
 
         ctrl.root(request, response);
 
-        assertTrue("expected 302, got " + response.getStatus(),
-                response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
-        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
-                response.getRedirectedUrl().contains("/account/userdetails?login"));
+        assertTrue(response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY,
+                "expected 302, got " + response.getStatus());
+        assertTrue(response.getRedirectedUrl().contains("/account/userdetails?login"),
+                "bad redirectUrl, got " + response.getRedirectedUrl());
     }
 
     @Test

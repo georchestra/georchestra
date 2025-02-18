@@ -42,10 +42,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.NonNull;
@@ -69,7 +68,7 @@ public class UsersExport {
      * <a href="https://eugdpr.org/">General Data Protection Regulation</a>)
      * relevant information available on the system.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/account/gdpr/download", produces = "application/zip")
+    @GetMapping(value = "/account/gdpr/download", produces = "application/zip")
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
 

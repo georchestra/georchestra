@@ -51,11 +51,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +110,7 @@ public class EditUserDetailsFormController {
      * @return the edit form view
      * @throws IOException
      */
-    @RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
+    @GetMapping("/account/userdetails")
     @PreAuthorize("isAuthenticated()")
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         try {
@@ -187,7 +183,7 @@ public class EditUserDetailsFormController {
      * @return the next view
      * @throws IOException
      */
-    @RequestMapping(value = "/account/userdetails", method = RequestMethod.POST)
+    @PostMapping("/account/userdetails")
     public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute EditUserDetailsFormBean formBean, BindingResult resultErrors, SessionStatus sessionStatus)
             throws IOException {

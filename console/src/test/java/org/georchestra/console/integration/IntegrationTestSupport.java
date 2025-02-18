@@ -18,21 +18,21 @@
  */
 package org.georchestra.console.integration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TestName;
 import org.junit.runner.Description;
@@ -99,8 +99,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     public @Override void before() {
         this.createdUsers = new HashSet<>();
-        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName.getMethodName(),
-                psqlPort, ldapPort));
+        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName, psqlPort, ldapPort));
         // pre-flight sanity check
         assertNotNull(ldapTemplate.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();

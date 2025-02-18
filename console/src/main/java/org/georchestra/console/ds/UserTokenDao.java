@@ -35,7 +35,7 @@ import org.georchestra.lib.sqlcommand.DataCommand;
 import org.georchestra.lib.sqlcommand.DataCommandException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Maintains the tokens generated when the "Lost password use case" is executed.
@@ -95,7 +95,7 @@ public class UserTokenDao {
      */
     public String findUidWithoutAdditionalInfo(String token) throws DataServiceException, NameNotFoundException {
         Map<String, Object> data = findByToken(token);
-        if (!StringUtils.isEmpty(data.get(DatabaseSchema.ADDITIONAL_INFO))) {
+        if (!ObjectUtils.isEmpty(data.get(DatabaseSchema.ADDITIONAL_INFO))) {
             throw new NameNotFoundException("the token " + token + " has unexpected additional info");
         }
         return (String) data.get(DatabaseSchema.UID_COLUMN);
@@ -117,7 +117,7 @@ public class UserTokenDao {
             throw new NameNotFoundException("the token " + token + " uid doesn't match");
         }
         String additionalInfo = (String) data.get(DatabaseSchema.ADDITIONAL_INFO);
-        if (StringUtils.isEmpty(additionalInfo)) {
+        if (ObjectUtils.isEmpty(additionalInfo)) {
             throw new NameNotFoundException("the token " + token + " has no additional info");
         }
         return additionalInfo;

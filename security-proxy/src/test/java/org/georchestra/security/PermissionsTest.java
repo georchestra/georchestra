@@ -1,8 +1,6 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +14,7 @@ import java.util.stream.Stream;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.ResolverDelegate;
 import org.georchestra.security.permissions.UriMatcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 public class PermissionsTest {
@@ -168,9 +166,9 @@ public class PermissionsTest {
         assertFalse(range.matches("192.168.0.0"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNetworkBadFormat() throws IOException {
-        this.load("test-permissions-network-bad-format.xml");
+    @Test
+    public void testNetworkBadFormat() {
+        assertThrows(IllegalArgumentException.class, () -> this.load("test-permissions-network-bad-format.xml"));
     }
 
     @Test

@@ -14,15 +14,11 @@ import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapRdn;
@@ -42,13 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore({ "javax.net.ssl.*", "jdk.internal.reflect.*" })
-@PrepareForTest({ ReCaptchaV2.class, URL.class, DataOutputStream.class })
 public class NewAccountFormControllerTest {
 
     // Mocked objects needed by the controller default constructor
@@ -68,7 +62,7 @@ public class NewAccountFormControllerTest {
 
     private final String orgName = "geOrchestra testing team";
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         rep.setVerifyUrl("https://localhost");
@@ -98,6 +92,14 @@ public class NewAccountFormControllerTest {
         String[] orgTypes = { "Association", "Company", "Non-governmental organization" };
         when(mockOrgDao.getOrgTypeValues()).thenReturn(orgTypes);
 
+    }
+
+    @BeforeEach
+    void setUpStaticMocks() {
+    }
+
+    @AfterEach
+    void tearDownStaticMocks() {
     }
 
     @Test
@@ -381,7 +383,6 @@ public class NewAccountFormControllerTest {
         formBean.setPassword("TestTestTest123!");
         formBean.setRecaptcha_response_field("success");
         formBean.setPrivacyPolicyAgreed(true);
-        mockRecaptchaSucess();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
 
         toTest.create(request, formBean, "", resultErrors, status, UiModel);
@@ -405,7 +406,8 @@ public class NewAccountFormControllerTest {
         acc3.setEmail("");
         Account acc4 = new AccountImpl();
         acc4.setEmail("flup@georchestra.org");
-        when(accountDao.findByRole(anyString())).thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
+        when(accountDao.findByRole(nullable(String.class)))
+                .thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
         toTest.setAccountDao(accountDao);
 
         List<String> ret = toTest.getSuperUserEmailAddresses();
@@ -427,7 +429,7 @@ public class NewAccountFormControllerTest {
         when(formBean.getDescription()).thenReturn("Bot Unit Testing");
         when(formBean.getPrivacyPolicyAgreed()).thenReturn(true);
 
-        when(rec.isValid(anyString(), anyString(), anyString())).thenReturn(true);
+        when(rec.isValid(nullable(String.class), nullable(String.class), nullable(String.class))).thenReturn(true);
     }
 
     private NewAccountFormController createToTest(String requiredFields) {
@@ -444,15 +446,4 @@ public class NewAccountFormControllerTest {
         return toTest;
     }
 
-    private void mockRecaptchaSucess() throws Exception {
-        HttpsURLConnection hucMock = mock(HttpsURLConnection.class);
-        BufferedInputStream successInputStream = new BufferedInputStream(
-                new ReaderInputStream(new StringReader("{\"success\": true}")));
-        when(hucMock.getInputStream()).thenReturn(successInputStream);
-        URL urlMock = PowerMockito.mock(URL.class);
-        PowerMockito.whenNew(URL.class).withAnyArguments().thenReturn(urlMock);
-        when(urlMock.openConnection()).thenReturn(hucMock);
-        DataOutputStream dosMock = PowerMockito.mock(DataOutputStream.class);
-        PowerMockito.whenNew(DataOutputStream.class).withArguments(any(OutputStream.class)).thenReturn(dosMock);
-    }
 }

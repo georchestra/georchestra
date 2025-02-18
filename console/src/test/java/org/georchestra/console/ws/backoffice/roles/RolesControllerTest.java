@@ -2,13 +2,11 @@ package org.georchestra.console.ws.backoffice.roles;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -40,8 +38,8 @@ import org.georchestra.ds.users.UserRule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -69,7 +67,7 @@ public class RolesControllerTest {
 
     private String roleSearchBaseDN = "ou=roles";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         contextSource = mock(LdapContextSource.class);
         mockLogUtils = mock(LogUtils.class);
@@ -90,7 +88,7 @@ public class RolesControllerTest {
         resTestuser.setUid("testuser");
         resTestuser.setOrgs(new String[] { "psc", "cra" });
         resTestuser.setRoles(new String[] { "GN_REVIEWER", "GN_EDITOR" });
-        when(delegationDao.findOne(eq("testuser"))).thenReturn(resTestuser);
+        when(delegationDao.findFirstByUid(eq("testuser"))).thenReturn(resTestuser);
         roleCtrl.setDelegationDao(delegationDao);
 
         AdvancedDelegationDao advancedDelegationDao = mock(AdvancedDelegationDao.class);
@@ -116,21 +114,25 @@ public class RolesControllerTest {
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
-    @Test(expected = DataServiceException.class)
-    public void findAllWithException() throws Exception {
-        doThrow(DataServiceException.class).when(roleDao).findAll();
-        roleCtrl.findAll();
+    @Test
+    public void findAllWithException() {
+        assertThrows(DataServiceException.class, () -> {
+            doThrow(DataServiceException.class).when(roleDao).findAll();
+            roleCtrl.findAll();
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testFindByCNEmpty() throws Exception {
-        roleCtrl.findByCN("");
+    @Test
+    public void testFindByCNEmpty() {
+        assertThrows(IllegalArgumentException.class, () -> roleCtrl.findByCN(""));
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testFindByCNDataServiceException() throws Exception {
-        doThrow(DataServiceException.class).when(roleDao).findByCommonName(anyString());
-        roleCtrl.findByCN("NOTEXISTINGROLE");
+    @Test
+    public void testFindByCNDataServiceException() {
+        assertThrows(DataServiceException.class, () -> {
+            doThrow(DataServiceException.class).when(roleDao).findByCommonName(anyString());
+            roleCtrl.findByCN("NOTEXISTINGROLE");
+        });
     }
 
     @Test
@@ -393,43 +395,49 @@ public class RolesControllerTest {
 
     }
 
-    @Test(expected = NameNotFoundException.class)
-    public void testUpdateUsersNotFoundException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
-                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/console/roles_users");
+    @Test
+    public void testUpdateUsersNotFoundException() {
+        assertThrows(NameNotFoundException.class, () -> {
+            JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+                    .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+            request.setContent(toSend.toString().getBytes());
+            request.setRequestURI("/console/roles_users");
 
-        doThrow(NameNotFoundException.class).when(accountDao).findByUID(anyString());
+            doThrow(NameNotFoundException.class).when(accountDao).findByUID(anyString());
 
-        roleCtrl.updateUsers(request, response);
+            roleCtrl.updateUsers(request, response);
+        });
     }
 
-    @Test(expected = JSONException.class)
-    public void testUpdateUsersJsonException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
-                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
-        // Remove first char of json string so json is not parsable
-        request.setContent(toSend.toString().substring(1).getBytes());
-        request.setRequestURI("/console/roles_users");
+    @Test
+    public void testUpdateUsersJsonException() {
+        assertThrows(JSONException.class, () -> {
+            JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+                    .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+            // Remove first char of json string so json is not parsable
+            request.setContent(toSend.toString().substring(1).getBytes());
+            request.setRequestURI("/console/roles_users");
 
-        roleCtrl.updateUsers(request, response);
+            roleCtrl.updateUsers(request, response);
+        });
     }
 
-    @Test(expected = DataServiceException.class)
-    public void testUpdateUsersDataServiceException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
-                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+    @Test
+    public void testUpdateUsersDataServiceException() {
+        assertThrows(DataServiceException.class, () -> {
+            JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+                    .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 
-        mockAccountLookup("testadmin");
-        mockAccountLookup("testuser");
+            mockAccountLookup("testadmin");
+            mockAccountLookup("testuser");
 
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/console/roles_users");
+            request.setContent(toSend.toString().getBytes());
+            request.setRequestURI("/console/roles_users");
 
-        doThrow(DataServiceException.class).when(roleDao).addUsersInRoles(any(), any());
+            doThrow(DataServiceException.class).when(roleDao).addUsersInRoles(any(), any());
 
-        roleCtrl.updateUsers(request, response);
+            roleCtrl.updateUsers(request, response);
+        });
     }
 
     @Test
@@ -471,21 +479,27 @@ public class RolesControllerTest {
                 Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
     }
 
-    @Test(expected = AccessDeniedException.class)
+    @Test
     public void testCheckAuthorizationIllegalUser() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testuser", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        assertThrows(AccessDeniedException.class,
+                () -> roleCtrl.checkAuthorization("testuser",
+                        Arrays.asList(new String[] { "testuser", "testreviewer" }),
+                        Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" })));
     }
 
-    @Test(expected = AccessDeniedException.class)
+    @Test
     public void testCheckAuthorizationIllegalRolePut() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_ADMIN" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        assertThrows(AccessDeniedException.class,
+                () -> roleCtrl.checkAuthorization("testuser",
+                        Arrays.asList(new String[] { "testeditor", "testreviewer" }),
+                        Arrays.asList(new String[] { "GN_ADMIN" }), Arrays.asList(new String[] { "GN_EDITOR" })));
     }
 
-    @Test(expected = AccessDeniedException.class)
+    @Test
     public void testCheckAuthorizationIllegalRoleDelete() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_ADMIN" }));
+        assertThrows(AccessDeniedException.class,
+                () -> roleCtrl.checkAuthorization("testuser",
+                        Arrays.asList(new String[] { "testeditor", "testreviewer" }),
+                        Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_ADMIN" })));
     }
 }

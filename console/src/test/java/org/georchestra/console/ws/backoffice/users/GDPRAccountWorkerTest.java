@@ -1,9 +1,6 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +22,9 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.UserDataBun
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.locationtech.jts.geom.Geometry;
@@ -80,9 +77,18 @@ public class GDPRAccountWorkerTest {
             metadataRecords.get(owner.getUid()).forEach(consumer);
         }
 
+        private static File newFolder(File root, String... subDirs) throws IOException {
+            String subFolder = String.join("/", subDirs);
+            File result = new File(root, subFolder);
+            if (!result.mkdirs()) {
+                throw new IOException("Couldn't create folders " + root);
+            }
+            return result;
+        }
+
     }
 
-    public @Before void before() throws Exception {
+    public @BeforeEach void before() throws Exception {
         ghostAccount = new AccountImpl();
         ghostAccount.setUid(AccountGDPRDao.DELETED_ACCOUNT_USERNAME);
         account1 = new AccountImpl();
@@ -207,7 +213,7 @@ public class GDPRAccountWorkerTest {
         final @Cleanup DirectoryStream<Path> mdfiles = Files.newDirectoryStream(metadataDirectory);
         List<Path> files = Streams.stream(mdfiles).map(Path::getFileName).filter(p -> p.toString().endsWith(".xml"))
                 .collect(Collectors.toList());
-        assertEquals(files.toString(), recordsPerUnit, files.size());
+        assertEquals(recordsPerUnit, files.size(), files.toString());
     }
 
     private void assertNumCsvRecords(Path csvFile, int expectedRecords, String expectedHeader) throws IOException {

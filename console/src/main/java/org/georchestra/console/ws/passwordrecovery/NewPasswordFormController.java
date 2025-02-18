@@ -59,7 +59,6 @@ public class NewPasswordFormController {
     @Autowired
     private boolean reCaptchaActivated;
 
-    @Autowired
     public NewPasswordFormController(AccountDao accountDao, UserTokenDao userTokenDao) {
         this.accountDao = accountDao;
         this.userTokenDao = userTokenDao;
@@ -84,9 +83,9 @@ public class NewPasswordFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/newPassword", method = RequestMethod.GET)
-    public String setupForm(@RequestParam(name = "token", required = false) String token, Model model,
-            HttpServletRequest request) throws IOException {
+    @GetMapping("/account/newPassword")
+    public String setupForm(@RequestParam(required = false) String token, Model model, HttpServletRequest request)
+            throws IOException {
         model.addAttribute("recaptchaActivated", reCaptchaActivated);
         try {
             final String uid = this.userTokenDao.findUidWithoutAdditionalInfo(token);
@@ -124,7 +123,7 @@ public class NewPasswordFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/newPassword", method = RequestMethod.POST)
+    @PostMapping("/account/newPassword")
     public String newPassword(@ModelAttribute NewPasswordFormBean formBean, BindingResult result,
             SessionStatus sessionStatus) throws IOException {
 

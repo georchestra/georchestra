@@ -18,12 +18,10 @@
  */
 package org.georchestra.console.integration.ws.passwordrecovery;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,16 +41,14 @@ import org.georchestra.console.integration.IntegrationTestSupport;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormBean;
 import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormController;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.support.SessionStatus;
@@ -61,9 +57,8 @@ import org.springframework.web.bind.support.SessionStatus;
  * Integration test case for
  * https://github.com/georchestra/georchestra/issues/2195
  */
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
@@ -76,7 +71,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegratio
 
     private @Autowired PasswordRecoveryFormController controller;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         assertTrue(maxPoolSize > 0);
     }
 

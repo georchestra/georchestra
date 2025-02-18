@@ -47,12 +47,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -99,7 +94,6 @@ public class PasswordRecoveryFormController {
     @Value("https://${domainName}")
     private String publicUrl;
 
-    @Autowired
     public PasswordRecoveryFormController(AccountDao dao, RoleDao gDao, EmailFactory emailFactory,
             UserTokenDao userTokenDao, ReCaptchaParameters reCaptchaParameters) {
         this.accountDao = dao;
@@ -115,9 +109,9 @@ public class PasswordRecoveryFormController {
         dataBinder.setAllowedFields("email", "recaptcha_response_field");
     }
 
-    @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
-            Model model) throws DataServiceException {
+    @GetMapping("/account/passwordRecovery")
+    public String setupForm(HttpServletRequest request, @RequestParam(required = false) String email, Model model)
+            throws DataServiceException {
 
         if (email != null) {
             PasswordType pt = getPasswordType(email);
@@ -156,7 +150,7 @@ public class PasswordRecoveryFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.POST)
+    @PostMapping("/account/passwordRecovery")
     public String generateToken(HttpServletRequest request, @ModelAttribute PasswordRecoveryFormBean formBean,
             BindingResult resultErrors, SessionStatus sessionStatus) throws IOException {
 

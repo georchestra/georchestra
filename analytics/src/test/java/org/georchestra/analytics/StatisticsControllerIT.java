@@ -1,7 +1,7 @@
 package org.georchestra.analytics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,19 +13,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:ws-servlet.xml" })
+@SpringJUnitConfig(locations = { "classpath:ws-servlet.xml" })
 public class StatisticsControllerIT {
 
     private @Autowired StatisticsController controller;
@@ -43,7 +40,7 @@ public class StatisticsControllerIT {
 
     private static boolean scriptExecuted;
 
-    public @Before void before() throws SQLException {
+    public @BeforeEach void before() throws SQLException {
         if (!scriptExecuted) {
             try (Connection c = dataSource.getConnection()) {
                 for (String sstatement : SCRIPT) {
@@ -63,8 +60,8 @@ public class StatisticsControllerIT {
 
         JSONObject jsRet = new JSONObject(ret);
         JSONArray results = jsRet.getJSONArray("results");
-        assertEquals("GT_TELEKOM role should have only one hit in the statistics table", 1, results.length());
-        assertEquals("count json property for GT_TELEKOM role mismatch", 1, results.getJSONObject(0).getInt("count"));
+        assertEquals(1, results.length(), "GT_TELEKOM role should have only one hit in the statistics table");
+        assertEquals(1, results.getJSONObject(0).getInt("count"), "count json property for GT_TELEKOM role mismatch");
     }
 
     public @Test void testNoFilteringByOrg() throws Exception {
@@ -76,7 +73,7 @@ public class StatisticsControllerIT {
 
         JSONObject jsRet = new JSONObject(ret);
         JSONArray results = jsRet.getJSONArray("results");
-        assertTrue("With no filter on the role, we expect more than 1 hit in the statistics table",
-                results.length() == 5);
+        assertTrue(results.length() == 5,
+                "With no filter on the role, we expect more than 1 hit in the statistics table");
     }
 }
