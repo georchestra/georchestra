@@ -7,7 +7,10 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_ORG;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +33,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.junit.Rule;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class HeadersManagementStrategyTest {
 
-    public @Rule File tmpDatadir = new File();
+    public @Rule TemporaryFolder tmpDatadir = new TemporaryFolder();
 
     /**
      * Show that by default the headers are removed
@@ -144,8 +148,8 @@ public class HeadersManagementStrategyTest {
                 new Header[] { setCookieHeader }, session);
 
         Map<String, String> jSessionIds = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
-        assertTrue(jSessionIds.get("/console").contentEquals("JSESSIONID=node0aaaaaaaaaaaaaaaaaaaaaaaa.node0"),
-                "Unexpected JsessionId map in session");
+        assertTrue("Unexpected JsessionId map in session",
+                jSessionIds.get("/console").contentEquals("JSESSIONID=node0aaaaaaaaaaaaaaaaaaaaaaaa.node0"));
     }
 
     @Test
@@ -160,7 +164,7 @@ public class HeadersManagementStrategyTest {
                 new Header[] { setCookieHeader }, session);
 
         Map<String, String> jSessionIds = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
-        assertTrue(jSessionIds == null, "jSessionIds map expected to be unset");
+        assertTrue("jSessionIds map expected to be unset", jSessionIds == null);
     }
 
     @Test
@@ -175,8 +179,8 @@ public class HeadersManagementStrategyTest {
                 new Header[] { setCookieHeader }, session);
 
         Map<String, String> jSessionIds = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
-        assertTrue(jSessionIds.get("/console").contentEquals("JSESSIONID=node0aaaaaaaaaaaaaaaaaaaaaaaa.node0"),
-                "Unexpected JsessionId map in session");
+        assertTrue("Unexpected JsessionId map in session",
+                jSessionIds.get("/console").contentEquals("JSESSIONID=node0aaaaaaaaaaaaaaaaaaaaaaaa.node0"));
 
     }
 
@@ -197,8 +201,8 @@ public class HeadersManagementStrategyTest {
         // In the session map, the JSESSIONID should still be indexed by the original
         // path
         Map<String, String> jSessionIds = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
-        assertTrue(jSessionIds.get("/myconsole_is_elsewhere").contentEquals("JSESSIONID=aaaaaa.node0"),
-                "Unexpected JsessionId map in session");
+        assertTrue("Unexpected JsessionId map in session",
+                jSessionIds.get("/myconsole_is_elsewhere").contentEquals("JSESSIONID=aaaaaa.node0"));
         // The other custom cookie should be rewritten so that the path corresponds
         // to the "visible" path configured in the SP's targets-mappings.properties
         // file.
@@ -216,8 +220,8 @@ public class HeadersManagementStrategyTest {
      */
     @Test
     public void testResponseCookieAffinityConfigLoading() throws IOException {
-        File root = this.tmpDatadir;
-        File contextDataDir = newFolder(this.tmpDatadir, "security-proxy");
+        File root = this.tmpDatadir.getRoot();
+        File contextDataDir = this.tmpDatadir.newFolder("security-proxy");
 
         System.setProperty("georchestra.datadir", root.getAbsolutePath());
         GeorchestraConfiguration georconfig = new GeorchestraConfiguration("security-proxy");
@@ -308,7 +312,7 @@ public class HeadersManagementStrategyTest {
             // 3. and have same path (case-sensitive).
             return getName().equalsIgnoreCase(other.getName())
                     && (getDomain() == null ? "" : getDomain())
-                            .equalsIgnoreCase((other.getDomain() == null ? "" : other.getDomain()))
+                    .equalsIgnoreCase((other.getDomain() == null ? "" : other.getDomain()))
                     && Objects.equals(getPath(), other.getPath()) && Objects.equals(getValue(), other.getValue());
         }
 
@@ -318,15 +322,6 @@ public class HeadersManagementStrategyTest {
 
         public @Override String toString() {
             return String.format("%s=%s;Path=%s;Domain=%s", getName(), getValue(), getPath(), getDomain());
-        }
-
-        private static File newFolder(File root, String... subDirs) throws IOException {
-            String subFolder = String.join("/", subDirs);
-            File result = new File(root, subFolder);
-            if (!result.mkdirs()) {
-                throw new IOException("Couldn't create folders " + root);
-            }
-            return result;
         }
     }
 
@@ -348,14 +343,5 @@ public class HeadersManagementStrategyTest {
         c.setSecure(cookie.getSecure());
         c.setVersion(cookie.getVersion());
         return c;
-    }
-
-    private static File newFolder(File root, String... subDirs) throws IOException {
-        String subFolder = String.join("/", subDirs);
-        File result = new File(root, subFolder);
-        if (!result.mkdirs()) {
-            throw new IOException("Couldn't create folders " + root);
-        }
-        return result;
     }
 }

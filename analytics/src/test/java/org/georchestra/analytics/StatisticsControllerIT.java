@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:ws-servlet.xml"})
+@SpringJUnitConfig(locations = { "classpath:ws-servlet.xml" })
 public class StatisticsControllerIT {
 
     private @Autowired StatisticsController controller;

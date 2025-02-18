@@ -1,4 +1,5 @@
 package org.georchestra.analytics;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.core.StringContains.containsString;
