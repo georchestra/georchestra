@@ -34,6 +34,7 @@ import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.GeonetworkPublishingConfiguration;
 import org.georchestra.datafeeder.service.geonetwork.GeoNetworkRemoteService;
 import org.junit.Before;
+import org.junit.Test;
 
 public class GeorchestraTemplateMapperTest {
 

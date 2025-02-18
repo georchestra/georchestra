@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.google.common.collect.Sets;

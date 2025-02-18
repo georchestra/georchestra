@@ -51,6 +51,7 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Rule;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.opengis.feature.simple.SimpleFeature;

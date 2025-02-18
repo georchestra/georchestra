@@ -28,6 +28,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Test;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

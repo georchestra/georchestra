@@ -31,6 +31,7 @@ import java.net.URL;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 public class GeoNetworkRemoteServiceTest {
