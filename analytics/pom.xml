@@ -62,6 +62,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
+      <version>${json.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jsondoc</groupId>
@@ -130,6 +131,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
+      <version>2.13.0</version>
     </dependency>
   </dependencies>
   <build>
