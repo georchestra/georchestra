@@ -45,7 +45,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class InternalSecurityApiImplIT {
 
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();// .withLogToStdOut();

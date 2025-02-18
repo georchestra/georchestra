@@ -168,8 +168,7 @@ public class PermissionsTest {
 
     @Test
     public void testNetworkBadFormat() {
-        assertThrows(IllegalArgumentException.class, () ->
-            this.load("test-permissions-network-bad-format.xml"));
+        assertThrows(IllegalArgumentException.class, () -> this.load("test-permissions-network-bad-format.xml"));
     }
 
     @Test

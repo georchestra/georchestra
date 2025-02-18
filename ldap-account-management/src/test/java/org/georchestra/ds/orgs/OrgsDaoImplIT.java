@@ -27,7 +27,7 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class OrgsDaoImplIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 

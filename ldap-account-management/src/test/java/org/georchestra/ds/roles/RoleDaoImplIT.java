@@ -23,7 +23,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import com.google.common.collect.Lists;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class RoleDaoImplIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
