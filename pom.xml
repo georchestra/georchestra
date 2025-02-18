@@ -941,30 +941,6 @@
       </modules>
     </profile>
     <profile>
-      <id>geonetwork</id>
-      <modules>
-        <module>geonetwork</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>analytics</id>
-      <modules>
-        <module>analytics</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>datafeeder</id>
-      <modules>
-        <module>datafeeder</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>datafeeder-ui</id>
-      <modules>
-        <module>datafeeder-ui</module>
-      </modules>
-    </profile>
-    <profile>
       <id>geoserver</id>
       <modules>
         <module>geoserver</module>
