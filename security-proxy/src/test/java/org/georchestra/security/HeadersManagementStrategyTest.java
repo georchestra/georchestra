@@ -312,7 +312,7 @@ public class HeadersManagementStrategyTest {
             // 3. and have same path (case-sensitive).
             return getName().equalsIgnoreCase(other.getName())
                     && (getDomain() == null ? "" : getDomain())
-                    .equalsIgnoreCase((other.getDomain() == null ? "" : other.getDomain()))
+                            .equalsIgnoreCase((other.getDomain() == null ? "" : other.getDomain()))
                     && Objects.equals(getPath(), other.getPath()) && Objects.equals(getValue(), other.getValue());
         }
 
