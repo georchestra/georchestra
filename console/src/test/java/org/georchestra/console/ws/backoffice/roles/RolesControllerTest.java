@@ -90,7 +90,7 @@ public class RolesControllerTest {
         resTestuser.setUid("testuser");
         resTestuser.setOrgs(new String[] { "psc", "cra" });
         resTestuser.setRoles(new String[] { "GN_REVIEWER", "GN_EDITOR" });
-        when(delegationDao.findOne(eq("testuser"))).thenReturn(resTestuser);
+        when(delegationDao.findFirstByUid(eq("testuser"))).thenReturn(resTestuser);
         roleCtrl.setDelegationDao(delegationDao);
 
         AdvancedDelegationDao advancedDelegationDao = mock(AdvancedDelegationDao.class);

@@ -57,7 +57,6 @@ public class HomeController {
     @Autowired
     private ServletContext context;
 
-    @Autowired
     public HomeController(ExpiredTokenManagement tokenManagment) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("home controller initialization");

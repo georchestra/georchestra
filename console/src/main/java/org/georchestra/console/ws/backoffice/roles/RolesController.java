@@ -68,11 +68,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Web Services to maintain the Roles information.
@@ -136,7 +133,6 @@ public class RolesController {
         return new JSONObject(map).toString();
     }
 
-    @Autowired
     public RolesController(RoleDao dao, UserRule userRule) {
         this.roleDao = dao;
         this.filter = new ProtectedUserFilter(userRule.getListUidProtected());
@@ -147,7 +143,7 @@ public class RolesController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @PostFilter("hasPermission(filterObject, 'read')")
     @ResponseBody
     public List<Role> findAll() throws DataServiceException {
@@ -177,11 +173,10 @@ public class RolesController {
      * @param cn Comon name of role
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{cn:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/{cn:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Role findByCN(@PathVariable String cn) throws DataServiceException {
-        if (StringUtils.isEmpty(cn)) {
+        if (ObjectUtils.isEmpty(cn)) {
             throw new IllegalArgumentException("name is empty");
         }
         Role res;
@@ -193,7 +188,7 @@ public class RolesController {
             res = this.roleDao.findByCommonName(cn);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-            if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getRoles()).contains(cn))
+            if (!Arrays.asList(this.delegationDao.findFirstByUid(auth.getName()).getRoles()).contains(cn))
                 throw new AccessDeniedException("Role not under delegation");
             res.getUserList().retainAll(this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()));
         }
@@ -249,7 +244,7 @@ public class RolesController {
      * @param response
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST)
+    @PostMapping(REQUEST_MAPPING)
     @PreAuthorize("hasRole('SUPERUSER')")
     public void create(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -296,7 +291,7 @@ public class RolesController {
      * @param cn       Common name of role to delete
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
+    @DeleteMapping(REQUEST_MAPPING + "/{cn:.+}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public void delete(HttpServletResponse response, @PathVariable String cn) throws IOException {
         try {
@@ -370,7 +365,7 @@ public class RolesController {
      * @throws IOException if the uid does not exist or fails to access to the LDAP
      *                     store.
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.PUT)
+    @PutMapping(REQUEST_MAPPING + "/{cn:.+}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public void update(HttpServletRequest request, HttpServletResponse response, @PathVariable String cn)
             throws IOException {
@@ -433,7 +428,7 @@ public class RolesController {
      * @param response
      * @throws IOException
      */
-    @RequestMapping(value = BASE_MAPPING + "/roles_users", method = RequestMethod.POST)
+    @PostMapping(BASE_MAPPING + "/roles_users")
     public void updateUsers(HttpServletRequest request, HttpServletResponse response)
             throws AccessDeniedException, IOException, JSONException, DataServiceException {
 
@@ -477,7 +472,7 @@ public class RolesController {
         Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(delegatedAdmin);
         if (!usersUnderDelegation.containsAll(users))
             throw new AccessDeniedException("Some users are not under delegation");
-        DelegationEntry delegation = this.delegationDao.findOne(delegatedAdmin);
+        DelegationEntry delegation = this.delegationDao.findFirstByUid(delegatedAdmin);
         if (!Arrays.asList(delegation.getRoles()).containsAll(putRole))
             throw new AccessDeniedException("Some roles are not under delegation (put)");
         if (!Arrays.asList(delegation.getRoles()).containsAll(deleteRole))

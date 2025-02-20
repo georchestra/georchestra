@@ -73,13 +73,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import org.springframework.web.bind.annotation.*;
 import lombok.Setter;
 
 /**
@@ -187,7 +183,7 @@ public class UsersController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @ResponseBody
     @PostFilter("hasPermission(filterObject, 'read')")
     public List<SimpleAccount> findAll() throws DataServiceException {
@@ -229,8 +225,7 @@ public class UsersController {
      * </p>
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Account findByUid(@PathVariable String uid)
             throws AccessDeniedException, NameNotFoundException, DataServiceException {
@@ -338,7 +333,7 @@ public class UsersController {
      * @param request HTTP POST data contains the user data
      * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @PostMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @ResponseBody
     public Account create(HttpServletRequest request)
             throws IOException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
@@ -349,7 +344,7 @@ public class UsersController {
         // Verify that org is under delegation if user is not SUPERUSER
         final String requestOriginator = auth.getName();
         if (!callerIsSuperUser()) {
-            DelegationEntry delegation = this.delegationDao.findOne(requestOriginator);
+            DelegationEntry delegation = this.delegationDao.findFirstByUid(requestOriginator);
             if (delegation != null && !Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
                 throw new AccessDeniedException("Org not under delegation");
         }
@@ -416,8 +411,7 @@ public class UsersController {
      *                               the LDAP store.
      * @throws NameNotFoundException
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid:.+}", method = RequestMethod.PUT, produces = "application/json; charset=utf-8")
+    @PutMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Account update(@PathVariable String uid, HttpServletRequest request)
             throws IOException, NameNotFoundException, DataServiceException, DuplicatedEmailException, ParseException,
@@ -438,7 +432,7 @@ public class UsersController {
 
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
             if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
-                if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs())
+                if (!Arrays.asList(this.delegationDao.findFirstByUid(auth.getName()).getOrgs())
                         .contains(originalAcount.getOrg()))
                     throw new AccessDeniedException("User not under delegation");
             orgDao.unlinkUser(originalAcount);
@@ -451,7 +445,7 @@ public class UsersController {
 
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
             if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
-                if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs())
+                if (!Arrays.asList(this.delegationDao.findFirstByUid(auth.getName()).getOrgs())
                         .contains(modifiedAccount.getOrg()))
                     throw new AccessDeniedException("User not under delegation");
             orgDao.linkUser(modifiedAccount);
@@ -473,7 +467,7 @@ public class UsersController {
         }
 
         if (accountDao.hasUserLoginChanged(originalAcount, modifiedAccount)) {
-            DelegationEntry delegationEntry = delegationDao.findOne(originalAcount.getUid());
+            DelegationEntry delegationEntry = delegationDao.findFirstByUid(originalAcount.getUid());
             if (delegationEntry != null) {
                 delegationDao.delete(delegationEntry);
                 delegationEntry.setUid(modifiedAccount.getUid());
@@ -501,7 +495,7 @@ public class UsersController {
      * [BASE_MAPPING]/users/{uid}
      * </pre>
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{uid:.+}", method = RequestMethod.DELETE, produces = "application/json")
+    @DeleteMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json")
     public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
             throws IOException, DataServiceException, NameNotFoundException {
 
@@ -522,8 +516,8 @@ public class UsersController {
         roleDao.deleteUser(account);
 
         // Also delete delegation if exists
-        if (delegationDao.findOne(account.getUid()) != null) {
-            delegationDao.delete(account.getUid());
+        if (delegationDao.findById(account.getUid()) != null) {
+            delegationDao.deleteById(account.getUid());
         }
 
         // log when a user is removed according to pending status
@@ -540,7 +534,7 @@ public class UsersController {
      *
      * @return summary of records anonymized as a result
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
+    @PostMapping(value = "/account/gdpr/delete", produces = "application/json")
     public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(HttpServletResponse response)
             throws DataServiceException {
 
@@ -580,7 +574,7 @@ public class UsersController {
         return responseValue;
     }
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    @GetMapping(PUBLIC_REQUEST_MAPPING + "/requiredFields")
     public void getUserCreationRequiredFields(HttpServletResponse response) throws IOException {
         try {
             JSONArray fields = new JSONArray();
@@ -765,7 +759,7 @@ public class UsersController {
         String[] sshKeysA = new String[0];
         String saslUser = RequestUtil.getFieldValue(json, "saslUser");
 
-        if (!StringUtils.isEmpty(sshKeys)) {
+        if (!ObjectUtils.isEmpty(sshKeys)) {
             sshKeysA = sshKeys.split("\n"); // TODO what would be the most convenient delimiter ?
         }
 

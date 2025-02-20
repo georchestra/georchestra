@@ -28,6 +28,7 @@ import java.sql.Types;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
 public class PostGresArrayStringType implements UserType {
@@ -88,26 +89,27 @@ public class PostGresArrayStringType implements UserType {
     }
 
     @Override
-    public final Object nullSafeGet(final ResultSet resultSet, final String[] names, final SessionImplementor session,
-            final Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet resultSet, String[] strings,
+            SharedSessionContractImplementor sharedSessionContractImplementor, Object o)
+            throws HibernateException, SQLException {
         if (resultSet.wasNull()) {
             return null;
         }
 
-        String[] array = (String[]) resultSet.getArray(names[0]).getArray();
+        String[] array = (String[]) resultSet.getArray(strings[0]).getArray();
         return array;
     }
 
     @Override
-    public final void nullSafeSet(final PreparedStatement statement, final Object value, final int index,
-            final SessionImplementor session) throws HibernateException, SQLException {
-
-        if (value == null) {
-            statement.setNull(index, SQL_TYPES[0]);
+    public void nullSafeSet(PreparedStatement preparedStatement, Object o, int i,
+            SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
+        if (o == null) {
+            preparedStatement.setNull(i, SQL_TYPES[0]);
         } else {
-            String[] castObject = (String[]) value;
-            Array array = session.connection().createArrayOf("text", castObject);
-            statement.setArray(index, array);
+            String[] castObject = (String[]) o;
+            Array array = sharedSessionContractImplementor.connection().createArrayOf("text", castObject);
+            preparedStatement.setArray(i, array);
         }
     }
+
 }

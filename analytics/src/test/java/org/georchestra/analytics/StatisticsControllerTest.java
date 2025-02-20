@@ -1,9 +1,9 @@
 package org.georchestra.analytics;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,10 +24,9 @@ import javax.sql.DataSource;
 
 import org.georchestra.analytics.StatisticsController.GRANULARITY;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ReflectionUtils;
 
@@ -36,7 +35,7 @@ public class StatisticsControllerTest {
     private StatisticsController ctrl;
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         DataSource mockDS = mock(DataSource.class);
@@ -54,7 +53,7 @@ public class StatisticsControllerTest {
         ctrl.setDataSource(mockDS);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

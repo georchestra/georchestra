@@ -63,8 +63,7 @@ import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-
+import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -508,7 +507,7 @@ public class HeadersManagementStrategy {
         if (map == null) {
             map = new HashMap<String, String>();
         }
-        if (!StringUtils.isEmpty(path)) {
+        if (!ObjectUtils.isEmpty(path)) {
             // clean out session IDs with longer path since this should supersede them
             for (String key : new HashMap<String, String>(map).keySet()) {
                 if (key.startsWith(path)) {

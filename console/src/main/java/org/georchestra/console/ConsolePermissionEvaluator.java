@@ -32,7 +32,7 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
             return true;
         } else {
             String username = authentication.getName();
-            DelegationEntry delegation = delegationDao.findOne(username);
+            DelegationEntry delegation = delegationDao.findFirstByUid(username);
             if (delegation == null) {
                 return false;
             }

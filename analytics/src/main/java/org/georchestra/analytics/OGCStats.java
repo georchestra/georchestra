@@ -28,8 +28,7 @@ import org.georchestra.analytics.model.OGCStatsModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * ogc layers controller
@@ -50,7 +49,7 @@ public class OGCStats extends AbstractApplication {
     private final String csvUsers = "OgcUsers";
     private final String csvOrgs = "OgcOrgs";
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ogc/layers")
+    @GetMapping("/ogc/layers")
     public void getOGCLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         getStats(request, response, new StrategyController() {
@@ -60,7 +59,7 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ogc/users")
+    @GetMapping("/ogc/users")
     public void getOGCUsersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         getStats(request, response, new StrategyController() {
@@ -70,7 +69,7 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ogc/orgs")
+    @GetMapping("/ogc/orgs")
     public void getOGCOrgsStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         getStats(request, response, new StrategyController() {
@@ -80,7 +79,7 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/export/ogclayers")
+    @GetMapping("/export/ogclayers")
     public void exportLayers(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         exportCSV(request, response, csvLayers, new StrategyController() {
@@ -90,7 +89,7 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/export/ogcusers")
+    @GetMapping("/export/ogcusers")
     public void exportUsers(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         exportCSV(request, response, csvUsers, new StrategyController() {
@@ -100,7 +99,7 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/export/ogcorgs")
+    @GetMapping("/export/ogcorgs")
     public void exportOrgs(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         exportCSV(request, response, csvOrgs, new StrategyController() {

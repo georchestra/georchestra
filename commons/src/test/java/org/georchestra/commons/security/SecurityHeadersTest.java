@@ -22,12 +22,12 @@ import static java.util.Arrays.asList;
 import static org.georchestra.commons.security.SecurityHeaders.decode;
 import static org.georchestra.commons.security.SecurityHeaders.decodeAsList;
 import static org.georchestra.commons.security.SecurityHeaders.encodeBase64;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SecurityHeadersTest {
 
@@ -50,7 +50,7 @@ public class SecurityHeadersTest {
 
     @Test
     public void encodeBase64_Empty() {
-        assertEquals("empty string should remain empty string", "", encodeBase64(""));
+        assertEquals("", encodeBase64(""), "empty string should remain empty string");
         assertEquals("", decode(""));
     }
 

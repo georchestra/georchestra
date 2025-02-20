@@ -34,9 +34,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
+import org.springframework.web.bind.annotation.GetMapping;
 import com.bedatadriven.jackson.datatype.jts.JtsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
@@ -87,7 +85,7 @@ public class AreaOfCompetenceController {
      * @throws DataServiceException
      * @throws IOException
      */
-    @RequestMapping(value = "/account/areaofcompetence", produces = "application/json", method = RequestMethod.GET)
+    @GetMapping(value = "/account/areaofcompetence", produces = "application/json")
     public void getCurrentUserAreaOfCompetence(HttpServletResponse response) throws DataServiceException, IOException {
         final String accountId = usernameResolver.get();
         final Account account = accountDao.findByUID(accountId);
