@@ -516,7 +516,7 @@ public class UsersController {
         roleDao.deleteUser(account);
 
         // Also delete delegation if exists
-        if (delegationDao.findById(account.getUid()) != null) {
+        if (delegationDao.findFirstByUid(account.getUid()) != null) {
             delegationDao.deleteById(account.getUid());
         }
 
