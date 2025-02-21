@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import com.google.common.collect.Lists;
 
@@ -63,17 +62,16 @@ public class RemoveXForwardedHeadersTest {
         assertFalse(headers.filter(RemoveXForwardedHeaders.FOR, null, createProxyRequest("geoserver/wms?Service=wms")));
     }
 
-    /**
-     * @Test @Ignore("TODO Fail with spring boot 2") public void
-     *       testBothIncludeAndExcludeSet() {
-     *       assertThrows(IllegalArgumentException.class, () -> { final
-     *       RemoveXForwardedHeaders headers = new RemoveXForwardedHeaders();
-     *       headers.setIncludes(Lists.newArrayList(".*.service=wfs.*"));
-     *       headers.setExcludes(Lists.newArrayList(".*.service=wms.*")); try {
-     *       headers.checkConfiguration(); fail("Expected
-     *       IllegalArgumentException"); } catch (IllegalArgumentException e) { //
-     *       good } }); }
-     **/
+    @Test
+    public void testBothIncludeAndExcludeSet() throws Exception {
+        assertThrows(IllegalArgumentException.class, () -> {
+            final RemoveXForwardedHeaders headers = new RemoveXForwardedHeaders();
+            headers.setIncludes(Lists.newArrayList(".*.service=wfs.*"));
+            headers.setExcludes(Lists.newArrayList(".*.service=wms.*"));
+            headers.checkConfiguration();
+        });
+    }
+
     private HttpRequestBase createProxyRequest(String uriFragment) throws URISyntaxException {
         return createProxyRequest("http://localhost:8080/", uriFragment);
     }
