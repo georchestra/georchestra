@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,39 +44,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT extends ConsoleIntegrationTest {
-    private static Logger LOGGER = Logger.getLogger(RolesIT.class);
 
     public @Rule @Autowired IntegrationTestSupport support;
 
     private String roleName;
-
-    private ResultActions delete(String roleName) throws Exception {
-        return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
-    }
-
-    private ResultActions create() throws Exception {
-        roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        return create(roleName);
-    }
-
-    private ResultActions create(String name) throws Exception {
-        String body = "{ \"cn\": \"" + name + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-        return support.perform(post("/private/roles").content(body));
-    }
-
-    private ResultActions update(String name, String description, boolean isFavorite) throws Exception {
-        String body = "{ \"cn\": \"" + name + "\", \"description\": \"" + description + "\", \"isFavorite\": "
-                + isFavorite + " }";
-        return support.perform(put("/private/roles/{cn}", name).content(body));
-    }
-
-    private ResultActions get(String name) throws Exception {
-        return support.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
-    }
-
-    private ResultActions getAll() throws Exception {
-        return support.perform(MockMvcRequestBuilders.get("/private/roles"));
-    }
 
     @WithMockUser(username = "user", roles = "USER")
     public @Test void testCreateBadUser() throws Exception {
@@ -145,5 +115,33 @@ public class RolesIT extends ConsoleIntegrationTest {
         getAll().andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(jsonPath("$.[?(@.cn=='TEMPORARY')].users.*", containsInAnyOrder(userName2, userName1)))
                 .andExpect(jsonPath("$.[?(@.cn=='EXPIRED')].users.*", containsInAnyOrder(userName1)));
+    }
+
+    private ResultActions delete(String roleName) throws Exception {
+        return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
+    }
+
+    private ResultActions create() throws Exception {
+        roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        return create(roleName);
+    }
+
+    private ResultActions create(String name) throws Exception {
+        String body = "{ \"cn\": \"" + name + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
+        return support.perform(post("/private/roles").content(body));
+    }
+
+    private ResultActions update(String name, String description, boolean isFavorite) throws Exception {
+        String body = "{ \"cn\": \"" + name + "\", \"description\": \"" + description + "\", \"isFavorite\": "
+                + isFavorite + " }";
+        return support.perform(put("/private/roles/{cn}", name).content(body));
+    }
+
+    private ResultActions get(String name) throws Exception {
+        return support.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
+    }
+
+    private ResultActions getAll() throws Exception {
+        return support.perform(MockMvcRequestBuilders.get("/private/roles"));
     }
 }
