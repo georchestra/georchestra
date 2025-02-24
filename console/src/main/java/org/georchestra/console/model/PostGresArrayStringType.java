@@ -90,7 +90,7 @@ public class PostGresArrayStringType implements UserType {
 
     @Override
     public Object nullSafeGet(ResultSet resultSet, String[] strings,
-            SharedSessionContractImplementor sharedSessionContractImplementor, Object o)
+            SharedSessionContractImplementor sharedSessionContractImplementor, Object object)
             throws HibernateException, SQLException {
         if (resultSet.wasNull()) {
             return null;
@@ -101,14 +101,14 @@ public class PostGresArrayStringType implements UserType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement preparedStatement, Object o, int i,
+    public void nullSafeSet(PreparedStatement preparedStatement, Object object, int index,
             SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
-        if (o == null) {
-            preparedStatement.setNull(i, SQL_TYPES[0]);
+        if (object == null) {
+            preparedStatement.setNull(index, SQL_TYPES[0]);
         } else {
-            String[] castObject = (String[]) o;
+            String[] castObject = (String[]) object;
             Array array = sharedSessionContractImplementor.connection().createArrayOf("text", castObject);
-            preparedStatement.setArray(i, array);
+            preparedStatement.setArray(index, array);
         }
     }
 
