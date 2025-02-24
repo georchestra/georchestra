@@ -381,4 +381,12 @@ public class RoleDaoImpl implements RoleDao {
             deleteUsers(roleName, users);
         }
     }
+
+    @Override
+    public void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    }
+
+    @Override
+    public void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    }
 }

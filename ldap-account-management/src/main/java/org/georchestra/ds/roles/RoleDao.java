@@ -81,4 +81,8 @@ public interface RoleDao {
 
     void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException;
 
+    void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException;
+
+    void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException;
+
 }
