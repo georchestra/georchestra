@@ -35,7 +35,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -51,18 +50,6 @@ public class RolesIT extends ConsoleIntegrationTest {
     public @Rule @Autowired IntegrationTestSupport support;
 
     private String roleName;
-
-    private void deleteQuiet() {
-        try {
-            delete();
-        } catch (Exception e) {
-            LOGGER.info(String.format("Error deleting role %s at %s", roleName, support.testName()), e);
-        }
-    }
-
-    private MvcResult delete() throws Exception {
-        return delete(roleName).andReturn();
-    }
 
     private ResultActions delete(String roleName) throws Exception {
         return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
@@ -99,81 +86,64 @@ public class RolesIT extends ConsoleIntegrationTest {
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
     public @Test void testCreate() throws Exception {
-        try {
-            create()//
-                    .andExpect(status().isOk())// note: should return 201:CREATED instead?
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.cn").value(roleName));
-        } finally {
-            deleteQuiet();
-        }
+        create()//
+                .andExpect(status().isOk())// note: should return 201:CREATED instead?
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.cn").value(roleName));
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
     public @Test void testUpdateIsFavoriteNoOp() throws Exception {
-        try {
-            create().andExpect(status().isOk());
+        create().andExpect(status().isOk());
 
-            update(roleName, "", false)//
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(false));
+        update(roleName, "", false)//
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(false));
 
-            get(roleName)// update says it was updated, but what does get say?
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(false));
-        } finally {
-            deleteQuiet();
-        }
+        get(roleName)// update says it was updated, but what does get say?
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(false));
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
     public @Test void testUpdateIsFavorite() throws Exception {
-        try {
-            create().andExpect(status().isOk());
+        create().andExpect(status().isOk());
 
-            update(roleName, "", true)//
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(true));
+        update(roleName, "", true)//
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(true));
 
-            get(roleName)// update says it was updated, but what does get say?
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(true));
+        get(roleName)// update says it was updated, but what does get say?
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(true));
 
-            update(roleName, "", false)//
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(false));
+        update(roleName, "", false)//
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(false));
 
-            get(roleName)// update says it was updated, but what does get say?
-                    .andExpect(status().isOk())//
-                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                    .andExpect(jsonPath("$.isFavorite").value(false));
-        } finally {
-            deleteQuiet();
-        }
+        get(roleName)// update says it was updated, but what does get say?
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.isFavorite").value(false));
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
     public @Test void listRolesWithExpired() throws Exception {
-        try {
-            String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-            String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-            String userName3 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String userName3 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 
-            support.createUser(userName1, true); // temporary and expired
-            support.createUser(userName2, false); // temporary but still valid
-            support.createUser(userName3); // no expiry date defined
+        support.createUser(userName1, true); // temporary and expired
+        support.createUser(userName2, false); // temporary but still valid
+        support.createUser(userName3); // no expiry date defined
 
-            getAll().andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/json"))
-                    .andExpect(jsonPath("$.[?(@.cn=='TEMPORARY')].users.*", containsInAnyOrder(userName2, userName1)))
-                    .andExpect(jsonPath("$.[?(@.cn=='EXPIRED')].users.*", containsInAnyOrder(userName1)));
-
-        } finally {
-            deleteQuiet();
-        }
+        getAll().andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/json"))
+                .andExpect(jsonPath("$.[?(@.cn=='TEMPORARY')].users.*", containsInAnyOrder(userName2, userName1)))
+                .andExpect(jsonPath("$.[?(@.cn=='EXPIRED')].users.*", containsInAnyOrder(userName1)));
     }
 }
