@@ -118,7 +118,6 @@ public class RoleDaoImpl implements RoleDao {
             context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
             this.ldapTemplate.modifyAttributes(context);
         } catch (Exception e) {
-            LOG.error(e);
             throw new DataServiceException(e);
         }
     }
@@ -257,7 +256,6 @@ public class RoleDaoImpl implements RoleDao {
         try {
             this.ldapTemplate.bind(dn, context, null);
         } catch (org.springframework.ldap.NamingException e) {
-            LOG.error(e);
             throw new DataServiceException(e);
         }
     }
