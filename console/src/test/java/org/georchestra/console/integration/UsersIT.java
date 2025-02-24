@@ -3,7 +3,6 @@ package org.georchestra.console.integration;
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -19,14 +18,12 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -49,13 +46,7 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 
-    private @Autowired LdapTemplate ldapTemplateSanityCheck;
-
     private @Autowired GDPRAccountWorker gdprWorker;
-
-    public @Before void preflightSanityCheck() {
-        assertNotNull(ldapTemplateSanityCheck.lookup("ou=users"));
-    }
 
     @WithMockRandomUidUser
     public @Test void changeOrgAndUid() throws Exception {
