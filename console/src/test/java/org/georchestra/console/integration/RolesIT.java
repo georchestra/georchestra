@@ -60,6 +60,17 @@ public class RolesIT extends ConsoleIntegrationTest {
                 .andExpect(status().isOk())// note: should return 201:CREATED instead?
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.cn").value(roleName));
+
+       get(roleName).andExpect(status().isOk());
+    }
+
+    @WithMockUser(username = "admin", roles = "SUPERUSER")
+    public @Test void delete() throws Exception {
+        create().andExpect(status().isOk());
+
+        delete(roleName);
+
+        get(roleName).andExpect(status().isNotFound());
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
