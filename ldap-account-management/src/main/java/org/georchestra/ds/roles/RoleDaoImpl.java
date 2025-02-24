@@ -239,15 +239,8 @@ public class RoleDaoImpl implements RoleDao {
         if (role.getName().length() == 0) {
             throw new IllegalArgumentException("given name is required");
         }
-        // checks unique common name
-        try {
-            if (findByCommonName(role.getName()) == null) {
-                throw new NameNotFoundException("Not found");
-            }
-            throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
-        } catch (NameNotFoundException e) {
-            LOG.debug("The role with name " + role.getName() + " does not exist yet, it can  then be safely created.");
-        }
+
+        checkThereIsNoRoleWithThisName(role.getName());
 
         // inserts the new role
         Name dn = buildRoleDn(role.getName());
@@ -330,15 +323,7 @@ public class RoleDaoImpl implements RoleDao {
         Name destDn = buildRoleDn(role.getName());
 
         if (!role.getName().equals(roleName)) {
-            // checks unique common name
-            try {
-                findByCommonName(role.getName());
-                throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
-            } catch (NameNotFoundException e1) {
-                // if a role with the specified name cannot be retrieved, then the new role can be safely renamed.
-                LOG.debug("no account with name " + role.getName() + " can be found, it is then "
-                        + "safe to rename the role.");
-            }
+            checkThereIsNoRoleWithThisName(role.getName());
             ldapTemplate.rename(sourceDn, destDn);
         }
 
@@ -379,5 +364,16 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    }
+
+    private void checkThereIsNoRoleWithThisName(String roleName) throws DataServiceException, DuplicatedCommonNameException {
+        try {
+            if (findByCommonName(roleName) == null) {
+                throw new NameNotFoundException("Not found");
+            }
+            throw new DuplicatedCommonNameException("there is a role with this name: " + roleName);
+        } catch (NameNotFoundException e) {
+            LOG.debug("Role with name " + roleName + " does not exist yet, name can be safely used for creation / renaming.");
+        }
     }
 }
