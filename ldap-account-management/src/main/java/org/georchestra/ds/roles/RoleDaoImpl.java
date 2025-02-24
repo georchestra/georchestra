@@ -89,7 +89,7 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException {
+    public void addUser(String roleName, Account user) throws DataServiceException, NameNotFoundException {
         /*
          * TODO Add hierarchic behaviour here : if configuration flag hierarchic_roles
          * is set and, if role name contain separator (also found in config) then remove
@@ -98,7 +98,7 @@ public class RoleDaoImpl implements RoleDao {
          * ...)
          */
 
-        Name dn = buildRoleDn(roleID);
+        Name dn = buildRoleDn(roleName);
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
         Set<String> values = new HashSet<>();
