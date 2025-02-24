@@ -35,7 +35,7 @@ public interface RoleDao {
     /**
      * adds the user to the role
      */
-    void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException;
+    void addUser(String roleName, Account user) throws DataServiceException, NameNotFoundException;
 
     /**
      * Returns all roles. Each roles will contains its list of users.
