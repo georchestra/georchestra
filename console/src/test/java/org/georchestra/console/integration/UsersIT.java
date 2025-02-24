@@ -64,7 +64,8 @@ public class UsersIT extends ConsoleIntegrationTest {
         support.createUser(userName);
 
         support.perform(put("/private/users/" + userName)
-                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
+                .content(support.readResourceToString("/testData/createUserPayload.json")
+                        .replace("{uuid}", newUserName)
                         .replace("psc", "C2C")));
 
         support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
@@ -73,8 +74,7 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     public @Test void userDetail() throws Exception {
-        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-                .getUsername();
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
         support.createUser(userName);
 
         support.perform(get("/account/userdetails").header(SEC_USERNAME, userName)).andExpect(status().isOk());
@@ -82,8 +82,7 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     public @Test void users() throws Exception {
-        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-                .getUsername();
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
         support.createUser(userName);
 
         support.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
@@ -115,24 +114,10 @@ public class UsersIT extends ConsoleIntegrationTest {
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 
-    private String createRole() throws Exception {
-        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-        support.perform(post("/private/roles").content(body));
-        return roleName;
-    }
-
-    private void setRole(String userName, String role1Name, String role2Name) throws Exception {
-        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
-                + "\"],\"DELETE\":[]}";
-        support.perform(post("/private/roles_users").content(body));
-    }
-
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
     @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws Exception {
-
         support.createUser("user1");
 
         Authentication auth = Mockito.mock(Authentication.class);
@@ -148,7 +133,6 @@ public class UsersIT extends ConsoleIntegrationTest {
 
         support.perform(post("/account/gdpr/delete").header(SEC_USERNAME, "user1"))//
                 .andExpect(status().isNotFound());
-
     }
 
     @WithMockRandomUidUser
@@ -166,7 +150,20 @@ public class UsersIT extends ConsoleIntegrationTest {
         assertFalse(isEmpty(afterDeletion));
     }
 
-    boolean isEmpty(DeletedAccountSummary summary) {
+    private String createRole() throws Exception {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
+        support.perform(post("/private/roles").content(body));
+        return roleName;
+    }
+
+    private void setRole(String userName, String role1Name, String role2Name) throws Exception {
+        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
+                + "\"],\"DELETE\":[]}";
+        support.perform(post("/private/roles_users").content(body));
+    }
+
+    private boolean isEmpty(DeletedAccountSummary summary) {
         return summary.getMetadataRecords() == 0 && summary.getOgcStatsRecords() == 0;
     }
 }
