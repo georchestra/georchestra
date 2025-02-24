@@ -50,35 +50,30 @@ public class RolesIT extends ConsoleIntegrationTest {
     private String roleName;
 
     @WithMockUser(username = "user", roles = "USER")
-    public @Test void testCreateBadUser() throws Exception {
+    public @Test void createNotAllowed() throws Exception {
         create().andExpect(status().isForbidden());
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
-    public @Test void testCreate() throws Exception {
-        create()//
+    public @Test void createAllowed() throws Exception {
+        create() //
                 .andExpect(status().isOk())// note: should return 201:CREATED instead?
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.cn").value(roleName));
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
-    public @Test void testUpdateIsFavoriteNoOp() throws Exception {
+    public @Test void isFavoriteDefaultIsFalse() throws Exception {
         create().andExpect(status().isOk());
 
-        update(roleName, "", false)//
-                .andExpect(status().isOk())//
-                .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                .andExpect(jsonPath("$.isFavorite").value(false));
-
-        get(roleName)// update says it was updated, but what does get say?
+        get(roleName) //
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.isFavorite").value(false));
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
-    public @Test void testUpdateIsFavorite() throws Exception {
+    public @Test void updateIsFavorite() throws Exception {
         create().andExpect(status().isOk());
 
         update(roleName, "", true)//
@@ -86,7 +81,7 @@ public class RolesIT extends ConsoleIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.isFavorite").value(true));
 
-        get(roleName)// update says it was updated, but what does get say?
+        get(roleName) // update says it was updated, but what does get say?
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.isFavorite").value(true));
@@ -96,7 +91,7 @@ public class RolesIT extends ConsoleIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.isFavorite").value(false));
 
-        get(roleName)// update says it was updated, but what does get say?
+        get(roleName) // update says it was updated, but what does get say?
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.isFavorite").value(false));
