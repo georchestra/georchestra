@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -241,24 +242,18 @@ public class RoleDaoImpl implements RoleDao {
         }
         // checks unique common name
         try {
-            if (findByCommonName(role.getName()) == null)
+            if (findByCommonName(role.getName()) == null) {
                 throw new NameNotFoundException("Not found");
-
+            }
             throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
-
-        } catch (NameNotFoundException e1) {
-            // if an role with the specified name cannot be retrieved, then
-            // the new role can be safely added.
-            LOG.debug("The role with name " + role.getName() + " does not exist yet, it can "
-                    + "then be safely created.");
+        } catch (NameNotFoundException e) {
+            LOG.debug("The role with name " + role.getName() + " does not exist yet, it can  then be safely created.");
         }
 
         // inserts the new role
         Name dn = buildRoleDn(role.getName());
-
         DirContextAdapter context = new DirContextAdapter(dn);
         mapToContext(role, context);
-
         try {
             this.ldapTemplate.bind(dn, context, null);
         } catch (org.springframework.ldap.NamingException e) {
@@ -285,14 +280,18 @@ public class RoleDaoImpl implements RoleDao {
 
         setContextField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-        context.setAttributeValues(RoleSchema.MEMBER_KEY, role.getUserList().stream().map(userUid -> {
-            try {
-                return accountDao.findByUID(userUid);
-            } catch (DataServiceException e) {
-                return null;
-            }
-        }).filter(account -> null != account).map(account -> accountDao.buildFullUserDn(account))
-                .collect(Collectors.toList()).toArray());
+        String[] members = role.getUserList().stream()
+                .map(userUid -> {
+                    try {
+                        return accountDao.findByUID(userUid);
+                    } catch (DataServiceException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .map(account -> accountDao.buildFullUserDn(account))
+                .collect(Collectors.toList()).toArray(new String[0]);
+        context.setAttributeValues(RoleSchema.MEMBER_KEY, members);
         if (role.isFavorite()) {
             setContextField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         } else {
@@ -360,7 +359,6 @@ public class RoleDaoImpl implements RoleDao {
         for (Account account : deleteList) {
             deleteUser(roleName, account);
         }
-
     }
 
     @Override
