@@ -33,7 +33,7 @@ import lombok.Setter;
  * @author Mauricio Pazos
  *
  */
-class RoleImpl implements Role, Comparable<Role> {
+class RoleImpl implements Role {
 
     private @Getter @Setter UUID uniqueIdentifier;
     private String name;
