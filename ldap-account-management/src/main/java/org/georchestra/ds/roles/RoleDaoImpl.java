@@ -36,6 +36,7 @@ import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -46,7 +47,6 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
-import lombok.Setter;
 
 /**
  * Maintains the role of users in the ldap store.
@@ -89,6 +89,7 @@ public class RoleDaoImpl implements RoleDao {
         this.roles = roles;
     }
 
+    @Autowired
     public void setAccountDao(AccountDao accountDao) {
         this.accountDao = accountDao;
     }
@@ -106,7 +107,6 @@ public class RoleDaoImpl implements RoleDao {
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
         Set<String> values = new HashSet<>();
-
         if (context.getStringAttributes("objectClass") != null) {
             Collections.addAll(values, context.getStringAttributes("objectClass"));
         }
@@ -120,8 +120,6 @@ public class RoleDaoImpl implements RoleDao {
             LOG.error(e);
             throw new DataServiceException(e);
         }
-
-        findByCommonName(roleID);
     }
 
     @Override
@@ -185,8 +183,7 @@ public class RoleDaoImpl implements RoleDao {
     public Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
         try {
             Name dn = buildRoleDn(commonName);
-            Role g = ldapTemplate.lookup(dn, new RoleContextMapper());
-            return g;
+            return ldapTemplate.lookup(dn, new RoleContextMapper());
         } catch (NameNotFoundException e) {
             throw new NameNotFoundException("There is not a role with this common name (cn): " + commonName);
         }
@@ -197,7 +194,6 @@ public class RoleDaoImpl implements RoleDao {
         if (this.roles.isProtected(commonName)) {
             throw new DataServiceException("Role " + commonName + " is a protected role");
         }
-
         try {
             this.ldapTemplate.unbind(buildRoleDn(commonName), true);
         } catch (NameNotFoundException ignore) {
@@ -240,7 +236,6 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public synchronized void insert(Role role) throws DataServiceException, DuplicatedCommonNameException {
-
         if (role.getName().length() == 0) {
             throw new IllegalArgumentException("given name is required");
         }
