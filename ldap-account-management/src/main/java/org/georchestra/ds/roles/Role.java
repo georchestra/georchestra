@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author Mauricio Pazos
  */
-public interface Role {
+public interface Role extends Comparable<Role>{
 
     final String USER = "USER";
 

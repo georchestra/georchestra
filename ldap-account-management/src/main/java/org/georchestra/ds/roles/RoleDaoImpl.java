@@ -21,11 +21,9 @@ package org.georchestra.ds.roles;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -157,11 +155,8 @@ public class RoleDaoImpl implements RoleDao {
     public List<Role> findAll() {
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         List<Role> roleList = ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
-        TreeSet<Role> sorted = new TreeSet<Role>();
-        for (Role g : roleList) {
-            sorted.add(g);
-        }
-        return new LinkedList(sorted);
+        roleList.sort(Role::compareTo);
+        return roleList;
     }
 
     @Override
