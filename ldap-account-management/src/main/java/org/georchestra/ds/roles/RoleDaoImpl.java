@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.naming.Name;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
@@ -64,26 +65,18 @@ public class RoleDaoImpl implements RoleDao {
 
     private String roleSearchBaseDN;
 
-    public void setRoleSearchBaseDN(String roleSearchBaseDN) {
-        this.roleSearchBaseDN = roleSearchBaseDN;
-    }
-
     @Autowired
     private AccountDao accountDao;
 
     @Autowired
     private RoleProtected roles;
 
-    public void setLdapTemplate(LdapTemplate ldapTemplate) {
-        this.ldapTemplate = ldapTemplate;
+    public void setRoleSearchBaseDN(String roleSearchBaseDN) {
+        this.roleSearchBaseDN = roleSearchBaseDN;
     }
 
-    public Name buildRoleDn(String cn) {
-        try {
-            return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
-        } catch (org.springframework.ldap.InvalidNameException ex) {
-            throw new IllegalArgumentException(ex.getMessage());
-        }
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
     }
 
     public void setRoles(RoleProtected roles) {
@@ -95,6 +88,7 @@ public class RoleDaoImpl implements RoleDao {
         this.accountDao = accountDao;
     }
 
+    @Override
     public void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException {
         /*
          * TODO Add hierarchic behaviour here : if configuration flag hierarchic_roles
@@ -130,6 +124,7 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
+    @Override
     public void deleteUser(String roleName, Account account) throws NameNotFoundException, DataServiceException {
         /* TODO Add hierarchic behaviour here like addUser method */
         Role role = this.findByCommonName(roleName);
@@ -158,6 +153,7 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
+    @Override
     public List<Role> findAll() {
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         List<Role> roleList = ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
@@ -168,6 +164,7 @@ public class RoleDaoImpl implements RoleDao {
         return new LinkedList(sorted);
     }
 
+    @Override
     public List<Role> findAllForUser(Account account) {
         EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
         AndFilter filter = new AndFilter();
@@ -199,6 +196,70 @@ public class RoleDaoImpl implements RoleDao {
         } catch (NameNotFoundException ignore) {
             LOG.debug("Tried to remove a non exising role, ignoring: " + commonName);
         }
+    }
+
+    @Override
+    public synchronized void insert(Role role) throws DataServiceException, DuplicatedCommonNameException {
+        if (role.getName().length() == 0) {
+            throw new IllegalArgumentException("given name is required");
+        }
+
+        checkThereIsNoRoleWithThisName(role.getName());
+
+        // inserts the new role
+        Name dn = buildRoleDn(role.getName());
+        DirContextAdapter context = new DirContextAdapter(dn);
+        mapToContext(role, context);
+        try {
+            this.ldapTemplate.bind(dn, context, null);
+        } catch (org.springframework.ldap.NamingException e) {
+            throw new DataServiceException(e);
+        }
+    }
+
+    /**
+     * Updates the field of role in the LDAP store
+     */
+    @Override
+    public synchronized void update(final String roleName, final Role role)
+            throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
+        if (role.getName().length() == 0) {
+            throw new IllegalArgumentException("given name is required");
+        }
+
+        Name sourceDn = buildRoleDn(roleName);
+        Name destDn = buildRoleDn(role.getName());
+
+        if (!role.getName().equals(roleName)) {
+            checkThereIsNoRoleWithThisName(role.getName());
+            ldapTemplate.rename(sourceDn, destDn);
+        }
+
+        DirContextOperations context = ldapTemplate.lookupContext(destDn);
+        mapToContext(role, context);
+        ldapTemplate.modifyAttributes(context);
+    }
+
+    @Override
+    public void addUsersInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+        for (String roleName : putRole) {
+            addUsers(roleName, users);
+        }
+    }
+
+    @Override
+    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+        for (String roleName : deleteRole) {
+            deleteUsers(roleName, users);
+        }
+    }
+
+    @Override
+    public void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    }
+
+    @Override
+    public void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
     }
 
     private static class RoleContextMapper implements ContextMapper<Role> {
@@ -234,26 +295,16 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    @Override
-    public synchronized void insert(Role role) throws DataServiceException, DuplicatedCommonNameException {
-        if (role.getName().length() == 0) {
-            throw new IllegalArgumentException("given name is required");
-        }
-
-        checkThereIsNoRoleWithThisName(role.getName());
-
-        // inserts the new role
-        Name dn = buildRoleDn(role.getName());
-        DirContextAdapter context = new DirContextAdapter(dn);
-        mapToContext(role, context);
+    @VisibleForTesting
+    protected Name buildRoleDn(String cn) {
         try {
-            this.ldapTemplate.bind(dn, context, null);
-        } catch (org.springframework.ldap.NamingException e) {
-            throw new DataServiceException(e);
+            return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
+        } catch (org.springframework.ldap.InvalidNameException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
         }
     }
 
-    void mapToContext(Role role, DirContextOperations context) {
+    private void mapToContext(Role role, DirContextOperations context) {
         Set<String> objectClass = new HashSet<>();
 
         if (context.getStringAttributes("objectClass") != null) {
@@ -309,29 +360,6 @@ public class RoleDaoImpl implements RoleDao {
         return false;
     }
 
-    /**
-     * Updates the field of role in the LDAP store
-     */
-    @Override
-    public synchronized void update(final String roleName, final Role role)
-            throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
-        if (role.getName().length() == 0) {
-            throw new IllegalArgumentException("given name is required");
-        }
-
-        Name sourceDn = buildRoleDn(roleName);
-        Name destDn = buildRoleDn(role.getName());
-
-        if (!role.getName().equals(roleName)) {
-            checkThereIsNoRoleWithThisName(role.getName());
-            ldapTemplate.rename(sourceDn, destDn);
-        }
-
-        DirContextOperations context = ldapTemplate.lookupContext(destDn);
-        mapToContext(role, context);
-        ldapTemplate.modifyAttributes(context);
-    }
-
     private void addUsers(String roleName, List<Account> addList) throws NameNotFoundException, DataServiceException {
         for (Account account : addList) {
             addUser(roleName, account);
@@ -342,28 +370,6 @@ public class RoleDaoImpl implements RoleDao {
         for (Account account : deleteList) {
             deleteUser(roleName, account);
         }
-    }
-
-    @Override
-    public void addUsersInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
-        for (String roleName : putRole) {
-            addUsers(roleName, users);
-        }
-    }
-
-    @Override
-    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
-        for (String roleName : deleteRole) {
-            deleteUsers(roleName, users);
-        }
-    }
-
-    @Override
-    public void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
-    }
-
-    @Override
-    public void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
     }
 
     private void checkThereIsNoRoleWithThisName(String roleName) throws DataServiceException, DuplicatedCommonNameException {
