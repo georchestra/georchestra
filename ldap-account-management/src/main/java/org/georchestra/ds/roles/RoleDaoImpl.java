@@ -51,11 +51,7 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 /**
- * Maintains the role of users in the ldap store.
- *
- *
  * @author Mauricio Pazos
- *
  */
 public class RoleDaoImpl implements RoleDao {
 
@@ -363,27 +359,29 @@ public class RoleDaoImpl implements RoleDao {
         if (null == role.getUniqueIdentifier()) {
             role.setUniqueIdentifier(UUID.randomUUID());
         }
-        String suuid = role.getUniqueIdentifier().toString();
-        setContextField(context, RoleSchema.UUID_KEY, suuid);
-
+        setContextField(context, RoleSchema.UUID_KEY, role.getUniqueIdentifier().toString());
         setContextField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-        Stream<String> userMembers = role.getUserList().stream().map(userUid -> {
-            try {
-                return accountDao.findByUID(userUid);
-            } catch (DataServiceException e) {
-                return null;
-            }
-        }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account));
 
-        Stream<String> orgMembers = role.getOrgList().stream().map(orgUid -> {
-            return orgDao.findByCommonName(orgUid);
-        }).filter(Objects::nonNull).map(org -> orgDao.getOrgExtension().buildOrgDN(org))
+        Stream<String> userMembers = role.getUserList().stream() //
+                .map(userUid -> { //
+                    try { //
+                        return accountDao.findByUID(userUid); //
+                    } catch (DataServiceException e) { //
+                        return null; //
+                    }}) //
+                .filter(Objects::nonNull) //
+                .map(account -> accountDao.buildFullUserDn(account));
+
+        Stream<String> orgMembers = role.getOrgList().stream() //
+                .map(orgDao::findByCommonName) //
+                .filter(Objects::nonNull) //
+                .map(org -> orgDao.getOrgExtension().buildOrgDN(org)) //
                 .map(dn -> String.format("%s,%s", dn, orgDao.getOrgSearchBaseDN()));
 
         String[] members = Stream.concat(userMembers, orgMembers).collect(Collectors.toList()).toArray(new String[0]);
-
         context.setAttributeValues(RoleSchema.MEMBER_KEY, members);
+
         if (role.isFavorite()) {
             setContextField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         } else {
