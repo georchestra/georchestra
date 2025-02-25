@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.users.Account;
 import org.springframework.ldap.NameNotFoundException;
 
@@ -81,8 +82,8 @@ public interface RoleDao {
 
     void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException;
 
-    void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException;
+    void addOrgsInRoles(List<String> putRole, List<Org> orgs) throws DataServiceException, NameNotFoundException;
 
-    void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException;
+    void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs) throws DataServiceException, NameNotFoundException;
 
 }
