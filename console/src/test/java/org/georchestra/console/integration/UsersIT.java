@@ -55,8 +55,7 @@ public class UsersIT extends ConsoleIntegrationTest {
         support.createUser(userName);
 
         support.perform(put("/private/users/" + userName)
-                .content(support.readResourceToString("/testData/createUserPayload.json")
-                        .replace("{uuid}", newUserName)
+                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
                         .replace("psc", "C2C")));
 
         support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
@@ -65,7 +64,8 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     public @Test void userDetail() throws Exception {
-        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
         support.createUser(userName);
 
         support.perform(get("/account/userdetails").header(SEC_USERNAME, userName)).andExpect(status().isOk());
@@ -73,7 +73,8 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     public @Test void users() throws Exception {
-        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
         support.createUser(userName);
 
         support.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())

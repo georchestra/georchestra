@@ -61,7 +61,7 @@ public class RolesIT extends ConsoleIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.cn").value(roleName));
 
-       get(roleName).andExpect(status().isOk());
+        get(roleName).andExpect(status().isOk());
     }
 
     @WithMockUser(username = "admin", roles = "SUPERUSER")
