@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.naming.Name;
 
@@ -34,6 +35,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 
@@ -67,6 +70,9 @@ public class RoleDaoImpl implements RoleDao {
     private AccountDao accountDao;
 
     @Autowired
+    private OrgsDao orgDao;
+
+    @Autowired
     private RoleProtected roles;
 
     public void setRoleSearchBaseDN(String roleSearchBaseDN) {
@@ -81,9 +87,12 @@ public class RoleDaoImpl implements RoleDao {
         this.roles = roles;
     }
 
-    @Autowired
     public void setAccountDao(AccountDao accountDao) {
         this.accountDao = accountDao;
+    }
+
+    public void setOrgDao(OrgsDao orgDao) {
+        this.orgDao = orgDao;
     }
 
     @Override
@@ -250,14 +259,34 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public void addOrgsInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    public void addOrgsInRoles(List<String> putRole, List<Org> orgs) throws DataServiceException, NameNotFoundException {
+        putRole.stream().forEach(roleName -> {
+
+            Name dn = buildRoleDn(roleName);
+            DirContextOperations context = ldapTemplate.lookupContext(dn);
+
+            Set<String> values = new HashSet<>();
+            if (context.getStringAttributes("objectClass") != null) {
+                Collections.addAll(values, context.getStringAttributes("objectClass"));
+            }
+            Collections.addAll(values, "top", "groupOfMembers");
+            context.setAttributeValues("objectClass", values.toArray());
+
+            try {
+                orgs.stream().forEach(org -> {
+                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgExtension().buildOrgDN(org), orgDao.getOrgSearchBaseDN()), false);
+                });
+                this.ldapTemplate.modifyAttributes(context);
+            } catch (Exception e) {
+            }
+        });
     }
 
     @Override
-    public void deleteOrgsInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    public void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs) throws DataServiceException, NameNotFoundException {
     }
 
-    private static class RoleContextMapper implements ContextMapper<Role> {
+    private class RoleContextMapper implements ContextMapper<Role> {
         @Override
         public Role mapFromContext(Object ctx) {
             DirContextAdapter context = (DirContextAdapter) ctx;
@@ -276,8 +305,17 @@ public class RoleDaoImpl implements RoleDao {
             // set the list of user
             Object[] members = getUsers(context);
             for (int i = 0; i < members.length; i++) {
-                role.addUser((String) members[i]);
+                if (!((String) members[i]).endsWith(orgDao.getOrgSearchBaseDN())) {
+                    role.addUser((String) members[i]);
+                }
             }
+            members = getOrgs(context);
+            for (int i = 0; i < members.length; i++) {
+                if (((String) members[i]).endsWith(orgDao.getOrgSearchBaseDN())) {
+                    role.addOrg((String) members[i]);
+                }
+            }
+
             return role;
         }
 
@@ -288,6 +326,15 @@ public class RoleDaoImpl implements RoleDao {
             }
             return members;
         }
+
+        private Object[] getOrgs(DirContextAdapter context) {
+            Object[] members = context.getObjectAttributes(RoleSchema.MEMBER_KEY);
+            if (members == null) {
+                members = new Object[0];
+            }
+            return members;
+        }
+
     }
 
     @VisibleForTesting
@@ -317,7 +364,7 @@ public class RoleDaoImpl implements RoleDao {
 
         setContextField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-        String[] members = role.getUserList().stream()
+        Stream<String> userMembers = role.getUserList().stream()
                 .map(userUid -> {
                     try {
                         return accountDao.findByUID(userUid);
@@ -326,8 +373,19 @@ public class RoleDaoImpl implements RoleDao {
                     }
                 })
                 .filter(Objects::nonNull)
-                .map(account -> accountDao.buildFullUserDn(account))
-                .collect(Collectors.toList()).toArray(new String[0]);
+                .map(account -> accountDao.buildFullUserDn(account));
+
+        Stream<String> orgMembers = role.getOrgList().stream()
+                .map(orgUid -> {
+                        return orgDao.findByCommonName(orgUid);
+                    }
+                )
+                .filter(Objects::nonNull)
+                .map(org -> orgDao.getOrgExtension().buildOrgDN(org))
+                .map(dn -> String.format("%s,%s", dn, orgDao.getOrgSearchBaseDN()));
+
+        String[] members = Stream.concat(userMembers, orgMembers).collect(Collectors.toList()).toArray(new String[0]);
+
         context.setAttributeValues(RoleSchema.MEMBER_KEY, members);
         if (role.isFavorite()) {
             setContextField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);

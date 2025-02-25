@@ -59,6 +59,9 @@ public interface Role extends Comparable<Role>{
     @JsonProperty("users")
     List<String> getUserList();
 
+    @JsonProperty("orgs")
+    List<String> getOrgList();
+
     void setUserList(List<String> userUidList);
 
     /**
@@ -67,6 +70,8 @@ public interface Role extends Comparable<Role>{
      * @param userUid a user dn
      */
     void addUser(String userUid);
+
+    void addOrg(String orgUid);
 
     void setDescription(String description);
 

@@ -38,6 +38,7 @@ class RoleImpl implements Role {
     private @Getter @Setter UUID uniqueIdentifier;
     private String name;
     private List<String> userList = new LinkedList<String>();
+    private List<String> orgList = new LinkedList<String>();
     private String description;
     private boolean isFavorite;
 
@@ -71,6 +72,11 @@ class RoleImpl implements Role {
         return this.userList;
     }
 
+    @Override
+    public List<String> getOrgList() {
+        return this.orgList;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -97,6 +103,12 @@ class RoleImpl implements Role {
     public void addUser(String userUid) {
         // Extracting the uid
         this.userList.add(userUid.replaceAll("uid=([^,]+).*$", "$1"));
+    }
+
+    @Override
+    public void addOrg(String orgUid) {
+        // Extracting the uid
+        this.orgList.add(orgUid.replaceAll("uid=([^,]+).*$", "$1"));
     }
 
     @Override
