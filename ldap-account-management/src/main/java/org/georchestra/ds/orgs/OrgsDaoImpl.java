@@ -192,22 +192,19 @@ public class OrgsDaoImpl implements OrgsDao {
 
         @Override
         public AttributesMapper<Org> getAttributeMapper(boolean pending) {
-            return new AttributesMapper<Org>() {
-                public Org mapFromAttributes(Attributes attrs) throws NamingException {
-                    Org org = new Org();
-                    org.setId(asStringStream(attrs, "cn").collect(joining(",")));
-                    org.setName(asStringStream(attrs, "o").collect(joining(",")));
-                    org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
-                    org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
-                            .collect(Collectors.toList()));
-                    org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
-                            .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
-                            .collect(Collectors.toList()));
-                    org.setOrgUniqueId(asStringStream(attrs, "orgUniqueId").collect(joining(",")));
-                    org.setPending(pending);
-
-                    return org;
-                }
+            return attrs -> {
+                Org org = new Org();
+                org.setId(asStringStream(attrs, "cn").collect(joining(",")));
+                org.setName(asStringStream(attrs, "o").collect(joining(",")));
+                org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
+                org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
+                        .collect(Collectors.toList()));
+                org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
+                        .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
+                        .collect(Collectors.toList()));
+                org.setOrgUniqueId(asStringStream(attrs, "orgUniqueId").collect(joining(",")));
+                org.setPending(pending);
+                return org;
             };
         }
     }
@@ -244,7 +241,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
         @Override
         public AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
-            return new AttributesMapper<OrgExt>() {
+            return new AttributesMapper() {
                 public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
                     OrgExt orgExt = new OrgExt();
                     // georchestraObjectIdentifier
@@ -449,7 +446,6 @@ public class OrgsDaoImpl implements OrgsDao {
             orgExtExtension.mapToContext(ext, orgExtContext);
             ldapTemplate.bind(orgExtContext);
         }
-        Org o = findByCommonName(org.getId());
     }
 
     @Override
@@ -475,17 +471,10 @@ public class OrgsDaoImpl implements OrgsDao {
             extExtension.mapToContext(ext, context);
             this.ldapTemplate.modifyAttributes(context);
         }
-        Org o = findByCommonName(org.getId());
     }
 
     @Override
     public void delete(Org org) {
-        Org o;
-        try {
-            o = findByCommonName(org.getId());
-        } catch (NameNotFoundException noSuchOrg) {
-            o = null;
-        }
         Name orgDN = getOrgExtension().buildOrgDN(org);
         Name orgExtDN = getOrgExtExtension().buildOrgDN(org.getExt());
         this.ldapTemplate.unbind(orgDN);
