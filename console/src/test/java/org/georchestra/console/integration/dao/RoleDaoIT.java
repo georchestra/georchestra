@@ -25,11 +25,9 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class RoleDaoIT extends ConsoleIntegrationTest {
 
-    private @Autowired
-    RoleDao roleDao;
+    private @Autowired RoleDao roleDao;
 
-    private @Autowired
-    OrgsDao orgsDao;
+    private @Autowired OrgsDao orgsDao;
 
     @Test
     public void orgWithRole() throws DuplicatedCommonNameException, DataServiceException {

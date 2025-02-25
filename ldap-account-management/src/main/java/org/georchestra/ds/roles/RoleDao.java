@@ -62,7 +62,8 @@ public interface RoleDao {
      * @param role
      *
      * @throws DataServiceException
-     * @throws DuplicatedCommonNameException if the role is present in the LDAP store
+     * @throws DuplicatedCommonNameException if the role is present in the LDAP
+     *                                       store
      */
     void insert(Role role) throws DataServiceException, DuplicatedCommonNameException;
 
@@ -76,11 +77,13 @@ public interface RoleDao {
     /**
      * Modifies the roles fields in the store
      */
-    void update(String roleName, Role modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
+    void update(String roleName, Role modified)
+            throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
     void addUsersInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException;
 
-    void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException;
+    void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
+            throws DataServiceException, NameNotFoundException;
 
     void addOrgsInRoles(List<String> putRole, List<Org> orgs) throws DataServiceException, NameNotFoundException;
 

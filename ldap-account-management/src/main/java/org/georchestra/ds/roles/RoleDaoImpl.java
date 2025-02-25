@@ -50,7 +50,6 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
-
 /**
  * Maintains the role of users in the ldap store.
  *
@@ -245,21 +244,24 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public void addUsersInRoles(List<String> putRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    public void addUsersInRoles(List<String> putRole, List<Account> users)
+            throws DataServiceException, NameNotFoundException {
         for (String roleName : putRole) {
             addUsers(roleName, users);
         }
     }
 
     @Override
-    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users) throws DataServiceException, NameNotFoundException {
+    public void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
+            throws DataServiceException, NameNotFoundException {
         for (String roleName : deleteRole) {
             deleteUsers(roleName, users);
         }
     }
 
     @Override
-    public void addOrgsInRoles(List<String> putRole, List<Org> orgs) throws DataServiceException, NameNotFoundException {
+    public void addOrgsInRoles(List<String> putRole, List<Org> orgs)
+            throws DataServiceException, NameNotFoundException {
         putRole.stream().forEach(roleName -> {
 
             Name dn = buildRoleDn(roleName);
@@ -274,7 +276,8 @@ public class RoleDaoImpl implements RoleDao {
 
             try {
                 orgs.stream().forEach(org -> {
-                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgExtension().buildOrgDN(org), orgDao.getOrgSearchBaseDN()), false);
+                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgExtension().buildOrgDN(org),
+                            orgDao.getOrgSearchBaseDN()), false);
                 });
                 this.ldapTemplate.modifyAttributes(context);
             } catch (Exception e) {
@@ -283,7 +286,8 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
-    public void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs) throws DataServiceException, NameNotFoundException {
+    public void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs)
+            throws DataServiceException, NameNotFoundException {
     }
 
     private class RoleContextMapper implements ContextMapper<Role> {
@@ -364,24 +368,17 @@ public class RoleDaoImpl implements RoleDao {
 
         setContextField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
         setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-        Stream<String> userMembers = role.getUserList().stream()
-                .map(userUid -> {
-                    try {
-                        return accountDao.findByUID(userUid);
-                    } catch (DataServiceException e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .map(account -> accountDao.buildFullUserDn(account));
+        Stream<String> userMembers = role.getUserList().stream().map(userUid -> {
+            try {
+                return accountDao.findByUID(userUid);
+            } catch (DataServiceException e) {
+                return null;
+            }
+        }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account));
 
-        Stream<String> orgMembers = role.getOrgList().stream()
-                .map(orgUid -> {
-                        return orgDao.findByCommonName(orgUid);
-                    }
-                )
-                .filter(Objects::nonNull)
-                .map(org -> orgDao.getOrgExtension().buildOrgDN(org))
+        Stream<String> orgMembers = role.getOrgList().stream().map(orgUid -> {
+            return orgDao.findByCommonName(orgUid);
+        }).filter(Objects::nonNull).map(org -> orgDao.getOrgExtension().buildOrgDN(org))
                 .map(dn -> String.format("%s,%s", dn, orgDao.getOrgSearchBaseDN()));
 
         String[] members = Stream.concat(userMembers, orgMembers).collect(Collectors.toList()).toArray(new String[0]);
@@ -419,20 +416,23 @@ public class RoleDaoImpl implements RoleDao {
         }
     }
 
-    private void deleteUsers(String roleName, List<Account> deleteList) throws DataServiceException, NameNotFoundException {
+    private void deleteUsers(String roleName, List<Account> deleteList)
+            throws DataServiceException, NameNotFoundException {
         for (Account account : deleteList) {
             deleteUser(roleName, account);
         }
     }
 
-    private void checkThereIsNoRoleWithThisName(String roleName) throws DataServiceException, DuplicatedCommonNameException {
+    private void checkThereIsNoRoleWithThisName(String roleName)
+            throws DataServiceException, DuplicatedCommonNameException {
         try {
             if (findByCommonName(roleName) == null) {
                 throw new NameNotFoundException("Not found");
             }
             throw new DuplicatedCommonNameException("there is a role with this name: " + roleName);
         } catch (NameNotFoundException e) {
-            LOG.debug("Role with name " + roleName + " does not exist yet, name can be safely used for creation / renaming.");
+            LOG.debug("Role with name " + roleName
+                    + " does not exist yet, name can be safely used for creation / renaming.");
         }
     }
 }
