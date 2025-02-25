@@ -66,7 +66,7 @@ public class OrgsDaoImpl implements OrgsDao {
     private OrgExtension orgExtension = new OrgExtension();
     private OrgExtExtension orgExtExtension = new OrgExtExtension();
 
-    abstract class Extension<T extends ReferenceAware> {
+    public abstract class Extension<T extends ReferenceAware> {
 
         private AndFilter objectClassFilter;
 
@@ -268,7 +268,7 @@ public class OrgsDaoImpl implements OrgsDao {
         }
     }
 
-    Extension<Org> getOrgExtension() {
+    public Extension<Org> getOrgExtension() {
         return orgExtension;
     }
 
@@ -294,6 +294,10 @@ public class OrgsDaoImpl implements OrgsDao {
 
     public void setOrgSearchBaseDN(String orgSearchBaseDN) {
         this.orgSearchBaseDN = orgSearchBaseDN;
+    }
+
+    public String getOrgSearchBaseDN() {
+        return this.orgSearchBaseDN;
     }
 
     public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
