@@ -80,4 +80,8 @@ public interface OrgsDao {
     public String generateId(String org_name) throws IOException;
 
     public String[] getOrgTypeValues();
+
+    public OrgsDaoImpl.Extension<Org> getOrgExtension();
+
+    public String getOrgSearchBaseDN();
 }
