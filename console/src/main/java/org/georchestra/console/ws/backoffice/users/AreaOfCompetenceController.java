@@ -85,7 +85,7 @@ public class AreaOfCompetenceController {
      * @throws DataServiceException
      * @throws IOException
      */
-    @GetMapping(value = "/account/areaofcompetence", produces = "application/json")
+    @GetMapping(value = "/account/areaofcompetence")
     public void getCurrentUserAreaOfCompetence(HttpServletResponse response) throws DataServiceException, IOException {
         final String accountId = usernameResolver.get();
         final Account account = accountDao.findByUID(accountId);
