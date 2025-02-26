@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Sets;
@@ -146,8 +146,11 @@ public class OrgsController {
     @GetMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @PostFilter("hasPermission(filterObject, 'read')")
     @ResponseBody
-    public List<Org> findAll() {
+    public List<Org> findAll(@RequestParam(defaultValue = "true") boolean logos) {
         List<Org> orgs = this.orgDao.findAll();
+        if (!logos) {
+            orgs.forEach(o -> o.setLogo(null));
+        }
         Collections.sort(orgs);
         return orgs;
     }
