@@ -215,23 +215,6 @@ public class EmailController {
     }
 
     /**
-     * This service can be used to test email sending
-     *
-     * @param recipient login of recipient
-     * @return Html page to test email sending
-     */
-    @GetMapping("{recipient}/sendEmail")
-    @ResponseBody
-    public String sendEmail(@PathVariable String recipient) {
-        return "<form method=POST>" + "recipient : " + recipient + "<br>"
-                + "subject : <input type='test' name='subject'><br>"
-                + "content : <textarea name='content'></textarea><br>"
-                + "comma separated list of attachment identifier <input type='text' name='attachments'><br>"
-                + "<input type='submit'>" + "</form>";
-
-    }
-
-    /**
      * List available attachments in database
      *
      * @return JSON object containing all attachments available in database
