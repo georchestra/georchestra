@@ -1,5 +1,7 @@
 FROM jetty:9.4.46-jre11
 
+ENV GEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
+    GEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles
 ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
@@ -26,7 +28,7 @@ CMD ["sh", "-c", "exec java \
 -Dgeorchestra.datadir=/etc/georchestra \
 -DGEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
 -DGEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles \
--Xms$XMS -Xmx$XMX \
+-XX:MaxRAMPercentage=80 -XX:+UseParallelGC \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
 -Djetty.httpConfig.sendServerVersion=false \

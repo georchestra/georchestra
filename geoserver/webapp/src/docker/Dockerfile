@@ -1,7 +1,5 @@
 FROM jetty:9.4-jre11
 
-ENV XMS=1536M XMX=8G
-
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,jndi,http-forwarded
 
 COPY --chown=jetty:jetty . /
@@ -43,8 +41,8 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DGEOSERVER_DATA_DIR=/mnt/geoserver_datadir \
 -DGEOWEBCACHE_CACHE_DIR=/mnt/geoserver_tiles \
 -DGEOWEBCACHE_CONFIG_DIR=/mnt/geoserver_datadir/gwc \
--Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
--Xms$XMS -Xmx$XMX \
+-Dhttps.protocols=TLSv1.2,TLSv1.3 \
+-XX:MaxRAMPercentage=80 -XX:+UseParallelGC \
 -XX:SoftRefLRUPolicyMSPerMB=36000 \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
