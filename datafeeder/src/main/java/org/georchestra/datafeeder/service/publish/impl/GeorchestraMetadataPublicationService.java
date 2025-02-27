@@ -182,7 +182,13 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
      * @return true if the dataset is a geographical dataset, false otherwise.
      */
     private boolean isGeoDataset(DatasetUploadState dataset) {
-        return (dataset.getSampleGeometryWKT() != null);
+        Envelope e = new Envelope();
+        e.setMinx(-1.0);
+        e.setMaxx(0.0);
+        e.setMiny(-1.0);
+        e.setMaxy(0.0);
+        return (dataset.getSampleGeometryWKT() != null || (dataset.getPublishing().getGeographicBoundingBox() != null
+                && !dataset.getPublishing().getGeographicBoundingBox().equals(e)));
     }
 
     // see
