@@ -1,15 +1,25 @@
 package org.georchestra.console.ws.utils;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MapBindingResult;
 
+import org.json.JSONObject;
+
 public class ValidationTest {
+
+    private OrgsDao mockOrgsDao;
 
     @Test
     public void testHardCodedUserFields() {
@@ -122,5 +132,56 @@ public class ValidationTest {
         Assert.assertFalse(v.validateUrlFieldWithSpecificMsg("orgUrl", "radada", errors));
 
         Assert.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "http://www.hereisthefish.org", errors));
+    }
+
+    @Test
+    public void validateBadOrgUnicityUpdate() {
+        Validation v = new Validation("");
+
+        UUID fakeUUID = UUID.randomUUID();
+        String fakeOrgUniqueId = "5413513131";
+
+        mockOrgsDao = mock(OrgsDao.class);
+
+        Org mockOrg = new Org();
+        mockOrg.setId("georTest");
+        mockOrg.setName("geOrchestra testing LLC");
+        mockOrg.setOrgType("Non profit");
+        mockOrg.setAddress("fake address");
+        mockOrg.setUrl("https://georchestra.org");
+        mockOrg.setDescription("A test desc");
+        mockOrg.setOrgUniqueId(fakeOrgUniqueId);
+        mockOrg.setUniqueIdentifier(fakeUUID);
+
+        when(mockOrgsDao.findByOrgUniqueId(fakeOrgUniqueId)).thenReturn(mockOrg);
+
+        /** Fake JSON from request */
+        JSONObject mockChanges = new JSONObject();
+        mockChanges.put("name", "foo");
+        mockChanges.put("orgType", "Non profit");
+
+        // create org without orguniqueId + without uuid
+        Assert.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+
+        // create org but orgUniqueId already exists
+        mockChanges.put("orgUniqueId", fakeOrgUniqueId);
+        Assert.assertFalse(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+
+        // create org with orgUniqueId that not exists
+        mockChanges.put("orgUniqueId", "11113513");
+        Assert.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+
+        // update org - no UUID and orgUniqueId already exists
+        mockChanges.put("orgUniqueId", fakeOrgUniqueId);
+        Assert.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+
+        // update org - unknown UUID + orgUniqueId not already exists
+        mockChanges.put("uuid", UUID.randomUUID().toString());
+        Assert.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+
+        // update org - verified UUID + orgUniqueId not already exists
+        mockChanges.put("uuid", fakeUUID.toString());
+        Assert.assertTrue(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+
     }
 }

@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.annotations.VisibleForTesting;
+import org.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -179,8 +181,8 @@ public final class NewAccountFormController {
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
                 "password", "confirmPassword", "privacyPolicyAgreed", "consentAgreed", "createOrg", "orgName",
-                "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
-                "recaptcha_response_field");
+                "orgShortName", "orgUniqueId", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl",
+                "orgMail", "orgLogo", "recaptcha_response_field");
     }
 
     @RequestMapping(value = "/account/new", method = RequestMethod.GET)
@@ -258,6 +260,7 @@ public final class NewAccountFormController {
                 org.setUrl(formBean.getOrgUrl());
                 org.setLogo(formBean.getOrgLogo());
                 org.setMail(formBean.getOrgMail());
+                org.setOrgUniqueId(formBean.getOrgUniqueId());
                 // Parse and store cities
                 orgCities = orgCities.trim();
                 if (orgCities.length() > 0)
@@ -417,7 +420,11 @@ public final class NewAccountFormController {
             validation.validateOrgField("url", formBean.getOrgUrl(), result);
             validation.validateOrgField("description", formBean.getOrgDescription(), result);
             validation.validateOrgField("logo", formBean.getOrgLogo(), result);
+            validation.validateOrgField("orgUniqueId", formBean.getOrgUniqueId(), result);
             validation.validateUrlFieldWithSpecificMsg("orgUrl", formBean.getOrgUrl(), result);
+
+            JSONObject orgToValidate = new JSONObject().put("orgUniqueId", formBean.getOrgUniqueId());
+            validation.validateOrgUniqueIdField(this.orgDao, orgToValidate, result);
         } else {
             validation.validateUserField("org", formBean.getOrg(), result);
         }

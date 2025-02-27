@@ -108,6 +108,10 @@
                       document.querySelector('#orgShortName').setAttribute('title', '<s:message code="org.shortNameFormat"/>')
                     </script>
 
+                    <t:input path="orgUniqueId" required="${orgUniqueIdRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgUniqueId"/></jsp:attribute>
+                    </t:input>
+
                     <t:textarea path="orgAddress" required="${orgAddressRequired}">
                         <jsp:attribute name="label"><s:message code="org.creation.address"/></jsp:attribute>
                     </t:textarea>

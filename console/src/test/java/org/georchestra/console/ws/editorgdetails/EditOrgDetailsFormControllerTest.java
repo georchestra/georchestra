@@ -60,6 +60,7 @@ public class EditOrgDetailsFormControllerTest {
         formBean.setAddress("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac");
         formBean.setUrl("https://georchestra.org");
         formBean.setId("georTest");
+        formBean.setOrgUniqueId("171335413");
 
         Org org = new Org();
         org.setId("georTest");
@@ -68,6 +69,7 @@ public class EditOrgDetailsFormControllerTest {
         org.setAddress("fake address");
         org.setUrl("https://georchestra.org");
         org.setDescription("A test desc");
+        org.setOrgUniqueId("541874843435");
 
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq("georTest"))).thenReturn(org);
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);

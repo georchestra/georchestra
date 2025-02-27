@@ -47,6 +47,7 @@ class OrgExt extends ReferenceAware implements Cloneable {
     private String logo = "";
     private String note = "";
     private String mail = "";
+    private String orgUniqueId = "";
 
     @Override
     public OrgExt clone() {

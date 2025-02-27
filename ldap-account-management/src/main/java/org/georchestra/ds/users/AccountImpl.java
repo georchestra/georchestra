@@ -162,6 +162,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.OAUTH2_UID_KEY)
     private String oAuth2Uid;
 
+    @JsonProperty(UserSchema.OAUTH2_ORGID_KEY)
+    private String oAuth2OrgId;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -619,6 +622,16 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setOAuth2Uid(String oAuth2Uid) {
         this.oAuth2Uid = oAuth2Uid;
+    }
+
+    @Override
+    public String getOAuth2OrgId() {
+        return this.oAuth2OrgId;
+    }
+
+    @Override
+    public void setOAuth2OrgId(String oAuth2OrgId) {
+        this.oAuth2OrgId = oAuth2OrgId;
     }
 
     @Override

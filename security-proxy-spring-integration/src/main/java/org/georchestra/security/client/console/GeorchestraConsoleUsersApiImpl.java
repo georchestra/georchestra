@@ -62,4 +62,9 @@ public class GeorchestraConsoleUsersApiImpl implements UsersApi {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<GeorchestraUser> findByEmail(String email) {
+        Objects.requireNonNull(email);
+        return client.get("/console/internal/users/email/{email}", GeorchestraUser.class, email);
+    }
 }
