@@ -17,11 +17,12 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
-    <spring.version>5.3.32</spring.version>
-    <spring-security.version>5.7.11</spring-security.version>
-    <gwc.version>1.25.2</gwc.version>
-    <gt.version>31.2</gt.version><!-- must match the version used by gwc@gwc.version -->
-    <hazelcast.version>5.3.6</hazelcast.version>
+    <gwc.version>1.26-SNAPSHOT</gwc.version>
+    <!-- override dependencies from parent pom to match the ones for the gwc version -->
+    <gt.version>32-SNAPSHOT</gt.version>
+    <spring.version>5.3.39</spring.version>
+    <spring-security.version>5.7.12</spring-security.version>
+    <hazelcast.version>5.3.8</hazelcast.version>
     <context.name>geowebcache</context.name>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
 
