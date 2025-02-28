@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.users.Account;
 import org.springframework.ldap.NameNotFoundException;
 
@@ -34,14 +35,8 @@ public interface RoleDao {
 
     /**
      * adds the user to the role
-     *
-     * @param roleID
-     * @param userId
-     * @throws NameNotFoundException
-     * @throws DataServiceException
      */
-
-    void addUser(String roleID, Account user) throws DataServiceException, NameNotFoundException;
+    void addUser(String roleName, Account user) throws DataServiceException, NameNotFoundException;
 
     /**
      * Returns all roles. Each roles will contains its list of users.
@@ -56,10 +51,6 @@ public interface RoleDao {
 
     /**
      * Deletes the user from the role
-     *
-     * @param roleName
-     * @param uid
-     * @throws DataServiceException
      */
     void deleteUser(String roleName, Account account) throws DataServiceException;
 
@@ -71,36 +62,20 @@ public interface RoleDao {
      * @param role
      *
      * @throws DataServiceException
-     * @throws DuplicatedCommonNameException if the role es present in the LDAP
+     * @throws DuplicatedCommonNameException if the role is present in the LDAP
      *                                       store
      */
     void insert(Role role) throws DataServiceException, DuplicatedCommonNameException;
 
     /**
      * Removes the role
-     *
-     * @param commonName
-     * @throws DataServiceException
-     * @throws NameNotFoundException
      */
     void delete(String commonName) throws DataServiceException, NameNotFoundException;
 
-    /**
-     * Search the role based on the common name (cn)
-     *
-     * @param commonName
-     * @return {@link Role}
-     *
-     * @throws NameNotFoundException
-     */
     Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
 
     /**
      * Modifies the roles fields in the store
-     *
-     * @param roleName
-     * @param modified
-     *
      */
     void update(String roleName, Role modified)
             throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
@@ -109,5 +84,9 @@ public interface RoleDao {
 
     void deleteUsersInRoles(List<String> deleteRole, List<Account> users)
             throws DataServiceException, NameNotFoundException;
+
+    void addOrgsInRoles(List<String> putRole, List<Org> orgs) throws DataServiceException, NameNotFoundException;
+
+    void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs) throws DataServiceException, NameNotFoundException;
 
 }
