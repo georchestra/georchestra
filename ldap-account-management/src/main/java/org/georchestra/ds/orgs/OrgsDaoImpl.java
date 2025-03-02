@@ -62,14 +62,14 @@ public class OrgsDaoImpl implements OrgsDao {
     private String basePath;
     private String orgSearchBaseDN;
     private String pendingOrgSearchBaseDN;
-    private OrgExtension orgExtension = new OrgExtension();
-    private OrgExtExtension orgExtExtension = new OrgExtExtension();
+    private OrgLdapWrapper orgLdapWrapper = new OrgLdapWrapper();
+    private OrgExtLdapWrapper orgExtLdapWrapper = new OrgExtLdapWrapper();
 
-    public abstract class Extension<T extends ReferenceAware> {
+    public abstract class LdapWrapper<T extends ReferenceAware> {
 
         private AndFilter objectClassFilter;
 
-        public Extension() {
+        public LdapWrapper() {
             objectClassFilter = new AndFilter();
             for (int i = 0; i < getObjectClass().length; i++) {
                 objectClassFilter.and(new EqualsFilter("objectClass", getObjectClass()[i]));
@@ -123,7 +123,7 @@ public class OrgsDaoImpl implements OrgsDao {
         public abstract AttributesMapper<T> getAttributeMapper(boolean pending);
     }
 
-    class OrgExtension extends Extension<Org> {
+    class OrgLdapWrapper extends LdapWrapper<Org> {
 
         @Override
         public void mapPayloadToContext(Org org, DirContextOperations context) {
@@ -206,7 +206,7 @@ public class OrgsDaoImpl implements OrgsDao {
         }
     }
 
-    class OrgExtExtension extends Extension<OrgExt> {
+    class OrgExtLdapWrapper extends LdapWrapper<OrgExt> {
 
         @Override
         public void mapPayloadToContext(OrgExt org, DirContextOperations context) {
@@ -266,12 +266,12 @@ public class OrgsDaoImpl implements OrgsDao {
         }
     }
 
-    public Extension<Org> getOrgExtension() {
-        return orgExtension;
+    public LdapWrapper<Org> getOrgLdapWrapper() {
+        return orgLdapWrapper;
     }
 
-    Extension<OrgExt> getOrgExtExtension() {
-        return orgExtExtension;
+    LdapWrapper<OrgExt> getOrgExtLdapWrapper() {
+        return orgExtLdapWrapper;
     }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
@@ -318,13 +318,13 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     private Stream<Org> findAllWithExt() {
-        final Extension<Org> orgExtension = getOrgExtension();
+        final LdapWrapper<Org> orgLdapWrapper = getOrgLdapWrapper();
 
-        Filter filter = orgExtension.getObjectClassFilter();
+        Filter filter = orgLdapWrapper.getObjectClassFilter();
         List<Org> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                orgExtension.getAttributeMapper(false));
+                orgLdapWrapper.getAttributeMapper(false));
         List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                orgExtension.getAttributeMapper(true));
+                orgLdapWrapper.getAttributeMapper(true));
 
         Stream<Org> orgs = Stream.concat(active.stream(), pending.stream());
         // Use lower-case id matching, as per
@@ -342,12 +342,12 @@ public class OrgsDaoImpl implements OrgsDao {
      * @return list of organizations (ldap organization object)
      */
     private Stream<OrgExt> findAllExt() {
-        Extension<OrgExt> orgExtExtension = getOrgExtExtension();
-        Filter filter = orgExtExtension.getObjectClassFilter();
+        LdapWrapper<OrgExt> orgExtLdapWrapper = getOrgExtLdapWrapper();
+        Filter filter = orgExtLdapWrapper.getObjectClassFilter();
         List<OrgExt> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                orgExtExtension.getAttributeMapper(false));
+                orgExtLdapWrapper.getAttributeMapper(false));
         List<OrgExt> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                orgExtExtension.getAttributeMapper(true));
+                orgExtLdapWrapper.getAttributeMapper(true));
         return Stream.concat(active.stream(), pending.stream());
     }
 
@@ -361,7 +361,7 @@ public class OrgsDaoImpl implements OrgsDao {
         EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
-        AttributesMapper<Org> notPendingMapper = getOrgExtension().getAttributeMapper(false);
+        AttributesMapper<Org> notPendingMapper = getOrgLdapWrapper().getAttributeMapper(false);
         return ldapTemplate.search(orgSearchBaseDN, filter.encode(), notPendingMapper)//
                 .stream()//
                 .map(this::addExt)//
@@ -380,7 +380,7 @@ public class OrgsDaoImpl implements OrgsDao {
         if (StringUtils.isEmpty(commonName)) {
             return null;
         }
-        return addExt(getOrgExtension().findById(commonName));
+        return addExt(getOrgLdapWrapper().findById(commonName));
     }
 
     @Override
@@ -425,22 +425,22 @@ public class OrgsDaoImpl implements OrgsDao {
      * @return OrgExt instance corresponding to extended attributes
      */
     OrgExt findExtById(String cn) {
-        return getOrgExtExtension().findById(cn);
+        return getOrgExtLdapWrapper().findById(cn);
     }
 
     @Override
     public void insert(Org org) {
         {
-            Extension<Org> orgExtension = getOrgExtension();
-            DirContextAdapter orgContext = new DirContextAdapter(orgExtension.buildOrgDN(org));
-            orgExtension.mapToContext(org, orgContext);
+            LdapWrapper<Org> orgLdapWrapper = getOrgLdapWrapper();
+            DirContextAdapter orgContext = new DirContextAdapter(orgLdapWrapper.buildOrgDN(org));
+            orgLdapWrapper.mapToContext(org, orgContext);
             ldapTemplate.bind(orgContext);
         }
         {
             OrgExt ext = org.getExt();
-            Extension<OrgExt> orgExtExtension = getOrgExtExtension();
-            DirContextAdapter orgExtContext = new DirContextAdapter(orgExtExtension.buildOrgDN(ext));
-            orgExtExtension.mapToContext(ext, orgExtContext);
+            LdapWrapper<OrgExt> orgExtLdapWrapper = getOrgExtLdapWrapper();
+            DirContextAdapter orgExtContext = new DirContextAdapter(orgExtLdapWrapper.buildOrgDN(ext));
+            orgExtLdapWrapper.mapToContext(ext, orgExtContext);
             ldapTemplate.bind(orgExtContext);
         }
     }
@@ -448,18 +448,18 @@ public class OrgsDaoImpl implements OrgsDao {
     @Override
     public void update(Org org) {
         {
-            Extension<Org> orgExtension = getOrgExtension();
-            Name newName = orgExtension.buildOrgDN(org);
+            LdapWrapper<Org> orgLdapWrapper = getOrgLdapWrapper();
+            Name newName = orgLdapWrapper.buildOrgDN(org);
             if (newName.compareTo(org.getReference().getDn()) != 0) {
                 this.ldapTemplate.rename(org.getReference().getDn(), newName);
             }
             DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-            orgExtension.mapToContext(org, context);
+            orgLdapWrapper.mapToContext(org, context);
             this.ldapTemplate.modifyAttributes(context);
         }
         {
             OrgExt ext = org.getExt();
-            Extension<OrgExt> extExtension = getOrgExtExtension();
+            LdapWrapper<OrgExt> extExtension = getOrgExtLdapWrapper();
             Name newName = extExtension.buildOrgDN(ext);
             if (newName.compareTo(ext.getReference().getDn()) != 0) {
                 this.ldapTemplate.rename(ext.getReference().getDn(), newName);
@@ -472,8 +472,8 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void delete(Org org) {
-        Name orgDN = getOrgExtension().buildOrgDN(org);
-        Name orgExtDN = getOrgExtExtension().buildOrgDN(org.getExt());
+        Name orgDN = getOrgLdapWrapper().buildOrgDN(org);
+        Name orgExtDN = getOrgExtLdapWrapper().buildOrgDN(org.getExt());
         this.ldapTemplate.unbind(orgDN);
         this.ldapTemplate.unbind(orgExtDN);
     }
