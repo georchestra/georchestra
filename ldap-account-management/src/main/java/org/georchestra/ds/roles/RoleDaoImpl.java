@@ -258,8 +258,8 @@ public class RoleDaoImpl implements RoleDao {
 
             try {
                 orgs.stream().forEach(org -> {
-                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgLdapWrapper().buildOrgDN(org),
-                            orgDao.getOrgSearchBaseDN()), false);
+                    context.addAttributeValue("member", String.format("%s,%s",
+                            orgDao.getOrgLdapWrapper().buildOrgDN(org), orgDao.getOrgSearchBaseDN()), false);
                 });
                 this.ldapTemplate.modifyAttributes(context);
             } catch (Exception e) {
