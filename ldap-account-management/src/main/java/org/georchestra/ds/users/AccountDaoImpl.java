@@ -360,7 +360,6 @@ public class AccountDaoImpl implements AccountDao {
         return newUid;
     }
 
-    @Override
     public String buildFullUserDn(Account account) {
         return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), basePath);
     }
