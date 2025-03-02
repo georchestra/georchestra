@@ -38,8 +38,8 @@ import org.georchestra.ds.DuplicatedCommonNameException;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDao;
 
+import org.georchestra.ds.users.AccountDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -62,7 +62,7 @@ public class RoleDaoImpl implements RoleDao {
     private String roleSearchBaseDN;
 
     @Autowired
-    private AccountDao accountDao;
+    private AccountDaoImpl accountDao;
 
     @Autowired
     private OrgsDao orgDao;
@@ -82,7 +82,7 @@ public class RoleDaoImpl implements RoleDao {
         this.roles = roles;
     }
 
-    public void setAccountDao(AccountDao accountDao) {
+    public void setAccountDao(AccountDaoImpl accountDao) {
         this.accountDao = accountDao;
     }
 
@@ -350,12 +350,7 @@ public class RoleDaoImpl implements RoleDao {
         setContextField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
 
         Stream<String> userMembers = role.getUserList().stream() //
-                .map(userUid -> { //
-                    try { //
-                        return accountDao.findByUID(userUid); //
-                    } catch (DataServiceException e) { //
-                        return null; //
-                    }}) //
+                .map(accountDao::findByUID) //
                 .filter(Objects::nonNull) //
                 .map(account -> accountDao.buildFullUserDn(account));
 
