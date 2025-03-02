@@ -103,13 +103,6 @@ public class RoleDaoImpl implements RoleDao {
         Name dn = buildRoleDn(roleName);
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-        Set<String> values = new HashSet<>();
-        if (context.getStringAttributes("objectClass") != null) {
-            Collections.addAll(values, context.getStringAttributes("objectClass"));
-        }
-        Collections.addAll(values, "top", "groupOfMembers");
-        context.setAttributeValues("objectClass", values.toArray());
-
         try {
             context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
             this.ldapTemplate.modifyAttributes(context);
@@ -262,13 +255,6 @@ public class RoleDaoImpl implements RoleDao {
 
             Name dn = buildRoleDn(roleName);
             DirContextOperations context = ldapTemplate.lookupContext(dn);
-
-            Set<String> values = new HashSet<>();
-            if (context.getStringAttributes("objectClass") != null) {
-                Collections.addAll(values, context.getStringAttributes("objectClass"));
-            }
-            Collections.addAll(values, "top", "groupOfMembers");
-            context.setAttributeValues("objectClass", values.toArray());
 
             try {
                 orgs.stream().forEach(org -> {
