@@ -30,58 +30,35 @@ import org.georchestra.ds.users.Account;
  */
 public interface OrgsDao {
 
-    /**
-     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search
-     * path in ldap.
-     *
-     * @return list of organizations
-     */
-    public List<Org> findAll();
+    List<Org> findAll();
 
-    /**
-     * Search for validated organizations defined in ldap.
-     *
-     * @return list of validated organizations
-     */
-    public List<Org> findValidated();
+    List<Org> findValidated();
 
-    /**
-     * Search organization with 'commonName' as distinguish name
-     *
-     * @param commonName distinguish name of organization for example : 'psc' to
-     *                   retrieve 'cn=psc,ou=orgs,dc=georchestra,dc=org'
-     * @return Org instance with specified DN
-     */
-    public Org findByCommonName(String commonName);
+    Org findByCommonName(String commonName);
 
-    public Org findByUser(Account user);
+    Org findByUser(Account user);
 
-    public Org findByOrgUniqueId(String orgUniqueId);
+    Org findByOrgUniqueId(String orgUniqueId);
 
-    /**
-     * Search by {@link Org#getUniqueIdentifier()}
-     *
-     * @return the matching organization or {@code null}
-     */
-    public Org findById(UUID uuid);
+    Org findById(UUID uuid);
 
-    public void insert(Org org);
+    void insert(Org org);
 
-    public void update(Org org);
+    void update(Org org);
 
-    public void delete(Org org);
+    void delete(Org org);
 
-    public void linkUser(Account user);
+    void linkUser(Account user);
 
-    public void unlinkUser(Account user);
+    void unlinkUser(Account user);
 
-    public String reGenerateId(String orgName, String allowedId) throws IOException;
+    String reGenerateId(String orgName, String allowedId) throws IOException;
 
-    public String generateId(String org_name) throws IOException;
+    String generateId(String org_name) throws IOException;
 
-    public String[] getOrgTypeValues();
+    String[] getOrgTypeValues();
 
-    public OrgsDaoImpl.Extension<Org> getOrgExtension();
+    OrgsDaoImpl.Extension<Org> getOrgExtension();
 
-    public String getOrgSearchBaseDN();
+    String getOrgSearchBaseDN();
 }
