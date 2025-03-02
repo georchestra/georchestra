@@ -104,6 +104,22 @@ public abstract class LdapWrapper<T extends ReferenceAware> {
         }
     }
 
+    public void update(T ref) {
+        Name newName = buildOrgDN(ref);
+        if (newName.compareTo(ref.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(ref.getReference().getDn(), newName);
+        }
+        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+        mapToContext(ref, context);
+        this.ldapTemplate.modifyAttributes(context);
+    }
+
+    public void insert(T ref) {
+        DirContextAdapter context = new DirContextAdapter(buildOrgDN(ref));
+        mapToContext(ref, context);
+        ldapTemplate.bind(context);
+    }
+
     protected String asString(Attribute att) throws NamingException {
         String v = att == null ? null : (String) att.get();
         return StringUtils.isEmpty(v) ? "" : v;
