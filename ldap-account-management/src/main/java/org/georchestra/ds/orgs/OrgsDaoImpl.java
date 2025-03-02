@@ -34,9 +34,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDao;
+import org.georchestra.ds.users.AccountDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -56,7 +55,7 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unchecked")
 public class OrgsDaoImpl implements OrgsDao {
 
-    private @Autowired AccountDao accountDao;
+    private @Autowired AccountDaoImpl accountDao;
 
     private LdapTemplate ldapTemplate;
     private String[] orgTypeValues;
@@ -138,14 +137,12 @@ public class OrgsDaoImpl implements OrgsDao {
             context.setAttributeValue("o", org.getName());
 
             if (org.getMembers() != null) {
-                context.setAttributeValues("member", org.getMembers().stream().map(userUid -> {
-                    try {
-                        return accountDao.findByUID(userUid);
-                    } catch (DataServiceException e) {
-                        return null;
-                    }
-                }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account))
-                        .collect(Collectors.toList()).toArray(new String[] {}));
+                context.setAttributeValues("member", //
+                        org.getMembers().stream() //
+                                .map(accountDao::findByUID) //
+                                .filter(Objects::nonNull) //
+                                .map(account -> accountDao.buildFullUserDn(account)) //
+                                .collect(Collectors.toList()).toArray(new String[] {}));
             }
 
             // Optional ones
@@ -305,7 +302,7 @@ public class OrgsDaoImpl implements OrgsDao {
         this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
     }
 
-    public void setAccountDao(AccountDao accountDao) {
+    public void setAccountDao(AccountDaoImpl accountDao) {
         this.accountDao = accountDao;
     }
 

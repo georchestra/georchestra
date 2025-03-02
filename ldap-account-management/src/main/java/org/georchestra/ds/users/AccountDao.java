@@ -180,7 +180,4 @@ public interface AccountDao {
 
     boolean hasUserLoginChanged(Account account, Account modified);
 
-    // TODO: this is not API, but LDAP specific implementation detail. Make it just
-    // a static method in AccountDaoImpl
-    String buildFullUserDn(Account account);
 }
