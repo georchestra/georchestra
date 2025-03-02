@@ -258,7 +258,7 @@ public class RoleDaoImpl implements RoleDao {
 
             try {
                 orgs.stream().forEach(org -> {
-                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgExtension().buildOrgDN(org),
+                    context.addAttributeValue("member", String.format("%s,%s", orgDao.getOrgLdapWrapper().buildOrgDN(org),
                             orgDao.getOrgSearchBaseDN()), false);
                 });
                 this.ldapTemplate.modifyAttributes(context);
@@ -357,7 +357,7 @@ public class RoleDaoImpl implements RoleDao {
         Stream<String> orgMembers = role.getOrgList().stream() //
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull) //
-                .map(org -> orgDao.getOrgExtension().buildOrgDN(org)) //
+                .map(org -> orgDao.getOrgLdapWrapper().buildOrgDN(org)) //
                 .map(dn -> String.format("%s,%s", dn, orgDao.getOrgSearchBaseDN()));
 
         String[] members = Stream.concat(userMembers, orgMembers).collect(Collectors.toList()).toArray(new String[0]);
