@@ -228,30 +228,14 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void insert(Org org) {
-        insert(orgLdapWrapper, org);
-        insert(orgExtLdapWrapper, org.getExt());
-    }
-
-    private void insert(LdapWrapper wrapper, ReferenceAware ref) {
-        DirContextAdapter context = new DirContextAdapter(wrapper.buildOrgDN(ref));
-        wrapper.mapToContext(ref, context);
-        ldapTemplate.bind(context);
+        orgLdapWrapper.insert(org);
+        orgExtLdapWrapper.insert(org.getExt());
     }
 
     @Override
     public void update(Org org) {
-        update(orgLdapWrapper, org);
-        update(orgExtLdapWrapper, org.getExt());
-    }
-
-    private void update(LdapWrapper wrapper, ReferenceAware ref) {
-        Name newName = wrapper.buildOrgDN(ref);
-        if (newName.compareTo(ref.getReference().getDn()) != 0) {
-            this.ldapTemplate.rename(ref.getReference().getDn(), newName);
-        }
-        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-        wrapper.mapToContext(ref, context);
-        this.ldapTemplate.modifyAttributes(context);
+        orgLdapWrapper.update(org);
+        orgExtLdapWrapper.update(org.getExt());
     }
 
     @Override
