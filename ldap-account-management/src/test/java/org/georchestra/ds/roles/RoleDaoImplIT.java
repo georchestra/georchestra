@@ -1,5 +1,6 @@
 package org.georchestra.ds.roles;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -9,6 +10,11 @@ import java.util.stream.Collectors;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountFactory;
@@ -33,6 +39,7 @@ public class RoleDaoImplIT {
 
     private @Autowired AccountDaoImpl accountDao;
     private @Autowired RoleDaoImpl roleDao;
+    private @Autowired OrgsDaoImpl orgsDao;
     private @Autowired LdapTemplate ldapTemplate;
 
     private Account account;
@@ -79,4 +86,21 @@ public class RoleDaoImplIT {
                 .collect(Collectors.toCollection(ArrayList::new)).contains("uidObject"));
     }
 
+    @Test
+    public void orgWithRole() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Role role = RoleFactory.create(roleName, "sample role", false);
+        roleDao.insert(role);
+        String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Org org = new Org();
+        org.setId(orgName);
+        orgsDao.insert(org);
+
+        roleDao.addOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertEquals(1, actualRole.getOrgList().size());
+        assertEquals(0, actualRole.getUserList().size());
+
+    }
 }
