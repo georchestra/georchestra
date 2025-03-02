@@ -82,8 +82,13 @@ public class RoleDaoImplIT {
         dco = ldapTemplate.lookupContext(roleDn);
         role.setDescription("New Description");
         roleDao.update("TEST_ROLE", role);
-        assertTrue(Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new)).contains("uidObject"));
+        roleDao.addUser("TEST_ROLE", account);
+
+        ArrayList<String> objectClasses = Arrays.stream(dco.getStringAttributes("objectClass"))
+                .collect(Collectors.toCollection(ArrayList::new));
+        assertTrue(objectClasses.contains("uidObject"));
+        assertTrue(objectClasses.contains("top"));
+        assertTrue(objectClasses.contains("groupOfMembers"));
     }
 
     @Test
