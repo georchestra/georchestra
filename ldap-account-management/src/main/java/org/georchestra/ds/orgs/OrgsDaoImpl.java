@@ -423,40 +423,30 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void insert(Org org) {
-        {
-            DirContextAdapter orgContext = new DirContextAdapter(orgLdapWrapper.buildOrgDN(org));
-            orgLdapWrapper.mapToContext(org, orgContext);
-            ldapTemplate.bind(orgContext);
-        }
-        {
-            OrgExt ext = org.getExt();
-            DirContextAdapter orgExtContext = new DirContextAdapter(orgExtLdapWrapper.buildOrgDN(ext));
-            orgExtLdapWrapper.mapToContext(ext, orgExtContext);
-            ldapTemplate.bind(orgExtContext);
-        }
+        insert(orgLdapWrapper, org);
+        insert(orgExtLdapWrapper, org.getExt());
+    }
+
+    private void insert(LdapWrapper wrapper, ReferenceAware ref) {
+        DirContextAdapter context = new DirContextAdapter(wrapper.buildOrgDN(ref));
+        wrapper.mapToContext(ref, context);
+        ldapTemplate.bind(context);
     }
 
     @Override
     public void update(Org org) {
-        {
-            Name newName = orgLdapWrapper.buildOrgDN(org);
-            if (newName.compareTo(org.getReference().getDn()) != 0) {
-                this.ldapTemplate.rename(org.getReference().getDn(), newName);
-            }
-            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-            orgLdapWrapper.mapToContext(org, context);
-            this.ldapTemplate.modifyAttributes(context);
+        update(orgLdapWrapper, org);
+        update(orgExtLdapWrapper, org.getExt());
+    }
+
+    private void update (LdapWrapper wrapper, ReferenceAware ref) {
+        Name newName = wrapper.buildOrgDN(ref);
+        if (newName.compareTo(ref.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(ref.getReference().getDn(), newName);
         }
-        {
-            OrgExt ext = org.getExt();
-            Name newName = orgExtLdapWrapper.buildOrgDN(ext);
-            if (newName.compareTo(ext.getReference().getDn()) != 0) {
-                this.ldapTemplate.rename(ext.getReference().getDn(), newName);
-            }
-            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-            orgExtLdapWrapper.mapToContext(ext, context);
-            this.ldapTemplate.modifyAttributes(context);
-        }
+        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+        wrapper.mapToContext(ref, context);
+        this.ldapTemplate.modifyAttributes(context);
     }
 
     @Override
