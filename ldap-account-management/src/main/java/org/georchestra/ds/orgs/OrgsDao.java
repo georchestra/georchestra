@@ -56,7 +56,7 @@ public interface OrgsDao {
 
     String[] getOrgTypeValues();
 
-    OrgsDaoImpl.LdapWrapper<Org> getOrgLdapWrapper();
+    LdapWrapper<Org> getOrgLdapWrapper();
 
     String getOrgSearchBaseDN();
 }
