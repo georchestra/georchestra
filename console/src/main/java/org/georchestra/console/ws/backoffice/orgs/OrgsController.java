@@ -179,8 +179,7 @@ public class OrgsController {
      * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
-    @GetMapping(value = REQUEST_MAPPING
-            + "/uoi/{orgUniqueId:.+}", produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/uoi/{orgUniqueId:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Org getOrgInfosFromUniqueOrgId(@PathVariable String orgUniqueId) {
         Org orgInfos = this.orgDao.findByOrgUniqueId(orgUniqueId);
