@@ -20,7 +20,7 @@
     <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
 
     <gt.version>29.0</gt.version>
-    <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
+    <openapi-generator-maven-plugin.version>7.12.0</openapi-generator-maven-plugin.version>
     <mapstruct.version>1.6.0</mapstruct.version>
     <lombok.version>1.18.22</lombok.version>
 
