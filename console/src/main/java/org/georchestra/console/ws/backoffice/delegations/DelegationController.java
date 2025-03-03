@@ -44,8 +44,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -74,8 +75,7 @@ public class DelegationController {
         throw new IOException(e);
     }
 
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/delegations", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/delegations", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String findAll() throws JSONException {
 
@@ -89,18 +89,16 @@ public class DelegationController {
         return res.toString();
     }
 
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid:.*}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/{uid:.*}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String findByUid(@PathVariable String uid) throws JSONException {
 
         // TODO test if uid correspond to connected user if request came from delegated
         // admin
-        return this.delegationDao.findOne(uid).toJSON().toString();
+        return this.delegationDao.findFirstByUid(uid).toJSON().toString();
     }
 
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid:.*}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @PostMapping(value = REQUEST_MAPPING + "/{uid:.*}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String add(HttpServletRequest request, @PathVariable String uid)
             throws JSONException, IOException, DataServiceException {
@@ -128,14 +126,13 @@ public class DelegationController {
         return res.toArray(new String[res.size()]);
     }
 
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{uid:.*}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
+    @DeleteMapping(value = REQUEST_MAPPING + "/{uid:.*}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String delete(HttpServletRequest request, @PathVariable String uid)
             throws JSONException, IOException, DataServiceException {
 
         // TODO deny if request came from delegated admin
-        this.delegationDao.delete(uid);
+        this.delegationDao.deleteById(uid);
         this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid));
         return new JSONObject().put("result", "ok").toString();
     }

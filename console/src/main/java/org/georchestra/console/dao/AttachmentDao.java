@@ -25,5 +25,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AttachmentDao extends CrudRepository<Attachment, Long> {
+    Attachment findFirstById(Long id);
 
 }

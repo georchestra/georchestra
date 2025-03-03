@@ -43,9 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,15 +93,11 @@ public class FileUploadApiController implements FileUploadApi {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/upload/{jobId}/{typeName}/sampleFeature", produces = {
-            "application/geo+json;charset=UTF-8" }, method = RequestMethod.GET)
+    @GetMapping(value = "/upload/{jobId}/{typeName}/sampleFeature", produces = { "application/geo+json;charset=UTF-8" })
     @Override
-    public ResponseEntity<Object> getSampleFeature(@PathVariable("jobId") UUID jobId,
-            @PathVariable("typeName") String typeName,
-            @RequestParam(value = "featureIndex", required = false) Integer featureIndex,
-            @RequestParam(value = "encoding", required = false) String encoding,
-            @RequestParam(value = "srs", required = false) String srs,
-            @RequestParam(value = "srsOverride", required = false) String srsOverride) {
+    public ResponseEntity<Object> getSampleFeature(@PathVariable UUID jobId, @PathVariable String typeName,
+            @RequestParam(required = false) Integer featureIndex, @RequestParam(required = false) String encoding,
+            @RequestParam(required = false) String srs, @RequestParam(required = false) String srsOverride) {
 
         validityService.checkAccessRights(jobId);
 
@@ -134,9 +129,8 @@ public class FileUploadApiController implements FileUploadApi {
     }
 
     @Override
-    public ResponseEntity<BoundingBox> getBounds(@PathVariable("jobId") UUID jobId,
-            @PathVariable("typeName") String typeName, @RequestParam(value = "srs", required = false) String srs,
-            @RequestParam(value = "srsOverride", required = false) String srsOverride) {
+    public ResponseEntity<BoundingBox> getBounds(@PathVariable UUID jobId, @PathVariable String typeName,
+            @RequestParam(required = false) String srs, @RequestParam(required = false) String srsOverride) {
 
         validityService.checkAccessRights(jobId);
 
@@ -176,8 +170,8 @@ public class FileUploadApiController implements FileUploadApi {
 
     @Override
     public ResponseEntity<Void> removeJob(//
-            @PathVariable("jobId") UUID jobId, //
-            @RequestParam(value = "abort", required = false, defaultValue = "false") Boolean abort) {
+            @PathVariable UUID jobId, //
+            @RequestParam(required = false, defaultValue = "false") Boolean abort) {
 
         validityService.checkAccessRights(jobId);
         if (Boolean.TRUE.equals(abort)) {

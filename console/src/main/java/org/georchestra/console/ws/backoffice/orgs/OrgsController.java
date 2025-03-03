@@ -65,7 +65,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -133,7 +136,6 @@ public class OrgsController {
     @Value("${AreasGroup:NOM_DEP}")
     private String areasGroup;
 
-    @Autowired
     public OrgsController(OrgsDao dao) {
         this.orgDao = dao;
     }
@@ -141,7 +143,7 @@ public class OrgsController {
     /**
      * Return a list of available organization as json array
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @PostFilter("hasPermission(filterObject, 'read')")
     @ResponseBody
     public List<Org> findAll() {
@@ -159,8 +161,7 @@ public class OrgsController {
      * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{cn:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/{cn:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Org getOrgInfos(@PathVariable String cn) {
         this.checkOrgAuthorization(cn);
@@ -178,8 +179,7 @@ public class OrgsController {
      * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/uoi/{orgUniqueId:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @GetMapping(value = REQUEST_MAPPING + "/uoi/{orgUniqueId:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Org getOrgInfosFromUniqueOrgId(@PathVariable String orgUniqueId) {
         Org orgInfos = this.orgDao.findByOrgUniqueId(orgUniqueId);
@@ -204,11 +204,7 @@ public class OrgsController {
      * plante, 73059 Chambrille", "members": [ "testadmin", "testuser" ] }
      *
      */
-    /**
-     * TODO: Control orgUniqueId unicity
-     */
-    @RequestMapping(value = REQUEST_MAPPING
-            + "/{commonName:.+}", method = RequestMethod.PUT, produces = "application/json; charset=utf-8")
+    @PutMapping(value = REQUEST_MAPPING + "/{commonName:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
     public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
             throws IOException, JSONException, SQLException {
@@ -277,7 +273,7 @@ public class OrgsController {
      * A new JSON document will be return to browser with a complete description of
      * created org. @see updateOrgInfos() for JSON format.
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @PostMapping(value = REQUEST_MAPPING, produces = "application/json; charset=utf-8")
     @ResponseBody
     @PreAuthorize("hasRole('SUPERUSER')")
     public Org createOrg(HttpServletRequest request) throws IOException, JSONException {
@@ -312,7 +308,7 @@ public class OrgsController {
     /**
      * Delete one org
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.DELETE)
+    @DeleteMapping(REQUEST_MAPPING + "/{commonName:.+}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
             throws IOException, SQLException {
@@ -339,14 +335,14 @@ public class OrgsController {
         ResponseUtil.writeSuccess(response);
     }
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    @GetMapping(PUBLIC_REQUEST_MAPPING + "/requiredFields")
     public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
         validation.getRequiredOrgFields().forEach(fields::put);
         ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
+    @GetMapping(PUBLIC_REQUEST_MAPPING + "/orgTypeValues")
     public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
         for (String field : this.orgDao.getOrgTypeValues()) {
@@ -368,7 +364,7 @@ public class OrgsController {
      * "value": "commune_name", "group": "department_name"} }
      */
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
+    @GetMapping(PUBLIC_REQUEST_MAPPING + "/areaConfig.json")
     public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
         JSONObject res = new JSONObject();
         JSONObject map = new JSONObject();
@@ -401,7 +397,7 @@ public class OrgsController {
      * CSV contains two columns one for org type and second for count
      *
      */
-    @RequestMapping(value = BASE_MAPPING + "/orgsTypeDistribution.{format:(?:csv|json)}", method = RequestMethod.GET)
+    @GetMapping(BASE_MAPPING + "/orgsTypeDistribution.{format:(?:csv|json)}")
     public void orgTypeDistribution(HttpServletResponse response, @PathVariable String format)
             throws IOException, JSONException {
 
@@ -411,7 +407,7 @@ public class OrgsController {
         // Filter results if user is not SUPERUSER
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-            String[] filteredIds = this.delegationDao.findOne(auth.getName()).getOrgs();
+            String[] filteredIds = this.delegationDao.findFirstByUid(auth.getName()).getOrgs();
             if (filteredIds != null && filteredIds.length > 0) {
                 final Set<String> retain = Sets.newHashSet(filteredIds);
                 orgs = orgs.stream().filter(o -> retain.contains(o.getName())).collect(Collectors.toList());
@@ -465,7 +461,7 @@ public class OrgsController {
         // Verify authent context and that org is under delegation if user is not
         // SUPERUSER
         if (auth != null && auth.getName() != null && !auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-            DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+            DelegationEntry delegation = this.delegationDao.findFirstByUid(auth.getName());
             if (delegation != null) {
                 if (!Arrays.asList(delegation.getOrgs()).contains(org)) {
                     throw new AccessDeniedException("Org not under delegation");

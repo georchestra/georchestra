@@ -51,11 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.google.common.annotations.VisibleForTesting;
 
 /**
@@ -275,7 +272,7 @@ public class StatisticsController {
      *
      * @throws JSONException
      */
-    @RequestMapping(value = "/combinedRequests.{format}", method = RequestMethod.POST)
+    @PostMapping("/combinedRequests.{format}")
     @ResponseBody
     @ApiMethod(description = "Returns the Total combined requests count groupped by time interval "
             + "(hour, day, week or month). It must be filtered by either a user or a role. "
@@ -405,7 +402,7 @@ public class StatisticsController {
      *
      * @throws JSONException
      */
-    @RequestMapping(value = "/layersUsage.json", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @PostMapping(value = "/layersUsage.json", produces = "application/json; charset=utf-8")
     @ResponseBody
     public String layersUsageJson(@RequestBody String payload, HttpServletResponse response)
             throws JSONException, SQLException {
@@ -422,7 +419,7 @@ public class StatisticsController {
      *
      * @throws JSONException
      */
-    @RequestMapping(value = "/layersUsage.csv", method = RequestMethod.POST, produces = "application/csv; charset=utf-8")
+    @PostMapping(value = "/layersUsage.csv", produces = "application/csv; charset=utf-8")
     @ResponseBody
     public String layersUsage(@RequestBody String payload, HttpServletResponse response)
             throws JSONException, SQLException {
@@ -546,7 +543,7 @@ public class StatisticsController {
      *
      * @throws JSONException
      */
-    @RequestMapping(value = "/distinctUsers", method = RequestMethod.POST)
+    @PostMapping("/distinctUsers")
     @ApiMethod(description = "Returns the distinct active users for a given period. A role can be provided in the query "
             + "to limit the results to a given role.<br/>" + "Here are 2 valid examples (with and without a role):<br/>"
             + "<code>" + "{ role: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>"

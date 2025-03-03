@@ -26,7 +26,7 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.security.SecurityHeaders;
@@ -41,12 +41,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -62,7 +57,6 @@ public class EditOrgDetailsFormController {
     @Autowired
     protected LogUtils logUtils;
 
-    @Autowired
     public EditOrgDetailsFormController(OrgsDao orgsDao, Validation validation) {
         this.orgsDao = orgsDao;
         this.validation = validation;
@@ -86,7 +80,7 @@ public class EditOrgDetailsFormController {
      * @return the edit form view
      * @throws IOException
      */
-    @RequestMapping(value = "/account/orgdetails", method = RequestMethod.GET)
+    @GetMapping("/account/orgdetails")
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
     public String setupForm(HttpServletRequest request, Model model) {
         Org org = this.orgsDao.findByCommonName(SecurityHeaders.decode(request.getHeader(SEC_ORG)));
@@ -105,10 +99,10 @@ public class EditOrgDetailsFormController {
         return "editOrgDetailsForm";
     }
 
-    @RequestMapping(value = "/account/orgdetails", method = RequestMethod.POST)
+    @PostMapping("/account/orgdetails")
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
-    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean,
-            @RequestParam(name = "logo") MultipartFile logo, BindingResult resultErrors) throws IOException {
+    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam MultipartFile logo,
+            BindingResult resultErrors) throws IOException {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
         validation.validateOrgField("description", formBean.getDescription(), resultErrors);

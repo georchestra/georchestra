@@ -337,7 +337,7 @@ public class UsersControllerTest {
 
         DelegationEntry toBeModified = new DelegationEntry();
         toBeModified.setUid("dummy");
-        when(mockDelegationDao.findOne("pmauduit")).thenReturn(toBeModified);
+        when(mockDelegationDao.findFirstByUid("pmauduit")).thenReturn(toBeModified);
 
         Account ret = usersCtrl.update("pmauduit", request);
 
@@ -383,11 +383,11 @@ public class UsersControllerTest {
         initialState.setOrg("psc");
         mockLookup(initialState);
 
-        when(mockDelegationDao.findOne("pmauduit")).thenReturn(null);
+        when(mockDelegationDao.findFirstByUid("pmauduit")).thenReturn(null);
 
         usersCtrl.update("pmauduit", request);
 
-        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).deleteById(anyString());
         verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
@@ -427,8 +427,8 @@ public class UsersControllerTest {
         assertEquals("pmauduit", ret.getUid());
         assertEquals("", ret.getOrg());
 
-        verify(mockDelegationDao, never()).findOne(anyString());
-        verify(mockDelegationDao, never()).delete(anyString());
+        verify(mockDelegationDao, never()).findFirstByUid(anyString());
+        verify(mockDelegationDao, never()).deleteById(anyString());
         verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
     }
 
@@ -439,7 +439,7 @@ public class UsersControllerTest {
         mockLookup("geoserver_privileged_user", false);
 
         DelegationEntry toBeDeleted = new DelegationEntry();
-        when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
+        when(mockDelegationDao.findFirstByUid("geoserver_privileged_user")).thenReturn(toBeDeleted);
 
         usersCtrl.delete("geoserver_privileged_user", request, response);
 

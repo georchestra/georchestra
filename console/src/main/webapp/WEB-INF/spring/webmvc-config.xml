@@ -29,12 +29,6 @@
     <security:expression-handler ref="expressionHandler"/>
   </security:global-method-security>
 
-  <bean id="swagger2Config" class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration"/>
-  <mvc:resources mapping="swagger-ui.html"
-                 location="classpath:/META-INF/resources/" />
-  <mvc:resources mapping="/webjars/**"
-                 location="classpath:/META-INF/resources/webjars/" />
-
   <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
       <property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
   </bean>

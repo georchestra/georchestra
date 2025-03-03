@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/internal", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/internal", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecurityApiController {
 
     private @Autowired RolesApi roles;
@@ -61,7 +61,7 @@ public class SecurityApiController {
      * This is the server-side counterpart of {@link UsersApi#findById}
      */
     @GetMapping(value = "/users/id/{id}")
-    public ResponseEntity<GeorchestraUser> findUserById(@PathVariable("id") String id) {
+    public ResponseEntity<GeorchestraUser> findUserById(@PathVariable String id) {
         return toEntityOrNotFound(users.findById(id));
     }
 
@@ -71,7 +71,7 @@ public class SecurityApiController {
      * This is the server-side counterpart of {@link UsersApi#findByUsername}
      */
     @GetMapping(value = "/users/username/{name:.+}")
-    public ResponseEntity<GeorchestraUser> findUserByUsername(@PathVariable("name") String name) {
+    public ResponseEntity<GeorchestraUser> findUserByUsername(@PathVariable String name) {
         return toEntityOrNotFound(users.findByUsername(name));
     }
 
@@ -92,7 +92,7 @@ public class SecurityApiController {
      * This is the server-side counterpart of {@link OrganizationsApi#findById}
      */
     @GetMapping(value = "/organizations/id/{id}")
-    public ResponseEntity<Organization> findOrganizationById(@PathVariable("id") String id) {
+    public ResponseEntity<Organization> findOrganizationById(@PathVariable String id) {
         return toEntityOrNotFound(this.orgs.findById(id));
     }
 
@@ -103,12 +103,12 @@ public class SecurityApiController {
      * {@link OrganizationsApi#findByShortName}
      */
     @GetMapping(value = "/organizations/shortname/{name}")
-    public ResponseEntity<Organization> findOrganizationByShortName(@PathVariable("name") String name) {
+    public ResponseEntity<Organization> findOrganizationByShortName(@PathVariable String name) {
         return toEntityOrNotFound(this.orgs.findByShortName(name));
     }
 
     @GetMapping(value = "/organizations/id/{id}/logo", produces = "application/octet-stream")
-    public ResponseEntity<byte[]> getOrganizationLogo(@PathVariable("id") String id) {
+    public ResponseEntity<byte[]> getOrganizationLogo(@PathVariable String id) {
         return toEntityOrNotFound(this.orgs.getLogo(id));
     }
 
@@ -129,7 +129,7 @@ public class SecurityApiController {
      * This is the server-side counterpart of {@link RolesApi#findByName}
      */
     @GetMapping(value = "/roles/name/{name}")
-    public ResponseEntity<Role> findRoleByName(@PathVariable("name") String name) {
+    public ResponseEntity<Role> findRoleByName(@PathVariable String name) {
         return toEntityOrNotFound(roles.findByName(name));
     }
 

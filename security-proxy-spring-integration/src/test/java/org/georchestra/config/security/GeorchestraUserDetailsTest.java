@@ -1,13 +1,13 @@
 package org.georchestra.config.security;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertFalse;
 
 public class GeorchestraUserDetailsTest {
 

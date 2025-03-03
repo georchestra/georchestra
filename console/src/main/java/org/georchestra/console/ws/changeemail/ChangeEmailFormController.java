@@ -40,12 +40,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -86,7 +81,6 @@ public class ChangeEmailFormController {
     @Value("https://${domainName}")
     private String publicUrl;
 
-    @Autowired
     public ChangeEmailFormController(AccountDao accountDao, EmailFactory emailFactory, UserTokenDao userTokenDao,
             Validation validation) {
         this.accountDao = accountDao;
@@ -111,7 +105,7 @@ public class ChangeEmailFormController {
      *
      * @throws DataServiceException
      */
-    @RequestMapping(value = "/account/changeEmail", method = RequestMethod.GET)
+    @GetMapping("/account/changeEmail")
     public String setupForm(Model model) throws DataServiceException {
         ChangeEmailFormBean formBean = new ChangeEmailFormBean();
         model.addAttribute(formBean);
@@ -127,7 +121,7 @@ public class ChangeEmailFormController {
      *
      * @throws DataServiceException
      */
-    @RequestMapping(value = "/account/changeEmail", method = RequestMethod.POST)
+    @PostMapping("/account/changeEmail")
     public String changeEmail(HttpServletRequest request, @ModelAttribute ChangeEmailFormBean formBean,
             BindingResult result, SessionStatus sessionStatus) throws DataServiceException, IOException {
 
@@ -186,9 +180,9 @@ public class ChangeEmailFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/validateEmail", method = RequestMethod.GET)
-    public void validateEmail(@RequestParam(name = "token", required = false) String token,
-            HttpServletResponse response, SessionStatus sessionStatus) throws IOException {
+    @GetMapping("/account/validateEmail")
+    public void validateEmail(@RequestParam(required = false) String token, HttpServletResponse response,
+            SessionStatus sessionStatus) throws IOException {
         try {
             Account account = getAccount();
             String uid = account.getUid();

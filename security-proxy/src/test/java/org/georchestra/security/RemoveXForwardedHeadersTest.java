@@ -1,17 +1,16 @@
 package org.georchestra.security;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import com.google.common.collect.Lists;
 
-import junit.framework.TestCase;
-
-public class RemoveXForwardedHeadersTest extends TestCase {
+public class RemoveXForwardedHeadersTest {
 
     @Test
     public void testFilterIncludes() throws Exception {
@@ -63,17 +62,14 @@ public class RemoveXForwardedHeadersTest extends TestCase {
         assertFalse(headers.filter(RemoveXForwardedHeaders.FOR, null, createProxyRequest("geoserver/wms?Service=wms")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBothIncludeAndExcludeSet() throws Exception {
-        final RemoveXForwardedHeaders headers = new RemoveXForwardedHeaders();
-        headers.setIncludes(Lists.newArrayList(".*.service=wfs.*"));
-        headers.setExcludes(Lists.newArrayList(".*.service=wms.*"));
-        try {
+        assertThrows(IllegalArgumentException.class, () -> {
+            final RemoveXForwardedHeaders headers = new RemoveXForwardedHeaders();
+            headers.setIncludes(Lists.newArrayList(".*.service=wfs.*"));
+            headers.setExcludes(Lists.newArrayList(".*.service=wms.*"));
             headers.checkConfiguration();
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // good
-        }
+        });
     }
 
     private HttpRequestBase createProxyRequest(String uriFragment) throws URISyntaxException {

@@ -34,11 +34,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +65,6 @@ public class ChangePasswordFormController {
     @Autowired
     protected LogUtils logUtils;
 
-    @Autowired
     public ChangePasswordFormController(AccountDao dao) {
         this.accountDao = dao;
     }
@@ -89,7 +84,7 @@ public class ChangePasswordFormController {
      *
      * @throws DataServiceException
      */
-    @RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
+    @GetMapping("/account/changePassword")
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model)
             throws DataServiceException {
         Optional<String> uid = getUsername();
@@ -119,7 +114,7 @@ public class ChangePasswordFormController {
      *
      * @throws DataServiceException
      */
-    @RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
+    @PostMapping("/account/changePassword")
     public String changePassword(Model model, @ModelAttribute ChangePasswordFormBean formBean, BindingResult result)
             throws DataServiceException {
         Optional<String> username = getUsername();

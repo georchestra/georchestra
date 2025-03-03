@@ -1,8 +1,6 @@
 package org.georchestra.ogcservstatistics.log4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -11,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.georchestra.ogcservstatistics.util.Utility;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OGCServiceParserTest {
     @Test
