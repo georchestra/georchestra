@@ -1,3 +1,10 @@
+# This file defines the geOrchestra custom LDAP schema. If some modifications
+# are needed, please make sure the page on the official website stays in sync
+# with the following, see:
+#
+# * https://www.georchestra.org/oid.html
+# * https://github.com/georchestra/georchestra.github.io/blob/master/oid.md
+#
 dn: cn=georchestra, cn=schema, cn=config
 objectClass: olcSchemaConfig
 cn: georchestra
