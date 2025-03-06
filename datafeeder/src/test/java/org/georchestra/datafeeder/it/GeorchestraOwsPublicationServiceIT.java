@@ -173,6 +173,7 @@ public class GeorchestraOwsPublicationServiceIT {
         publishing.setImportedName(IMPORTED_LAYERNAME);
         publishing.setKeywords(Arrays.asList("tag1", "tag 2"));
         publishing.setSrs("EPSG:4326");
+        publishing.setTitle("Public Layer é (2025)");
         return dset;
     }
 
