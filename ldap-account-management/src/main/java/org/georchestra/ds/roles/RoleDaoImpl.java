@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
 import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
 
 import org.georchestra.ds.users.AccountDaoImpl;
@@ -65,7 +65,7 @@ public class RoleDaoImpl implements RoleDao {
     private AccountDaoImpl accountDao;
 
     @Autowired
-    private OrgsDao orgDao;
+    private OrgsDaoImpl orgDao;
 
     @Autowired
     private RoleProtected roles;
@@ -86,7 +86,7 @@ public class RoleDaoImpl implements RoleDao {
         this.accountDao = accountDao;
     }
 
-    public void setOrgDao(OrgsDao orgDao) {
+    public void setOrgDao(OrgsDaoImpl orgDao) {
         this.orgDao = orgDao;
     }
 
@@ -258,8 +258,7 @@ public class RoleDaoImpl implements RoleDao {
 
             try {
                 orgs.stream().forEach(org -> {
-                    context.addAttributeValue("member", String.format("%s,%s",
-                            orgDao.getOrgLdapWrapper().buildOrgDN(org), orgDao.getOrgSearchBaseDN()), false);
+                    context.addAttributeValue("member", orgDao.buildFullOrgDn(org), false);
                 });
                 this.ldapTemplate.modifyAttributes(context);
             } catch (Exception e) {
@@ -276,8 +275,7 @@ public class RoleDaoImpl implements RoleDao {
 
             try {
                 orgs.stream().forEach(org -> {
-                    context.removeAttributeValue("member", String.format("%s,%s",
-                            orgDao.getOrgLdapWrapper().buildOrgDN(org), orgDao.getOrgSearchBaseDN()));
+                    context.removeAttributeValue("member", orgDao.buildFullOrgDn(org));
                 });
                 this.ldapTemplate.modifyAttributes(context);
             } catch (Exception e) {
@@ -370,8 +368,7 @@ public class RoleDaoImpl implements RoleDao {
         Stream<String> orgMembers = role.getOrgList().stream() //
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull) //
-                .map(org -> orgDao.getOrgLdapWrapper().buildOrgDN(org)) //
-                .map(dn -> String.format("%s,%s", dn, orgDao.getOrgSearchBaseDN()));
+                .map(org -> orgDao.buildFullOrgDn(org));
 
         String[] members = Stream.concat(userMembers, orgMembers).collect(Collectors.toList()).toArray(new String[0]);
         context.setAttributeValues(RoleSchema.MEMBER_KEY, members);
@@ -382,6 +379,8 @@ public class RoleDaoImpl implements RoleDao {
             context.removeAttributeValue(RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         }
     }
+
+
 
     /**
      * if the value is not null then sets the value in the context.
