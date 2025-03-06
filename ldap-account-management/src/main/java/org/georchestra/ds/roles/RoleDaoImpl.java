@@ -112,6 +112,14 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
+    public void addOrg(String roleName, Org org) {
+        Name dn = buildRoleDn(roleName);
+        DirContextOperations context = ldapTemplate.lookupContext(dn);
+        context.addAttributeValue("member", orgDao.buildFullOrgDn(org), false);
+        this.ldapTemplate.modifyAttributes(context);
+    }
+
+    @Override
     public void deleteUser(Account account) throws DataServiceException {
         List<Role> allRoles = findAllForUser(account);
         for (Role role : allRoles) {
