@@ -270,6 +270,19 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public void deleteOrgsInRoles(List<String> deleteRole, List<Org> orgs)
             throws DataServiceException, NameNotFoundException {
+        deleteRole.stream().forEach(roleName -> {
+            Name dn = buildRoleDn(roleName);
+            DirContextOperations context = ldapTemplate.lookupContext(dn);
+
+            try {
+                orgs.stream().forEach(org -> {
+                    context.removeAttributeValue("member", String.format("%s,%s",
+                            orgDao.getOrgLdapWrapper().buildOrgDN(org), orgDao.getOrgSearchBaseDN()));
+                });
+                this.ldapTemplate.modifyAttributes(context);
+            } catch (Exception e) {
+            }
+        });
     }
 
     private class RoleContextMapper implements ContextMapper<Role> {
