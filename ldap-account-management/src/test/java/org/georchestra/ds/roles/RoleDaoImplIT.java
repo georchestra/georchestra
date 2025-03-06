@@ -92,32 +92,33 @@ public class RoleDaoImplIT {
     }
 
     @Test
+    public void makeOneOrgMemberOfOneRole() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org org = createOrg();
+
+        roleDao.addOrg(roleName, org);
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertEquals(1, actualRole.getOrgList().size());
+        assertEquals(0, actualRole.getUserList().size());
+    }
+
+    @Test
     public void makeOrgsMembersOfRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
-        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        Role role = RoleFactory.create(roleName, "sample role", false);
-        roleDao.insert(role);
-        String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        Org org = new Org();
-        org.setId(orgName);
-        orgsDao.insert(org);
+        String roleName = createRole();
+        Org org = createOrg();
 
         roleDao.addOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
 
         Role actualRole = roleDao.findByCommonName(roleName);
         assertEquals(1, actualRole.getOrgList().size());
         assertEquals(0, actualRole.getUserList().size());
-
     }
 
     @Test
     public void deleteOrgsMembersFromRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
-        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        Role role = RoleFactory.create(roleName, "sample role", false);
-        roleDao.insert(role);
-        String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        Org org = new Org();
-        org.setId(orgName);
-        orgsDao.insert(org);
+        String roleName = createRole();
+        Org org = createOrg();
         roleDao.addOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
 
         roleDao.deleteOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
@@ -126,4 +127,18 @@ public class RoleDaoImplIT {
         assertEquals(0, actualRole.getOrgList().size());
     }
 
+    private Org createOrg() {
+        String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Org org = new Org();
+        org.setId(orgName);
+        orgsDao.insert(org);
+        return org;
+    }
+
+    private String createRole() throws DataServiceException, DuplicatedCommonNameException {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Role role = RoleFactory.create(roleName, "sample role", false);
+        roleDao.insert(role);
+        return roleName;
+    }
 }
