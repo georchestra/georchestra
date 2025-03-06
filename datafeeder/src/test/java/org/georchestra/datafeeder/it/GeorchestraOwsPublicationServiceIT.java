@@ -107,7 +107,7 @@ public class GeorchestraOwsPublicationServiceIT {
     /**
      * Layer name as published to geoserver (e.g. overrides the IMPORTED_LAYERNAME)
      */
-    private static final String PULISHED_LAYERNAME = "PublicLayer";
+    private static final String PULISHED_LAYERNAME = "public_layer_e__2025_";
 
     private UserInfo user;
     private String expectedWorksapce;
