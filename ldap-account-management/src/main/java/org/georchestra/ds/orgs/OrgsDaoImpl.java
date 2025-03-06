@@ -300,4 +300,8 @@ public class OrgsDaoImpl implements OrgsDao {
     public String generateId(String org_name) throws IOException {
         return reGenerateId(org_name, "");
     }
+
+    public String buildFullOrgDn(Org org) {
+        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), getOrgSearchBaseDN());
+    }
 }
