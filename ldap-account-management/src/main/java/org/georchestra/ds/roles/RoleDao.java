@@ -38,6 +38,8 @@ public interface RoleDao {
      */
     void addUser(String roleName, Account user) throws DataServiceException, NameNotFoundException;
 
+    void addOrg(String roleName, Org org) throws DataServiceException, NameNotFoundException;
+
     /**
      * Returns all roles. Each roles will contains its list of users.
      *
