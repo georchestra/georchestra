@@ -402,6 +402,8 @@ public class RoleDaoImpl implements RoleDao {
         ldapTemplate.modifyAttributes(context);
     }
 
+    public static int dummy;
+
     private void addUsers(String roleName, List<Account> addList) throws NameNotFoundException, DataServiceException {
 
         for (Account account : addList) {
