@@ -107,7 +107,7 @@ public class GeorchestraOwsPublicationServiceIT {
     /**
      * Layer name as published to geoserver (e.g. overrides the IMPORTED_LAYERNAME)
      */
-    private static final String PULISHED_LAYERNAME = "PublicLayer";
+    private static final String PUBLISHED_LAYERNAME = "public_layer_e__2025_";
 
     private UserInfo user;
     private String expectedWorksapce;
@@ -169,10 +169,11 @@ public class GeorchestraOwsPublicationServiceIT {
 
         PublishSettings publishing = new PublishSettings();
         dset.setPublishing(publishing);
-        publishing.setPublishedName(PULISHED_LAYERNAME);
+        publishing.setPublishedName(PUBLISHED_LAYERNAME);
         publishing.setImportedName(IMPORTED_LAYERNAME);
         publishing.setKeywords(Arrays.asList("tag1", "tag 2"));
         publishing.setSrs("EPSG:4326");
+        publishing.setTitle("Public Layer é (2025)");
         return dset;
     }
 
@@ -192,9 +193,9 @@ public class GeorchestraOwsPublicationServiceIT {
         assertTrue(workspaces.findByName(expectedWorksapce).isPresent());
         assertTrue(dataStores.findByWorkspaceAndName(expectedWorksapce, expectedDataStore).isPresent());
         Optional<FeatureTypeInfo> featureType = featureTypes.getFeatureType(expectedWorksapce, expectedDataStore,
-                PULISHED_LAYERNAME);
+                PUBLISHED_LAYERNAME);
         assertTrue(featureType.isPresent());
-        assertTrue(layers.getLayer(expectedWorksapce, PULISHED_LAYERNAME).isPresent());
+        assertTrue(layers.getLayer(expectedWorksapce, PUBLISHED_LAYERNAME).isPresent());
         assertEquals(IMPORTED_LAYERNAME, featureType.get().getNativeName());
     }
 
@@ -202,7 +203,7 @@ public class GeorchestraOwsPublicationServiceIT {
     public void testPublish_sets_layer_attribution_to_orgname_and_url() {
         service.publish(shpDataset, user);
 
-        Layer layer = geoServerClient.layers().getLayer(expectedWorksapce, PULISHED_LAYERNAME)
+        Layer layer = geoServerClient.layers().getLayer(expectedWorksapce, PUBLISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
         AttributionInfo attribution = layer.getAttribution();
         assertNotNull(attribution);
@@ -221,7 +222,7 @@ public class GeorchestraOwsPublicationServiceIT {
 
         FeatureTypesClient featureTypes = geoServerClient.featureTypes();
         FeatureTypeInfo featureType = featureTypes
-                .getFeatureType(expectedWorksapce, expectedDataStore, PULISHED_LAYERNAME)
+                .getFeatureType(expectedWorksapce, expectedDataStore, PUBLISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
 
         MetadataMap metadataMap = featureType.getMetadata();
@@ -253,7 +254,7 @@ public class GeorchestraOwsPublicationServiceIT {
                 metadataRecordId);
 
         FeatureTypeInfo featureType = geoServerClient.featureTypes()
-                .getFeatureType(expectedWorksapce, expectedDataStore, PULISHED_LAYERNAME)
+                .getFeatureType(expectedWorksapce, expectedDataStore, PUBLISHED_LAYERNAME)
                 .orElseThrow(NoSuchElementException::new);
 
         assertNotNull(featureType.getMetadataLinks());
