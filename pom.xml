@@ -15,7 +15,7 @@
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
     <packaging>pom</packaging>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1_orgs_with_roles-SNAPSHOT</version>
     <name>Root project of the geOrchestra SDI</name>
     <url>http://maven.apache.org</url>
     <organization>
@@ -872,14 +872,12 @@
                 </file>
             </activation>
             <modules>
-                <module>geoserver</module>
                 <module>geowebcache-webapp</module>
                 <module>commons</module>
                 <module>ldap-account-management</module>
                 <module>testcontainers</module>
                 <module>console</module>
                 <module>security-proxy</module>
-                <module>geonetwork</module>
                 <module>analytics</module>
                 <module>datafeeder</module>
                 <module>datafeeder-ui</module>
