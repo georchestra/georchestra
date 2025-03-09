@@ -197,7 +197,7 @@ public class OrgsDaoImplIT {
     public void testOrgAttributeMapperCities() throws NamingException {
         Attributes orgToDeserialize = new BasicAttributes();
         orgToDeserialize.put("description", "1,2,3");
-        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgExtension().getAttributeMapper(true);
+        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgLdapWrapper().getAttributeMapper(true);
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
 
@@ -211,7 +211,7 @@ public class OrgsDaoImplIT {
         desc.add("1,2,3");
         desc.add("4,5,6");
         orgToDeserialize.put(desc);
-        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgExtension().getAttributeMapper(true);
+        AttributesMapper<Org> toTest = ((OrgsDaoImpl) dao).getOrgLdapWrapper().getAttributeMapper(true);
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
         assertTrue("Expected 6 cities", org.getCities().size() == 6);

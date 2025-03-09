@@ -1,5 +1,6 @@
 package org.georchestra.ds.roles;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -9,6 +10,11 @@ import java.util.stream.Collectors;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountFactory;
@@ -33,6 +39,7 @@ public class RoleDaoImplIT {
 
     private @Autowired AccountDaoImpl accountDao;
     private @Autowired RoleDaoImpl roleDao;
+    private @Autowired OrgsDaoImpl orgsDao;
     private @Autowired LdapTemplate ldapTemplate;
 
     private Account account;
@@ -75,8 +82,78 @@ public class RoleDaoImplIT {
         dco = ldapTemplate.lookupContext(roleDn);
         role.setDescription("New Description");
         roleDao.update("TEST_ROLE", role);
-        assertTrue(Arrays.stream(dco.getStringAttributes("objectClass"))
-                .collect(Collectors.toCollection(ArrayList::new)).contains("uidObject"));
+        roleDao.addUser("TEST_ROLE", account);
+
+        ArrayList<String> objectClasses = Arrays.stream(dco.getStringAttributes("objectClass"))
+                .collect(Collectors.toCollection(ArrayList::new));
+        assertTrue(objectClasses.contains("uidObject"));
+        assertTrue(objectClasses.contains("top"));
+        assertTrue(objectClasses.contains("groupOfMembers"));
     }
 
+    @Test
+    public void makeOneOrgMemberOfOneRole() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org org = createOrg();
+
+        roleDao.addOrg(roleName, org);
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertEquals(1, actualRole.getOrgList().size());
+        assertEquals(0, actualRole.getUserList().size());
+    }
+
+    @Test
+    public void deleteOneOrgMemberOfOneRole() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org orgA = createOrg();
+        Org orgB = createOrg();
+        roleDao.addOrg(roleName, orgA);
+        roleDao.addOrg(roleName, orgB);
+
+        roleDao.deleteOrg(roleName, orgA);
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertTrue(actualRole.getOrgList().get(0).contains(orgB.getId()));
+        assertEquals(1, actualRole.getOrgList().size());
+    }
+
+    @Test
+    public void makeOrgsMembersOfRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org org = createOrg();
+
+        roleDao.addOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertEquals(1, actualRole.getOrgList().size());
+        assertEquals(0, actualRole.getUserList().size());
+    }
+
+    @Test
+    public void deleteOrgsMembersFromRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org org = createOrg();
+        roleDao.addOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
+
+        roleDao.deleteOrgsInRoles(Arrays.asList(roleName), Arrays.asList(org));
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertEquals(0, actualRole.getOrgList().size());
+    }
+
+    private Org createOrg() {
+        String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Org org = new Org();
+        org.setId(orgName);
+        orgsDao.insert(org);
+        return org;
+    }
+
+    private String createRole() throws DataServiceException, DuplicatedCommonNameException {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Role role = RoleFactory.create(roleName, "sample role", false);
+        roleDao.insert(role);
+        return roleName;
+    }
 }
