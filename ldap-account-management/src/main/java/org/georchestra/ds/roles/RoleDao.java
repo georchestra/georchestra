@@ -56,6 +56,8 @@ public interface RoleDao {
      */
     void deleteUser(String roleName, Account account) throws DataServiceException;
 
+    void deleteOrg(String roleName, Org org) throws DataServiceException;
+
     void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException;
 
     /**

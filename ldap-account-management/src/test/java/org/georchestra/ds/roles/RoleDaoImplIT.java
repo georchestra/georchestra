@@ -104,6 +104,22 @@ public class RoleDaoImplIT {
     }
 
     @Test
+    public void deleteOneOrgMemberOfOneRole() throws DuplicatedCommonNameException, DataServiceException {
+        String roleName = createRole();
+        Org orgA = createOrg();
+        Org orgB = createOrg();
+        roleDao.addOrg(roleName, orgA);
+        roleDao.addOrg(roleName, orgB);
+
+        roleDao.deleteOrg(roleName, orgA);
+
+        Role actualRole = roleDao.findByCommonName(roleName);
+        assertTrue(actualRole.getOrgList().get(0).contains(orgB.getId()));
+        assertEquals(1, actualRole.getOrgList().size());
+    }
+
+
+    @Test
     public void makeOrgsMembersOfRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
         String roleName = createRole();
         Org org = createOrg();
