@@ -144,6 +144,20 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Override
+    public void deleteOrg(String roleName, Org org) throws DataServiceException {
+        Role role = this.findByCommonName(roleName);
+        List<String> orgList = role.getOrgList();
+        boolean removed = orgList != null && orgList.remove(orgDao.buildFullOrgDn(org));
+        if (removed) {
+            try {
+                this.update(roleName, role);
+            } catch (DuplicatedCommonNameException e) {
+                throw new DataServiceException(e);
+            }
+        }
+    }
+
+    @Override
     public void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException {
         for (Role role : findAllForUser(oldAccount)) {
             Name dnRole = buildRoleDn(role.getName());
@@ -374,6 +388,7 @@ public class RoleDaoImpl implements RoleDao {
                 .map(account -> accountDao.buildFullUserDn(account));
 
         Stream<String> orgMembers = role.getOrgList().stream() //
+                .map(cn -> cn.split(",")[0].split("=")[1] )//
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull) //
                 .map(org -> orgDao.buildFullOrgDn(org));
