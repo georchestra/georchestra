@@ -388,7 +388,7 @@ public class RoleDaoImpl implements RoleDao {
                 .map(account -> accountDao.buildFullUserDn(account));
 
         Stream<String> orgMembers = role.getOrgList().stream() //
-                .map(cn -> cn.split(",")[0].split("=")[1] )//
+                .map(cn -> cn.split(",")[0].split("=")[1])//
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull) //
                 .map(org -> orgDao.buildFullOrgDn(org));
@@ -402,8 +402,6 @@ public class RoleDaoImpl implements RoleDao {
             context.removeAttributeValue(RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
         }
     }
-
-
 
     /**
      * if the value is not null then sets the value in the context.
