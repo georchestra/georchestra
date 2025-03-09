@@ -118,7 +118,6 @@ public class RoleDaoImplIT {
         assertEquals(1, actualRole.getOrgList().size());
     }
 
-
     @Test
     public void makeOrgsMembersOfRolesNominal() throws DuplicatedCommonNameException, DataServiceException {
         String roleName = createRole();
