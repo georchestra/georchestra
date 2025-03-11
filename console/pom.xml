@@ -47,11 +47,6 @@
             <version>2.7.18</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-amqp</artifactId>
-            <version>2.4.17</version> <!-- Use the latest version if possible -->
-        </dependency>
-        <dependency>
             <!-- upgrade version to match gt-geojson-store's expected one -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
