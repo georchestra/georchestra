@@ -20,6 +20,9 @@ import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountFactory;
+import org.georchestra.ds.users.AccountImpl;
+import org.georchestra.ds.users.DuplicatedEmailException;
+import org.georchestra.ds.users.DuplicatedUidException;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
 import org.junit.After;
 import org.junit.Before;
@@ -157,6 +160,26 @@ public class RoleDaoImplIT {
         assertThat(roleNames, containsInAnyOrder(roleNameA, roleNameB));
     }
 
+    @Test
+    public void findAll() throws DuplicatedCommonNameException, DataServiceException, DuplicatedUidException,
+            DuplicatedEmailException {
+        String roleNameA = createRole();
+        String roleNameB = createRole();
+        Org org = createOrg();
+        Account account = createAccount();
+        roleDao.addOrg(roleNameA, org);
+        roleDao.addUser(roleNameA, account);
+        roleDao.addUser(roleNameB, account);
+
+        List<Role> role = roleDao.findAll();
+
+        Role roleA = role.stream().filter(r -> r.getName().equals(roleNameA)).findFirst().get();
+        Role roleB = role.stream().filter(r -> r.getName().equals(roleNameB)).findFirst().get();
+        assertEquals(1, roleA.getOrgList().size());
+        assertEquals(1, roleA.getUserList().size());
+        assertEquals(0, roleB.getOrgList().size());
+        assertEquals(1, roleB.getUserList().size());
+    }
 
     private Org createOrg() {
         String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
@@ -164,6 +187,14 @@ public class RoleDaoImplIT {
         org.setId(orgName);
         orgsDao.insert(org);
         return org;
+    }
+
+    private Account createAccount() throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
+        String accountName = "IT_ACCOUNT_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        Account account = AccountFactory.createBrief(accountName, "123", "fname", "sname",
+                String.format("%s@localhost", accountName), "+33123456789", "title", "");
+        accountDao.insert(account);
+        return account;
     }
 
     private String createRole() throws DataServiceException, DuplicatedCommonNameException {
