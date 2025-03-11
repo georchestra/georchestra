@@ -45,7 +45,7 @@ class UserController {
           const options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
-          $injector.get('Orgs').query(orgs => {
+          $injector.get('Orgs').query({ logos: false }, (orgs) => {
             this.orgs = orgs.filter(o => !o.pending)
           })
         })
@@ -420,7 +420,7 @@ angular.module('manager')
         user.pending = false
       }
       const selOrgs = []
-      Orgs.query((orgs) => {
+      Orgs.query({ logos: false }, (orgs) => {
         orgs.forEach((o) => {
           if (user.pending || !o.pending) {
             selOrgs.push({
