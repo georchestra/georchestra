@@ -73,6 +73,8 @@ public interface Role extends Comparable<Role> {
 
     void addOrg(String orgUid);
 
+    void addMembers(String[] members);
+
     void setDescription(String description);
 
     String getDescription();

@@ -321,39 +321,9 @@ public class RoleDaoImpl implements RoleDao {
             boolean isFavorite = RoleSchema.FAVORITE_VALUE.equals(context.getStringAttribute(RoleSchema.FAVORITE_KEY));
             role.setFavorite(isFavorite);
 
-            // set the list of user
-            Object[] members = getUsers(context);
-            for (int i = 0; i < members.length; i++) {
-                if (!((String) members[i]).endsWith(orgDao.getOrgSearchBaseDN())) {
-                    role.addUser((String) members[i]);
-                }
-            }
-            members = getOrgs(context);
-            for (int i = 0; i < members.length; i++) {
-                if (((String) members[i]).endsWith(orgDao.getOrgSearchBaseDN())) {
-                    role.addOrg((String) members[i]);
-                }
-            }
-
+            role.addMembers(context.getStringAttributes(RoleSchema.MEMBER_KEY));
             return role;
         }
-
-        private Object[] getUsers(DirContextAdapter context) {
-            Object[] members = context.getObjectAttributes(RoleSchema.MEMBER_KEY);
-            if (members == null) {
-                members = new Object[0];
-            }
-            return members;
-        }
-
-        private Object[] getOrgs(DirContextAdapter context) {
-            Object[] members = context.getObjectAttributes(RoleSchema.MEMBER_KEY);
-            if (members == null) {
-                members = new Object[0];
-            }
-            return members;
-        }
-
     }
 
     @VisibleForTesting
