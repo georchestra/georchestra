@@ -4,7 +4,8 @@ angular.module('manager')
       query: {
         cache: true,
         method: 'GET',
-        isArray: true
+        isArray: true,
+        params: { logos: '@logos' }
       },
       get: {
         params: { id: '@id' },
