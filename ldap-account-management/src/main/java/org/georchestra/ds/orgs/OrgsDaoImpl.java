@@ -92,10 +92,6 @@ public class OrgsDaoImpl implements OrgsDao {
         this.orgExtLdapWrapper.setOrgSearchBaseDN(orgSearchBaseDN);
     }
 
-    public String getOrgSearchBaseDN() {
-        return this.orgSearchBaseDN;
-    }
-
     public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
         this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
         this.orgLdapWrapper.setPendingOrgSearchBaseDN(pendingOrgSearchBaseDN);
@@ -302,6 +298,6 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     public String buildFullOrgDn(Org org) {
-        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), getOrgSearchBaseDN());
+        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), orgSearchBaseDN);
     }
 }
