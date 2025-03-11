@@ -2,7 +2,7 @@ package org.georchestra.ds.users;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
