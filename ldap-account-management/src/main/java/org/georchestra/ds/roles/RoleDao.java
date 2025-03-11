@@ -49,6 +49,8 @@ public interface RoleDao {
 
     List<Role> findAllForUser(Account account) throws DataServiceException;
 
+    List<Role> findAllForOrg(Org org) throws DataServiceException;
+
     void deleteUser(Account account) throws DataServiceException;
 
     /**

@@ -187,6 +187,15 @@ public class RoleDaoImpl implements RoleDao {
         return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
     }
 
+    @Override
+    public List<Role> findAllForOrg(Org org) throws DataServiceException {
+        EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
+        AndFilter filter = new AndFilter();
+        filter.and(grpFilter);
+        filter.and(new EqualsFilter("member", orgDao.buildFullOrgDn(org)));
+        return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
+    }
+
     /**
      * Searches the role by common name (cn)
      */

@@ -1,5 +1,7 @@
 package org.georchestra.ds.roles;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -141,6 +143,20 @@ public class RoleDaoImplIT {
         Role actualRole = roleDao.findByCommonName(roleName);
         assertEquals(0, actualRole.getOrgList().size());
     }
+
+    @Test
+    public void findAllForOrg() throws DuplicatedCommonNameException, DataServiceException {
+        String roleNameA = createRole();
+        String roleNameB = createRole();
+        Org org = createOrg();
+        roleDao.addOrg(roleNameA, org);
+        roleDao.addOrg(roleNameB, org);
+
+        List<String> roleNames = roleDao.findAllForOrg(org).stream().map(Role::getName).collect(Collectors.toList());
+
+        assertThat(roleNames, containsInAnyOrder(roleNameA, roleNameB));
+    }
+
 
     private Org createOrg() {
         String orgName = "IT_ORG_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
