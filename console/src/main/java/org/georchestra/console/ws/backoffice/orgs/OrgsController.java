@@ -66,6 +66,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -144,8 +145,11 @@ public class OrgsController {
     @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     @PostFilter("hasPermission(filterObject, 'read')")
     @ResponseBody
-    public List<Org> findAll() {
+    public List<Org> findAll(@RequestParam(defaultValue = "true") boolean logos) {
         List<Org> orgs = this.orgDao.findAll();
+        if (!logos) {
+            orgs.forEach(o -> o.setLogo(null));
+        }
         Collections.sort(orgs);
         return orgs;
     }

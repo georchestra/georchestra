@@ -8,7 +8,7 @@ class OrgsController {
     this.$injector = $injector
 
     this.org = $routeParams.org
-    this.orgs = this.$injector.get('Orgs').query(() => {
+    this.orgs = this.$injector.get('Orgs').query({ logos: false }, () => {
       if (this.org === 'pending') {
         this.orgs = this.orgs.filter(o => o.pending)
       } else {
