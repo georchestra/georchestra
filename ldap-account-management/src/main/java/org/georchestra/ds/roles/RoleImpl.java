@@ -108,7 +108,7 @@ class RoleImpl implements Role {
     @Override
     public void addOrg(String orgUid) {
         // Extracting the uid
-        this.orgList.add(orgUid.replaceAll("uid=([^,]+).*$", "$1"));
+        this.orgList.add(orgUid.replaceAll("cn=([^,]+).*$", "$1"));
     }
 
     @Override
