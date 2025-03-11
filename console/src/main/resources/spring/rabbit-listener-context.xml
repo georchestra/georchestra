@@ -23,7 +23,7 @@
     <bean id="eventsListener" class="org.georchestra.console.events.RabbitmqEventsListener" />
 
     <!-- glue the listener and OAuth2Queue to the container-->
-    <rabbit:listener-container id="EventListenerContainer" connection-factory="connectionFactory">
+    <rabbit:listener-container connection-factory="connectionFactory">
         <rabbit:listener ref="eventsListener" queues="OAuth2Queue" />
     </rabbit:listener-container>
 </beans>
