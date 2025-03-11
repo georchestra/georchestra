@@ -147,7 +147,7 @@ public class RoleDaoImpl implements RoleDao {
     public void deleteOrg(String roleName, Org org) throws DataServiceException {
         Role role = this.findByCommonName(roleName);
         List<String> orgList = role.getOrgList();
-        boolean removed = orgList != null && orgList.remove(orgDao.buildFullOrgDn(org));
+        boolean removed = orgList != null && orgList.remove(org.getId());
         if (removed) {
             try {
                 this.update(roleName, role);
@@ -388,7 +388,6 @@ public class RoleDaoImpl implements RoleDao {
                 .map(account -> accountDao.buildFullUserDn(account));
 
         Stream<String> orgMembers = role.getOrgList().stream() //
-                .map(cn -> cn.split(",")[0].split("=")[1])//
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull) //
                 .map(org -> orgDao.buildFullOrgDn(org));
