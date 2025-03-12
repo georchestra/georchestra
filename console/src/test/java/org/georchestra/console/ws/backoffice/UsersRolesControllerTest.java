@@ -13,7 +13,6 @@ import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.LdapDaoProperties;
-import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.roles.RoleFactory;
@@ -197,10 +196,6 @@ public class UsersRolesControllerTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setLdapDaoProperties(ldapDaoProperties);
-
-        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
-        orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setLdapDaoProperties(ldapDaoProperties);
 
         // configures AccountDao
         dao = new AccountDaoImpl(ldapTemplate);
