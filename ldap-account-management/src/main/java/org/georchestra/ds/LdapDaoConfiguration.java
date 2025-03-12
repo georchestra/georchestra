@@ -1,5 +1,7 @@
 package org.georchestra.ds;
 
+import org.georchestra.ds.orgs.OrgExtLdapWrapper;
+import org.georchestra.ds.orgs.OrgLdapWrapper;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.AccountDaoImpl;
@@ -25,6 +27,16 @@ public class LdapDaoConfiguration {
     @Bean
     public OrgsDaoImpl orgsDao() {
         return new OrgsDaoImpl();
+    }
+
+    @Bean
+    public OrgLdapWrapper orgLdapWrapper() {
+        return new OrgLdapWrapper();
+    }
+
+    @Bean
+    public OrgExtLdapWrapper orgExtLdapWrapper() {
+        return new OrgExtLdapWrapper();
     }
 
     @Bean

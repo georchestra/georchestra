@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static java.util.stream.Collectors.joining;
 
-class OrgExtLdapWrapper extends LdapWrapper<OrgExt> {
+public class OrgExtLdapWrapper extends LdapWrapper<OrgExt> {
 
     @Override
     public void mapPayloadToContext(OrgExt org, DirContextOperations context) {

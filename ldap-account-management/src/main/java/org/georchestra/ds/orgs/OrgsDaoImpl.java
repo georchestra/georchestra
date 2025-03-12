@@ -27,12 +27,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.annotation.PostConstruct;
 import javax.naming.Name;
 
 import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -48,48 +46,33 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unchecked")
 public class OrgsDaoImpl implements OrgsDao {
 
-    private @Autowired AccountDaoImpl accountDao;
-
     private LdapDaoProperties props;
+    private LdapTemplate ldapTemplate;
+    private OrgLdapWrapper orgLdapWrapper;
+    private OrgExtLdapWrapper orgExtLdapWrapper;
 
     @Autowired
     public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
         this.props = ldapDaoProperties;
     }
 
-    private LdapTemplate ldapTemplate;
-
-    private OrgLdapWrapper orgLdapWrapper = new OrgLdapWrapper();
-    private OrgExtLdapWrapper orgExtLdapWrapper = new OrgExtLdapWrapper();
-
-    @PostConstruct
-    public void accountDaoAndPropsKnown() {
-        orgLdapWrapper.setAccountDao(accountDao);
-        orgLdapWrapper.setBasePath(props.getBasePath());
-        orgLdapWrapper.setOrgSearchBaseDN(props.getOrgSearchBaseDN());
-        orgExtLdapWrapper.setOrgSearchBaseDN(props.getOrgSearchBaseDN());
-        orgLdapWrapper.setPendingOrgSearchBaseDN(props.getPendingOrgSearchBaseDN());
-        orgExtLdapWrapper.setPendingOrgSearchBaseDN(props.getPendingOrgSearchBaseDN());
-    }
-
-    public LdapWrapper<Org> getOrgLdapWrapper() {
-        return orgLdapWrapper;
-    }
-
     @Autowired
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
-        this.orgLdapWrapper.setLdapTemplate(ldapTemplate);
-        this.orgExtLdapWrapper.setLdapTemplate(ldapTemplate);
+    }
+
+    @Autowired
+    public void setOrgLdapWrapper(OrgLdapWrapper orgLdapWrapper) {
+        this.orgLdapWrapper = orgLdapWrapper;
+    }
+
+    @Autowired
+    public void setOrgExtLdapWrapper(OrgExtLdapWrapper orgExtLdapWrapper) {
+        this.orgExtLdapWrapper = orgExtLdapWrapper;
     }
 
     public String[] getOrgTypeValues() {
         return props.getOrgTypeValues();
-    }
-
-    public void setAccountDao(AccountDaoImpl accountDao) {
-        this.accountDao = accountDao;
-        orgLdapWrapper.setAccountDao(accountDao);
     }
 
     /**
@@ -287,6 +270,6 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     public String buildFullOrgDn(Org org) {
-        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), props.getOrgSearchBaseDN());
+        return String.format("%s,%s", orgLdapWrapper.buildOrgDN(org), props.getOrgSearchBaseDN());
     }
 }

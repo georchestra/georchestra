@@ -1,5 +1,7 @@
 package org.georchestra.ds.orgs;
 
+import org.georchestra.ds.LdapDaoProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
@@ -25,9 +27,18 @@ import java.util.stream.Stream;
 public abstract class LdapWrapper<T extends ReferenceAware> {
 
     private AndFilter objectClassFilter;
-    protected String orgSearchBaseDN;
-    protected String pendingOrgSearchBaseDN;
+    protected LdapDaoProperties props;
     private LdapTemplate ldapTemplate;
+
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
+    }
+
+    @Autowired
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
 
     public LdapWrapper() {
         objectClassFilter = new AndFilter();
@@ -36,24 +47,13 @@ public abstract class LdapWrapper<T extends ReferenceAware> {
         }
     }
 
-    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
-        this.orgSearchBaseDN = orgSearchBaseDN;
-    }
-
-    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
-        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
-    }
-
-    public void setLdapTemplate(LdapTemplate ldapTemplate) {
-        this.ldapTemplate = ldapTemplate;
-    }
-
     public AndFilter getObjectClassFilter() {
         return objectClassFilter;
     }
 
     public Name buildOrgDN(T org) {
-        return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
+        return LdapNameBuilder
+                .newInstance(org.isPending() ? props.getPendingOrgSearchBaseDN() : props.getOrgSearchBaseDN())
                 .add(getLdapKeyField(), org.getId()).build();
     }
 
@@ -96,10 +96,10 @@ public abstract class LdapWrapper<T extends ReferenceAware> {
     public <O extends ReferenceAware> O findById(String id) {
         String ldapKeyField = this.getLdapKeyField();
         try {
-            Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, id).build();
+            Name dn = LdapNameBuilder.newInstance(props.getOrgSearchBaseDN()).add(ldapKeyField, id).build();
             return (O) ldapTemplate.lookup(dn, this.getContextMapper(false));
         } catch (NameNotFoundException ex) {
-            Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, id).build();
+            Name dn = LdapNameBuilder.newInstance(props.getPendingOrgSearchBaseDN()).add(ldapKeyField, id).build();
             return (O) ldapTemplate.lookup(dn, this.getContextMapper(true));
         }
     }
