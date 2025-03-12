@@ -4,6 +4,7 @@ import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.Account;
@@ -72,18 +73,19 @@ public class ChangeEmailControllerTest {
     public void setUp() {
         ldapTemplate = mock(LdapTemplate.class);
 
+        LdapDaoProperties ldapDaoProperties = new LdapDaoProperties() //
+                .setOrgSearchBaseDN("ou=orgs").setOrgSearchBaseDN("ou=orgs").setPendingUserSearchBaseDN("ou=pending");
+
         RoleDaoImpl roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
+        roleDao.setLdapDaoProperties(ldapDaoProperties);
 
         OrgsDaoImpl orgsDao = new OrgsDaoImpl();
         orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
+        orgsDao.setLdapDaoProperties(ldapDaoProperties);
 
         AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate);
-        dao.setUserSearchBaseDN("ou=users");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setPendingUserSearchBaseDN("ou=pending");
+        dao.setLdapDaoProperties(ldapDaoProperties);
         Validation validation = new Validation("");
         ctrlToTest = new ChangeEmailFormController(accountDao, efi, userTokenDao, validation);
         ctrlToTest.setPublicUrl("https://georchestra.mydomain.org");
