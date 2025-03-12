@@ -12,6 +12,7 @@ import java.util.List;
 import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDaoImpl;
@@ -187,20 +188,23 @@ public class UsersRolesControllerTest {
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
+        LdapDaoProperties ldapDaoProperties = new LdapDaoProperties() //
+                .setRoleSearchBaseDN("ou=roles") //
+                .setOrgSearchBaseDN("ou=orgs") //
+                .setUserSearchBaseDN("ou=users");
+
         // Configures roleDao
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setRoleSearchBaseDN("ou=roles");
+        roleDao.setLdapDaoProperties(ldapDaoProperties);
 
         OrgsDaoImpl orgsDao = new OrgsDaoImpl();
         orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
+        orgsDao.setLdapDaoProperties(ldapDaoProperties);
 
         // configures AccountDao
         dao = new AccountDaoImpl(ldapTemplate);
-        dao.setUserSearchBaseDN("ou=users");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setRoleSearchBaseDN("ou=roles");
+        dao.setLdapDaoProperties(ldapDaoProperties);
     }
 
     private final String TEST_ROLE_NAME = "LDAPADMIN_TESTSUITE_SAMPLE_ROLE";
