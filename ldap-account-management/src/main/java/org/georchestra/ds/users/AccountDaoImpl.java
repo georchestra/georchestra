@@ -80,8 +80,6 @@ public class AccountDaoImpl implements AccountDao {
     private String orgSearchBaseDN;
     private String pendingOrgSearchBaseDN;
 
-    private final DateTimeFormatter ldapTimestampFmt = DateTimeFormatter.ofPattern("yyyyMMddHHmmssX");
-
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
