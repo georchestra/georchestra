@@ -15,7 +15,6 @@ class NewUserController {
     translate('user.created', this.i18n)
     translate('user.error', this.i18n)
 
-    this.contexts = $injector.get('Contexts').query()
     this.users = User.query()
     this.required = $injector.get('UserRequired').get()
   }
