@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
@@ -59,7 +60,12 @@ public class RoleDaoImpl implements RoleDao {
 
     private LdapTemplate ldapTemplate;
 
-    private String roleSearchBaseDN;
+    private LdapDaoProperties props;
+
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
+    }
 
     @Autowired
     private AccountDaoImpl accountDao;
@@ -69,10 +75,6 @@ public class RoleDaoImpl implements RoleDao {
 
     @Autowired
     private RoleProtected roles;
-
-    public void setRoleSearchBaseDN(String roleSearchBaseDN) {
-        this.roleSearchBaseDN = roleSearchBaseDN;
-    }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
@@ -173,7 +175,8 @@ public class RoleDaoImpl implements RoleDao {
     @Override
     public List<Role> findAll() {
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-        List<Role> roleList = ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
+        List<Role> roleList = ldapTemplate.search(props.getRoleSearchBaseDN(), filter.encode(),
+                new RoleContextMapper());
         roleList.sort(Role::compareTo);
         return roleList;
     }
@@ -184,7 +187,7 @@ public class RoleDaoImpl implements RoleDao {
         AndFilter filter = new AndFilter();
         filter.and(grpFilter);
         filter.and(new EqualsFilter("member", accountDao.buildFullUserDn(account)));
-        return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
+        return ldapTemplate.search(props.getRoleSearchBaseDN(), filter.encode(), new RoleContextMapper());
     }
 
     @Override
@@ -193,7 +196,7 @@ public class RoleDaoImpl implements RoleDao {
         AndFilter filter = new AndFilter();
         filter.and(grpFilter);
         filter.and(new EqualsFilter("member", orgDao.buildFullOrgDn(org)));
-        return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
+        return ldapTemplate.search(props.getRoleSearchBaseDN(), filter.encode(), new RoleContextMapper());
     }
 
     /**
@@ -338,7 +341,7 @@ public class RoleDaoImpl implements RoleDao {
     @VisibleForTesting
     protected Name buildRoleDn(String cn) {
         try {
-            return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
+            return LdapNameBuilder.newInstance(props.getRoleSearchBaseDN()).add("cn", cn).build();
         } catch (org.springframework.ldap.InvalidNameException ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }

@@ -110,6 +110,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.users.AccountDao;
@@ -419,7 +420,7 @@ public class UsersExportTest {
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
         AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate);
-        adao.setUserSearchBaseDN("ou=users");
+        adao.setLdapDaoProperties(new LdapDaoProperties().setUserSearchBaseDN("ou=users"));
 
 //        us.setAccountDao(adao);
     }

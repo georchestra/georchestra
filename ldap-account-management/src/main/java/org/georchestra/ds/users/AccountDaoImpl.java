@@ -47,7 +47,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.LdapDaoProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -71,14 +73,15 @@ import lombok.NonNull;
 public class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
+    private LdapDaoProperties props;
+
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
+    }
+
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
-    private LdapName userSearchBaseDN;
-    private LdapName pendingUserSearchBaseDN;
-    private String roleSearchBaseDN;
-    private String basePath;
-    private String orgSearchBaseDN;
-    private String pendingOrgSearchBaseDN;
 
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate) {
@@ -87,36 +90,13 @@ public class AccountDaoImpl implements AccountDao {
 
     @PostConstruct
     public void init() {
-        this.attributMapper = new AccountContextMapper(pendingUserSearchBaseDN, orgSearchBaseDN + "," + basePath,
-                pendingOrgSearchBaseDN + "," + basePath);
+        this.attributMapper = new AccountContextMapper(props.getPendingUserSearchBaseDN(),
+                props.getOrgSearchBaseDN() + "," + props.getBasePath(),
+                props.getPendingOrgSearchBaseDN() + "," + props.getBasePath());
     }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
-    }
-
-    public void setUserSearchBaseDN(String userSearchBaseDN) {
-        this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
-    }
-
-    public void setPendingUserSearchBaseDN(String pendingUserSearchBaseDN) {
-        this.pendingUserSearchBaseDN = LdapNameBuilder.newInstance(pendingUserSearchBaseDN).build();
-    }
-
-    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
-        this.orgSearchBaseDN = orgSearchBaseDN;
-    }
-
-    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
-        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
-    }
-
-    public void setRoleSearchBaseDN(String roleSearchBaseDN) {
-        this.roleSearchBaseDN = roleSearchBaseDN;
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
     }
 
     @Override
@@ -306,7 +286,8 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException {
-        Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(roleSearchBaseDN).add("cn", role).build();
+        Name memberOfValue = LdapNameBuilder.newInstance(props.getBasePath()).add(props.getRoleSearchBaseDN())
+                .add("cn", role).build();
         return new AccountSearcher().and(new EqualsFilter("memberOf", memberOfValue.toString()))
                 .getActiveOrPendingAccounts();
     }
@@ -359,7 +340,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     public String buildFullUserDn(Account account) {
-        return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), basePath);
+        return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), props.getBasePath());
     }
 
     private LdapName buildUserDn(Account account) {
@@ -476,8 +457,8 @@ public class AccountDaoImpl implements AccountDao {
             context.setAttributeValues(UserSchema.SSH_KEY, account.getSshKeys());
         }
         if (account.getManager() != null)
-            setAccountField(context, UserSchema.MANAGER_KEY,
-                    "uid=" + account.getManager() + "," + userSearchBaseDN.toString() + "," + basePath);
+            setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + ","
+                    + props.getUserSearchBaseDN().toString() + "," + props.getBasePath());
         else
             setAccountField(context, UserSchema.MANAGER_KEY, null);
 
@@ -656,7 +637,7 @@ public class AccountDaoImpl implements AccountDao {
 
     private LdapName buildUserDn(String uid, boolean pending) {
         LdapNameBuilder builder = LdapNameBuilder.newInstance();
-        builder.add(pending ? pendingUserSearchBaseDN : userSearchBaseDN);
+        builder.add(pending ? props.getPendingUserSearchBaseDN() : props.getUserSearchBaseDN());
         builder.add("uid", uid);
         return builder.build();
     }
@@ -667,8 +648,10 @@ public class AccountDaoImpl implements AccountDao {
 
         public List<Account> getActiveOrPendingAccounts() {
             SearchControls sc = createSearchControls();
-            List<Account> active = ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
-            List<Account> pending = ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
+            List<Account> active = ldapTemplate.search(props.getUserSearchBaseDN(), filter.encode(), sc,
+                    attributMapper);
+            List<Account> pending = ldapTemplate.search(props.getPendingUserSearchBaseDN(), filter.encode(), sc,
+                    attributMapper);
             return Stream.concat(active.stream(), pending.stream()).collect(toList());
         }
 

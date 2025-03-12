@@ -30,13 +30,12 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.naming.Name;
 
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -51,17 +50,26 @@ public class OrgsDaoImpl implements OrgsDao {
 
     private @Autowired AccountDaoImpl accountDao;
 
-    private LdapTemplate ldapTemplate;
-    private String[] orgTypeValues;
+    private LdapDaoProperties props;
 
-    private String orgSearchBaseDN;
-    private String pendingOrgSearchBaseDN;
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
+    }
+
+    private LdapTemplate ldapTemplate;
+
     private OrgLdapWrapper orgLdapWrapper = new OrgLdapWrapper();
     private OrgExtLdapWrapper orgExtLdapWrapper = new OrgExtLdapWrapper();
 
     @PostConstruct
-    public void accountDaoKnown() {
+    public void accountDaoAndPropsKnown() {
         orgLdapWrapper.setAccountDao(accountDao);
+        orgLdapWrapper.setBasePath(props.getBasePath());
+        orgLdapWrapper.setOrgSearchBaseDN(props.getOrgSearchBaseDN());
+        orgExtLdapWrapper.setOrgSearchBaseDN(props.getOrgSearchBaseDN());
+        orgLdapWrapper.setPendingOrgSearchBaseDN(props.getPendingOrgSearchBaseDN());
+        orgExtLdapWrapper.setPendingOrgSearchBaseDN(props.getPendingOrgSearchBaseDN());
     }
 
     public LdapWrapper<Org> getOrgLdapWrapper() {
@@ -74,28 +82,8 @@ public class OrgsDaoImpl implements OrgsDao {
         this.orgExtLdapWrapper.setLdapTemplate(ldapTemplate);
     }
 
-    public void setOrgTypeValues(String orgTypeValues) {
-        this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
-    }
-
     public String[] getOrgTypeValues() {
-        return orgTypeValues;
-    }
-
-    public void setBasePath(String basePath) {
-        orgLdapWrapper.setBasePath(basePath);
-    }
-
-    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
-        this.orgSearchBaseDN = orgSearchBaseDN;
-        this.orgLdapWrapper.setOrgSearchBaseDN(orgSearchBaseDN);
-        this.orgExtLdapWrapper.setOrgSearchBaseDN(orgSearchBaseDN);
-    }
-
-    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
-        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
-        this.orgLdapWrapper.setPendingOrgSearchBaseDN(pendingOrgSearchBaseDN);
-        this.orgExtLdapWrapper.setPendingOrgSearchBaseDN(pendingOrgSearchBaseDN);
+        return props.getOrgTypeValues();
     }
 
     public void setAccountDao(AccountDaoImpl accountDao) {
@@ -116,9 +104,9 @@ public class OrgsDaoImpl implements OrgsDao {
 
     private Stream<Org> findAllWithExt() {
         Filter filter = orgLdapWrapper.getObjectClassFilter();
-        List<Org> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
+        List<Org> active = ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(),
                 orgLdapWrapper.getAttributeMapper(false));
-        List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
+        List<Org> pending = ldapTemplate.search(props.getPendingOrgSearchBaseDN(), filter.encode(),
                 orgLdapWrapper.getAttributeMapper(true));
 
         Stream<Org> orgs = Stream.concat(active.stream(), pending.stream());
@@ -138,9 +126,9 @@ public class OrgsDaoImpl implements OrgsDao {
      */
     private Stream<OrgExt> findAllExt() {
         Filter filter = orgExtLdapWrapper.getObjectClassFilter();
-        List<OrgExt> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
+        List<OrgExt> active = ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(),
                 orgExtLdapWrapper.getAttributeMapper(false));
-        List<OrgExt> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
+        List<OrgExt> pending = ldapTemplate.search(props.getPendingOrgSearchBaseDN(), filter.encode(),
                 orgExtLdapWrapper.getAttributeMapper(true));
         return Stream.concat(active.stream(), pending.stream());
     }
@@ -156,7 +144,7 @@ public class OrgsDaoImpl implements OrgsDao {
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
         AttributesMapper<Org> notPendingMapper = orgLdapWrapper.getAttributeMapper(false);
-        return ldapTemplate.search(orgSearchBaseDN, filter.encode(), notPendingMapper)//
+        return ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(), notPendingMapper)//
                 .stream()//
                 .map(this::addExt)//
                 .collect(Collectors.toList());
@@ -298,6 +286,6 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     public String buildFullOrgDn(Org org) {
-        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), orgSearchBaseDN);
+        return String.format("%s,%s", getOrgLdapWrapper().buildOrgDN(org), props.getOrgSearchBaseDN());
     }
 }
