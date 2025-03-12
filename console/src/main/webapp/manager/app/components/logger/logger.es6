@@ -46,7 +46,7 @@ class LoggerController {
     // manage query params to get user's or complete logs
     let typeQuery = 'Logs'
     const params = {
-      limit: 100000,
+      limit: 500,
       page: 0
     }
     if (this.user) {
