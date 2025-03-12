@@ -58,14 +58,6 @@ public class ChangePasswordControllerTest {
         LdapDaoProperties ldapDaoProperties = new LdapDaoProperties() //
                 .setOrgSearchBaseDN("ou=orgs").setUserSearchBaseDN("ou=users").setPendingUserSearchBaseDN("ou=pending");
 
-        RoleDaoImpl roleDao = new RoleDaoImpl();
-        roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setLdapDaoProperties(ldapDaoProperties);
-
-        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
-        orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setLdapDaoProperties(ldapDaoProperties);
-
         AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate);
         dao.setLdapDaoProperties(ldapDaoProperties);
         ctrlToTest = new ChangePasswordFormController(dao);

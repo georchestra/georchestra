@@ -5,33 +5,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.support.LdapNameBuilder;
-import org.springframework.util.StringUtils;
 
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
-class OrgLdapWrapper extends LdapWrapper<Org> {
+public class OrgLdapWrapper extends LdapWrapper<Org> {
 
     private AccountDaoImpl accountDao;
-    private String basePath;
+
+    @Autowired
+    public void setAccountDao(AccountDaoImpl accountDao) {
+        this.accountDao = accountDao;
+    }
 
     @Override
     public void mapPayloadToContext(Org org, DirContextOperations context) {
         String seeAlsoValueExt = LdapNameBuilder
-                .newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath)
+                .newInstance((org.isPending() ? props.getPendingOrgSearchBaseDN() : props.getOrgSearchBaseDN()) + ","
+                        + props.getBasePath())
                 .add("o", org.getId()).build().toString();
 
         context.setAttributeValue("seeAlso", seeAlsoValueExt);
@@ -80,10 +77,6 @@ class OrgLdapWrapper extends LdapWrapper<Org> {
         }
     }
 
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-
     @Override
     protected String getLdapKeyField() {
         return "cn";
@@ -108,9 +101,5 @@ class OrgLdapWrapper extends LdapWrapper<Org> {
             org.setPending(pending);
             return org;
         };
-    }
-
-    public void setAccountDao(AccountDaoImpl accountDao) {
-        this.accountDao = accountDao;
     }
 }
