@@ -76,6 +76,7 @@ public class OrgsDaoImpl implements OrgsDao {
         return orgLdapWrapper;
     }
 
+    @Autowired
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
         this.orgLdapWrapper.setLdapTemplate(ldapTemplate);

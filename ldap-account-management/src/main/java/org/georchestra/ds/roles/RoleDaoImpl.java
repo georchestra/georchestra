@@ -76,6 +76,7 @@ public class RoleDaoImpl implements RoleDao {
     @Autowired
     private RoleProtected roles;
 
+    @Autowired
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
     }

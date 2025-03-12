@@ -20,7 +20,7 @@
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
   <context:annotation-config/>
-  <context:component-scan base-package="org.georchestra.ds"/>
+  <context:component-scan base-package="org.georchestra.ds.security"/>
   <context:property-placeholder 
     location="classpath:/default.properties"
     ignore-resource-not-found="false" 
@@ -48,21 +48,7 @@
     <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
   </bean>
   
-  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-    <constructor-arg ref="contextSource"/>
-  </bean>
-
-  <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
-  </bean>
-
-  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
-  </bean>
-
-  <bean id="accountDao" class="org.georchestra.ds.users.AccountDaoImpl">
-    <constructor-arg ref="ldapTemplate"/>
-  </bean>
+  <bean id="ldapDaoConfiguration" class="org.georchestra.ds.LdapDaoConfiguration" />
 
   <bean id="ldapDaoProperties" class="org.georchestra.ds.LdapDaoProperties">
     <property name="basePath" value="${ldapBaseDn}"/>
