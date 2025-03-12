@@ -45,7 +45,7 @@
   <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
   <context:component-scan base-package="org.georchestra.console"/>
-  <context:component-scan base-package="org.georchestra.ds"/>
+  <context:component-scan base-package="org.georchestra.ds.security"/>
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
     <property name="attributes">
@@ -114,21 +114,7 @@
     <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
   </bean>
 
-  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-    <constructor-arg ref="contextSource"/>
-  </bean>
-
-  <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
-  </bean>
-
-  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
-  </bean>
-
-  <bean id="accountDao" class="org.georchestra.ds.users.AccountDaoImpl">
-    <constructor-arg ref="ldapTemplate"/>
-  </bean>
+  <bean id="ldapDaoConfiguration" class="org.georchestra.ds.LdapDaoConfiguration" />
 
   <bean id="ldapDaoProperties" class="org.georchestra.ds.LdapDaoProperties">
     <property name="basePath" value="${ldapBaseDn}"/>
