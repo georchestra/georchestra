@@ -185,8 +185,8 @@ public class GeorchestraMetadataPublicationServiceIT {
         assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
 
         final String title = publishing.getTitle();
-        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title + " - WMS");
-        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title + " - WFS");
+        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title);
+        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title);
 
         URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
         final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
@@ -326,8 +326,8 @@ public class GeorchestraMetadataPublicationServiceIT {
                 "MD_Metadata/dataQualityInfo/DQ_DataQuality/lineage/LI_Lineage/statement/CharacterString[text() = 'Test process description']");
         assertXpath(dom, "MD_Metadata/hierarchyLevel/MD_ScopeCode[@codeListValue='dataset']");
         final String title = publishing.getTitle();
-        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title + " - WMS");
-        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title + " - WFS");
+        assertOnlineResource(dom, "OGC:WMS", PUBLISHED_LAYERNAME, title);
+        assertOnlineResource(dom, "OGC:WFS", PUBLISHED_LAYERNAME, title);
         URL publicUrl = configProperties.getPublishing().getGeonetwork().getPublicUrl();
         final String uniqueResourceIdentifier = URI.create(publicUrl + "?uuid=" + createdMdId).normalize().toString();
         assertXpath(dom,
