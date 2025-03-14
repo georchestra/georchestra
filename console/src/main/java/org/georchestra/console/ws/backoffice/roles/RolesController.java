@@ -466,6 +466,13 @@ public class RolesController {
         ResponseUtil.writeSuccess(response);
     }
 
+    @PostMapping(BASE_MAPPING + "/roles_orgs")
+    public void updateOrgs(HttpServletRequest request, HttpServletResponse response)
+            throws AccessDeniedException, IOException, JSONException, DataServiceException {
+
+        ResponseUtil.writeSuccess(response);
+    }
+
     public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole,
             List<String> deleteRole) throws AccessDeniedException {
         // Verify authorization
