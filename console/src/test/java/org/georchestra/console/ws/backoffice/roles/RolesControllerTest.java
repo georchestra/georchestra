@@ -442,8 +442,6 @@ public class RolesControllerTest {
         request.setRequestURI("/console/roles_users");
         Account testadmin = mockAccountLookup("testadmin");
         Account testuser = mockAccountLookup("testuser");
-        Role myRole = RoleFactory.create("USERS", "USERS role", false);
-        when(roleDao.findByCommonName(eq(myRole.getName()))).thenReturn(myRole);
 
         roleCtrl.updateUsers(request, response);
 
