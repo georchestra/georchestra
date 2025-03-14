@@ -457,7 +457,7 @@ public class RolesControllerTest {
     @Test
     public void updateOrgs() throws Exception {
         JSONObject toSend = new JSONObject().put("orgs", new JSONArray().put("testorga").put("testorgb"))
-                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray());
+                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_orgs");
         Org orgA = mockOrgLookup("testorga");
@@ -466,6 +466,7 @@ public class RolesControllerTest {
         roleCtrl.updateOrgs(request, response);
 
         verify(roleDao).addOrgsInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(orgA, orgB)));
+        verify(roleDao).deleteOrgsInRoles(eq(List.of("USERS")), eq(List.of(orgA, orgB)));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));

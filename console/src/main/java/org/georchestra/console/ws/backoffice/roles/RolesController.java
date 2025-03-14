@@ -480,12 +480,14 @@ public class RolesController {
 
         List<String> orgsCN = createUserOrOrgList(json, "orgs");
         List<String> putRole = createUserOrOrgList(json, "PUT");
+        List<String> deleteRole = createUserOrOrgList(json, "DELETE");
 
         List<Org> orgs = orgsCN.stream() //
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull).collect(Collectors.toList());
 
         this.roleDao.addOrgsInRoles(putRole, orgs);
+        this.roleDao.deleteOrgsInRoles(deleteRole, orgs);
 
         ResponseUtil.writeSuccess(response);
     }
