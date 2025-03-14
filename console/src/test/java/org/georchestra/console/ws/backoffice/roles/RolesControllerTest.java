@@ -1,7 +1,5 @@
 package org.georchestra.console.ws.backoffice.roles;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -15,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -441,23 +438,17 @@ public class RolesControllerTest {
     public void testUpdateUsers() throws Exception {
         JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
-
-        Account testadmin = mockAccountLookup("testadmin");
-        Account testuser = mockAccountLookup("testuser");
-
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_users");
-
+        Account testadmin = mockAccountLookup("testadmin");
+        Account testuser = mockAccountLookup("testuser");
         Role myRole = RoleFactory.create("USERS", "USERS role", false);
         when(roleDao.findByCommonName(eq(myRole.getName()))).thenReturn(myRole);
 
         roleCtrl.updateUsers(request, response);
 
-        List<Account> accounts = newArrayList(testadmin, testuser);
-
-        verify(roleDao).addUsersInRoles(eq(singletonList("ADMINISTRATOR")), eq(accounts));
-        verify(roleDao).deleteUsersInRoles(eq(singletonList("USERS")), eq(accounts));
-
+        verify(roleDao).addUsersInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(testadmin, testuser)));
+        verify(roleDao).deleteUsersInRoles(eq(List.of("USERS")), eq(List.of(testadmin, testuser)));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
@@ -474,8 +465,7 @@ public class RolesControllerTest {
 
         roleCtrl.updateOrgs(request, response);
 
-        List<Org> orgs = newArrayList(orgA, orgB);
-        verify(roleDao).addOrgsInRoles(eq(singletonList("ADMINISTRATOR")), eq(orgs));
+        verify(roleDao).addOrgsInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(orgA, orgB)));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
@@ -496,25 +486,25 @@ public class RolesControllerTest {
 
     @Test
     public void testCheckAuthorizationOK() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalUser() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testuser", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testuser", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalRolePut() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_ADMIN" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_ADMIN"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalRoleDelete() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_ADMIN" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_ADMIN"));
     }
 }
