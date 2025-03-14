@@ -131,8 +131,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
             }
 
             m.getOnlineResources()
-                    .add(onlineResource(d, databaseTableName, "OGC API - Features",
-                            publishing.getTitle(),
+                    .add(onlineResource(d, databaseTableName, "OGC API - Features", publishing.getTitle(),
                             buildUri(publishingConfiguration.getOgcfeatures().getPublicUrl(),
                                     "/collections/" + databaseTableName + "/items", "")));
         }
