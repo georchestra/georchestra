@@ -1,7 +1,5 @@
 package org.georchestra.console.ws.backoffice.roles;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -15,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +26,8 @@ import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
@@ -59,6 +58,7 @@ public class RolesControllerTest {
 
     private RoleDao roleDao;
     private AccountDao accountDao;
+    private OrgsDao orgDao;
 
     private UserRule userRule;
     private LdapContextSource contextSource;
@@ -75,6 +75,7 @@ public class RolesControllerTest {
         mockLogUtils = mock(LogUtils.class);
         roleDao = mock(RoleDao.class);
         accountDao = mock(AccountDao.class);
+        orgDao = mock(OrgsDao.class);
 
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
@@ -84,6 +85,7 @@ public class RolesControllerTest {
 
         roleCtrl = new RolesController(roleDao, userRule);
         roleCtrl.setAccountDao(accountDao);
+        roleCtrl.setOrgDao(orgDao);
 
         DelegationDao delegationDao = mock(DelegationDao.class);
         DelegationEntry resTestuser = new DelegationEntry();
@@ -436,23 +438,33 @@ public class RolesControllerTest {
     public void testUpdateUsers() throws Exception {
         JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
-
+        request.setContent(toSend.toString().getBytes());
+        request.setRequestURI("/console/roles_users");
         Account testadmin = mockAccountLookup("testadmin");
         Account testuser = mockAccountLookup("testuser");
 
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/console/roles_users");
-
-        Role myRole = RoleFactory.create("USERS", "USERS role", false);
-        when(roleDao.findByCommonName(eq(myRole.getName()))).thenReturn(myRole);
-
         roleCtrl.updateUsers(request, response);
 
-        List<Account> accounts = newArrayList(testadmin, testuser);
+        verify(roleDao).addUsersInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(testadmin, testuser)));
+        verify(roleDao).deleteUsersInRoles(eq(List.of("USERS")), eq(List.of(testadmin, testuser)));
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+        assertTrue(ret.getBoolean("success"));
+    }
 
-        verify(roleDao).addUsersInRoles(eq(singletonList("ADMINISTRATOR")), eq(accounts));
-        verify(roleDao).deleteUsersInRoles(eq(singletonList("USERS")), eq(accounts));
+    @Test
+    public void updateOrgs() throws Exception {
+        JSONObject toSend = new JSONObject().put("orgs", new JSONArray().put("testorga").put("testorgb"))
+                .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+        request.setContent(toSend.toString().getBytes());
+        request.setRequestURI("/console/roles_orgs");
+        Org orgA = mockOrgLookup("testorga");
+        Org orgB = mockOrgLookup("testorgb");
 
+        roleCtrl.updateOrgs(request, response);
+
+        verify(roleDao).addOrgsInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(orgA, orgB)));
+        verify(roleDao).deleteOrgsInRoles(eq(List.of("USERS")), eq(List.of(orgA, orgB)));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
@@ -465,27 +477,33 @@ public class RolesControllerTest {
         return account;
     }
 
+    private Org mockOrgLookup(String cn) throws NameNotFoundException, DataServiceException {
+        Org mockOrg = mock(Org.class);
+        when(orgDao.findByCommonName(eq(cn))).thenReturn(mockOrg);
+        return mockOrg;
+    }
+
     @Test
     public void testCheckAuthorizationOK() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalUser() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testuser", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testuser", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalRolePut() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_ADMIN" }), Arrays.asList(new String[] { "GN_EDITOR" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_ADMIN"),
+                List.of("GN_EDITOR"));
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testCheckAuthorizationIllegalRoleDelete() {
-        roleCtrl.checkAuthorization("testuser", Arrays.asList(new String[] { "testeditor", "testreviewer" }),
-                Arrays.asList(new String[] { "GN_REVIEWER" }), Arrays.asList(new String[] { "GN_ADMIN" }));
+        roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"),
+                List.of("GN_ADMIN"));
     }
 }
