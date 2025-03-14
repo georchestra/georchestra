@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -504,19 +505,11 @@ public class RolesController {
     }
 
     private List<String> createUserOrOrgList(JSONObject json, String arrayKey) throws IOException {
-
         try {
-
-            List<String> list = new LinkedList<String>();
-
             JSONArray jsonArray = json.getJSONArray(arrayKey);
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                list.add(jsonArray.getString(i));
-            }
-
-            return list;
-
+            return IntStream.range(0, jsonArray.length()) //
+                    .mapToObj(jsonArray::getString) //
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new IOException(e);
