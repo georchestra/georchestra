@@ -29,6 +29,8 @@ import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
@@ -59,6 +61,7 @@ public class RolesControllerTest {
 
     private RoleDao roleDao;
     private AccountDao accountDao;
+    private OrgsDao orgDao;
 
     private UserRule userRule;
     private LdapContextSource contextSource;
@@ -75,6 +78,7 @@ public class RolesControllerTest {
         mockLogUtils = mock(LogUtils.class);
         roleDao = mock(RoleDao.class);
         accountDao = mock(AccountDao.class);
+        orgDao = mock(OrgsDao.class);
 
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
@@ -84,6 +88,7 @@ public class RolesControllerTest {
 
         roleCtrl = new RolesController(roleDao, userRule);
         roleCtrl.setAccountDao(accountDao);
+        roleCtrl.setOrgDao(orgDao);
 
         DelegationDao delegationDao = mock(DelegationDao.class);
         DelegationEntry resTestuser = new DelegationEntry();
@@ -460,14 +465,17 @@ public class RolesControllerTest {
 
     @Test
     public void updateOrgs() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testorga").put("testorgb"))
+        JSONObject toSend = new JSONObject().put("orgs", new JSONArray().put("testorga").put("testorgb"))
                 .put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray());
-
         request.setContent(toSend.toString().getBytes());
         request.setRequestURI("/console/roles_orgs");
+        Org orgA = mockOrgLookup("testorga");
+        Org orgB = mockOrgLookup("testorgb");
 
         roleCtrl.updateOrgs(request, response);
 
+        List<Org> orgs = newArrayList(orgA, orgB);
+        verify(roleDao).addOrgsInRoles(eq(singletonList("ADMINISTRATOR")), eq(orgs));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
@@ -478,6 +486,12 @@ public class RolesControllerTest {
         account.setUid(uuid);
         when(accountDao.findByUID(eq(uuid))).thenReturn(account);
         return account;
+    }
+
+    private Org mockOrgLookup(String cn) throws NameNotFoundException, DataServiceException {
+        Org mockOrg = mock(Org.class);
+        when(orgDao.findByCommonName(eq(cn))).thenReturn(mockOrg);
+        return mockOrg;
     }
 
     @Test
