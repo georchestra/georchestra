@@ -36,6 +36,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -104,19 +105,15 @@ public class RolesController {
     private static final String VIRTUAL_EXPIRED_ROLE_NAME = "EXPIRED";
     private static final String VIRTUAL_EXPIRED_ROLE_DESCRIPTION = "Virtual role that contains all expired users";
 
-    @Autowired
     private AccountDao accountDao;
 
-    @Autowired
     private OrgsDao orgDao;
 
     @Autowired
     protected LogUtils logUtils;
 
-    @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
-    @Autowired
     private DelegationDao delegationDao;
 
     private RoleDao roleDao;
@@ -586,24 +583,12 @@ public class RolesController {
         }
     }
 
-    /**
-     * Method used for testing convenience.
-     *
-     * @param gd
-     */
-    public void setRoleDao(RoleDao gd) {
-        roleDao = gd;
-    }
-
-    /**
-     * Method used for testing convenience.
-     *
-     * @param ad
-     */
+    @Autowired
     public void setAccountDao(AccountDao ad) {
         this.accountDao = ad;
     }
 
+    @Autowired
     public void setOrgDao(OrgsDao orgDao) {
         this.orgDao = orgDao;
     }
@@ -612,6 +597,7 @@ public class RolesController {
         return advancedDelegationDao;
     }
 
+    @Autowired
     public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
         this.advancedDelegationDao = advancedDelegationDao;
     }
@@ -620,6 +606,7 @@ public class RolesController {
         return delegationDao;
     }
 
+    @Autowired
     public void setDelegationDao(DelegationDao delegationDao) {
         this.delegationDao = delegationDao;
     }
