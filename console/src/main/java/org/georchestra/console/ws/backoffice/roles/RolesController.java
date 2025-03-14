@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,6 +47,8 @@ import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
@@ -102,6 +105,9 @@ public class RolesController {
 
     @Autowired
     private AccountDao accountDao;
+
+    @Autowired
+    private OrgsDao orgDao;
 
     @Autowired
     protected LogUtils logUtils;
@@ -434,9 +440,9 @@ public class RolesController {
 
         JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
 
-        List<String> users = createUserList(json, "users");
-        List<String> putRole = createUserList(json, "PUT");
-        List<String> deleteRole = createUserList(json, "DELETE");
+        List<String> users = createUserOrOrgList(json, "users");
+        List<String> putRole = createUserOrOrgList(json, "PUT");
+        List<String> deleteRole = createUserOrOrgList(json, "DELETE");
 
         List<Account> accounts = users.stream().map(userUuid -> {
             try {
@@ -469,6 +475,16 @@ public class RolesController {
     @PostMapping(BASE_MAPPING + "/roles_orgs")
     public void updateOrgs(HttpServletRequest request, HttpServletResponse response)
             throws AccessDeniedException, IOException, JSONException, DataServiceException {
+        JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
+
+        List<String> orgsCN = createUserOrOrgList(json, "orgs");
+        List<String> putRole = createUserOrOrgList(json, "PUT");
+
+        List<Org> orgs = orgsCN.stream() //
+                .map(orgDao::findByCommonName) //
+                .filter(Objects::nonNull).collect(Collectors.toList());
+
+        this.roleDao.addOrgsInRoles(putRole, orgs);
 
         ResponseUtil.writeSuccess(response);
     }
@@ -487,7 +503,7 @@ public class RolesController {
 
     }
 
-    private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
+    private List<String> createUserOrOrgList(JSONObject json, String arrayKey) throws IOException {
 
         try {
 
@@ -591,6 +607,10 @@ public class RolesController {
      */
     public void setAccountDao(AccountDao ad) {
         this.accountDao = ad;
+    }
+
+    public void setOrgDao(OrgsDao orgDao) {
+        this.orgDao = orgDao;
     }
 
     public AdvancedDelegationDao getAdvancedDelegationDao() {
