@@ -2,6 +2,8 @@
 
 The `default.toml` file is the main configuration file for the datahub. It is located in the `datahub/conf` subfolder of the [georchestra datadir](https://github.com/georchestra/datadir/). Below are the main sections in the file.
 
+Full configuration can be found in the [geonetwork-ui documentation](https://geonetwork.github.io/geonetwork-ui/main/docs/guide/configure.html)
+
 ## Global settings
 
 The most important parameter is `geonetwork4_api_url` which should point at the API of the geonetwork instance. The default value `/geonetwork/srv/api` is a sensible one if datahub is installed on the same domain as geonetwork.
@@ -53,3 +55,25 @@ These 2 options are mutually exclusive (one only should be present in the config
 
 
 ## Translations
+
+Translations can be set for each key available in [`translations/`](https://github.com/geonetwork/geonetwork-ui/tree/main/translations) folder.
+
+# Organizations and images synchronization.
+
+By default, in geOrchestra, organizations are synchronized with the console application and create associated groups in Geonetwork. 
+
+In datahub, the organizations are, by default, retrieved from the first resource contact of the metadata. This can result in different names than the ones in GeoNetwork's group.
+
+## Recommended method
+
+To ensure images for organizations in datahub, it is recommended to set up images in one or more of the metadata that create a datahub organization.
+
+In full view edition, it is located in:
+- For a 19115-3 metadata: `Identification` tab > `Point of contact` > `Responsibility` > `Party` > `Organization` > `Logo`
+- For a 19139 metadata: `Identification` tab > `Point of contact` > `Responsible party` > `Contact information` > `Contact` > `Contact instructions`
+
+## Other method
+
+Alternatively, you can create a group in GeoNetwork with the same name as the organization in the metadata and set a logo for it.
+
+This method is not recommended as it can lead to inconsistencies between the console and GeoNetwork.
