@@ -2,7 +2,7 @@
 
 The `default.toml` file is the main configuration file for the datahub. It is located in the `datahub/conf` subfolder of the [georchestra datadir](https://github.com/georchestra/datadir/). Below are the main sections in the file.
 
-Full configuration can be found in the [geonetwork-ui documentation](https://geonetwork.github.io/geonetwork-ui/main/docs/guide/configure.html)
+Please note that the current documentation focuses on the main points and specifics of integration into geOrchestra. The full configuration options can be found in the [geonetwork-ui documentation](https://geonetwork.github.io/geonetwork-ui/main/docs/guide/configure.html).
 
 ## Global settings
 
