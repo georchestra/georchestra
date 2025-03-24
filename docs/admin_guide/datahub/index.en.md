@@ -2,6 +2,8 @@
 
 The `default.toml` file is the main configuration file for the datahub. It is located in the `datahub/conf` subfolder of the [georchestra datadir](https://github.com/georchestra/datadir/). Below are the main sections in the file.
 
+Please note that the current documentation focuses on the main points and specifics of integration into geOrchestra. The full configuration options can be found in the [geonetwork-ui documentation](https://geonetwork.github.io/geonetwork-ui/main/docs/guide/configure.html).
+
 ## Global settings
 
 The most important parameter is `geonetwork4_api_url` which should point at the API of the geonetwork instance. The default value `/geonetwork/srv/api` is a sensible one if datahub is installed on the same domain as geonetwork.
@@ -53,3 +55,27 @@ These 2 options are mutually exclusive (one only should be present in the config
 
 
 ## Translations
+
+Translations can be customized / overriden in the application config file:
+
+ * identify the translation key which is used by the application in the [`translations/`](https://github.com/geonetwork/geonetwork-ui/tree/main/translations) folder. eg `datahub.header.title.html` is the translation key which is used by default to provide the french title, as seen in the `fr.json` file (```"datahub.header.title.html": "<div class=\"text-white\">Toutes les données<br>publiques de mon organisation</div>"```).
+ * if required, create a `[translations.fr]` section in the `default.toml` file
+ * insert below the custom translation, eg ```datahub.header.title.html = '<div class="text-white">Toutes les données <br> de ma plateforme</div>'```
+
+# Organizations and their thumbnails
+
+The datahub is a standalone application which can be deployed independently of geOrchestra. Hence, organizations which are shown in the "Organizations" tab of the application stem from the metadata assets and only from the metadata assets. More precisely, organizations are named by the first resource contact of the metadata.
+
+But geOrchestra has also its own "organization" objects, which can be managed with the help of the console application, and often get synchronised with the GeoNetwork groups. geOrchestra "organization" objects may have a thumbnail, but this is not the one which gets displayed by the datahub.
+
+This makes it difficult to handle for now. We're working on a solution to this problem.
+
+In the mean time, to ensure that an organization featured by the datahub has its own thumbnail, it is recommended to edit at least one of the metadata which references this organization.
+
+When editing in "full view", the logo can be found:
+- for a ISO19115-3 metadata: `Identification` tab > `Point of contact` > `Responsibility` > `Party` > `Organization` > `Logo`
+- for a ISO19139 metadata: `Identification` tab > `Point of contact` > `Responsible party` > `Contact information` > `Contact` > `Contact instructions`
+
+
+Alternatively, if metadata editing is not an option, it is possible to create a group in GeoNetwork with the same name as the organization provided by the metadata and set a logo for it.
+This method is not ideal as it can lead to inconsistencies between the console and GeoNetwork.
