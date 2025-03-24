@@ -20,8 +20,8 @@ Users are saved in the LDAP directory and are authenticated by the gateway to be
 RabbitMQ is used to send messages between the gateway and the console but is not mandatory.
 It sends new external authentication information to the console, which is responsible for sending emails to administrators and logging it in the console's dashboard.
 
-## Self hiosted web server
+## Self hosted web server
 
 The self-hosted web server is used to serve static files and to manage the console's configuration.
-You can use apache, nginx, or any other web server to serve the console's static files.
+You can use apache, nginx, or any other web server to serve the static files like header configuration, css...
 
