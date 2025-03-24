@@ -56,24 +56,26 @@ These 2 options are mutually exclusive (one only should be present in the config
 
 ## Translations
 
-Translations can be set for each key available in [`translations/`](https://github.com/geonetwork/geonetwork-ui/tree/main/translations) folder.
+Translations can be customized / overriden in the application config file:
 
-# Organizations and images synchronization.
+ * identify the translation key which is used by the application in the [`translations/`](https://github.com/geonetwork/geonetwork-ui/tree/main/translations) folder. eg `datahub.header.title.html` is the translation key which is used by default to provide the french title, as seen in the `fr.json` file (```"datahub.header.title.html": "<div class=\"text-white\">Toutes les données<br>publiques de mon organisation</div>"```).
+ * if required, create a `[translations.fr]` section in the `default.toml` file
+ * insert below the custom translation, eg ```datahub.header.title.html = '<div class="text-white">Toutes les données <br> de ma plateforme</div>'```
 
-By default, in geOrchestra, organizations are synchronized with the console application and create associated groups in Geonetwork. 
+# Organizations and their thumbnails
 
-In datahub, the organizations are, by default, retrieved from the first resource contact of the metadata. This can result in different names than the ones in GeoNetwork's group.
+The datahub is a standalone application which can be deployed independently of geOrchestra. Hence, organizations which are shown in the "Organizations" tab of the application stem from the metadata assets and only from the metadata assets. More precisely, organizations are named by the first resource contact of the metadata.
 
-## Recommended method
+But geOrchestra has also its own "organization" objects, which can be managed with the help of the console application, and often get synchronised with the GeoNetwork groups. geOrchestra "organization" objects may have a thumbnail, but this is not the one which gets displayed by the datahub.
 
-To ensure images for organizations in datahub, it is recommended to set up images in one or more of the metadata that create a datahub organization.
+This makes it difficult to handle for now. We're working on a solution to this problem.
 
-In full view edition, it is located in:
-- For a 19115-3 metadata: `Identification` tab > `Point of contact` > `Responsibility` > `Party` > `Organization` > `Logo`
-- For a 19139 metadata: `Identification` tab > `Point of contact` > `Responsible party` > `Contact information` > `Contact` > `Contact instructions`
+In the mean time, to ensure that an organization featured by the datahub has its own thumbnail, it is recommended to edit at least one of the metadata which references this organization.
 
-## Other method
+When editing in "full view", the logo can be found:
+- for a ISO19115-3 metadata: `Identification` tab > `Point of contact` > `Responsibility` > `Party` > `Organization` > `Logo`
+- for a ISO19139 metadata: `Identification` tab > `Point of contact` > `Responsible party` > `Contact information` > `Contact` > `Contact instructions`
 
-Alternatively, you can create a group in GeoNetwork with the same name as the organization in the metadata and set a logo for it.
 
-This method is not recommended as it can lead to inconsistencies between the console and GeoNetwork.
+Alternatively, if metadata editing is not an option, it is possible to create a group in GeoNetwork with the same name as the organization provided by the metadata and set a logo for it.
+This method is not ideal as it can lead to inconsistencies between the console and GeoNetwork.
