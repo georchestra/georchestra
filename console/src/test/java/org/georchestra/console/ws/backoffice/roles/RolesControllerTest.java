@@ -1,5 +1,7 @@
 package org.georchestra.console.ws.backoffice.roles;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -468,6 +471,24 @@ public class RolesControllerTest {
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
+    }
+
+    @Test
+    public void listRolesWithOrg() throws DataServiceException {
+        Role roleAB = mock(Role.class);
+        when(roleAB.getName()).thenReturn("roleab");
+        when(roleAB.getOrgList()).thenReturn(List.of("testorga", "testorgb"));
+        when(roleAB.getUserList()).thenReturn(List.of());
+        Role roleNoOrg = mock(Role.class);
+        when(roleNoOrg.getName()).thenReturn("rolenorg");
+        when(roleNoOrg.getOrgList()).thenReturn(List.of());
+        when(roleNoOrg.getUserList()).thenReturn(List.of("testadmin", "testuser"));
+        when(roleDao.findAll()).thenReturn(new ArrayList<>(List.of(roleAB, roleNoOrg)));
+
+        List<Role> roles = roleCtrl.findAll();
+
+        assertThat(roles.stream().filter(role -> "roleab".equals(role.getName())).findFirst().get().getOrgList(), containsInAnyOrder("testorga", "testorgb"));
+        assertEquals(0, roles.stream().filter(role -> "rolenorg".equals(role.getName())).findFirst().get().getOrgList().size());
     }
 
     private Account mockAccountLookup(String uuid) throws NameNotFoundException, DataServiceException {
