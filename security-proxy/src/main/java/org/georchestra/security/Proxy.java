@@ -56,8 +56,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -364,12 +366,14 @@ public class Proxy {
      */
     @GetMapping(value = "/whoami", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String whoami(HttpServletRequest request) throws DataServiceException {
+    public ResponseEntity<String> whoami(HttpServletRequest request) throws DataServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();
 
         Optional<GeorchestraUser> usr = usersApi.findByUsername(authName);
 
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         final JSONObject ret = new JSONObject();
         final JSONObject georUsr = new JSONObject();
         if (usr.isPresent()) {
@@ -394,7 +398,7 @@ public class Proxy {
         } else {
             ret.put("GeorchestraUser", JSONObject.NULL);
         }
-        return ret.toString();
+        return new ResponseEntity<String>(ret.toString(), httpHeaders, org.springframework.http.HttpStatus.OK);
     }
 
     /**
