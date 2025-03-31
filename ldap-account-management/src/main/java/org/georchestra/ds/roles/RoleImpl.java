@@ -19,13 +19,22 @@
 
 package org.georchestra.ds.roles;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+import javax.naming.ldap.Rdn;
 
 /**
  * A role and its users.
@@ -33,11 +42,12 @@ import lombok.Setter;
  * @author Mauricio Pazos
  *
  */
-class RoleImpl implements Role, Comparable<Role> {
+class RoleImpl implements Role {
 
     private @Getter @Setter UUID uniqueIdentifier;
     private String name;
     private List<String> userList = new LinkedList<String>();
+    private List<String> orgList = new LinkedList<String>();
     private String description;
     private boolean isFavorite;
 
@@ -71,9 +81,12 @@ class RoleImpl implements Role, Comparable<Role> {
         return this.userList;
     }
 
+    @Override
+    public List<String> getOrgList() {
+        return this.orgList;
+    }
+
     /*
-     * (non-Javadoc)
-     *
      * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
      */
     @Override
@@ -89,14 +102,51 @@ class RoleImpl implements Role, Comparable<Role> {
     }
 
     /*
-     * (non-Javadoc)
-     *
      * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
      */
     @Override
     public void addUser(String userUid) {
         // Extracting the uid
         this.userList.add(userUid.replaceAll("uid=([^,]+).*$", "$1"));
+    }
+
+    @Override
+    public void addOrg(String orgUid) {
+        // Extracting the uid
+        this.orgList.add(orgUid.replaceAll("cn=([^,]+).*$", "$1"));
+    }
+
+    @Override
+    public void addMembers(String[] members) {
+        Map<String, List<String>> membersByOu = Arrays.stream(Optional.ofNullable(members).orElse(new String[0])) //
+                .map(Members::new) //
+                .collect(
+                        Collectors.groupingBy(Members::getOu, Collectors.mapping(Members::getId, Collectors.toList())));
+        orgList.addAll(membersByOu.getOrDefault("orgs", List.of()));
+        userList.addAll(membersByOu.getOrDefault("users", List.of()));
+    }
+
+    @Getter
+    private static class Members {
+        private String id;
+        private String ou = "unknown";
+
+        public Members(String dn) {
+            try {
+                LdapName ldapName = new LdapName(dn);
+                List<String> organizationalUnits = ldapName.getRdns().stream() //
+                        .filter(rdn -> "ou".equals(rdn.getType())) //
+                        .map(Rdn::getValue).map(Objects::toString).collect(Collectors.toList());
+                if (organizationalUnits.contains("orgs") && !organizationalUnits.contains("users")) {
+                    ou = "orgs";
+                    id = dn.replaceAll("cn=([^,]+).*$", "$1");
+                } else if (!organizationalUnits.contains("orgs") && organizationalUnits.contains("users")) {
+                    ou = "users";
+                    id = dn.replaceAll("uid=([^,]+).*$", "$1");
+                }
+            } catch (InvalidNameException e) {
+            }
+        }
     }
 
     @Override
