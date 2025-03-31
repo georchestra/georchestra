@@ -483,10 +483,26 @@ public class RolesController {
                 .map(orgDao::findByCommonName) //
                 .filter(Objects::nonNull).collect(Collectors.toList());
 
+        List<Account> accounts = orgs.stream() //
+                .map(Org::getMembers) //
+                .map(List::stream) //
+                .flatMap(s -> s.map(this::findAccount).filter(Objects::nonNull)) //
+                .collect(Collectors.toList());
+
+        this.roleDao.addUsersInRoles(putRole, accounts);
+        this.roleDao.deleteUsersInRoles(deleteRole, accounts);
         this.roleDao.addOrgsInRoles(putRole, orgs);
         this.roleDao.deleteOrgsInRoles(deleteRole, orgs);
 
         ResponseUtil.writeSuccess(response);
+    }
+
+    private Account findAccount(String uuid) {
+        try {
+            return accountDao.findByUID(uuid);
+        } catch (DataServiceException e) {
+            return null;
+        }
     }
 
     public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole,

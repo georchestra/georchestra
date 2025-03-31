@@ -463,11 +463,17 @@ public class RolesControllerTest {
         request.setRequestURI("/console/roles_orgs");
         Org orgA = mockOrgLookup("testorga");
         Org orgB = mockOrgLookup("testorgb");
+        Account user1 = mockAccountLookup("user1");
+        Account user2 = mockAccountLookup("user2");
+        when(orgA.getMembers()).thenReturn(List.of("user1"));
+        when(orgB.getMembers()).thenReturn(List.of("user2"));
 
         roleCtrl.updateOrgs(request, response);
 
         verify(roleDao).addOrgsInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(orgA, orgB)));
         verify(roleDao).deleteOrgsInRoles(eq(List.of("USERS")), eq(List.of(orgA, orgB)));
+        verify(roleDao).addUsersInRoles(eq(List.of("ADMINISTRATOR")), eq(List.of(user1, user2)));
+        verify(roleDao).deleteUsersInRoles(eq(List.of("USERS")), eq(List.of(user1, user2)));
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
@@ -487,8 +493,10 @@ public class RolesControllerTest {
 
         List<Role> roles = roleCtrl.findAll();
 
-        assertThat(roles.stream().filter(role -> "roleab".equals(role.getName())).findFirst().get().getOrgList(), containsInAnyOrder("testorga", "testorgb"));
-        assertEquals(0, roles.stream().filter(role -> "rolenorg".equals(role.getName())).findFirst().get().getOrgList().size());
+        assertThat(roles.stream().filter(role -> "roleab".equals(role.getName())).findFirst().get().getOrgList(),
+                containsInAnyOrder("testorga", "testorgb"));
+        assertEquals(0,
+                roles.stream().filter(role -> "rolenorg".equals(role.getName())).findFirst().get().getOrgList().size());
     }
 
     private Account mockAccountLookup(String uuid) throws NameNotFoundException, DataServiceException {
