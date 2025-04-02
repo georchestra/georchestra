@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -114,10 +115,10 @@ public class GeoNetworkRemoteService {
      * @return
      */
     public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString,
-            String group) {
+            String group, UserInfo user, Boolean actuallyPublish) {
         final String xmlRecord = xmlRecordAsString.get();
 
-        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord, group);
+        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord, group, user, actuallyPublish);
 
         HttpStatus statusCode = response.getStatus();
         String statusText = response.getStatusText();

@@ -21,6 +21,7 @@ package org.georchestra.datafeeder.service.geonetwork;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -30,6 +31,7 @@ import java.net.URI;
 import java.net.URL;
 
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.ExternalApiConfiguration;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -82,9 +84,10 @@ public class GeoNetworkRemoteServiceTest {
         response.setStatus(HttpStatus.CREATED);
 
         String group = "psc";
-        when(mockClient.putXmlRecord(eq(id), eq(record), eq(group))).thenReturn(response);
+        when(mockClient.putXmlRecord(eq(id), eq(record), eq(group), any(UserInfo.class), eq(true)))
+                .thenReturn(response);
 
-        GeoNetworkResponse ret = service.publish(id, () -> record, group);
+        GeoNetworkResponse ret = service.publish(id, () -> record, group, mock(UserInfo.class), true);
         assertSame(response, ret);
     }
 

@@ -32,10 +32,13 @@ import org.fao.geonet.client.ApiException;
 import org.fao.geonet.client.GroupsApi;
 import org.fao.geonet.client.MeApi;
 import org.fao.geonet.client.RecordsApi;
+import org.fao.geonet.client.UsersApi;
 import org.fao.geonet.client.model.Group;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.MeResponse;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
+import org.fao.geonet.client.model.User;
+import org.georchestra.datafeeder.model.UserInfo;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -92,10 +95,20 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
     }
 
     /**
-     * @param baseUrl e.g. {@code http://localhost:8080/geonetwork}
+     * Inserts a metadata into GeoNetwork.
+     *
+     * @param metadataId   the metadata UUID to insert
+     * @param xmlRecord    the raw metadata, a String representing the XML.
+     * @param groupName    the name of the group the metadata should be attached to.
+     * @param user         the UserInfo object describing the user having uploaded
+     *                     the dataset.
+     * @param publishToAll whether the metadata should be published right after
+     *                     having been added to the catalogue or not.
+     * @return the GeoNetworkResponse resulting object
      */
     @Override
-    public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName) {
+    public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName,
+            UserInfo user, Boolean publishToAll) {
 
         ApiClient client = newApiClient();
         // RecordsApi api = client.buildClient(RecordsApi.class);
@@ -113,8 +126,6 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         final String transformWith = null;
         final String schema = null;
         final String extra = null;
-        // This param makes the record public, but it seems it doesn't work in GN 3.8.x
-        final Boolean publishToAll = true;
 
         SimpleMetadataProcessingReport report;
 
@@ -132,8 +143,9 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
                 httpClient.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
             }
             // need to call publish, since publishToAll doesn't work/exist in GN 3.8.x?
-            api.publish(metadataId);
-
+            if (publishToAll) {
+                api.publish(metadataId);
+            }
             log.info("Published record {} to GeoNetwork", metadataId);
 
         } catch (ApiException e) {
@@ -148,6 +160,21 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             responseHeaders.forEach(headers::addAll);
             r.setHeaders(headers);
             return r;
+        }
+
+        try {
+            UsersApi usersApi = new UsersApi(client);
+            // TODO Isn't there a more efficient way to look up a user using the API ?
+            Optional<User> impersonatedUser = usersApi.getUsers().stream()
+                    .filter(usr -> usr.getUsername().equals(user.getUsername())).findFirst();
+            if ((!impersonatedUser.isPresent()) || (!groupId.isPresent())) {
+                log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
+                        user.getUsername(), groupName);
+            } else {
+                api.setRecordOwnership(metadataId, groupId.get(), impersonatedUser.get().getId(), true);
+            }
+        } catch (ApiException e) {
+            log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
         }
 
         GeoNetworkResponse r = new GeoNetworkResponse();
@@ -178,7 +205,7 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         return record;
     }
 
-    private ApiClient newApiClient() {
+    ApiClient newApiClient() {
         Objects.requireNonNull(this.apiUrl, () -> getClass().getSimpleName() + ": API URL is not set");
         final String baseUrl = this.apiUrl.toExternalForm();
         ApiClient client = new ApiClient();

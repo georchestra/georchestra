@@ -91,6 +91,7 @@ public @Data class DataFeederConfigurationProperties {
         private URI templateRecord;
         private URI templateTransform;
         private String defaultResourceType = "dataset";
+        private boolean publishMetadata = true;
     }
 
     @Data
