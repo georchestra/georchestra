@@ -1,4 +1,4 @@
-# Software architecture
+# geOrchestra architecture
 
 ![Software architecture](./images/geOrchestra-full.jpg)
 
