@@ -1,6 +1,6 @@
 # geOrchestra architecture
 
-![Software architecture](./images/geOrchestra-full.jpg)
+[![Software architecture](./images/geOrchestra-full.jpg)](./images/geOrchestra-full.jpg)
 
 ## Routing and reverse proxy
 
