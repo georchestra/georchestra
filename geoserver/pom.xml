@@ -33,7 +33,6 @@
     <!-- this ones are not provided onto the osgeo m2 repo -->
     <module>geoserver-submodule/src/extension/wmts-multi-dimensional</module>
     <module>geoserver-submodule/src/extension/ogcapi</module>
-    <module>geoserver-submodule/src/community/ogcapi</module>
     <module>webapp</module>
   </modules>
   <profiles>
