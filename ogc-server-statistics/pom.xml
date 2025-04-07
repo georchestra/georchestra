@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>24.1-SNAPSHOT</version>
+		<version>24.1_orgs_with_roles-SNAPSHOT</version>
 	</parent>
 	<artifactId>ogc-server-statistics</artifactId>
 	<packaging>jar</packaging>

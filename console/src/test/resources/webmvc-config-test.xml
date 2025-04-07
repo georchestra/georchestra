@@ -107,31 +107,16 @@
     <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
   </bean>
 
-  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-    <constructor-arg ref="contextSource"/>
-  </bean>
+  <bean id="ldapDaoConfiguration" class="org.georchestra.ds.LdapDaoConfiguration" />
 
-  <bean id="roleDao" class="org.georchestra.ds.roles.RoleDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
-  </bean>
-
-  <bean id="orgsDao" class="org.georchestra.ds.orgs.OrgsDaoImpl">
-    <property name="ldapTemplate" ref="ldapTemplate"/>
+  <bean id="ldapDaoProperties" class="org.georchestra.ds.LdapDaoProperties">
     <property name="basePath" value="${ldapBaseDn}"/>
-    <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
     <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
-  </bean>
-
-  <bean id="accountDao" class="org.georchestra.ds.users.AccountDaoImpl">
-    <constructor-arg ref="ldapTemplate"/>
-    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
     <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
     <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
-    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
-    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
-    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
   <bean id="AccountGDPRDao" class="org.georchestra.console.ds.AccountGDPRDaoImpl"/>
