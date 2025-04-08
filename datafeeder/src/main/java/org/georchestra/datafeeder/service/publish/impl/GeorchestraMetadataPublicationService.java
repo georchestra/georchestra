@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.georchestra.datafeeder.autoconf.GeorchestraNameNormalizer;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.config.DataFeederConfigurationProperties.PublishingConfiguration;
 import org.georchestra.datafeeder.config.PostgisSchemasConfiguration;
 import org.georchestra.datafeeder.model.DatasetUploadState;
@@ -63,6 +64,8 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
     private GeorchestraNameNormalizer nameResolver;
     private @Autowired(required = false) PostgisSchemasConfiguration postgisSchemasConfiguration;
 
+    private @Autowired DataFeederConfigurationProperties dataFeederConfigurationProperties;
+
     public @Autowired GeorchestraMetadataPublicationService(//
             @NonNull GeoNetworkRemoteService geonetwork, //
             @NonNull TemplateMapper templateMapper, //
@@ -94,10 +97,13 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         Supplier<String> record = templateMapper.apply(mdProps);
         Organization organization = user.getOrganization();
         // The metadata is inserted into the group which already exists due to
-        // GeoNetwork's LDAP sync (which currently garantees that a geonetwork group
+        // GeoNetwork's LDAP sync (which currently guarantees that a geonetwork group
         // exists for the publishing organization)
+        // TODO what if the sync is configured to synchronize against the roles, and not
+        // against the orgs ?
         String mdGroupId = organization.getShortName();
-        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId);
+        Boolean actuallyPublish = publishingConfiguration.getGeonetwork().isPublishMetadata();
+        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId, user, actuallyPublish);
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 

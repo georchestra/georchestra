@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Map;
 
 import lombok.NonNull;
+import org.georchestra.datafeeder.model.UserInfo;
 
 public interface GeoNetworkClient {
 
@@ -34,7 +35,8 @@ public interface GeoNetworkClient {
 
     void checkServiceAvailable() throws IOException;
 
-    GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName);
+    GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName,
+            UserInfo user, Boolean publishToAll);
 
     String getXmlRecord(@NonNull String recordId);
 

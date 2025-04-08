@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.transaction.Transactional;
 
@@ -32,6 +31,7 @@ import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetProgress;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.DatasetPublishingStep;
 import org.georchestra.datafeeder.batch.publish.PublishJobProgressTracker.JobProgress;
+import org.georchestra.datafeeder.config.DataFeederConfigurationProperties;
 import org.georchestra.datafeeder.model.DataUploadJob;
 import org.georchestra.datafeeder.model.DatasetUploadState;
 import org.georchestra.datafeeder.model.JobStatus;
@@ -77,7 +77,7 @@ public class PublishingBatchService {
         return repository.findByJobId(jobId).orElseThrow(() -> new IllegalArgumentException("job not found: " + jobId));
     }
 
-    private void checkAnalisisComplete(DataUploadJob job) {
+    private void checkAnalysisComplete(DataUploadJob job) {
         if (job.getAnalyzeStatus() != JobStatus.DONE) {
             throw new IllegalStateException(String.format("Datasets analysis not complete for job %s: %s",
                     job.getJobId(), job.getAnalyzeStatus()));
@@ -93,7 +93,7 @@ public class PublishingBatchService {
 
     private DataUploadJob findAndCheckPublishStatusIsRunning(@NonNull UUID jobId) {
         DataUploadJob job = findJob(jobId);
-        checkAnalisisComplete(job);
+        checkAnalysisComplete(job);
         checkPublishingStatus(jobId, job.getPublishStatus(), JobStatus.RUNNING);
         return job;
     }
@@ -125,7 +125,7 @@ public class PublishingBatchService {
     public void initializeJobPublishingStatus(@NonNull UUID jobId) {
         log.info("Publish {}: Initialize job status to {}", jobId, JobStatus.RUNNING);
         DataUploadJob job = findJob(jobId);
-        checkAnalisisComplete(job);
+        checkAnalysisComplete(job);
         job.setPublishStatus(JobStatus.RUNNING);
         save(job);
         this.progressTracker.initialize(job);
@@ -183,6 +183,18 @@ public class PublishingBatchService {
         return repository.saveAndFlush(job);
     }
 
+    /**
+     * Inserts the metadata into the GeoNetwork Catalogue. the method name is
+     * misleading, as it is possible to insert a metadata into the catalogue but
+     * keep it "unpublished", meaning that a reviewer will have a chance to review
+     * it and manually publish it (as in "making the metadata public") afterwards.
+     *
+     * Whether to publish the metadata or not is subject to the
+     * `datafeeder.publishing.geonetwork.publish-metadata` configuration flag.
+     *
+     * @param jobId the job identifier
+     * @param user  the user object having uploaded the dataset.
+     */
     public void step3_publishDatasetsMetadataToGeoNetwork(@NonNull UUID jobId, @NonNull UserInfo user) {
         log.info("Publish {}: Publish datasets metadata to GeoNetwork", jobId);
         DataUploadJob job = findAndCheckPublishStatusIsRunning(jobId);

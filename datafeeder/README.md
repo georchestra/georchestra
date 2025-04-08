@@ -6,7 +6,8 @@ The separate front-end UI service provides the wizard-like user interface to int
 
 ## Add georchestra/data-api
 
-In order to implement [geOrchestra's data-api](https://github.com/georchestra/data-api) you must implement:
+In order to integrate the Datafeeder with [geOrchestra's data-api](https://github.com/georchestra/data-api), you will have to follow the
+next sections, depending on the version of the data-api you are using.
 
 ### For all data-api versions
 In datafeeder.properties:
@@ -48,35 +49,31 @@ georchestra$ make docker-build-datafeeder
 Use the following maven properties to skip tests and/or integration tests:
 
 * `-DskipTests` skips both unit and integration tests
-* `-DskipITs` skips only integration tests and also avoid launching the docker composition (see section below)
-* `-D-Ddocker-compose.skip=true` avoids running the docker composition (see section below)
+* `-DskipITs` skips only integration tests
 
 ### Integration testing: docker compose
 
-For integration testing, some external services are required. For instance:
+For integration testing, some external services are required:
 - A geOrchestra GeoServer instance
 - A geOrchestra GeoNetwork instance
 - A PostgreSQL database with PostGIS extension, for which we're using geOrchestra's `database` docker image
 
-There is a docker composition with just the required extenal services in the `docker-compose.yml` file.
+There is a docker composition with just the required external services in the `docker-compose.yml` file.
 
-A normal build with no extra aguments (e.g. `mvn verify`) will take care of running the docker composition before the integration tests are run, and shut it down afterwards. This is performed by the `com.dkanejs.maven.plugins:docker-compose-maven-plugin`, launching the composition at maven's `pre-integration-test` phase, and shutting it down during `post-integration-test`.
-
-Since this process may take a while, during development it is desirable to have the composition already running through several runs of the integration tests suite. To do so, launch the composition manually with
+Prior to launch the integration tests, you will have to set up the provided docker
+composition by hand,  as follows:
 
 ```bash
 $ docker-compose -f docker-compose.yml up -d
 ```
 
-With that in place, run the tests as many times as needed from the IDE or the console by enabling the `docker-compose.skip` flag:
+With the services from the composition in place, run the tests as many times as needed from the IDE or the console:
 
 ```bash
-$ mvn verify -Ddocker-compose.skip=true
+$ mvn verify
 ```
 
-so that the `docker-compose-maven-plugin` does not run.
-
-The integration tests ough to be written in a way that support multiple runs without re-initializing the external services state (for example, randomizing database schema names when going to create a schema and such).
+The integration tests ought to be written in a way that support multiple runs without re-initializing the external services state (for example, randomizing database schema names when going to create a schema and such).
 
 ### Build the docker image:
 

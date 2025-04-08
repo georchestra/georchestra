@@ -149,6 +149,7 @@ datafeeder:
       api-url: http://localhost:28080/geonetwork
       public-url: https://georchestra.mydomain.org/geonetwork
       log-requests: false
+      publish-metadata: true
     ogcfeatures:
       public-url: https://georchestra.mydomain.org/ogc
     backend:
