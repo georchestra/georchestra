@@ -308,7 +308,7 @@ public class ProxyTest {
         proxy.setUsersApi(uapi);
 
         request = new MockHttpServletRequest(RequestMethod.GET.toString(), "/whoami");
-        String content = proxy.whoami(request);
+        String content = proxy.whoami(request).toString();
 
         assertTrue(content.contains("\"username\":\"anonymousUser\"")
                 && content.contains("\"roles\":[\"ROLE_ANONYMOUS\"]"));
