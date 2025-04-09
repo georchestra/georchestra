@@ -29,12 +29,6 @@
     <security:expression-handler ref="expressionHandler"/>
   </security:global-method-security>
 
-  <bean id="swagger2Config" class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration"/>
-  <mvc:resources mapping="swagger-ui.html"
-                 location="classpath:/META-INF/resources/" />
-  <mvc:resources mapping="/webjars/**"
-                 location="classpath:/META-INF/resources/webjars/" />
-
   <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
       <property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
   </bean>
@@ -62,6 +56,7 @@
         <entry key="headerScript" value="${headerScript}" />
         <entry key="logoUrl" value="${logoUrl}" />
         <entry key="georchestraStylesheet" value="${georchestraStylesheet:}" />
+        <entry key="headerConfigFile" value="${headerConfigFile:}" />
         <entry key="competenceAreaEnabled" value="${competenceAreaEnabled:false}" />
         <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
@@ -177,27 +172,42 @@
     <property name="driverClassName" value="org.postgresql.Driver"/>
   </bean>
 
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
-        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
-        <property name="user" value="${pgsqlUser}"/>
-        <property name="password" value="${pgsqlPassword}"/>
-        <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="initialPoolSize" value="2"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout:1000}"/>
-        <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
-        <property name="acquireIncrement" value="2"/>
-        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
-    </bean>
+  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
+    <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+    <property name="user" value="${pgsqlUser}"/>
+    <property name="password" value="${pgsqlPassword}"/>
+    <property name="driverClass" value="org.postgresql.Driver"/>
+    <property name="initialPoolSize" value="2"/>
+    <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
+    <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
+    <property name="checkoutTimeout" value = "${dataSource.timeout:1000}"/>
+    <property name="idleConnectionTestPeriod" value="30"/>
+    <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
+    <property name="acquireIncrement" value="2"/>
+    <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
+  </bean>
 
-   <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
-       <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-       <!--<property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>-->
-       <!--<property name="username" value="${pgsqlUser}"/>-->
-       <!--<property name="password" value="${pgsqlPassword}"/>-->
-   <!--</bean>-->
+  <bean id="waitForDbGeonetwork" class="org.georchestra.commons.WaitForDb">
+    <property name="url" value="jdbc:postgresql://${pgsqlGNHost:${pgsqlHost}}:${pgsqlGNPort:${pgsqlPort}}/${pgsqlGNDatabase:${pgsqlDatabase}}"/>
+    <property name="username" value="${pgsqlGNUser:${pgsqlUser}}"/>
+    <property name="password" value="${pgsqlGNPassword:${pgsqlPassword}}"/>
+    <property name="driverClassName" value="org.postgresql.Driver"/>
+  </bean>
+
+  <bean id="dataSourceGeonetwork" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDbGeonetwork">
+    <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlGNHost:${pgsqlHost}}:${pgsqlGNPort:${pgsqlPort}}/${pgsqlGNDatabase:${pgsqlDatabase}}"/>
+    <property name="user" value="${pgsqlGNUser:${pgsqlUser}}"/>
+    <property name="password" value="${pgsqlGNPassword:${pgsqlPassword}}"/>
+    <property name="driverClass" value="org.postgresql.Driver"/>
+    <property name="initialPoolSize" value="2"/>
+    <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
+    <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
+    <property name="checkoutTimeout" value = "${dataSource.timeout:1000}"/>
+    <property name="idleConnectionTestPeriod" value="30"/>
+    <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
+    <property name="acquireIncrement" value="2"/>
+    <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
+  </bean>
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
        <property name="dataSource" ref="dataSource" />

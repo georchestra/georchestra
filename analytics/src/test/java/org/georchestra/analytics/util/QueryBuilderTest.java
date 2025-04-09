@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import com.google.common.base.Strings;
@@ -23,7 +23,7 @@ public class QueryBuilderTest {
         if (Strings.isNullOrEmpty(url)) {
             url = System.getenv("JDBC_TEST_URL");
         }
-        Assume.assumeTrue(!Strings.isNullOrEmpty(url));
+        Assumptions.assumeTrue(!Strings.isNullOrEmpty(url));
 
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(url);
@@ -49,6 +49,6 @@ public class QueryBuilderTest {
                 + "AND user = 'biloute' " + "GROUP BY to_char(date, 'YYYY-mm-dd HH24') "
                 + "ORDER BY to_char(date, 'YYYY-mm-dd HH24')";
 
-        Assert.assertEquals(sqlWithReplacments, finalQuery);
+        Assertions.assertEquals(sqlWithReplacments, finalQuery);
     }
 }

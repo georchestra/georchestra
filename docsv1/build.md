@@ -54,5 +54,5 @@ mvn -Dmaven.test.skip=true --projects \!geowebcache-webapp clean install
 As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/``` directory.
 Now, let's [prepare the system](setup.md) to receive the webapps.
 
-Are you having problems with the build ? Please ask on IRC [freenode#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra).
+Are you having problems with the build ? Please ask on IRC [#georchestra](https://matrix.to/#/#georchestra:osgeo.org).
 Note that if you're connecting to the internet through proxies, you need to [tell maven how to reach public repositories](http://maven.apache.org/guides/mini/guide-proxies.html).

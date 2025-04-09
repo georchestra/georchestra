@@ -1,7 +1,6 @@
 require('components/user/user.tpl')
 
 require('services/util')
-require('services/contexts')
 
 class UserController {
   static $inject = ['$routeParams', '$injector', '$location', 'User', 'Role', 'Orgs']
@@ -46,7 +45,7 @@ class UserController {
           const options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
-          $injector.get('Orgs').query(orgs => {
+          $injector.get('Orgs').query({ logos: false }, (orgs) => {
             this.orgs = orgs.filter(o => !o.pending)
           })
         })
@@ -63,9 +62,6 @@ class UserController {
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
     switch (this.tab) {
-      case 'infos':
-        this.contexts = $injector.get('Contexts').query()
-        break
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
         this.attachments = this.$injector.get('Attachments').query()
@@ -424,7 +420,7 @@ angular.module('manager')
         user.pending = false
       }
       const selOrgs = []
-      Orgs.query((orgs) => {
+      Orgs.query({ logos: false }, (orgs) => {
         orgs.forEach((o) => {
           if (user.pending || !o.pending) {
             selOrgs.push({

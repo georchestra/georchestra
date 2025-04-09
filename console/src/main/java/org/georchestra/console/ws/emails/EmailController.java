@@ -75,12 +75,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class EmailController {
@@ -152,7 +147,7 @@ public class EmailController {
      * @return JSON list of Emails sent to specified user
      * @throws JSONException
      */
-    @RequestMapping(value = "/{recipient}/emails", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/{recipient}/emails", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String emailsList(@PathVariable String recipient) throws JSONException {
         this.checkAuthorisation(recipient);
@@ -178,11 +173,11 @@ public class EmailController {
      * @throws MessagingException    if email cannot be sent through SMTP protocol
      * @throws IOException           if email cannot be sent through SMTP protocol
      */
-    @RequestMapping(value = "{recipient}/sendEmail", method = RequestMethod.POST)
+    @PostMapping("{recipient}/sendEmail")
     @ResponseBody
-    public String sendEmail(@PathVariable String recipient, @RequestParam("subject") String subject,
-            @RequestParam("content") String content, @RequestParam("attachments") String attachmentsIds,
-            HttpServletRequest request, HttpServletResponse response)
+    public String sendEmail(@PathVariable String recipient, @RequestParam String subject, @RequestParam String content,
+            @RequestParam("attachments") String attachmentsIds, HttpServletRequest request,
+            HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, MessagingException, JSONException {
 
         this.checkAuthorisation(recipient);
@@ -200,7 +195,7 @@ public class EmailController {
         if (attachmentsIds.length() > 0) {
             String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
             for (String attId : attachmentsIdsList) {
-                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+                Attachment att = this.attachmentRepo.findFirstById(Long.parseLong(attId));
                 if (att == null)
                     throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
                 attachments.add(att);
@@ -220,29 +215,12 @@ public class EmailController {
     }
 
     /**
-     * This service can be used to test email sending
-     *
-     * @param recipient login of recipient
-     * @return Html page to test email sending
-     */
-    @RequestMapping(value = "{recipient}/sendEmail", method = RequestMethod.GET)
-    @ResponseBody
-    public String sendEmail(@PathVariable String recipient) {
-        return "<form method=POST>" + "recipient : " + recipient + "<br>"
-                + "subject : <input type='test' name='subject'><br>"
-                + "content : <textarea name='content'></textarea><br>"
-                + "comma separated list of attachment identifier <input type='text' name='attachments'><br>"
-                + "<input type='submit'>" + "</form>";
-
-    }
-
-    /**
      * List available attachments in database
      *
      * @return JSON object containing all attachments available in database
      * @throws JSONException if there is error when encoding to JSON
      */
-    @RequestMapping(value = "/attachments", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/attachments", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String attachments() throws JSONException {
         JSONArray attachments = new JSONArray();
@@ -265,7 +243,7 @@ public class EmailController {
      * @return JSON object containing all templates found in database
      * @throws JSONException if templates cannot be encoded to JSON
      */
-    @RequestMapping(value = "/emailTemplates", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/emailTemplates", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String emailTemplates() throws JSONException {
         JSONArray emailTemplates = new JSONArray();
@@ -303,7 +281,7 @@ public class EmailController {
      * please do not reply." }
      *
      */
-    @RequestMapping(value = "/emailProxy", method = RequestMethod.POST, produces = "application/json; charset=utf-8", consumes = "application/json")
+    @PostMapping(value = "/emailProxy", produces = "application/json; charset=utf-8", consumes = "application/json")
     @ResponseBody
     public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
             throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {

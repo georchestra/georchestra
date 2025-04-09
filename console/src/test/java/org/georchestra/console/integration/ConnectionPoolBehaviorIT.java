@@ -57,7 +57,7 @@ public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 
-    private @Autowired DataSource ds;
+    private @Autowired DataSource dataSource;
 
     private @Value("${dataSource.maxPoolSize}") int maxPoolSize;
 
@@ -75,7 +75,7 @@ public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
         List<Connection> consumeAll = new ArrayList<>();
         for (int i = 0; i < maxPoolSize; i++) {
             try {
-                Connection connection = ds.getConnection();
+                Connection connection = dataSource.getConnection();
                 consumeAll.add(connection);
                 if (testConnection == null) {// keep one to be used after the server closed all connections
                     testConnection = connection;
@@ -117,7 +117,7 @@ public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
 
         // but the pool should be able to provision up to maxPoolSize connections again
         for (int i = 0; i < maxPoolSize; i++) {
-            try (Connection newConnection = ds.getConnection()) {
+            try (Connection newConnection = dataSource.getConnection()) {
                 assertThat(countConnections(newConnection), greaterThanOrEqualTo(1));
             }
         }
@@ -128,7 +128,7 @@ public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
         }
 
         for (int i = 0; i < maxPoolSize; i++) {
-            try (Connection newConnection = ds.getConnection()) {
+            try (Connection newConnection = dataSource.getConnection()) {
                 assertThat(countConnections(newConnection), greaterThanOrEqualTo(1));
             }
         }

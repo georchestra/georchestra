@@ -56,14 +56,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -273,7 +276,7 @@ public class Proxy {
         gateway.loadCredentialsPage(request, response);
     }
 
-    @RequestMapping(value = "/testPage", method = { GET })
+    @GetMapping("/testPage")
     public void testPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         gateway.testPage(response);
@@ -361,14 +364,16 @@ public class Proxy {
      * Entry point available for non security-proxified webapps to get information
      * about current user.
      */
-    @RequestMapping(value = "/whoami", method = { GET }, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/whoami", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String whoami(HttpServletRequest request) throws DataServiceException {
+    public ResponseEntity<String> whoami(HttpServletRequest request) throws DataServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final String authName = authentication.getName();
 
         Optional<GeorchestraUser> usr = usersApi.findByUsername(authName);
 
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         final JSONObject ret = new JSONObject();
         final JSONObject georUsr = new JSONObject();
         if (usr.isPresent()) {
@@ -385,7 +390,6 @@ public class Proxy {
             georUsr.put("postalAddress", finalUser.getPostalAddress());
             georUsr.put("telephoneNumber", finalUser.getTelephoneNumber());
             georUsr.put("title", finalUser.getTitle());
-            georUsr.put("notes", finalUser.getNotes());
             georUsr.put("ldapWarn", finalUser.getLdapWarn());
             georUsr.put("ldapRemainingDays", finalUser.getLdapRemainingDays());
             georUsr.put("oauth2Provider", finalUser.getOAuth2Provider());
@@ -394,7 +398,7 @@ public class Proxy {
         } else {
             ret.put("GeorchestraUser", JSONObject.NULL);
         }
-        return ret.toString();
+        return new ResponseEntity<String>(ret.toString(), httpHeaders, org.springframework.http.HttpStatus.OK);
     }
 
     /**

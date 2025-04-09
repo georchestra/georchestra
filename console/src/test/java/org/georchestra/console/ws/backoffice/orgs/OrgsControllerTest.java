@@ -6,6 +6,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -101,6 +103,9 @@ public class OrgsControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(reqUsr.toString().getBytes());
 
+        // when(toTest.validation.validateOrgUnicity(mockOrgsDao,
+        // reqUsr)).thenReturn(true);
+
         toTest.updateOrgInfos("csc", request);
 
         verify(mockOrgsDao).update(mockOrg);
@@ -121,6 +126,9 @@ public class OrgsControllerTest {
         Validation mockValidation = mock(Validation.class);
         when(mockValidation.validateOrgField(anyString(), any(JSONObject.class))).thenReturn(true);
         when(mockValidation.validateUrl(anyString())).thenReturn(true);
+        JSONObject mockChanges = new JSONObject();
+        when(mockValidation.validateOrgUnicity(mockOrgsDao, mockChanges)).thenReturn(true);
+        when(mockValidation.validateOrgUnicity(eq(mockOrgsDao), any(JSONObject.class))).thenReturn(true);
         OrgsController toTest = new OrgsController(mockOrgsDao);
         toTest.delegationDao = delegationDaoMock;
         toTest.advancedDelegationDao = advancedDelegationDaoMock;

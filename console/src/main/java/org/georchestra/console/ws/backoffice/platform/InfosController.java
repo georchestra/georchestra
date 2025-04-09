@@ -62,7 +62,7 @@ public class InfosController {
     @Value("${headerUrl:/header/}")
     private String headerUrl;
 
-    @Value("${headerHeight:90}")
+    @Value("${headerHeight:80}")
     private String headerHeight;
 
     @Value("${headerScript:https://cdn.jsdelivr.net/gh/georchestra/header@dist/header.js}")
@@ -73,6 +73,9 @@ public class InfosController {
 
     @Value("${georchestraStylesheet:}")
     private String georchestraStylesheet;
+
+    @Value("${headerConfigFile:}")
+    private String headerConfigFile;
 
     @GetMapping(value = BASE_MAPPING + "/platform/infos", produces = "application/json; charset=utf-8")
     @PreAuthorize(value = "hasAnyRole('SUPERUSER', 'ORGADMIN')")
@@ -89,6 +92,7 @@ public class InfosController {
         ret.put("headerHeight", headerHeight);
         ret.put("headerScript", headerScript);
         ret.put("logoUrl", logoUrl);
+        ret.put("headerConfigFile", headerConfigFile);
         ret.put("georchestraStylesheet", georchestraStylesheet);
         return ret.toString();
     }

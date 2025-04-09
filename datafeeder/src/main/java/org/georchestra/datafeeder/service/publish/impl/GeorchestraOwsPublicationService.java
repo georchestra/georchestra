@@ -111,7 +111,8 @@ public class GeorchestraOwsPublicationService implements OWSPublicationService {
         }
         final String workspaceName = resolveWorkspace(user, geoserverConfig.get("workspacename"));
         final String dataStoreName = nameResolver.resolveDataStoreName(workspaceName, geoserverConfig.get("storename"));
-        final String publishedLayerName = resolveUniqueLayerName(workspaceName, publishing.getPublishedName());
+        final String publishedLayerName = resolveUniqueLayerName(workspaceName,
+                nameResolver.resolveDatabaseTableName(publishing.getTitle()));
 
         Optional<DataStoreResponse> dataStore = geoserver.findDataStore(workspaceName, dataStoreName);
         if (!dataStore.isPresent()) {

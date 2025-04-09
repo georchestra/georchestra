@@ -38,11 +38,7 @@ import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TEL;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_TITLE;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERID;
 import static org.georchestra.config.security.GeorchestraUserDetails.SEC_USERNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -51,8 +47,8 @@ import java.util.stream.Collectors;
 import org.georchestra.commons.security.SecurityHeaders;
 import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -66,7 +62,7 @@ public class GeorchestraSecurityProxyAuthenticationFilterTest {
     private GeorchestraUser user;
     private Organization org;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         request = new MockHttpServletRequest();
         filter = new GeorchestraSecurityProxyAuthenticationFilter();
 

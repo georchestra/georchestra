@@ -203,7 +203,9 @@ public class OrgsDaoImpl implements OrgsDao {
                     org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
                             .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
                             .collect(Collectors.toList()));
+                    org.setOrgUniqueId(asStringStream(attrs, "orgUniqueId").collect(joining(",")));
                     org.setPending(pending);
+
                     return org;
                 }
             };
@@ -227,6 +229,7 @@ public class OrgsDaoImpl implements OrgsDao {
             setOrDeleteField(context, "description", org.getDescription());
             setOrDeleteField(context, "labeledURI", org.getUrl());
             setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
+            setOrDeleteField(context, "orgUniqueId", org.getOrgUniqueId());
         }
 
         @Override
@@ -258,6 +261,7 @@ public class OrgsDaoImpl implements OrgsDao {
                     orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
                     orgExt.setPending(pending);
                     orgExt.setMail(asString(attrs.get("mail")));
+                    orgExt.setOrgUniqueId(asString(attrs.get("orgUniqueId")));
                     return orgExt;
                 }
 
@@ -394,6 +398,12 @@ public class OrgsDaoImpl implements OrgsDao {
     @Override
     public Org findById(UUID uuid) {
         return findAllWithExt().filter(o -> uuid.equals(o.getUniqueIdentifier())).findFirst().orElse(null);
+    }
+
+    @Override
+    public Org findByOrgUniqueId(String orgUniqueId) {
+        return findAllWithExt().filter(o -> orgUniqueId.equals(o.getOrgUniqueId())).findFirst().orElse(null);
+
     }
 
     private Org addExt(Org org) {

@@ -4,8 +4,6 @@ RUN mkdir -p /docker-entrypoint.d
 RUN chown jetty:jetty /docker-entrypoint.d
 USER jetty
 
-ENV XMS=256M XMX=1G
-
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
 
 COPY --chown=jetty:jetty . /
@@ -17,7 +15,7 @@ VOLUME [ "/tmp", "/run/jetty" ]
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
--Xms$XMS -Xmx$XMX \
+-XX:MaxRAMPercentage=80 -XX:+UseParallelGC \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
 -Djetty.httpConfig.sendServerVersion=false \

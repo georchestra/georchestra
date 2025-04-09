@@ -26,7 +26,7 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.security.SecurityHeaders;
@@ -41,12 +41,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -54,14 +49,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class EditOrgDetailsFormController {
     private OrgsDao orgsDao;
     private Validation validation;
-    private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address", "mail" };
+    private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address", "mail",
+            "orgUniqueId" };
 
     private static final Log LOG = LogFactory.getLog(EditOrgDetailsFormController.class.getName());
 
     @Autowired
     protected LogUtils logUtils;
 
-    @Autowired
     public EditOrgDetailsFormController(OrgsDao orgsDao, Validation validation) {
         this.orgsDao = orgsDao;
         this.validation = validation;
@@ -85,7 +80,7 @@ public class EditOrgDetailsFormController {
      * @return the edit form view
      * @throws IOException
      */
-    @RequestMapping(value = "/account/orgdetails", method = RequestMethod.GET)
+    @GetMapping("/account/orgdetails")
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
     public String setupForm(HttpServletRequest request, Model model) {
         Org org = this.orgsDao.findByCommonName(SecurityHeaders.decode(request.getHeader(SEC_ORG)));
@@ -94,6 +89,7 @@ public class EditOrgDetailsFormController {
         model.addAttribute("id", org.getId());
         model.addAttribute("logo", org.getLogo());
         model.addAttribute("mail", org.getMail());
+        model.addAttribute("orgUniqueId", org.getOrgUniqueId());
         HttpSession session = request.getSession();
         for (String f : FIELDS) {
             if (validation.isOrgFieldRequired(f)) {
@@ -103,13 +99,14 @@ public class EditOrgDetailsFormController {
         return "editOrgDetailsForm";
     }
 
-    @RequestMapping(value = "/account/orgdetails", method = RequestMethod.POST)
+    @PostMapping("/account/orgdetails")
     @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
-    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean,
-            @RequestParam(name = "logo") MultipartFile logo, BindingResult resultErrors) throws IOException {
+    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam MultipartFile logo,
+            BindingResult resultErrors) throws IOException {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
         validation.validateOrgField("description", formBean.getDescription(), resultErrors);
+        validation.validateOrgField("orgUniqueId", formBean.getOrgUniqueId(), resultErrors);
         // TODO validate mail address for the organization ?
 
         if (resultErrors.hasErrors()) {
@@ -122,6 +119,7 @@ public class EditOrgDetailsFormController {
         orgOrigin.setDescription(formBean.getDescription());
         orgOrigin.setUrl(formBean.getUrl());
         orgOrigin.setAddress(formBean.getAddress());
+        orgOrigin.setOrgUniqueId(formBean.getOrgUniqueId());
 
         if (!logo.isEmpty()) {
             orgOrigin.setLogo(transformLogoFileToBase64(logo));
@@ -154,6 +152,7 @@ public class EditOrgDetailsFormController {
         formBean.setAddress(org.getAddress());
         formBean.setOrgType(org.getOrgType());
         formBean.setMail(org.getMail());
+        formBean.setOrgUniqueId(org.getOrgUniqueId());
         return formBean;
     }
 
@@ -192,6 +191,11 @@ public class EditOrgDetailsFormController {
         if (StringUtils.isNotEmpty(org.getMail()) && !org.getMail().equals(formBean.getMail())) {
             logUtils.createAndLogDetails(id, Org.JSON_MAIL, org.getMail(), formBean.getMail(), type);
         }
+
+        if (!org.getOrgUniqueId().equals(formBean.getOrgUniqueId())) {
+            logUtils.createAndLogDetails(id, Org.JSON_ORG_UNIQ_ID, org.getOrgUniqueId(), formBean.getAddress(), type);
+        }
+
     }
 
 }

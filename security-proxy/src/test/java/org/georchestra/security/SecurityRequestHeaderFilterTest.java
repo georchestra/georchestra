@@ -4,12 +4,12 @@ import static org.georchestra.commons.security.SecurityHeaders.IMP_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.IMP_USERNAME;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**

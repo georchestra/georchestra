@@ -51,6 +51,7 @@
     <property name="headerHeight" value="${headerHeight}" />
     <property name="georchestraStylesheet" value="${georchestraStylesheet:''}" />
     <property name="logoUrl" value="${logoUrl}" />
+    <property name="headerConfigFile" value="${headerConfigFile:''}" />
   </bean>
 
   <!-- Override gwcURLMangler defined in core-context.xml -->

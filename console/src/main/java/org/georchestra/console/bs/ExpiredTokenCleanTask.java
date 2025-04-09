@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.ds.DataServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This task searches and removes the expired tokens generated when for the
@@ -45,7 +44,6 @@ public class ExpiredTokenCleanTask implements Runnable {
 
     private long delayInMilliseconds;
 
-    @Autowired
     public ExpiredTokenCleanTask(UserTokenDao userTokenDao) {
 
         this.userTokenDao = userTokenDao;

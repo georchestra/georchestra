@@ -59,7 +59,7 @@ public class DataPublishingApiController implements DataPublishingApi {
     private @Autowired(required = false) PostgisSchemasConfiguration postgisSchemasConfiguration;
 
     @Override
-    public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable("jobId") UUID jobId) {
+    public ResponseEntity<PublishJobStatus> getPublishingStatus(@PathVariable UUID jobId) {
         authorizationService.checkAccessRights(jobId);
 
         PublishJobStatus status = mapper.toApi(getOrNotFound(jobId));
@@ -144,7 +144,7 @@ public class DataPublishingApiController implements DataPublishingApi {
     }
 
     @Override
-    public ResponseEntity<PublishJobStatus> publish(@PathVariable("jobId") UUID jobId,
+    public ResponseEntity<PublishJobStatus> publish(@PathVariable UUID jobId,
             @RequestBody(required = false) PublishRequest publishRequest) {
 
         authorizationService.checkAccessRights(jobId);

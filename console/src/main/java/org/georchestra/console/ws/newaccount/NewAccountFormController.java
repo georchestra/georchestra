@@ -39,7 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -70,8 +71,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -136,7 +137,6 @@ public final class NewAccountFormController {
     @Value("${publicContextPath:/console}")
     private String publicContextPath;
 
-    @Autowired
     public NewAccountFormController(ReCaptchaParameters reCaptchaParameters, Validation validation) {
         this.reCaptchaParameters = reCaptchaParameters;
         this.validation = validation;
@@ -179,11 +179,11 @@ public final class NewAccountFormController {
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
                 "password", "confirmPassword", "privacyPolicyAgreed", "consentAgreed", "createOrg", "orgName",
-                "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgMail", "orgLogo",
-                "recaptcha_response_field");
+                "orgShortName", "orgUniqueId", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl",
+                "orgMail", "orgLogo", "recaptcha_response_field");
     }
 
-    @RequestMapping(value = "/account/new", method = RequestMethod.GET)
+    @GetMapping("/account/new")
     public String setupForm(HttpServletRequest request, Model model) throws IOException {
 
         HttpSession session = request.getSession();
@@ -227,10 +227,10 @@ public final class NewAccountFormController {
      *
      * @throws IOException
      */
-    @RequestMapping(value = "/account/new", method = RequestMethod.POST)
+    @PostMapping("/account/new")
     public String create(HttpServletRequest request, @ModelAttribute AccountFormBean formBean,
-            @RequestParam(value = "orgCities", required = false, defaultValue = "") String orgCities,
-            BindingResult result, SessionStatus sessionStatus, Model model) throws IOException, SQLException {
+            @RequestParam(required = false, defaultValue = "") String orgCities, BindingResult result,
+            SessionStatus sessionStatus, Model model) throws IOException, SQLException {
 
         populateOrgsAndOrgTypes(model);
         model.addAttribute("moderatedSignup", this.moderatedSignup);
@@ -258,6 +258,7 @@ public final class NewAccountFormController {
                 org.setUrl(formBean.getOrgUrl());
                 org.setLogo(formBean.getOrgLogo());
                 org.setMail(formBean.getOrgMail());
+                org.setOrgUniqueId(formBean.getOrgUniqueId());
                 // Parse and store cities
                 orgCities = orgCities.trim();
                 if (orgCities.length() > 0)
@@ -417,7 +418,11 @@ public final class NewAccountFormController {
             validation.validateOrgField("url", formBean.getOrgUrl(), result);
             validation.validateOrgField("description", formBean.getOrgDescription(), result);
             validation.validateOrgField("logo", formBean.getOrgLogo(), result);
+            validation.validateOrgField("orgUniqueId", formBean.getOrgUniqueId(), result);
             validation.validateUrlFieldWithSpecificMsg("orgUrl", formBean.getOrgUrl(), result);
+
+            JSONObject orgToValidate = new JSONObject().put("orgUniqueId", formBean.getOrgUniqueId());
+            validation.validateOrgUniqueIdField(this.orgDao, orgToValidate, result);
         } else {
             validation.validateUserField("org", formBean.getOrg(), result);
         }

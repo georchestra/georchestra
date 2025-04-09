@@ -1,3 +1,10 @@
+# This file defines the geOrchestra custom LDAP schema. If some modifications
+# are needed, please make sure the page on the official website stays in sync
+# with the following, see:
+#
+# * https://www.georchestra.org/oid.html
+# * https://github.com/georchestra/georchestra.github.io/blob/master/oid.md
+#
 dn: cn=georchestra, cn=schema, cn=config
 objectClass: olcSchemaConfig
 cn: georchestra
@@ -20,22 +27,28 @@ olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.2
     SINGLE-VALUE  )
 olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.3
     NAME 'oAuth2Provider'
-    DESC 'OAuth2 provider for external identity provider users)'
+    DESC 'OAuth2 provider for external identity provider users'
     EQUALITY caseIgnoreMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
     SINGLE-VALUE )
 olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.4
     NAME 'oAuth2Uid'
-    DESC 'OAuth2 UID for external identity provider users)'
+    DESC 'OAuth2 UID for external identity provider users'
     EQUALITY caseIgnoreMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
     SINGLE-VALUE )
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.5
+    NAME 'orgUniqueId'
+    DESC 'organization identifier such as SIRET number or other'
+    EQUALITY caseIgnoreMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+    SINGLE-VALUE)
 olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
     NAME 'georchestraOrg'
     DESC 'georchestra org'
     SUP top
     AUXILIARY
-    MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier))
+    MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier $ orgUniqueId))
 olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.3
     NAME 'georchestraRole'
     DESC 'Uniquely identifiable georchestra role'

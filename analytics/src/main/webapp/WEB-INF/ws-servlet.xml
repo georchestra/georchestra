@@ -54,6 +54,7 @@
                 <entry key="headerScript" value="${headerScript}" />
                 <entry key="useLegacyHeader" value="${useLegacyHeader}" />
                 <entry key="logoUrl" value="${logoUrl}" />
+                <entry key="headerConfigFile" value="${headerConfigFile}"/>
                 <entry key="georchestraStylesheet" value="${georchestraStylesheet}" />
             </map>
         </property>

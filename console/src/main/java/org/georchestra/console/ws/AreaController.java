@@ -37,7 +37,7 @@ public class AreaController {
      * @return json or rediurect to the resource if area is an URL
      * @throws IOException
      */
-    @GetMapping(value = "/public/area.geojson", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/public/area.geojson", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String serveArea(HttpServletResponse response) throws IOException {
         // if arealUrl in config is an http endpoint, then send it directly.

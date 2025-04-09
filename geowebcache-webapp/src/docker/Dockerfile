@@ -1,6 +1,7 @@
 FROM jetty:9.4.46-jre11
 
-ENV XMS=1G XMX=2G
+ENV GEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
+    GEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
 
@@ -24,9 +25,7 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
--DGEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
--DGEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles \
--Xms$XMS -Xmx$XMX \
+-XX:MaxRAMPercentage=80 -XX:+UseParallelGC \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
 -Djetty.httpConfig.sendServerVersion=false \

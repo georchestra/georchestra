@@ -7,7 +7,7 @@ class DelegationsController {
   constructor (Delegations, Orgs) {
     this.delegations = Delegations.query()
     this.orgs = {}
-    Orgs.query(orgs => orgs.forEach(org => (this.orgs[org.id] = org)))
+    Orgs.query({ logos: false }, (orgs) => orgs.forEach(org => (this.orgs[org.id] = org)))
     this.q = ''
     this.itemsPerPage = 15
   }

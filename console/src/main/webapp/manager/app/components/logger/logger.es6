@@ -46,7 +46,7 @@ class LoggerController {
     // manage query params to get user's or complete logs
     let typeQuery = 'Logs'
     const params = {
-      limit: 100000,
+      limit: 500,
       page: 0
     }
     if (this.user) {
@@ -139,7 +139,7 @@ class LoggerController {
 
     // get all orgs infos and orgs name
     this.orgsId = {}
-    this.$injector.get('Orgs').query(orgs => {
+    this.$injector.get('Orgs').query({ logos: false }, (orgs) => {
       orgs.forEach(org => {
         this.orgsId[org.id] = org.name
       })

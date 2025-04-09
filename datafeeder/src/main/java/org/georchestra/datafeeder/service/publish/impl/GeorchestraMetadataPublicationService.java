@@ -131,8 +131,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
             }
 
             m.getOnlineResources()
-                    .add(onlineResource(d, databaseTableName, "OGC API - Features",
-                            publishing.getTitle() + " - OGC API Features",
+                    .add(onlineResource(d, databaseTableName, "OGC API - Features", publishing.getTitle(),
                             buildUri(publishingConfiguration.getOgcfeatures().getPublicUrl(),
                                     "/collections/" + databaseTableName + "/items", "")));
         }
@@ -182,7 +181,13 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
      * @return true if the dataset is a geographical dataset, false otherwise.
      */
     private boolean isGeoDataset(DatasetUploadState dataset) {
-        return (dataset.getSampleGeometryWKT() != null);
+        Envelope e = new Envelope();
+        e.setMinx(-1.0);
+        e.setMaxx(0.0);
+        e.setMiny(-1.0);
+        e.setMaxy(0.0);
+        return (dataset.getSampleGeometryWKT() != null || (dataset.getPublishing().getGeographicBoundingBox() != null
+                && !dataset.getPublishing().getGeographicBoundingBox().equals(e)));
     }
 
     // see
@@ -312,14 +317,14 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
     private OnlineResource wmsOnlineResource(DatasetUploadState d) {
         String protocol = "OGC:WMS";
-        String description = d.getPublishing().getTitle() + " - WMS";
+        String description = d.getPublishing().getTitle();
         String layerName = d.getPublishing().getPublishedName();
         return onlineResource(d, layerName, protocol, description, buildGeoserverUri(d));
     }
 
     private OnlineResource wfsOnlineResource(DatasetUploadState d) {
         String protocol = "OGC:WFS";
-        String description = d.getPublishing().getTitle() + " - WFS";
+        String description = d.getPublishing().getTitle();
         String layerName = fullyQualifiedLayerName(d.getPublishing());
         return onlineResource(d, layerName, protocol, description, buildGeoserverUri(d));
     }
