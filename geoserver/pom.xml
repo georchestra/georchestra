@@ -8,12 +8,12 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.26.2</gs.version>
-    <gt.version>32.2</gt.version>
+    <gs.version>2.27.0</gs.version>
+    <gt.version>33.0</gt.version>
     <geofence.version>3.5.1</geofence.version>
     <jetty.version>9.4.57.v20241219</jetty.version>
     <marlin.version>0.9.4.8</marlin.version>
-    <jackson2.version>2.17.2</jackson2.version>
+    <jackson2.version>2.18.2</jackson2.version>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <server>generic</server>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
@@ -32,7 +32,7 @@
     <module>geoserver-submodule/src/web/core</module>
     <!-- this ones are not provided onto the osgeo m2 repo -->
     <module>geoserver-submodule/src/extension/wmts-multi-dimensional</module>
-    <module>geoserver-submodule/src/community/ogcapi</module>
+    <module>geoserver-submodule/src/extension/ogcapi</module>
     <module>webapp</module>
   </modules>
   <profiles>
@@ -55,13 +55,13 @@
       <id>osgeo</id>
       <name>OSGeo Nexus Release Repository</name>
       <url>https://repo.osgeo.org/repository/release/</url>
-      <snapshots><enabled>true</enabled></snapshots>
       <releases><enabled>true</enabled></releases>
     </repository>
     <repository>
-      <id>geosolutions</id>
-      <name>geosolutions</name>
-      <url>http://maven.geo-solutions.it/</url>
+      <id>osgeo-gs-snapshots</id>
+      <name>OSGeo Nexus Geoserver snapshots Repository</name>
+      <url>https://repo.osgeo.org/repository/geoserver-snapshots/</url>
+      <snapshots><enabled>true</enabled></snapshots>
     </repository>
   </repositories>
 </project>
