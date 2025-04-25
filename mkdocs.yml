@@ -75,6 +75,8 @@ nav:
           - admin_guide/users_rights_management/acl-cadastrapp.md
         - Datahub:
           - admin_guide/datahub/index.md
+        - French specificities:
+          - admin_guide/french_specificities/data-gouv-fr-geonetwork.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
