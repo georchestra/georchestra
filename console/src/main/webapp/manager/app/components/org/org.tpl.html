@@ -93,6 +93,30 @@
 
       </div>
 
+      <div class="panel-body" ng-if="org.tab=='roles'">
+
+        <h4 translate>role.system</h4>
+        <div class="form-group clearfix">
+          <div class="col-sm-6" ng-repeat="role in org.adminRoles" ng-if="org.allroles.indexOf(role) !== -1 && !org.isUnassignableRole(role)">
+            <div class="checkbox" title="{{org.roleDescriptions[role]}}">
+              <label>
+                <input type="checkbox" ng-model="org.org.adminRoles[role]"> {{::role}}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <h4 translate>role.app</h4>
+        <div class="form-group" ng-if="$translate.isReady()">
+          <select class="form-control" multiple ng-model="org.org.roles"
+                  ng-options="role for role in org.roles" chosen
+                  placeholder-text-multiple="'user.select_role'|translate">
+          </select>
+        </div>
+      </div>
+
       <div class="panel-body" ng-if="org.tab=='manage'">
         <div class="alert alert-danger clearfix">
           <i class="glyphicon glyphicon-exclamation-sign"></i>
