@@ -52,7 +52,7 @@
 
         <h4 translate>role.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1 && !user.isUnassignableRole(role)">
+          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1 && !user.isUnassignableRole(role) && user.user.orgRoles.indexOf(role) === -1">
             <div class="checkbox" title="{{user.roleDescriptions[role]}}">
               <label>
                 <input type="checkbox" ng-model="user.user.adminRoles[role]"> {{::role}}
@@ -66,10 +66,28 @@
         <h4 translate>role.app</h4>
         <div class="form-group" ng-if="$translate.isReady()">
           <select class="form-control" multiple ng-model="user.user.roles"
-             ng-options="role for role in user.roles" chosen
+             ng-options="role for role in user.roles | filter: user.filterNonOrgRoles()" chosen
              placeholder-text-multiple="'user.select_role'|translate">
           </select>
         </div>
+
+        <div ng-if="user.user.org">
+          <hr>
+          <h4><span translate>role.organization</span>
+            <span>: </span>
+            <a target="_blank" href="/console/manager/org/{{user.user.orgObj.shortName}}/roles">{{user.user.orgObj.name}}</a>
+          </h4>
+          <p translate translate-values="{orgName:user.user.orgObj.name}">role.user_belongs_to_org</p>
+          <ul class="">
+            <li ng-repeat="roleName in user.user.orgRoles | orderBy:'roleName'">
+              <span title="{{user.roleDescriptions[roleName]}}">
+                {{::roleName}}
+              </span>
+            </li>
+            <p class="text-muted" ng-if="!user.hasOrgRoles()"><em translate>role.no_org_roles</em></p>
+          </ul>
+        </div>
+
       </div>
 
       <div class="panel-heading text-center" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
