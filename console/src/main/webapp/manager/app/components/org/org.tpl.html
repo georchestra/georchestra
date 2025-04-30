@@ -96,6 +96,7 @@
       <div class="panel-body" ng-if="org.tab=='roles'">
 
         <h4 translate>role.system</h4>
+        <p translate>role.org.infos</p>
         <div class="form-group clearfix">
           <div class="col-sm-6" ng-repeat="role in org.adminRoles" ng-if="org.allroles.indexOf(role) !== -1 && !org.isUnassignableRole(role)">
             <div class="checkbox" title="{{org.roleDescriptions[role]}}">

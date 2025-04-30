@@ -52,7 +52,7 @@
 
         <h4 translate>role.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1 && !user.isUnassignableRole(role)">
+          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1 && !user.isUnassignableRole(role) && !user.user.orgRoles[role]">
             <div class="checkbox" title="{{user.roleDescriptions[role]}}">
               <label>
                 <input type="checkbox" ng-model="user.user.adminRoles[role]"> {{::role}}
@@ -63,10 +63,26 @@
 
         <hr>
 
+        <div ng-if="user.user.org">
+          <h4><span translate>role.organization</span><span>: {{user.user.orgObj.name}}</span></h4>
+          <div class="form-group clearfix">
+            <div class="col-sm-6" ng-repeat="(roleName, hasRole) in user.user.orgRoles" ng-if="hasRole">
+              <div class="checkbox disabled" title="{{user.roleDescriptions[roleName]}}">
+                <label>
+                  <input type="checkbox" disabled checked> {{::roleName}}
+                </label>
+              </div>
+            </div>
+            <p class="text-muted" ng-if="!user.hasOrgRoles()"><em translate>role.no_org_roles</em></p>
+          </div>
+          <hr>
+        </div>
+
+
         <h4 translate>role.app</h4>
         <div class="form-group" ng-if="$translate.isReady()">
           <select class="form-control" multiple ng-model="user.user.roles"
-             ng-options="role for role in user.roles" chosen
+             ng-options="role for role in user.roles | filter: user.filterNonOrgRoles()" chosen
              placeholder-text-multiple="'user.select_role'|translate">
           </select>
         </div>
