@@ -32,7 +32,7 @@ class UserController {
 
     this.user = User.get({ id: this.uid }, (user) => {
       user.originalID = user.uid
-      user.orgRoles = user.orgRoles || {}
+      user.orgRoles = user.orgRoles || []
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({ id: user.org }, org => {
           user.validOrg = !org.pending
@@ -63,7 +63,7 @@ class UserController {
       }
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
-    this.orgRoles = {}
+    this.orgRoles = []
     switch (this.tab) {
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
@@ -86,13 +86,7 @@ class UserController {
 
   hasOrgRoles () {
     if (!this.user || !this.user.orgRoles) return false
-
-    for (const role in this.user.orgRoles) {
-      if (this.user.orgRoles[role]) {
-        return true
-      }
-    }
-    return false
+    return this.user.orgRoles.length > 0
   }
 
   // search each choosen span elements and set title manually
@@ -132,11 +126,11 @@ class UserController {
       ]).then(() => {
         this.user.roles = this.user.roles || []
         this.user.adminRoles = this.user.adminRoles || {}
-        this.user.orgRoles = this.user.orgRoles || {}
+        this.user.orgRoles = this.user.orgRoles || []
         this.roles.forEach((role) => {
           const isOrgRole = this.user.org && role.orgs.indexOf(this.user.org) >= 0
           if (isOrgRole) {
-            this.user.orgRoles[role.cn] = true
+            this.user.orgRoles.push(role.cn)
           } else if (role.users.indexOf(this.user.uid) >= 0) {
             if (roleAdminFilter(role)) {
               this.user.adminRoles[role.cn] = true
@@ -405,7 +399,7 @@ class UserController {
     // Return a filter function that excludes org roles
     return (role) => {
       if (!this.user || !this.user.orgRoles) return true
-      return !this.user.orgRoles[role]
+      return this.user.orgRoles.indexOf(role) === -1
     }
   }
 }

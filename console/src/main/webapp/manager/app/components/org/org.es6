@@ -41,7 +41,6 @@ class OrgController {
     this.required = $injector.get('OrgsRequired').query()
     this.orgTypeValues = $injector.get('OrgsType').query()
 
-    this.adminRoles = this.$injector.get('roleAdminList')()
     this.bindRoles()
     // check if org is under delegation
     const Delegations = $injector.get('Delegations')
@@ -63,27 +62,17 @@ class OrgController {
       })
     })
     this.org.$promise.then(() => {
-      const roleAdminFilter = this.$injector.get('roleAdminFilter')
-      const notAdmin = []
       this.$injector.get('$q').all([
         this.org.$promise,
         this.roles.$promise
       ]).then(() => {
         this.org.roles = this.org.roles || []
-        this.org.adminRoles = this.org.adminRoles || {}
         this.roles.forEach((role) => {
           if (role.orgs.indexOf(this.org.id) >= 0) {
-            if (roleAdminFilter(role)) {
-              this.org.adminRoles[role.cn] = true
-            } else {
-              this.org.roles.push(role.cn)
-            }
-          }
-          if (!roleAdminFilter(role) && role.cn !== this.TMP_ROLE) {
-            notAdmin.push(role.cn)
+            this.org.roles.push(role.cn)
           }
         })
-        this.roles = notAdmin
+        this.roles = this.roles.map(r => r.cn)
       })
     })
   }
@@ -204,18 +193,8 @@ class OrgController {
 
       let previousRoles
       $scope.$watchCollection(() => {
-        const roles = []
-        for (const g in this.org.adminRoles) {
-          if (this.org.adminRoles[g]) { roles.push(g) }
-        }
-        if (this.org.adminRoles) {
-          previousRoles = roles
-          // to manually display roles description on roles multi select elements
-          this.setTitles()
-          return roles
-        } else {
-          return previousRoles
-        }
+        this.setTitles()
+        return previousRoles
       }, saveRoles.bind(this))
     })
   }
