@@ -30,3 +30,11 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
   target-branch: 23.1.x
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "docker"
+  directory: "/"
+  schedule:
+    interval: "weekly"
