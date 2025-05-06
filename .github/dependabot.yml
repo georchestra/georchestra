@@ -33,8 +33,41 @@ updates:
 - package-ecosystem: github-actions
   directory: /
   schedule:
-    interval: "weekly"
-- package-ecosystem: "docker"
-  directory: "/"
+    interval: weekly
+- package-ecosystem: docker
+  directory: /ldap
   schedule:
-    interval: "weekly"
+    interval: weekly
+- package-ecosystem: docker
+  directory: /postgresql
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /console/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /datafeeder/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /datafeeder-ui/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /geoserver/webapp/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /analytics/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /security-proxy/src/docker
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: /geowebcache-webapp/src/docker
+  schedule:
+    interval: weekly
+
