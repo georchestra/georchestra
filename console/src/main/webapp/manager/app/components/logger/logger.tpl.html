@@ -51,12 +51,12 @@
     <tbody>
         <tr dir-paginate="log in logger.logs | logs: logger.type:logger.admin:logger.target:logger.date | orderBy: '-date' | itemsPerPage: logger.itemsPerPage">
           <td><abbr ng-bind-html="log.date | dateFormat"></abbr></td>
-          <td style="max-width: 10vw" class="text-overflow"><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
+          <td style="max-width: 10vw" class="text-overflow"><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{logger.usersNames[log.admin] ? logger.usersNames[log.admin] : log.admin}}</a>
           <!--Target-->
           <td style="max-width: 10vw" class="text-overflow">
             <!--user or user's role modification-->
             <a ng-if="logger.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})">
-              {{::log.target}}
+              {{::(logger.usersNames[log.target] ? logger.usersNames[log.target] : log.target)}}
             </a>
             <!--org-->
             <a ng-if="logger.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})">
