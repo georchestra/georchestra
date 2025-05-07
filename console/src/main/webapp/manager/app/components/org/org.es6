@@ -49,6 +49,10 @@ class OrgController {
     User.query(users => {
       this.users = users.filter(u => u.org === this.org.name)
       this.notUsers = users.filter(u => u.org !== this.org.name)
+      this.usersNames = users.reduce((acc, u) => {
+        acc[u.uid] = u.sn + ' ' + u.givenName
+        return acc
+      }, {})
     })
   }
 

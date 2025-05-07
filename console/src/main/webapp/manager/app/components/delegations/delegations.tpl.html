@@ -25,7 +25,7 @@
       <tbody>
         <tr dir-paginate="delegation in delegations.delegations | filter:delegations.q | itemsPerPage: delegations.itemsPerPage">
           <td style="max-width: 15vw">
-            <a ng-link="user({id: delegation.uid, tab: 'delegations'})" class="break-word">{{::delegation.uid}}</a>
+            <a ng-link="user({id: delegation.uid, tab: 'delegations'})" class="break-word">{{::(delegations.users[delegation.uid] ? delegations.users[delegation.uid] : delegation.uid)}}</a>
           </td>
           <td>
             <span ng-repeat="org in delegation.orgs">
