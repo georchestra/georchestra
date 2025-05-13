@@ -1,4 +1,4 @@
-FROM jetty:9-jre11
+FROM jetty:11-jre11
 
 # remove jetty embedded "JavaMail", we have our own.
 # fix #3692 : ClassNotFoundException: javax.activation.DataSource
