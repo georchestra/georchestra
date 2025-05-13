@@ -154,8 +154,13 @@ class LoggerController {
 
     // get all users
     this.users = []
+    this.usersNames = {}
     this.$injector.get('User').query(users => {
       this.users = users.map(user => user.uid)
+      this.usersNames = users.reduce((acc, u) => {
+        acc[u.uid] = u.sn + ' ' + u.givenName
+        return acc
+      }, {})
     })
   }
 

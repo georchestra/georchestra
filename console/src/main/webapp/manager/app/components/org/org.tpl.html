@@ -23,7 +23,7 @@
       <div class="panel-heading text-center" ng-if="org.tab=='infos' && org.delegations.length > 0 && profile === 'SUPERUSER'">
         <span translate>org.ohasdeleg</span>
         <span ng-repeat="delegation in org.delegations">
-          <a ng-link="user({id: delegation.uid, tab: 'delegations'})">{{ delegation.uid }}</a>{{$last ? '' : ', '}}
+          <a ng-link="user({id: delegation.uid, tab: 'delegations'})">{{ org.usersNames[delegation.uid] ? org.usersNames[delegation.uid] : delegation.uid }}</a>{{$last ? '' : ', '}}
         </span>
       </div>
 
