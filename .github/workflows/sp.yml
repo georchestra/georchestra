@@ -50,7 +50,7 @@ jobs:
       run: ../mvnw clean package docker:build -Pdocker,log4j-logstash,sentry-log4j  -DdockerImageName=georchestra/security-proxy:${{ steps.version.outputs.VERSION }} -DskipTests --no-transfer-progress
 
     - name: "Logging in docker.io"
-      uses: azure/docker-login@v1
+      uses: azure/docker-login@v2
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'

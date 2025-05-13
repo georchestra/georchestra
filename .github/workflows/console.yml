@@ -61,7 +61,7 @@ jobs:
 
     - name: "Logging in docker.io"
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
-      uses: azure/docker-login@v1
+      uses: azure/docker-login@v2
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'

@@ -58,7 +58,7 @@ jobs:
       run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,${{ env.GEOSERVER_EXTENSION_PROFILES }},geofence,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
 
     - name: "Logging in docker.io"
-      uses: azure/docker-login@v1
+      uses: azure/docker-login@v2
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'

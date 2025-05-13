@@ -70,7 +70,7 @@ jobs:
         ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
 
     - name: "Logging in docker.io"
-      uses: azure/docker-login@v1
+      uses: azure/docker-login@v2
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
