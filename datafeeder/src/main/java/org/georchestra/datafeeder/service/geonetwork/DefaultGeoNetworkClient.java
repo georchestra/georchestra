@@ -20,6 +20,8 @@ package org.georchestra.datafeeder.service.geonetwork;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,13 +33,17 @@ import org.fao.geonet.client.ApiClient;
 import org.fao.geonet.client.ApiException;
 import org.fao.geonet.client.GroupsApi;
 import org.fao.geonet.client.MeApi;
+import org.fao.geonet.client.OperationsApi;
 import org.fao.geonet.client.RecordsApi;
 import org.fao.geonet.client.UsersApi;
 import org.fao.geonet.client.model.Group;
+import org.fao.geonet.client.model.GroupOperations;
 import org.fao.geonet.client.model.InfoReport;
 import org.fao.geonet.client.model.MeResponse;
+import org.fao.geonet.client.model.SharingParameter;
 import org.fao.geonet.client.model.SimpleMetadataProcessingReport;
 import org.fao.geonet.client.model.User;
+import org.fao.geonet.client.model.UserGroup;
 import org.georchestra.datafeeder.model.UserInfo;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.http.HttpHeaders;
@@ -104,11 +110,13 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
      *                     the dataset.
      * @param publishToAll whether the metadata should be published right after
      *                     having been added to the catalogue or not.
+     * @param orgBasedSync whether GeoNetwork is configured to synchronize the
+     *                     groups from the LDAP organizations.
      * @return the GeoNetworkResponse resulting object
      */
     @Override
     public GeoNetworkResponse putXmlRecord(@NonNull String metadataId, @NonNull String xmlRecord, String groupName,
-            UserInfo user, Boolean publishToAll) {
+            UserInfo user, Boolean publishToAll, Boolean orgBasedSync) {
 
         ApiClient client = newApiClient();
         // RecordsApi api = client.buildClient(RecordsApi.class);
@@ -162,11 +170,13 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             return r;
         }
 
+        UsersApi usersApi = new UsersApi(client);
+        Optional<User> impersonatedUser = Optional.empty();
         try {
-            UsersApi usersApi = new UsersApi(client);
+
             // TODO Isn't there a more efficient way to look up a user using the API ?
-            Optional<User> impersonatedUser = usersApi.getUsers().stream()
-                    .filter(usr -> usr.getUsername().equals(user.getUsername())).findFirst();
+            impersonatedUser = usersApi.getUsers().stream().filter(usr -> usr.getUsername().equals(user.getUsername()))
+                    .findFirst();
             if ((!impersonatedUser.isPresent()) || (!groupId.isPresent())) {
                 log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
                         user.getUsername(), groupName);
@@ -177,11 +187,46 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
         }
 
+        // if the GN synchronization is not based on the organizations, then we have to
+        // add the 'editing'
+        // privilege to each groups (e.g. geOrchestra roles) the user belongs to.
+        if (!orgBasedSync) {
+            try {
+                if (impersonatedUser.isPresent()) {
+                    User usr = impersonatedUser.get();
+                    List<UserGroup> ugs = usersApi.retrieveUserGroups(usr.getId());
+                    List<GroupOperations> lgo = new ArrayList<>();
+                    ugs.stream().filter(ug -> ug.getGroup().getId() > 2). // skip "hardcoded" GN groups
+                            forEach(ug -> lgo.add(allowEditing(ug.getGroup().getId())));
+                    SharingParameter shareParams = new SharingParameter();
+                    shareParams.clear(false);
+                    shareParams.setPrivileges(lgo);
+                    api.share(metadataId, shareParams);
+                    log.info("Added the 'editing' privilege to the groups the publisher belongs to.");
+                }
+            } catch (Exception e) {
+                log.error("Error while trying to give 'editing' privileges to the author, giving up.", e);
+            }
+        }
+
         GeoNetworkResponse r = new GeoNetworkResponse();
         r.setStatus(HttpStatus.CREATED);
         Map<String, List<InfoReport>> metadataInfos = report.getMetadataInfos();
         log.info("Created metadata record {}", metadataInfos);
         return r;
+    }
+
+    private GroupOperations allowEditing(Integer groupId) {
+        GroupOperations go = new GroupOperations();
+        go.setGroup(groupId);
+        go.setOperations(Map.of("view", true, //
+                "download", true, //
+                "dynamic", false, //
+                "editing", true, //
+                "featured", false, //
+                "notify", false//
+        ));
+        return go;
     }
 
     private Optional<Integer> findGroupId(ApiClient client, String groupName) {

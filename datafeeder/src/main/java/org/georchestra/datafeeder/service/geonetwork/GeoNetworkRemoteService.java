@@ -115,10 +115,11 @@ public class GeoNetworkRemoteService {
      * @return
      */
     public GeoNetworkResponse publish(@NonNull String metadataId, @NonNull Supplier<String> xmlRecordAsString,
-            String group, UserInfo user, Boolean actuallyPublish) {
+            String group, UserInfo user, Boolean actuallyPublish, Boolean orgBasedSync) {
         final String xmlRecord = xmlRecordAsString.get();
 
-        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord, group, user, actuallyPublish);
+        GeoNetworkResponse response = client.putXmlRecord(metadataId, xmlRecord, group, user, actuallyPublish,
+                orgBasedSync);
 
         HttpStatus statusCode = response.getStatus();
         String statusText = response.getStatusText();

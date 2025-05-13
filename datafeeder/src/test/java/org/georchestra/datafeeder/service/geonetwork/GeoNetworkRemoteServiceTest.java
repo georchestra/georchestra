@@ -84,10 +84,10 @@ public class GeoNetworkRemoteServiceTest {
         response.setStatus(HttpStatus.CREATED);
 
         String group = "psc";
-        when(mockClient.putXmlRecord(eq(id), eq(record), eq(group), any(UserInfo.class), eq(true)))
+        when(mockClient.putXmlRecord(eq(id), eq(record), eq(group), any(UserInfo.class), eq(true), eq(true)))
                 .thenReturn(response);
 
-        GeoNetworkResponse ret = service.publish(id, () -> record, group, mock(UserInfo.class), true);
+        GeoNetworkResponse ret = service.publish(id, () -> record, group, mock(UserInfo.class), true, true);
         assertSame(response, ret);
     }
 

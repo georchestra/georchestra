@@ -96,14 +96,21 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
 
         Supplier<String> record = templateMapper.apply(mdProps);
         Organization organization = user.getOrganization();
+        // In case of organization-based synchronization in GeoNetwork:
+        //
         // The metadata is inserted into the group which already exists due to
         // GeoNetwork's LDAP sync (which currently guarantees that a geonetwork group
         // exists for the publishing organization)
-        // TODO what if the sync is configured to synchronize against the roles, and not
-        // against the orgs ?
+        //
+        // In case of roles-based synchronization:
+        //
+        // The 'editing' privilege is added for each roles (groups in GN) the publisher
+        // belongs to.
         String mdGroupId = organization.getShortName();
         Boolean actuallyPublish = publishingConfiguration.getGeonetwork().isPublishMetadata();
-        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId, user, actuallyPublish);
+        Boolean orgBasedSync = publishingConfiguration.getGeonetwork().getSyncMode().equals("orgs");
+        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId, user, actuallyPublish,
+                orgBasedSync);
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
