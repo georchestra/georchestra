@@ -2,7 +2,7 @@
 # Dockerfile for the geOrchestra openldap service
 #
 
-FROM debian:bookworm
+FROM debian:12
 
 ARG PM_POLICY=default
 ENV OPENLDAP_VERSION 2.5.13
