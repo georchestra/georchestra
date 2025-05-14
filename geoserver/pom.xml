@@ -8,9 +8,9 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.27.0</gs.version>
-    <gt.version>33.0</gt.version>
-    <geofence.version>3.5.1</geofence.version>
+    <gs.version>2.27.1</gs.version>
+    <gt.version>33.1</gt.version>
+    <geofence.version>3.8.0</geofence.version>
     <jetty.version>9.4.57.v20241219</jetty.version>
     <marlin.version>0.9.4.8</marlin.version>
     <jackson2.version>2.18.2</jackson2.version>
@@ -19,7 +19,7 @@
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
     <spring.version>5.3.39</spring.version>
     <spring.security.version>5.8.16</spring.security.version>
-    <hibernate.version>3.6.9.Final</hibernate.version>
+    <hibernate.version>5.6.15.Final</hibernate.version>
 <!--
     <commons-beanutils.version>1.8.0</commons-beanutils.version>
     <commons-digester.version>1.7</commons-digester.version>
