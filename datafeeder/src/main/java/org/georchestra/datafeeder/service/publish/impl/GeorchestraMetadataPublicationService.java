@@ -109,8 +109,7 @@ public class GeorchestraMetadataPublicationService implements MetadataPublicatio
         String mdGroupId = organization.getShortName();
         Boolean actuallyPublish = publishingConfiguration.getGeonetwork().isPublishMetadata();
         Boolean orgBasedSync = publishingConfiguration.getGeonetwork().getSyncMode().equals("orgs");
-        GeoNetworkResponse response = geonetwork.publish(metadataId, record, mdGroupId, user, actuallyPublish,
-                orgBasedSync);
+        geonetwork.publish(metadataId, record, mdGroupId, user, actuallyPublish, orgBasedSync);
         dataset.getPublishing().setMetadataRecordId(metadataId);
     }
 
