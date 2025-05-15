@@ -62,7 +62,7 @@ datafeeder:
 
 feign:
   okhttp.enabled: false
-  httpclient.enabled: false 
+  httpclient.enabled: false
   client:
     config:
       default:
@@ -119,7 +119,7 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: password
-      
+
 georchestra.datadir: src/test/resources/datadir
 ---
 spring.profiles: it
@@ -149,6 +149,8 @@ datafeeder:
       api-url: http://localhost:28080/geonetwork
       public-url: https://georchestra.mydomain.org/geonetwork
       log-requests: false
+      publish-metadata: true
+      sync-mode: orgs
     ogcfeatures:
       public-url: https://georchestra.mydomain.org/ogc
     backend:

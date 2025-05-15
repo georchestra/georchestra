@@ -91,6 +91,13 @@ public @Data class DataFeederConfigurationProperties {
         private URI templateRecord;
         private URI templateTransform;
         private String defaultResourceType = "dataset";
+        private boolean publishMetadata = true;
+        // Sets the GeoNetwork group synchronization mode, defaults to "orgs".
+        // should be set to "roles" if a role-based synch is configured GeoNetwork-side.
+        //
+        // See:
+        // https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L25-L32
+        private String syncMode = "orgs";
     }
 
     @Data
