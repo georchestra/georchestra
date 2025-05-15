@@ -20,11 +20,6 @@
     This file is meant to be imported at the end of geowebcache-servlet.xml in order to provide geOrchestra specific spring bean 
     definitions, being new components or overrides of previously defined ones in vanilla gwc. ############################################################################### -->
 
-  <!-- geOrchestra Commons -->
-  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
-    <constructor-arg value="geowebcache" />
-  </bean>
-
   <context:property-placeholder location="file://${georchestra.datadir}/default.properties"
     ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
