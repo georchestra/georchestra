@@ -20,34 +20,24 @@
 package org.georchestra.ds.orgs;
 
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 
-import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.users.Account;
-import org.georchestra.ds.users.AccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
-import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.util.StringUtils;
 
 /**
@@ -56,256 +46,33 @@ import org.springframework.util.StringUtils;
 @SuppressWarnings("unchecked")
 public class OrgsDaoImpl implements OrgsDao {
 
-    private @Autowired AccountDao accountDao;
-
+    private LdapDaoProperties props;
     private LdapTemplate ldapTemplate;
-    private String[] orgTypeValues;
-    private String basePath;
-    private String orgSearchBaseDN;
-    private String pendingOrgSearchBaseDN;
-    private OrgExtension orgExtension = new OrgExtension();
-    private OrgExtExtension orgExtExtension = new OrgExtExtension();
+    private OrgLdapWrapper orgLdapWrapper;
+    private OrgExtLdapWrapper orgExtLdapWrapper;
 
-    abstract class Extension<T extends ReferenceAware> {
-
-        private AndFilter objectClassFilter;
-
-        public Extension() {
-            objectClassFilter = new AndFilter();
-            for (int i = 0; i < getObjectClass().length; i++) {
-                objectClassFilter.and(new EqualsFilter("objectClass", getObjectClass()[i]));
-            }
-        }
-
-        public AndFilter getObjectClassFilter() {
-            return objectClassFilter;
-        }
-
-        public Name buildOrgDN(T org) {
-            return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
-                    .add(getLdapKeyField(), org.getId()).build();
-        }
-
-        public ContextMapperSecuringReferenceAndMappingAttributes<T> getContextMapper(boolean pending) {
-            return new ContextMapperSecuringReferenceAndMappingAttributes<>(getAttributeMapper(pending));
-        }
-
-        public void mapToContext(T org, DirContextOperations context) {
-            Set<String> values = new HashSet<>();
-
-            if (context.getStringAttributes("objectClass") != null) {
-                Collections.addAll(values, context.getStringAttributes("objectClass"));
-            }
-            Collections.addAll(values, getObjectClass());
-
-            context.setAttributeValues("objectClass", values.toArray());
-
-            context.setAttributeValue(getLdapKeyField(), org.getId());
-            mapPayloadToContext(org, context);
-        }
-
-        public <O extends ReferenceAware> O findById(String id) {
-            String ldapKeyField = this.getLdapKeyField();
-            try {
-                Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add(ldapKeyField, id).build();
-                return (O) ldapTemplate.lookup(dn, this.getContextMapper(false));
-            } catch (NameNotFoundException ex) {
-                Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add(ldapKeyField, id).build();
-                return (O) ldapTemplate.lookup(dn, this.getContextMapper(true));
-            }
-        }
-
-        protected abstract void mapPayloadToContext(T org, DirContextOperations context);
-
-        protected abstract String getLdapKeyField();
-
-        protected abstract String[] getObjectClass();
-
-        public abstract AttributesMapper<T> getAttributeMapper(boolean pending);
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
     }
 
-    class OrgExtension extends Extension<Org> {
-
-        @Override
-        public void mapPayloadToContext(Org org, DirContextOperations context) {
-            String seeAlsoValueExt = LdapNameBuilder
-                    .newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath)
-                    .add("o", org.getId()).build().toString();
-
-            context.setAttributeValue("seeAlso", seeAlsoValueExt);
-
-            // Mandatory attribute
-            context.setAttributeValue("o", org.getName());
-
-            if (org.getMembers() != null) {
-                context.setAttributeValues("member", org.getMembers().stream().map(userUid -> {
-                    try {
-                        return accountDao.findByUID(userUid);
-                    } catch (DataServiceException e) {
-                        return null;
-                    }
-                }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account))
-                        .collect(Collectors.toList()).toArray(new String[] {}));
-            }
-
-            // Optional ones
-            if (org.getShortName() != null)
-                context.setAttributeValue("ou", org.getShortName());
-
-            if (org.getCities() != null) {
-                StringBuilder buffer = new StringBuilder();
-                List<String> descriptions = new ArrayList<>();
-                int maxFieldSize = 1000;
-
-                // special case where cities is empty
-                if (org.getCities().size() == 0) {
-                    Object[] values = context.getObjectAttributes("description");
-                    if (values != null) {
-                        Arrays.asList(values).stream().forEach(v -> context.removeAttributeValue("description", v));
-                    }
-                } else {
-                    for (String city : org.getCities()) {
-                        if (buffer.length() > maxFieldSize) {
-                            descriptions.add(buffer.substring(1));
-                            buffer = new StringBuilder();
-                        }
-                        buffer.append("," + city);
-                    }
-                }
-                if (buffer.length() > 0)
-                    descriptions.add(buffer.substring(1));
-
-                if (descriptions.size() > 0)
-                    context.setAttributeValues("description", descriptions.toArray());
-            }
-        }
-
-        @Override
-        protected String getLdapKeyField() {
-            return "cn";
-        }
-
-        @Override
-        protected String[] getObjectClass() {
-            return new String[] { "top", "groupOfMembers" };
-        }
-
-        @Override
-        public AttributesMapper<Org> getAttributeMapper(boolean pending) {
-            return new AttributesMapper<Org>() {
-                public Org mapFromAttributes(Attributes attrs) throws NamingException {
-                    Org org = new Org();
-                    org.setId(asStringStream(attrs, "cn").collect(joining(",")));
-                    org.setName(asStringStream(attrs, "o").collect(joining(",")));
-                    org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
-                    org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
-                            .collect(Collectors.toList()));
-                    org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
-                            .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
-                            .collect(Collectors.toList()));
-                    org.setOrgUniqueId(asStringStream(attrs, "orgUniqueId").collect(joining(",")));
-                    org.setPending(pending);
-
-                    return org;
-                }
-            };
-        }
-    }
-
-    class OrgExtExtension extends Extension<OrgExt> {
-
-        @Override
-        public void mapPayloadToContext(OrgExt org, DirContextOperations context) {
-            if (org.getOrgType() != null)
-                context.setAttributeValue("businessCategory", org.getOrgType());
-            if (org.getAddress() != null)
-                context.setAttributeValue("postalAddress", org.getAddress());
-            if (org.getUniqueIdentifier() == null) {
-                org.setUniqueIdentifier(UUID.randomUUID());
-            }
-            setOrDeleteField(context, "mail", org.getMail());
-            setOrDeleteField(context, "georchestraObjectIdentifier", org.getUniqueIdentifier().toString());
-            setOrDeleteField(context, "knowledgeInformation", org.getNote());
-            setOrDeleteField(context, "description", org.getDescription());
-            setOrDeleteField(context, "labeledURI", org.getUrl());
-            setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
-            setOrDeleteField(context, "orgUniqueId", org.getOrgUniqueId());
-        }
-
-        @Override
-        protected String getLdapKeyField() {
-            return "o";
-        }
-
-        @Override
-        protected String[] getObjectClass() {
-            return new String[] { "top", "organization", "georchestraOrg", "extensibleObject" };
-        }
-
-        @Override
-        public AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
-            return new AttributesMapper<OrgExt>() {
-                public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
-                    OrgExt orgExt = new OrgExt();
-                    // georchestraObjectIdentifier
-                    orgExt.setUniqueIdentifier(asUuid(attrs.get("georchestraObjectIdentifier")));
-                    orgExt.setId(asString(attrs.get("o")));
-
-                    String businessCategory = asString(attrs.get("businessCategory"));
-                    orgExt.setOrgType(businessCategory);// .isEmpty() ? null : businessCategory);
-
-                    orgExt.setAddress(asString(attrs.get("postalAddress")));
-                    orgExt.setDescription(listToCommaSeparatedString(attrs, "description"));
-                    orgExt.setUrl(listToCommaSeparatedString(attrs, "labeledURI"));
-                    orgExt.setNote(listToCommaSeparatedString(attrs, "knowledgeInformation"));
-                    orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
-                    orgExt.setPending(pending);
-                    orgExt.setMail(asString(attrs.get("mail")));
-                    orgExt.setOrgUniqueId(asString(attrs.get("orgUniqueId")));
-                    return orgExt;
-                }
-
-                private String listToCommaSeparatedString(Attributes atts, String attName) throws NamingException {
-                    return asStringStream(atts, attName).collect(joining(","));
-                }
-            };
-        }
-    }
-
-    Extension<Org> getOrgExtension() {
-        return orgExtension;
-    }
-
-    Extension<OrgExt> getOrgExtExtension() {
-        return orgExtExtension;
-    }
-
+    @Autowired
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
     }
 
-    public void setOrgTypeValues(String orgTypeValues) {
-        this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
+    @Autowired
+    public void setOrgLdapWrapper(OrgLdapWrapper orgLdapWrapper) {
+        this.orgLdapWrapper = orgLdapWrapper;
+    }
+
+    @Autowired
+    public void setOrgExtLdapWrapper(OrgExtLdapWrapper orgExtLdapWrapper) {
+        this.orgExtLdapWrapper = orgExtLdapWrapper;
     }
 
     public String[] getOrgTypeValues() {
-        return orgTypeValues;
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
-    }
-
-    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
-        this.orgSearchBaseDN = orgSearchBaseDN;
-    }
-
-    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
-        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
-    }
-
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
+        return props.getOrgTypeValues();
     }
 
     /**
@@ -320,13 +87,11 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     private Stream<Org> findAllWithExt() {
-        final Extension<Org> orgExtension = getOrgExtension();
-
-        Filter filter = orgExtension.getObjectClassFilter();
-        List<Org> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                orgExtension.getAttributeMapper(false));
-        List<Org> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                orgExtension.getAttributeMapper(true));
+        Filter filter = orgLdapWrapper.getObjectClassFilter();
+        List<Org> active = ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(),
+                orgLdapWrapper.getAttributeMapper(false));
+        List<Org> pending = ldapTemplate.search(props.getPendingOrgSearchBaseDN(), filter.encode(),
+                orgLdapWrapper.getAttributeMapper(true));
 
         Stream<Org> orgs = Stream.concat(active.stream(), pending.stream());
         // Use lower-case id matching, as per
@@ -344,12 +109,11 @@ public class OrgsDaoImpl implements OrgsDao {
      * @return list of organizations (ldap organization object)
      */
     private Stream<OrgExt> findAllExt() {
-        Extension<OrgExt> orgExtExtension = getOrgExtExtension();
-        Filter filter = orgExtExtension.getObjectClassFilter();
-        List<OrgExt> active = ldapTemplate.search(orgSearchBaseDN, filter.encode(),
-                orgExtExtension.getAttributeMapper(false));
-        List<OrgExt> pending = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(),
-                orgExtExtension.getAttributeMapper(true));
+        Filter filter = orgExtLdapWrapper.getObjectClassFilter();
+        List<OrgExt> active = ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(),
+                orgExtLdapWrapper.getAttributeMapper(false));
+        List<OrgExt> pending = ldapTemplate.search(props.getPendingOrgSearchBaseDN(), filter.encode(),
+                orgExtLdapWrapper.getAttributeMapper(true));
         return Stream.concat(active.stream(), pending.stream());
     }
 
@@ -363,8 +127,8 @@ public class OrgsDaoImpl implements OrgsDao {
         EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
-        AttributesMapper<Org> notPendingMapper = getOrgExtension().getAttributeMapper(false);
-        return ldapTemplate.search(orgSearchBaseDN, filter.encode(), notPendingMapper)//
+        AttributesMapper<Org> notPendingMapper = orgLdapWrapper.getAttributeMapper(false);
+        return ldapTemplate.search(props.getOrgSearchBaseDN(), filter.encode(), notPendingMapper)//
                 .stream()//
                 .map(this::addExt)//
                 .collect(Collectors.toList());
@@ -382,7 +146,7 @@ public class OrgsDaoImpl implements OrgsDao {
         if (StringUtils.isEmpty(commonName)) {
             return null;
         }
-        return addExt(getOrgExtension().findById(commonName));
+        return addExt(orgLdapWrapper.findById(commonName));
     }
 
     @Override
@@ -427,63 +191,25 @@ public class OrgsDaoImpl implements OrgsDao {
      * @return OrgExt instance corresponding to extended attributes
      */
     OrgExt findExtById(String cn) {
-        return getOrgExtExtension().findById(cn);
+        return orgExtLdapWrapper.findById(cn);
     }
 
     @Override
     public void insert(Org org) {
-        {
-            Extension<Org> orgExtension = getOrgExtension();
-            DirContextAdapter orgContext = new DirContextAdapter(orgExtension.buildOrgDN(org));
-            orgExtension.mapToContext(org, orgContext);
-            ldapTemplate.bind(orgContext);
-        }
-        {
-            OrgExt ext = org.getExt();
-            Extension<OrgExt> orgExtExtension = getOrgExtExtension();
-            DirContextAdapter orgExtContext = new DirContextAdapter(orgExtExtension.buildOrgDN(ext));
-            orgExtExtension.mapToContext(ext, orgExtContext);
-            ldapTemplate.bind(orgExtContext);
-        }
-        Org o = findByCommonName(org.getId());
+        orgLdapWrapper.insert(org);
+        orgExtLdapWrapper.insert(org.getExt());
     }
 
     @Override
     public void update(Org org) {
-        {
-            Extension<Org> orgExtension = getOrgExtension();
-            Name newName = orgExtension.buildOrgDN(org);
-            if (newName.compareTo(org.getReference().getDn()) != 0) {
-                this.ldapTemplate.rename(org.getReference().getDn(), newName);
-            }
-            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-            orgExtension.mapToContext(org, context);
-            this.ldapTemplate.modifyAttributes(context);
-        }
-        {
-            OrgExt ext = org.getExt();
-            Extension<OrgExt> extExtension = getOrgExtExtension();
-            Name newName = extExtension.buildOrgDN(ext);
-            if (newName.compareTo(ext.getReference().getDn()) != 0) {
-                this.ldapTemplate.rename(ext.getReference().getDn(), newName);
-            }
-            DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-            extExtension.mapToContext(ext, context);
-            this.ldapTemplate.modifyAttributes(context);
-        }
-        Org o = findByCommonName(org.getId());
+        orgLdapWrapper.update(org);
+        orgExtLdapWrapper.update(org.getExt());
     }
 
     @Override
     public void delete(Org org) {
-        Org o;
-        try {
-            o = findByCommonName(org.getId());
-        } catch (NameNotFoundException noSuchOrg) {
-            o = null;
-        }
-        Name orgDN = getOrgExtension().buildOrgDN(org);
-        Name orgExtDN = getOrgExtExtension().buildOrgDN(org.getExt());
+        Name orgDN = orgLdapWrapper.buildOrgDN(org);
+        Name orgExtDN = orgExtLdapWrapper.buildOrgDN(org.getExt());
         this.ldapTemplate.unbind(orgDN);
         this.ldapTemplate.unbind(orgExtDN);
     }
@@ -543,80 +269,7 @@ public class OrgsDaoImpl implements OrgsDao {
         return reGenerateId(org_name, "");
     }
 
-    private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
-        try {
-            if (StringUtils.isEmpty(value)) {
-                Attribute attributeToDelete = context.getAttributes().get(fieldName);
-                if (attributeToDelete != null) {
-                    Collections.list(attributeToDelete.getAll()).stream()
-                            .forEach(x -> context.removeAttributeValue(fieldName, x));
-                }
-            } else {
-                context.setAttributeValue(fieldName, value);
-            }
-        } catch (NamingException e) {
-            // no need to remove an nonexistant attribute
-        }
-    }
-
-    private void setOrDeletePhoto(DirContextOperations context, String fieldName, String value) {
-        try {
-            if (value == null || value.length() == 0) {
-                Attribute attributeToDelete = context.getAttributes().get(fieldName);
-                if (attributeToDelete != null) {
-                    Collections.list(attributeToDelete.getAll()).stream()
-                            .forEach(x -> context.removeAttributeValue(fieldName, x));
-                }
-            } else {
-                context.setAttributeValue(fieldName, Base64.getMimeDecoder().decode(value));
-            }
-        } catch (NamingException e) {
-            // no need to remove an nonexistant attribute
-        }
-    }
-
-    private String asString(Attribute att) throws NamingException {
-        String v = att == null ? null : (String) att.get();
-        return StringUtils.isEmpty(v) ? "" : v;
-    }
-
-    private UUID asUuid(Attribute att) throws NamingException {
-        String asString = asString(att);
-        if (StringUtils.hasLength(asString)) {
-            return UUID.fromString(asString);
-        }
-        return null;
-    }
-
-    private String asPhoto(Attribute att) throws NamingException {
-        if (att == null)
-            return "";
-        return Base64.getMimeEncoder().encodeToString((byte[]) att.get());
-    }
-
-    private Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
-        Attribute attribute = attributes.get(attributeName);
-        if (attribute == null) {
-            return Stream.empty();
-        }
-        return Collections.list(attribute.getAll()).stream().map(Object::toString);
-    }
-
-    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends ReferenceAware>
-            implements ContextMapper<T> {
-
-        private AttributesMapper<T> attributesMapper;
-
-        public ContextMapperSecuringReferenceAndMappingAttributes(AttributesMapper<T> attributesMapper) {
-            this.attributesMapper = attributesMapper;
-        }
-
-        @Override
-        public T mapFromContext(Object o) throws NamingException {
-            DirContextAdapter dirContext = (DirContextAdapter) o;
-            T dto = attributesMapper.mapFromAttributes(dirContext.getAttributes());
-            dto.setReference(dirContext);
-            return dto;
-        }
+    public String buildFullOrgDn(Org org) {
+        return String.format("%s,%s", orgLdapWrapper.buildOrgDN(org), props.getOrgSearchBaseDN());
     }
 }
