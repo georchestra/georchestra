@@ -21,6 +21,7 @@ on:
 
 jobs:
   build:
+    if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -35,7 +36,6 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-        cache: 'maven'
 
     - name: "Build Georchestra dependencies"
       run: ./mvnw install -pl :security-proxy-spring-integration,testcontainers --also-make -P-all -T1C -ntp -B -Dfmt.action=validate -Dadditionalparam=-Xdoclint:none
