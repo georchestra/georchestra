@@ -8,7 +8,7 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <skipTests>true</skipTests>
-    <gs.version>2.25.3</gs.version>
+    <gs.version>2.25.7</gs.version>
     <gt.version>31.3</gt.version>
     <geofence.version>3.7-SNAPSHOT</geofence.version>
     <jetty.version>9.4.52.v20230823</jetty.version>
