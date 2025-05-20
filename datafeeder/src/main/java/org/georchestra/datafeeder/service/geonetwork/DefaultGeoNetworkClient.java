@@ -173,27 +173,37 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
         UsersApi usersApi = new UsersApi(client);
         Optional<User> impersonatedUser = Optional.empty();
+        List<UserGroup> ugs;
+        List<Group> gps = List.of();
+
         try {
             impersonatedUser = usersApi.getUsers().stream().filter(usr -> usr.getUsername().equals(user.getUsername()))
                     .findFirst();
+            if (!orgBasedSync && impersonatedUser.isPresent()) {
+                User usr = impersonatedUser.get();
+                // skip "hardcoded" GN groups
+                ugs = usersApi.retrieveUserGroups(usr.getId());
+                gps = ugs.stream().map(UserGroup::getGroup).filter(ugGroup -> ugGroup.getId() > 2)
+                        .collect(Collectors.toList());
+                groupId = !gps.isEmpty() ? Optional.of(gps.get(0).getId()) : Optional.empty();
+                groupName = !gps.isEmpty() ? gps.get(0).getName() : "null";
+            }
+            if ((impersonatedUser.isEmpty()) || (groupId.isEmpty())) {
+                log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
+                        user.getUsername(), groupName);
+            } else {
+                api.setRecordOwnership(metadataId, groupId.get(), impersonatedUser.get().getId(), true);
+            }
         } catch (ApiException e) {
-            log.error("Unable to retrieve user {}", user, e);
+            log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
         }
-
         // if the GN synchronization is not based on the organizations, then we have to
         // add the 'editing'
         // privilege to each groups (e.g. geOrchestra roles) the user belongs to.
         if (!orgBasedSync) {
             try {
-                if (impersonatedUser.isPresent()) {
-                    User usr = impersonatedUser.get();
-                    List<UserGroup> ugs = usersApi.retrieveUserGroups(usr.getId());
+                if (!gps.isEmpty()) {
                     List<GroupOperations> lgo = new ArrayList<>();
-                    // skip "hardcoded" GN groups
-                    List<Group> gps = ugs.stream().map(UserGroup::getGroup).filter(ugGroup -> ugGroup.getId() > 2)
-                            .collect(Collectors.toList());
-                    groupId = !gps.isEmpty() ? Optional.of(gps.get(0).getId()) : Optional.empty();
-                    groupName = !gps.isEmpty() ? gps.get(0).getName() : "null";
                     gps.forEach(ug -> lgo.add(allowEditing(ug.getId())));
                     SharingParameter shareParams = new SharingParameter();
                     shareParams.clear(false);
@@ -204,17 +214,6 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             } catch (Exception e) {
                 log.error("Error while trying to give 'editing' privileges to the author, giving up.", e);
             }
-        }
-
-        try {
-            if ((impersonatedUser.isEmpty()) || (groupId.isEmpty())) {
-                log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
-                        user.getUsername(), groupName);
-            } else {
-                api.setRecordOwnership(metadataId, groupId.get(), impersonatedUser.get().getId(), true);
-            }
-        } catch (ApiException e) {
-            log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
         }
 
         GeoNetworkResponse r = new GeoNetworkResponse();
