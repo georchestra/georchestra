@@ -174,8 +174,8 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         UsersApi usersApi = new UsersApi(client);
         Optional<User> impersonatedUser = Optional.empty();
         try {
-            impersonatedUser = usersApi.getUsers().stream()
-                    .filter(usr -> usr.getUsername().equals(user.getUsername())).findFirst();
+            impersonatedUser = usersApi.getUsers().stream().filter(usr -> usr.getUsername().equals(user.getUsername()))
+                    .findFirst();
         } catch (ApiException e) {
             log.error("Unable to retrieve user {}", user, e);
         }
