@@ -177,7 +177,7 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
             impersonatedUser = usersApi.getUsers().stream()
                     .filter(usr -> usr.getUsername().equals(user.getUsername())).findFirst();
         } catch (ApiException e) {
-            log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
+            log.error("Unable to retrieve user {}", user, e);
         }
 
         // if the GN synchronization is not based on the organizations, then we have to
