@@ -179,6 +179,7 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
         try {
             impersonatedUser = usersApi.getUsers().stream().filter(usr -> usr.getUsername().equals(user.getUsername()))
                     .findFirst();
+            String computedGroupName = groupName;
             if (!orgBasedSync && impersonatedUser.isPresent()) {
                 User usr = impersonatedUser.get();
                 // skip "hardcoded" GN groups
@@ -186,11 +187,11 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
                 gps = ugs.stream().map(UserGroup::getGroup).filter(ugGroup -> ugGroup.getId() > 2)
                         .collect(Collectors.toList());
                 groupId = !gps.isEmpty() ? Optional.of(gps.get(0).getId()) : Optional.empty();
-                groupName = !gps.isEmpty() ? gps.get(0).getName() : "null";
+                computedGroupName = !gps.isEmpty() ? gps.get(0).getName() : "null";
             }
             if ((impersonatedUser.isEmpty()) || (groupId.isEmpty())) {
                 log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
-                        user.getUsername(), groupName);
+                        user.getUsername(), computedGroupName);
             } else {
                 api.setRecordOwnership(metadataId, groupId.get(), impersonatedUser.get().getId(), true);
             }
