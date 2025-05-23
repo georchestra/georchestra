@@ -4,7 +4,7 @@
       [georchestra.org](https://www.georchestra.org/)
 
 -    **Where to get help**:  
-     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [Geonetwork-UI repo](https://github.com/geonetwork/geonetwork-ui/), [IRC chat](https://matrix.to/#/#georchestra:osgeo.org), Stack Overflow
+     the [geOrchestra Github repo](https://github.com/georchestra/georchestra), [IRC chat](https://matrix.to/#/#georchestra:osgeo.org), Stack Overflow
 
 # Featured tags
 
@@ -14,7 +14,6 @@
 
 - **Where to file issues**: 
   - [https://github.com/georchestra/georchestra/issues](https://github.com/georchestra/georchestra/issues)
-  - [Geonetwork-ui upstream](https://github.com/geonetwork/geonetwork-ui/)
 
 -	**Supported architectures**:   
      [`amd64`](https://hub.docker.com/r/amd64/docker/)
@@ -25,8 +24,6 @@
 # What is `georchestra/datafeeder-frontend`
 
 **Datafeeder-frontend** is geOrchestra's frontend UI service provides the wizard-like user interface to interact with the [backend](https://hub.docker.com/r/georchestra/datafeeder), it aims to upload file based datasets and publish them to GeoServer and GeoNetwork in one shot.
-
-**Datafeeder-frontend** is a fork of [geonetwork-ui/datafeeder](https://github.com/geonetwork/geonetwork-ui/) Angular app.
 
 # How to use this image
 
@@ -40,7 +37,7 @@ For this specific component, see the section `import` in the [`georchestra/docke
 
 This image is built using maven : `../mvnw clean package docker:build -Pdocker` in `georchestra` repo `datafeeder-ui/` folder.
 
-It pulls associated branch from [georchestra/geonetwork-ui](https://github.com/georchestra/geonetwork-ui/tree/georchestra-datafeeder) repo.
+It pulls associated branch from [georchestra/datafeeder-ui](https://github.com/georchestra/datafeeder-ui/tree/georchestra-datafeeder) repo.
 
 # License
 
