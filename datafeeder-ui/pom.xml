@@ -53,8 +53,8 @@
               <version>1.11.2</version>
               <configuration>
                   <checkoutDirectory>${project.build.directory}/datafeeder-ui</checkoutDirectory>
-                  <connectionUrl>scm:git:https://github.com/georchestra/geonetwork-ui.git</connectionUrl>
-                  <scmVersion>master</scmVersion>
+                  <connectionUrl>scm:git:https://github.com/georchestra/datafeeder-ui.git</connectionUrl>
+                  <scmVersion>main</scmVersion>
                   <scmVersionType>branch</scmVersionType>
                   <pushChanges>false</pushChanges>
               </configuration>
