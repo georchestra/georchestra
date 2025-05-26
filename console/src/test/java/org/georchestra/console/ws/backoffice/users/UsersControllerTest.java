@@ -241,11 +241,11 @@ public class UsersControllerTest {
     }
 
     @Test
-    public void createUserWithOrgDefaultRoles() throws DataServiceException, DuplicatedUidException, IOException, DuplicatedEmailException {
+    public void createUserWithOrgDefaultRoles()
+            throws DataServiceException, DuplicatedUidException, IOException, DuplicatedEmailException {
         prepareOrgsRolesMock();
         JSONObject reqUsr = new JSONObject().put("sn", "user with role from org").put("mail", "tomcat@localhost")
-                .put("org", "testorg")
-                .put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
+                .put("org", "testorg").put("givenName", "GS Priv User").put("telephoneNumber", "+331234567890")
                 .put("facsimileTelephoneNumber", "+33123456788").put("street", "Avenue des Ducs de Savoie")
                 .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234")
                 .put("privacyPolicyAgreementDate", "2019-03-12");
@@ -254,8 +254,8 @@ public class UsersControllerTest {
 
         usersCtrl.create(request);
 
-        Class<List<Account>> accountListClass = (Class<List<Account>>)(Class)List.class;
-        Class<List<String>> stringListClass = (Class<List<String>>)(Class)List.class;
+        Class<List<Account>> accountListClass = (Class<List<Account>>) (Class) List.class;
+        Class<List<String>> stringListClass = (Class<List<String>>) (Class) List.class;
         ArgumentCaptor<List<Account>> accountArgumentCaptor = ArgumentCaptor.forClass(accountListClass);
         ArgumentCaptor<List<String>> roleArgumentCaptor = ArgumentCaptor.forClass(stringListClass);
         verify(roleDao).addUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
@@ -264,7 +264,8 @@ public class UsersControllerTest {
     }
 
     @Test
-    public void updateUserWithOrgDefaultRoles() throws DataServiceException, DuplicatedUidException, IOException, DuplicatedEmailException, MessagingException, ParseException {
+    public void updateUserWithOrgDefaultRoles() throws DataServiceException, DuplicatedUidException, IOException,
+            DuplicatedEmailException, MessagingException, ParseException {
         prepareOrgsRolesMock();
         Account account = mock(Account.class);
         when(account.getUid()).thenReturn("updaterolefromorg");
@@ -275,8 +276,8 @@ public class UsersControllerTest {
 
         usersCtrl.update("updaterolefromorg", request);
 
-        Class<List<Account>> accountListClass = (Class<List<Account>>)(Class)List.class;
-        Class<List<String>> stringListClass = (Class<List<String>>)(Class)List.class;
+        Class<List<Account>> accountListClass = (Class<List<Account>>) (Class) List.class;
+        Class<List<String>> stringListClass = (Class<List<String>>) (Class) List.class;
         ArgumentCaptor<List<Account>> accountArgumentCaptor = ArgumentCaptor.forClass(accountListClass);
         ArgumentCaptor<List<String>> roleArgumentCaptor = ArgumentCaptor.forClass(stringListClass);
         verify(roleDao).deleteUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
@@ -288,7 +289,8 @@ public class UsersControllerTest {
     }
 
     @Test
-    public void updateUserWithOrgDefaultRolesNoChanges() throws DataServiceException, IOException, DuplicatedEmailException, MessagingException, ParseException {
+    public void updateUserWithOrgDefaultRolesNoChanges()
+            throws DataServiceException, IOException, DuplicatedEmailException, MessagingException, ParseException {
         prepareOrgsRolesMock();
         Account account = mock(Account.class);
         when(account.getUid()).thenReturn("updaterolefromorg1");
@@ -590,7 +592,6 @@ public class UsersControllerTest {
         assertTrue(
                 parsed.getJSONArray("roles").length() == 1 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER"));
     }
-
 
     private void prepareOrgsRolesMock() throws DataServiceException {
         Role roleA = mock(Role.class);
