@@ -18,10 +18,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -268,6 +270,78 @@ public class UsersControllerTest {
 
         assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolea", "roleb"));
         assertEquals("guserwithrolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
+    }
+
+    @Test
+    public void updateUserWithOrgDefaultRoles() throws DataServiceException, DuplicatedUidException, IOException, DuplicatedEmailException, MessagingException, ParseException {
+        Role roleA = mock(Role.class);
+        when(roleA.getName()).thenReturn("rolea");
+        when(roleA.getOrgList()).thenReturn(List.of("testorg"));
+        Role roleB = mock(Role.class);
+        when(roleB.getName()).thenReturn("roleb");
+        when(roleB.getOrgList()).thenReturn(List.of("testorg", "testorg1"));
+        Role roleC = mock(Role.class);
+        when(roleC.getName()).thenReturn("rolec");
+        when(roleC.getOrgList()).thenReturn(List.of("testorg"));
+        Org org = mock(Org.class);
+        when(org.getName()).thenReturn("testorg");
+        Org org1 = mock(Org.class);
+        when(org.getName()).thenReturn("testorg1");
+        when(orgsDao.findByOrgUniqueId("testorg")).thenReturn(org);
+        when(orgsDao.findByOrgUniqueId("testorg1")).thenReturn(org1);
+        when(roleDao.findAllForOrg(eq(org))).thenReturn(List.of(roleA, roleB));
+        when(roleDao.findAllForOrg(eq(org1))).thenReturn(List.of(roleC, roleB));
+        Account account = mock(Account.class);
+        when(account.getUid()).thenReturn("updaterolefromorg");
+        when(account.getOrg()).thenReturn("testorg");
+        when(dao.findByUID("updaterolefromorg")).thenReturn(account);
+        request.setRequestURI("/console/users/geoserver");
+        request.setContent(new JSONObject().put("org", "testorg1").toString().getBytes());
+
+        usersCtrl.update("updaterolefromorg", request);
+
+        Class<List<Account>> accountListClass = (Class<List<Account>>)(Class)List.class;
+        Class<List<String>> stringListClass = (Class<List<String>>)(Class)List.class;
+        ArgumentCaptor<List<Account>> accountArgumentCaptor = ArgumentCaptor.forClass(accountListClass);
+        ArgumentCaptor<List<String>> roleArgumentCaptor = ArgumentCaptor.forClass(stringListClass);
+        verify(roleDao).deleteUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
+        assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolea", "roleb"));
+        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
+        verify(roleDao).addUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
+        assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolec", "roleb"));
+        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
+    }
+
+    @Test
+    public void updateUserWithOrgDefaultRolesNoChanges() throws DataServiceException, IOException, DuplicatedEmailException, MessagingException, ParseException {
+        Role roleA = mock(Role.class);
+        when(roleA.getName()).thenReturn("rolea");
+        when(roleA.getOrgList()).thenReturn(List.of("testorg"));
+        Role roleB = mock(Role.class);
+        when(roleB.getName()).thenReturn("roleb");
+        when(roleB.getOrgList()).thenReturn(List.of("testorg", "testorg1"));
+        Role roleC = mock(Role.class);
+        when(roleC.getName()).thenReturn("rolec");
+        when(roleC.getOrgList()).thenReturn(List.of("testorg"));
+        Org org = mock(Org.class);
+        when(org.getName()).thenReturn("testorg");
+        Org org1 = mock(Org.class);
+        when(org.getName()).thenReturn("testorg1");
+        when(orgsDao.findByOrgUniqueId("testorg")).thenReturn(org);
+        when(orgsDao.findByOrgUniqueId("testorg1")).thenReturn(org1);
+        when(roleDao.findAllForOrg(eq(org))).thenReturn(List.of(roleA, roleB));
+        when(roleDao.findAllForOrg(eq(org1))).thenReturn(List.of(roleC, roleB));
+        Account account = mock(Account.class);
+        when(account.getUid()).thenReturn("updaterolefromorg1");
+        when(account.getOrg()).thenReturn("testorg");
+        when(dao.findByUID("updaterolefromorg1")).thenReturn(account);
+        request.setRequestURI("/console/users/geoserver");
+        request.setContent(new JSONObject().put("mail", "test@a.org").toString().getBytes());
+
+        usersCtrl.update("updaterolefromorg1", request);
+
+        verify(roleDao, never()).deleteOrgsInRoles(any(), any());
+        verify(roleDao, never()).addUsersInRoles(any(), any());
     }
 
     @Test(expected = AccessDeniedException.class)

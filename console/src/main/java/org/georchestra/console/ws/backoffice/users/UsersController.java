@@ -441,9 +441,20 @@ public class UsersController {
                         .contains(originalAcount.getOrg()))
                     throw new AccessDeniedException("User not under delegation");
             orgDao.unlinkUser(originalAcount);
+            roleDao.deleteUsersInRoles(
+                    roleDao.findAllForOrg(orgDao.findByOrgUniqueId(originalAcount.getOrg())).stream()
+                            .map(Role::getName).collect(Collectors.toList()),
+                    List.of(originalAcount));
         }
 
         accountDao.update(originalAcount, modifiedAccount);
+
+        if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
+            roleDao.addUsersInRoles(
+                    roleDao.findAllForOrg(orgDao.findByOrgUniqueId(modifiedAccount.getOrg())).stream()
+                            .map(Role::getName).collect(Collectors.toList()),
+                    List.of(modifiedAccount));
+        }
 
         // log update modifications
         logUtils.logChanges(modifiedAccount, originalAcount);
