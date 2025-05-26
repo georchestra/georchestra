@@ -358,6 +358,11 @@ public class UsersController {
 
         roleDao.addUser(Role.USER, account);
 
+        roleDao.addUsersInRoles(
+                roleDao.findAllForOrg(orgDao.findByOrgUniqueId(account.getOrg())).stream()
+                        .map(Role::getName).collect(Collectors.toList()),
+                List.of(account));
+
         orgDao.linkUser(account);
 
         logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
