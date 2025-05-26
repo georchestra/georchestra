@@ -193,6 +193,9 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public List<Role> findAllForOrg(Org org) throws DataServiceException {
+        if (org == null) {
+            return List.of();
+        }
         EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
         AndFilter filter = new AndFilter();
         filter.and(grpFilter);
