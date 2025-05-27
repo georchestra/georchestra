@@ -358,8 +358,8 @@ public class UsersController {
 
         roleDao.addUser(Role.USER, account);
 
-        roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(account.getOrg())).stream().map(Role::getName)
-                .collect(Collectors.toList()), List.of(account));
+        roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(account.getOrg())).stream()
+                .map(Role::getName).collect(Collectors.toList()), List.of(account));
 
         orgDao.linkUser(account);
 
