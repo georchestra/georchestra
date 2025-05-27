@@ -358,8 +358,8 @@ public class UsersController {
 
         roleDao.addUser(Role.USER, account);
 
-        roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByOrgUniqueId(account.getOrg())).stream()
-                .map(Role::getName).collect(Collectors.toList()), List.of(account));
+        roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(account.getOrg())).stream().map(Role::getName)
+                .collect(Collectors.toList()), List.of(account));
 
         orgDao.linkUser(account);
 
@@ -439,14 +439,14 @@ public class UsersController {
                         .contains(originalAcount.getOrg()))
                     throw new AccessDeniedException("User not under delegation");
             orgDao.unlinkUser(originalAcount);
-            roleDao.deleteUsersInRoles(roleDao.findAllForOrg(orgDao.findByOrgUniqueId(originalAcount.getOrg())).stream()
+            roleDao.deleteUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(originalAcount.getOrg())).stream()
                     .map(Role::getName).collect(Collectors.toList()), List.of(originalAcount));
         }
 
         accountDao.update(originalAcount, modifiedAccount);
 
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
-            roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByOrgUniqueId(modifiedAccount.getOrg())).stream()
+            roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(modifiedAccount.getOrg())).stream()
                     .map(Role::getName).collect(Collectors.toList()), List.of(modifiedAccount));
         }
 

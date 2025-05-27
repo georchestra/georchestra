@@ -607,8 +607,8 @@ public class UsersControllerTest {
         when(org.getName()).thenReturn("testorg");
         Org org1 = mock(Org.class);
         when(org.getName()).thenReturn("testorg1");
-        when(orgsDao.findByOrgUniqueId("testorg")).thenReturn(org);
-        when(orgsDao.findByOrgUniqueId("testorg1")).thenReturn(org1);
+        when(orgsDao.findByCommonName("testorg")).thenReturn(org);
+        when(orgsDao.findByCommonName("testorg1")).thenReturn(org1);
         when(roleDao.findAllForOrg(eq(org))).thenReturn(List.of(roleA, roleB));
         when(roleDao.findAllForOrg(eq(org1))).thenReturn(List.of(roleC, roleB));
     }
