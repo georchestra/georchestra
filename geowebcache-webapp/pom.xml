@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -17,11 +17,11 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
-    <gwc.version>1.26-SNAPSHOT</gwc.version>
+    <gwc.version>1.27.0</gwc.version>
     <!-- override dependencies from parent pom to match the ones for the gwc version -->
-    <gt.version>32-SNAPSHOT</gt.version>
+    <gt.version>33.0</gt.version>
     <spring.version>5.3.39</spring.version>
-    <spring-security.version>5.7.12</spring-security.version>
+    <spring-security.version>5.7.13</spring-security.version>
     <hazelcast.version>5.3.8</hazelcast.version>
     <context.name>geowebcache</context.name>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
@@ -45,14 +45,6 @@
       <artifactId>georchestra-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.2.17</version>
-      <type>jar</type>
-      <scope>runtime</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-core</artifactId>
