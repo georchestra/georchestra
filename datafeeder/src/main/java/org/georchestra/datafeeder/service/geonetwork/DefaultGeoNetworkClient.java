@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.client.Client;
 
@@ -172,32 +173,39 @@ public class DefaultGeoNetworkClient implements GeoNetworkClient {
 
         UsersApi usersApi = new UsersApi(client);
         Optional<User> impersonatedUser = Optional.empty();
-        try {
+        List<UserGroup> ugs;
+        List<Group> gps = List.of();
 
-            // TODO Isn't there a more efficient way to look up a user using the API ?
+        try {
             impersonatedUser = usersApi.getUsers().stream().filter(usr -> usr.getUsername().equals(user.getUsername()))
                     .findFirst();
-            if ((!impersonatedUser.isPresent()) || (!groupId.isPresent())) {
+            String computedGroupName = groupName;
+            if (!orgBasedSync && impersonatedUser.isPresent()) {
+                User usr = impersonatedUser.get();
+                // skip "hardcoded" GN groups
+                ugs = usersApi.retrieveUserGroups(usr.getId());
+                gps = ugs.stream().map(UserGroup::getGroup).filter(ugGroup -> ugGroup.getId() > 2)
+                        .collect(Collectors.toList());
+                groupId = !gps.isEmpty() ? Optional.of(gps.get(0).getId()) : Optional.empty();
+                computedGroupName = !gps.isEmpty() ? gps.get(0).getName() : "null";
+            }
+            if ((impersonatedUser.isEmpty()) || (groupId.isEmpty())) {
                 log.warn("Unable to find user {} and/or group {} in GeoNetwork, skipping record impersonation",
-                        user.getUsername(), groupName);
+                        user.getUsername(), computedGroupName);
             } else {
                 api.setRecordOwnership(metadataId, groupId.get(), impersonatedUser.get().getId(), true);
             }
         } catch (ApiException e) {
             log.error("Unable to give ownership on record {} to user {}", metadataId, user, e);
         }
-
         // if the GN synchronization is not based on the organizations, then we have to
         // add the 'editing'
         // privilege to each groups (e.g. geOrchestra roles) the user belongs to.
         if (!orgBasedSync) {
             try {
-                if (impersonatedUser.isPresent()) {
-                    User usr = impersonatedUser.get();
-                    List<UserGroup> ugs = usersApi.retrieveUserGroups(usr.getId());
+                if (!gps.isEmpty()) {
                     List<GroupOperations> lgo = new ArrayList<>();
-                    ugs.stream().filter(ug -> ug.getGroup().getId() > 2). // skip "hardcoded" GN groups
-                            forEach(ug -> lgo.add(allowEditing(ug.getGroup().getId())));
+                    gps.forEach(ug -> lgo.add(allowEditing(ug.getId())));
                     SharingParameter shareParams = new SharingParameter();
                     shareParams.clear(false);
                     shareParams.setPrivileges(lgo);
