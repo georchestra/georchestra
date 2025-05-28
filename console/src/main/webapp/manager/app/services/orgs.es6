@@ -42,4 +42,12 @@ angular.module('manager')
         isArray: true
       }
     })
+  ]).factory('OrgsRoles', ['$resource', 'CONSOLE_PUBLIC_PATH', ($resource, baseUri) =>
+    $resource(baseUri + 'orgs/orgTypeValues', {}, {
+      query: {
+        method: 'GET',
+        cache: true,
+        isArray: true
+      }
+    })
   ])

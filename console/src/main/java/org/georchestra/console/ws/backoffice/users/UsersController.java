@@ -358,6 +358,9 @@ public class UsersController {
 
         roleDao.addUser(Role.USER, account);
 
+        roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(account.getOrg())).stream()
+                .map(Role::getName).collect(Collectors.toList()), List.of(account));
+
         orgDao.linkUser(account);
 
         logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
@@ -436,9 +439,16 @@ public class UsersController {
                         .contains(originalAcount.getOrg()))
                     throw new AccessDeniedException("User not under delegation");
             orgDao.unlinkUser(originalAcount);
+            roleDao.deleteUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(originalAcount.getOrg())).stream()
+                    .map(Role::getName).collect(Collectors.toList()), List.of(originalAcount));
         }
 
         accountDao.update(originalAcount, modifiedAccount);
+
+        if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
+            roleDao.addUsersInRoles(roleDao.findAllForOrg(orgDao.findByCommonName(modifiedAccount.getOrg())).stream()
+                    .map(Role::getName).collect(Collectors.toList()), List.of(modifiedAccount));
+        }
 
         // log update modifications
         logUtils.logChanges(modifiedAccount, originalAcount);

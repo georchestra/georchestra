@@ -3,7 +3,6 @@ package org.georchestra.console.integration;
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -19,25 +18,18 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
@@ -54,23 +46,7 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
 
-    private @Autowired LdapTemplate ldapTemplateSanityCheck;
-
     private @Autowired GDPRAccountWorker gdprWorker;
-
-    @Autowired
-    private WebApplicationContext wac;
-
-    private MockMvc mockMvc;
-
-    public static @BeforeClass void init() {
-    }
-
-    public @Before void before() {
-        // pre-flight sanity check
-        assertNotNull(ldapTemplateSanityCheck.lookup("ou=users"));
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    }
 
     @WithMockRandomUidUser
     public @Test void changeOrgAndUid() throws Exception {
@@ -130,45 +106,25 @@ public class UsersIT extends ConsoleIntegrationTest {
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 
-    private ResultActions getProfile() throws Exception {
-        return support.perform(get("/private/users/profile"));
-    }
-
-    private String createRole() throws Exception {
-        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-        support.perform(post("/private/roles").content(body));
-        return roleName;
-    }
-
-    private void setRole(String userName, String role1Name, String role2Name) throws Exception {
-        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
-                + "\"],\"DELETE\":[]}";
-        support.perform(post("/private/roles_users").content(body));
-    }
-
-    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
     @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws Exception {
-
         support.createUser("user1");
 
         Authentication auth = Mockito.mock(Authentication.class);
         Mockito.when(auth.getName()).thenReturn("user1");
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        this.mockMvc.perform(post("/account/gdpr/delete")).andExpect(status().isOk())//
+        support.perform(post("/account/gdpr/delete")).andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 // .andDo(print())//
                 .andExpect(jsonPath("$.account").value("user1"))//
                 .andExpect(jsonPath("$.metadata").value(2))//
                 .andExpect(jsonPath("$.ogcStats").value(3));
 
-        this.mockMvc.perform(post("/account/gdpr/delete").header(SEC_USERNAME, "user1"))//
+        support.perform(post("/account/gdpr/delete").header(SEC_USERNAME, "user1"))//
                 .andExpect(status().isNotFound());
-
     }
 
     @WithMockRandomUidUser
@@ -186,7 +142,20 @@ public class UsersIT extends ConsoleIntegrationTest {
         assertFalse(isEmpty(afterDeletion));
     }
 
-    boolean isEmpty(DeletedAccountSummary summary) {
+    private String createRole() throws Exception {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
+        support.perform(post("/private/roles").content(body));
+        return roleName;
+    }
+
+    private void setRole(String userName, String role1Name, String role2Name) throws Exception {
+        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
+                + "\"],\"DELETE\":[]}";
+        support.perform(post("/private/roles_users").content(body));
+    }
+
+    private boolean isEmpty(DeletedAccountSummary summary) {
         return summary.getMetadataRecords() == 0 && summary.getOgcStatsRecords() == 0;
     }
 }

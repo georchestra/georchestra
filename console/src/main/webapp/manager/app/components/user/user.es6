@@ -15,7 +15,8 @@ class UserController {
     this.i18n = {}
     const strings = [
       'user.updated', 'user.error', 'user.deleted', 'user.content',
-      'org.select', 'delegation.dupdated', 'delegation.ddeleted']
+      'org.select', 'delegation.dupdated', 'delegation.ddeleted',
+      'role.organization', 'role.no_org_roles']
     strings.map(str => translate(str, this.i18n))
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
@@ -31,6 +32,7 @@ class UserController {
 
     this.user = User.get({ id: this.uid }, (user) => {
       user.originalID = user.uid
+      user.orgRoles = user.orgRoles || []
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({ id: user.org }, org => {
           user.validOrg = !org.pending
@@ -61,6 +63,7 @@ class UserController {
       }
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
+    this.orgRoles = []
     switch (this.tab) {
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
@@ -71,11 +74,19 @@ class UserController {
     this.bindRoles()
 
     this.required = $injector.get('UserRequired').get()
+
+    // Bind methods to this instance
+    this.filterNonOrgRoles = this.filterNonOrgRoles.bind(this)
   }
 
   hasDelegation () {
     if (!this.delegation) return false
     return (this.delegation.orgs.length !== 0) && (this.delegation.roles.length !== 0)
+  }
+
+  hasOrgRoles () {
+    if (!this.user || !this.user.orgRoles) return false
+    return this.user.orgRoles.length > 0
   }
 
   // search each choosen span elements and set title manually
@@ -115,14 +126,20 @@ class UserController {
       ]).then(() => {
         this.user.roles = this.user.roles || []
         this.user.adminRoles = this.user.adminRoles || {}
+        this.user.orgRoles = this.user.orgRoles || []
         this.roles.forEach((role) => {
-          if (role.users.indexOf(this.user.uid) >= 0) {
+          const isOrgRole = this.user.org && role.orgs.indexOf(this.user.org) >= 0
+          if (isOrgRole) {
+            this.user.orgRoles.push(role.cn)
+          } else if (role.users.indexOf(this.user.uid) >= 0) {
             if (roleAdminFilter(role)) {
               this.user.adminRoles[role.cn] = true
             } else {
               this.user.roles.push(role.cn)
             }
           }
+
+          // Add to available app roles if not admin and not temporary
           if (!roleAdminFilter(role) && role.cn !== this.TMP_ROLE) {
             notAdmin.push(role.cn)
           }
@@ -376,6 +393,14 @@ class UserController {
 
   isUnassignableRole (role) {
     return this.$injector.get('readonlyRoleList').includes(role)
+  }
+
+  filterNonOrgRoles () {
+    // Return a filter function that excludes org roles
+    return (role) => {
+      if (!this.user || !this.user.orgRoles) return true
+      return this.user.orgRoles.indexOf(role) === -1
+    }
   }
 }
 
