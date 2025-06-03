@@ -30,21 +30,21 @@ public class LdapDaoProperties {
     @Setter
     String[] orgTypeValues;
 
+    @Getter
+    LdapName userSearchBaseDN;
+
+    @Getter
+    LdapName pendingUserSearchBaseDN;
+
     public LdapDaoProperties setOrgTypeValues(String orgTypeValues) {
         this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
         return this;
     }
 
-    @Getter
-    LdapName userSearchBaseDN;
-
     public LdapDaoProperties setUserSearchBaseDN(String userSearchBaseDN) {
         this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
         return this;
     }
-
-    @Getter
-    LdapName pendingUserSearchBaseDN;
 
     public LdapDaoProperties setPendingUserSearchBaseDN(String pendingUserSearchBaseDN) {
         this.pendingUserSearchBaseDN = LdapNameBuilder.newInstance(pendingUserSearchBaseDN).build();

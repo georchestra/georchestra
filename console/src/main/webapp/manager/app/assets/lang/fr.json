@@ -168,7 +168,7 @@
   "role.app"             : "Autres rôles",
   "role.organization"    : "Rôles attribués via l'organisme",
   "role.user_belongs_to_org"  : "L'utilisateur appartient à l'organisme {{orgName}}, qui attribue les rôles suivants à ses membres:",
-  "role.org.infos",       : "Ces rôles seront attribués à tous les utilisateurs de l'organisme. Attention : si vous supprimez un rôle de l'organisme, il sera supprimé de tous les utilisateurs de l'organisme.",
+  "role.org.infos"       : "Ces rôles seront attribués à tous les utilisateurs de l'organisme. Attention : si vous supprimez un rôle de l'organisme, il sera supprimé de tous les utilisateurs de l'organisme.",
   "role.no_org_roles"    : "Aucun rôle attribué via l'organisme",
   "role.newuser"         : "Nouvel utilisateur",
   "role.newrole"         : "Nouveau rôle",

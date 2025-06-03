@@ -63,11 +63,6 @@ public class RoleDaoImpl implements RoleDao {
     private LdapDaoProperties props;
 
     @Autowired
-    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
-        this.props = ldapDaoProperties;
-    }
-
-    @Autowired
     private AccountDaoImpl accountDao;
 
     @Autowired
@@ -75,6 +70,11 @@ public class RoleDaoImpl implements RoleDao {
 
     @Autowired
     private RoleProtected roles;
+
+    @Autowired
+    public void setLdapDaoProperties(LdapDaoProperties ldapDaoProperties) {
+        this.props = ldapDaoProperties;
+    }
 
     @Autowired
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
