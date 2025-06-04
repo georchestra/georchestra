@@ -26,14 +26,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +49,8 @@ import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
 import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.roles.RoleFactory;
@@ -100,16 +105,15 @@ public class RolesController {
     private static final String VIRTUAL_EXPIRED_ROLE_NAME = "EXPIRED";
     private static final String VIRTUAL_EXPIRED_ROLE_DESCRIPTION = "Virtual role that contains all expired users";
 
-    @Autowired
     private AccountDao accountDao;
+
+    private OrgsDao orgDao;
 
     @Autowired
     protected LogUtils logUtils;
 
-    @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
-    @Autowired
     private DelegationDao delegationDao;
 
     private RoleDao roleDao;
@@ -434,9 +438,9 @@ public class RolesController {
 
         JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
 
-        List<String> users = createUserList(json, "users");
-        List<String> putRole = createUserList(json, "PUT");
-        List<String> deleteRole = createUserList(json, "DELETE");
+        List<String> users = createUserOrOrgList(json, "users");
+        List<String> putRole = createUserOrOrgList(json, "PUT");
+        List<String> deleteRole = createUserOrOrgList(json, "DELETE");
 
         List<Account> accounts = users.stream().map(userUuid -> {
             try {
@@ -466,6 +470,41 @@ public class RolesController {
         ResponseUtil.writeSuccess(response);
     }
 
+    @PostMapping(BASE_MAPPING + "/roles_orgs")
+    public void updateOrgs(HttpServletRequest request, HttpServletResponse response)
+            throws AccessDeniedException, IOException, JSONException, DataServiceException {
+        JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
+
+        List<String> orgsCN = createUserOrOrgList(json, "orgs");
+        List<String> putRole = createUserOrOrgList(json, "PUT");
+        List<String> deleteRole = createUserOrOrgList(json, "DELETE");
+
+        List<Org> orgs = orgsCN.stream() //
+                .map(orgDao::findByCommonName) //
+                .filter(Objects::nonNull).collect(Collectors.toList());
+
+        List<Account> accounts = orgs.stream() //
+                .map(Org::getMembers) //
+                .map(List::stream) //
+                .flatMap(s -> s.map(this::findAccount).filter(Objects::nonNull)) //
+                .collect(Collectors.toList());
+
+        this.roleDao.addUsersInRoles(putRole, accounts);
+        this.roleDao.deleteUsersInRoles(deleteRole, accounts);
+        this.roleDao.addOrgsInRoles(putRole, orgs);
+        this.roleDao.deleteOrgsInRoles(deleteRole, orgs);
+
+        ResponseUtil.writeSuccess(response);
+    }
+
+    private Account findAccount(String uuid) {
+        try {
+            return accountDao.findByUID(uuid);
+        } catch (DataServiceException e) {
+            return null;
+        }
+    }
+
     public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole,
             List<String> deleteRole) throws AccessDeniedException {
         // Verify authorization
@@ -480,20 +519,12 @@ public class RolesController {
 
     }
 
-    private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
-
+    private List<String> createUserOrOrgList(JSONObject json, String arrayKey) throws IOException {
         try {
-
-            List<String> list = new LinkedList<String>();
-
             JSONArray jsonArray = json.getJSONArray(arrayKey);
-            for (int i = 0; i < jsonArray.length(); i++) {
-
-                list.add(jsonArray.getString(i));
-            }
-
-            return list;
-
+            return IntStream.range(0, jsonArray.length()) //
+                    .mapToObj(jsonArray::getString) //
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             LOG.error(e.getMessage());
             throw new IOException(e);
@@ -568,28 +599,21 @@ public class RolesController {
         }
     }
 
-    /**
-     * Method used for testing convenience.
-     *
-     * @param gd
-     */
-    public void setRoleDao(RoleDao gd) {
-        roleDao = gd;
-    }
-
-    /**
-     * Method used for testing convenience.
-     *
-     * @param ad
-     */
+    @Autowired
     public void setAccountDao(AccountDao ad) {
         this.accountDao = ad;
+    }
+
+    @Autowired
+    public void setOrgDao(OrgsDao orgDao) {
+        this.orgDao = orgDao;
     }
 
     public AdvancedDelegationDao getAdvancedDelegationDao() {
         return advancedDelegationDao;
     }
 
+    @Autowired
     public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
         this.advancedDelegationDao = advancedDelegationDao;
     }
@@ -598,6 +622,7 @@ public class RolesController {
         return delegationDao;
     }
 
+    @Autowired
     public void setDelegationDao(DelegationDao delegationDao) {
         this.delegationDao = delegationDao;
     }

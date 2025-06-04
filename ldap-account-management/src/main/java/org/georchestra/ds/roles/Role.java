@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author Mauricio Pazos
  */
-public interface Role {
+public interface Role extends Comparable<Role> {
 
     final String USER = "USER";
 
@@ -59,6 +59,9 @@ public interface Role {
     @JsonProperty("users")
     List<String> getUserList();
 
+    @JsonProperty("orgs")
+    List<String> getOrgList();
+
     void setUserList(List<String> userUidList);
 
     /**
@@ -67,6 +70,10 @@ public interface Role {
      * @param userUid a user dn
      */
     void addUser(String userUid);
+
+    void addOrg(String orgUid);
+
+    void addMembers(String[] members);
 
     void setDescription(String description);
 

@@ -17,6 +17,7 @@ import javax.naming.Name;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.Account;
@@ -54,18 +55,11 @@ public class ChangePasswordControllerTest {
     public void setUp() {
         ldapTemplate = mock(LdapTemplate.class);
 
-        RoleDaoImpl roleDao = new RoleDaoImpl();
-        roleDao.setLdapTemplate(ldapTemplate);
-
-        OrgsDaoImpl orgsDao = new OrgsDaoImpl();
-        orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
+        LdapDaoProperties ldapDaoProperties = new LdapDaoProperties() //
+                .setOrgSearchBaseDN("ou=orgs").setUserSearchBaseDN("ou=users").setPendingUserSearchBaseDN("ou=pending");
 
         AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate);
-        dao.setUserSearchBaseDN("ou=users");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setOrgSearchBaseDN("ou=orgs");
-        dao.setPendingUserSearchBaseDN("ou=pending");
+        dao.setLdapDaoProperties(ldapDaoProperties);
         ctrlToTest = new ChangePasswordFormController(dao);
         ctrlToTest.passwordUtils = new PasswordUtils();
 
