@@ -23,7 +23,7 @@ LICENSE_HEADER='/*
 # Check what should be found in file
 header="This file is part of geOrchestra."
 extensions=(".java" ".js" ".ts" ".css" ".less" ".html")
-exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" ".git" ".idea" ".gradle" "assets" "docs")
+exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" ".git" ".idea" ".gradle" "docs")
 exclude_files=("package-lock.json" "yarn.lock" "*.min.js" "*.min.css" "*.svg" "*.md" "*.txt" "*.json" "*.xml")
 
 # Build find command to locate files with specific extensions
