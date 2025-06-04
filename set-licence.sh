@@ -27,8 +27,8 @@ LICENSE_HEADER='/*
 
 # Check what should be found in file
 header="This file is part of geOrchestra."
-extensions=(".java" ".js" ".ts" ".css" ".less" ".html")
-exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" ".git" ".idea" ".gradle" "docs")
+extensions=(".java" ".js" ".ts" ".css" ".less" ".html" ".jsp")
+exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" ".git" ".idea" ".gradle" "assets" "docs")
 exclude_files=("package-lock.json" "yarn.lock" "*.min.js" "*.min.css" "*.svg" "*.md" "*.txt" "*.json" "*.xml")
 
 # Build find command to locate files with specific extensions
@@ -119,17 +119,27 @@ else
 
             echo "$head_content" > "$temp_file"
             echo "<!--" >> "$temp_file"
-            echo "$LICENSE_HEADER" | sed 's|/\*||' | sed 's|\*/||' >> "$temp_file"
+            echo "$LICENSE_HEADER" | sed 's|/\*||' | sed 's|\*/||' | sed 's|^ \*||g' >> "$temp_file"
             echo "-->" >> "$temp_file"
             echo "" >> "$temp_file"  # Add a blank line
             echo "$tail_content" >> "$temp_file"
           else
             echo "<!--" > "$temp_file"
-            echo "$LICENSE_HEADER" | sed 's|/\*||' | sed 's|\*/||' >> "$temp_file"
+            echo "$LICENSE_HEADER" | sed 's|/\*||' | sed 's|\*/||' | sed 's|^ \*||g' >> "$temp_file"
             echo "-->" >> "$temp_file"
             echo "" >> "$temp_file"  # Add a blank line
             cat "$file" >> "$temp_file"
           fi
+          mv "$temp_file" "$file"
+          ;;
+        jsp)
+          # For JSP files, use JSP comment syntax <%-- --%>
+          temp_file=$(mktemp)
+          echo "<%--" > "$temp_file"
+            echo "$LICENSE_HEADER" | sed 's|/\*||' | sed 's|\*/||' | sed 's|^ \*||g' >> "$temp_file"
+          echo "--%>" >> "$temp_file"
+          echo "" >> "$temp_file"  # Add a blank line
+          cat "$file" >> "$temp_file"
           mv "$temp_file" "$file"
           ;;
         *)
