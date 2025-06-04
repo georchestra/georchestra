@@ -23,14 +23,20 @@ LICENSE_HEADER='/*
 # Check what should be found in file
 header="This file is part of geOrchestra."
 extensions=(".java" ".js" ".ts" ".css" ".less" ".html")
-exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" )
+exclude_dirs=("node_modules" "lib" "dist" "geonetwork" "geoserver" "geowebcache" ".mvn" "target" "build" "bin" "out" "vendor" "bootstrap*" ".git" ".idea" ".gradle" "assets" "docs")
+exclude_files=("package-lock.json" "yarn.lock" "*.min.js" "*.min.css" "*.svg" "*.md" "*.txt" "*.json" "*.xml")
 
 # Build find command to locate files with specific extensions
 find_command="find ."
 
 # Add exclude directories
 for dir in "${exclude_dirs[@]}"; do
-  find_command+=" -not -path '*/$dir/*'"
+  find_command+=" -not -path '*/$dir/*' -not -path '*/$dir'"
+done
+
+# Add exclude files
+for file in "${exclude_files[@]}"; do
+  find_command+=" -not -name '$file'"
 done
 
 # Add file extensions using -o (OR) operator
