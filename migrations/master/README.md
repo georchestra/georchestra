@@ -55,3 +55,10 @@ Finally, use the following command with the [ldap_migration.ldif](ldap_migration
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
 ```
 
+### Geonetwork
+
+Since this is merge <https://github.com/georchestra/geonetwork/pull/320>
+
+Xlink contacts are enabled by default in geonetwork config-editors
+
+In order to migrate the metadata you can use the following documentation : <https://github.com/georchestra/geonetwork/blob/6ee9f9d357eb2c6c26d4b02827e0c24fa75aa0a8/georchestra-migration/about-xlinks.md>
