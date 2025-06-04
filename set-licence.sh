@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# This script checks for the presence of a specific license header in source files,
+# adds the header if missing, and updates the copyright year if outdated.
+# It supports multiple file types and excludes certain directories and files.
+# Usage: Run this script in the root directory of the project.
+
 CURRENT_YEAR=$(date +"%Y")
 LICENSE_HEADER='/*
  * Copyright (C) 2009-'"$CURRENT_YEAR"' by the geOrchestra PSC
