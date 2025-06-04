@@ -40,12 +40,34 @@ for ext in "${extensions[@]}"; do
 done
 find_command+=" \)"
 
-# Execute the find command and pipe results to grep
-missing_header_files=$(eval "$find_command" | xargs grep -L "$header")
+# Execute the find command
+all_files=$(eval "$find_command")
 
+# Separate files with missing headers and files with outdated year
+missing_header_files=""
+outdated_year_files=""
+
+while IFS= read -r file; do
+  if grep -q "$header" "$file"; then
+    # File has license header, check for outdated year
+    if grep -q "Copyright (C) 2009-[0-9]\{4\} by the geOrchestra PSC" "$file"; then
+      if ! grep -q "Copyright (C) 2009-$CURRENT_YEAR by the geOrchestra PSC" "$file"; then
+        outdated_year_files+="$file"$'\n'
+      fi
+    fi
+  else
+    # File is missing license header
+    missing_header_files+="$file"$'\n'
+  fi
+done <<< "$all_files"
+
+# Trim trailing newlines
+missing_header_files=$(echo "$missing_header_files" | sed '/^$/d')
+outdated_year_files=$(echo "$outdated_year_files" | sed '/^$/d')
+
+# Handle files with missing headers
 if [ -z "$missing_header_files" ]; then
   echo "All source files contain the header."
-  exit 0
 else
   file_count=$(echo "$missing_header_files" | wc -l)
   echo "The following files are missing the header ($file_count files):"
@@ -108,6 +130,42 @@ else
 
     echo "License added successfully!"
   else
-    echo "Operation cancelled."
+    echo "Operation cancelled for missing licenses."
   fi
+fi
+
+# Handle files with outdated year
+if [ -n "$outdated_year_files" ]; then
+  file_count=$(echo "$outdated_year_files" | wc -l)
+  echo
+  echo "The following files have outdated copyright year ($file_count files):"
+  echo "$outdated_year_files"
+
+  echo
+  echo "Do you want to update the copyright year to $CURRENT_YEAR in these files? (y/n)"
+  read -r response
+
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "Updating copyright year in files..."
+
+    while IFS= read -r file; do
+      echo "Updating $file"
+      # Use sed to replace the year in the copyright line
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS version of sed requires backup extension
+        sed -i '' "s/Copyright (C) 2009-[0-9]\{4\} by the geOrchestra PSC/Copyright (C) 2009-$CURRENT_YEAR by the geOrchestra PSC/g" "$file"
+      else
+        # Linux version
+        sed -i "s/Copyright (C) 2009-[0-9]\{4\} by the geOrchestra PSC/Copyright (C) 2009-$CURRENT_YEAR by the geOrchestra PSC/g" "$file"
+      fi
+    done <<< "$outdated_year_files"
+
+    echo "Copyright year updated successfully!"
+  else
+    echo "Operation cancelled for year updates."
+  fi
+fi
+
+if [ -z "$missing_header_files" ] && [ -z "$outdated_year_files" ]; then
+  echo "All files have the correct license header with the current year ($CURRENT_YEAR)."
 fi
