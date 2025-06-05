@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 by the geOrchestra PSC
+ * Copyright (C) 2009-2025 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
