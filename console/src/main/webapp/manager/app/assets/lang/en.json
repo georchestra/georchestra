@@ -168,7 +168,7 @@
   "role.app"             : "Other roles",
   "role.organization"    : "Roles granted by the organization",
   "role.user_belongs_to_org"  : "The user belongs to {{orgName}}, which grants the following roles to its members:",
-  "role.org.infos"       : "Those roles will be assigned to all users of the organization. Warning: if you remove a role from the organization, it will be removed from all users of the organization.",
+  "role.org.infos"       : "Those roles will be assigned to all users of the organization. Warning: removing a role from an organization means removing it for all members of the organization.",
   "role.no_org_roles"    : "No roles assigned through organization",
   "role.newuser"         : "New user",
   "role.newrole"         : "New role",

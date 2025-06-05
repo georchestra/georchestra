@@ -168,7 +168,7 @@
   "role.app"              : "Otros roles",
   "role.organization"     : "Roles de organización",
   "role.user_belongs_to_org"  : "El usuario pertenece a {{orgName}}, lo que otorga los siguientes roles a sus miembros:",
-  "role.org.infos"        : "Estos roles se asignarán a todos los usuarios de la organización. Advertencia: si elimina un rol de la organización, se eliminará de todos los usuarios de la organización.",
+  "role.org.infos"        : "Estos roles se asignarán a todos los usuarios de la organización. Tenga en cuenta: eliminar un rol de la organización significa eliminarlo de todos los miembros de la organización.",
   "role.no_org_roles"     : "No hay roles asignados a través de la organización",
   "role.newuser"          : "Nuevo usuario",
   "role.newrole"          : "Nuevo rol",

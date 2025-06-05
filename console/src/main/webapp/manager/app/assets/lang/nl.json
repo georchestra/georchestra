@@ -168,7 +168,7 @@
   "role.app"             : "Andere rollen",
   "role.organization"    : "Organisatierollen",
   "role.user_belongs_to_org"  : "De gebruiker behoort tot {{orgName}}, wat de volgende rollen aan zijn leden toekent:",
-  "role.org.infos"       : "Deze rollen worden toegewezen aan alle gebruikers van de organisatie. Waarschuwing: als u een rol uit de organisatie verwijdert, wordt deze verwijderd bij alle gebruikers van de organisatie.",
+  "role.org.infos"       : "Deze rollen worden toegewezen aan alle gebruikers van de organisatie. Let op: als u een rol uit een organisatie verwijdert, verwijdert u de rol ook uit alle leden van de organisatie.",
   "role.no_org_roles"    : "Geen rollen toegewezen via de organisatie",
   "role.newuser"         : "Nieuwe gebruiker",
   "role.newrole"         : "Nieuwe rol",

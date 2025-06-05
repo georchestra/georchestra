@@ -169,7 +169,7 @@
   "role.organization"     : "Organisationsrollen",
   "role.user_belongs_to_org"  : "Der Benutzer gehört zu {{orgName}}, was seinen Mitgliedern die folgenden Rollen zuweist",
   "role.no_org_roles"     : "Keine Rollen über die Organisation zugewiesen",
-  "role.org.infos"        : "Diese Rollen werden allen Benutzern der Organisation zugewiesen. Warnung: Wenn Sie eine Rolle aus der Organisation entfernen, wird sie von allen Benutzern der Organisation entfernt.",
+  "role.org.infos"        : "Diese Rollen werden allen Benutzern der Organisation zugewiesen. Bitte beachten: Wenn Sie eine Rolle aus der Organisation entfernen, bedeutet dies, dass Sie sie von allen Mitgliedern der Organisation entfernen.",
   "role.newuser"          : "Neuer Benutzer",
   "role.newrole"          : "Neue Rolle",
   "role.user"             : "Benutzer",

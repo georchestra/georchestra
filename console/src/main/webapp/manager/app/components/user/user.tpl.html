@@ -95,7 +95,7 @@
         <div ng-if="user.user.org">
           <hr>
           <h4><span translate>role.organization</span>
-            <a ng-link="org({org: user.user.orgObj.id, tab: 'roles'})">{{user.user.orgObj.name}}</a>
+            <a ng-link="org({org: user.user.orgObj.id, tab: 'roles'})">({{user.user.orgObj.name}})</a>
           </h4>
           <p translate translate-values="{orgName:user.user.orgObj.name}">role.user_belongs_to_org</p>
           <ul class="">
