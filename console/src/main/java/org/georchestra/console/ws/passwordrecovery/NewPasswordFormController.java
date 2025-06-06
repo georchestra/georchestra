@@ -96,6 +96,7 @@ public class NewPasswordFormController {
             formBean.setUid(uid);
 
             model.addAttribute(formBean);
+            model.addAttribute("pwdUtils", passwordUtils);
 
             return "newPasswordForm";
 
