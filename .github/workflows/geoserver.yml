@@ -44,7 +44,7 @@ jobs:
     - name: Getting image tag
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       id: version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
 
     - name: "Building docker image with native security"
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
