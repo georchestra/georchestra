@@ -19,7 +19,7 @@ jobs:
 
     - name: Getting image tag
       id: version
-      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+      run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_OUTPUT
 
     - name: "Docker build database"
       if: github.repository == 'georchestra/georchestra'
@@ -35,7 +35,7 @@ jobs:
 
     - name: "Update Docker Hub Description"
       if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
-      uses: peter-evans/dockerhub-description@v3
+      uses: peter-evans/dockerhub-description@v4
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_PASSWORD }}
