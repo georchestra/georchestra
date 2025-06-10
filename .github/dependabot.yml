@@ -47,14 +47,6 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: docker
-  directory: /datafeeder/src/docker
-  schedule:
-    interval: weekly
-- package-ecosystem: docker
-  directory: /datafeeder-ui/src/docker
-  schedule:
-    interval: weekly
-- package-ecosystem: docker
   directory: /geoserver/webapp/src/docker
   schedule:
     interval: weekly
