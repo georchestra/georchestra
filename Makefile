@@ -21,13 +21,6 @@ docker-build-database:
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
-docker-build-gn: docker-pull-jetty
-	mvn install -pl security-proxy-spring-integration --also-make -DskipTests; \
-	cd geonetwork; \
-	mvn -DskipTests -Pdatahub-integration clean install; \
-	cd web; \
-	mvn -Pdocker,datahub-integration -DskipTests package -DdockerImageTags=${BTAG}
-
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
@@ -75,10 +68,6 @@ war-build-geoserver-geofence: build-deps
 war-build-geowebcache: build-deps
 	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
 
-war-build-gn: build-deps
-	mvn clean install -pl testcontainers,ldap-account-management,security-proxy-spring-integration -DskipTests
-	mvn clean install -f geonetwork/pom.xml -Pdatahub-integration -DskipTests
-
 war-build-georchestra: war-build-gn war-build-geoserver
 	mvn -Dmaven.test.skip=true -DskipTests clean install
 
@@ -97,7 +86,7 @@ deb-build-geowebcache: war-build-geowebcache
 	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver deb-build-geowebcache
-	mvn package deb:package -pl security-proxy,analytics,console,geonetwork/web -PdebianPackage,datahub-integration -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl security-proxy,analytics,console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:
