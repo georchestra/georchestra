@@ -17,7 +17,7 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
-    <gwc.version>1.27.0</gwc.version>
+    <gwc.version>1.27.1</gwc.version>
     <!-- override dependencies from parent pom to match the ones for the gwc version -->
     <gt.version>33.0</gt.version>
     <spring.version>5.3.39</spring.version>
