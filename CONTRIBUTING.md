@@ -25,7 +25,7 @@ We welcome all contributions.
 
 * Keep pull requests as simple as possible. Remember: one PR targets one and only one feature or fix.
 * A bugfix PR should target the oldest supported branch where the bug appears. Releases get bugfixes during one year.
-* PR title should start with the module name, like this: "datafeeder - fix XXX"
+* PR title should start with the module name, like this: "console - fix XXX"
 * If a PR impacts the deployment procedure, it should also include documentation.
 * If a PR requires the admin to update any database or file, it should also update the [release notes](RELEASE_NOTES.md).
 

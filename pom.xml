@@ -882,8 +882,6 @@
                 <module>security-proxy</module>
                 <module>geonetwork</module>
                 <module>analytics</module>
-                <module>datafeeder</module>
-                <module>datafeeder-ui</module>
             </modules>
         </profile>
         <profile>
@@ -938,18 +936,6 @@
             <id>analytics</id>
             <modules>
                 <module>analytics</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>datafeeder</id>
-            <modules>
-                <module>datafeeder</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>datafeeder-ui</id>
-            <modules>
-                <module>datafeeder-ui</module>
             </modules>
         </profile>
         <profile>
