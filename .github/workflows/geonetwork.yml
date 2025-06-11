@@ -43,7 +43,7 @@ jobs:
 
     - name: "Build GeoNetwork"
       working-directory: geonetwork/
-      run: ../mvnw install -DskipTests -T1C -ntp -B -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw install -DskipTests -T1C -ntp -B -Dadditionalparam=-Xdoclint:none -Pdatahub-integration
 
     - name: "Build required docker images (ldap, database)"
       run: |
@@ -67,7 +67,7 @@ jobs:
       if: github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]'
       run: |
         cd geonetwork/web
-        ../../mvnw package docker:build -Pdocker -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
+        ../../mvnw package -Pdocker,datahub-integration -DdockerImageName=georchestra/geonetwork -DdockerImageTags=${{ steps.version.outputs.VERSION }},latest -DskipTests -ntp
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v2
