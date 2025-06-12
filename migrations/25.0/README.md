@@ -2,7 +2,12 @@
 
 ## Header
 
-[Georchestra WebComponent Header](https://github.com/georchestra) can now be [configured](https://github.com/georchestra/header/blob/main/CONFIG.md) using a file at runtime.
+[Georchestra WebComponent Header](https://github.com/georchestra/header) can now be [configured](https://github.com/georchestra/header/blob/main/CONFIG.md) using a file at runtime.
+
+The default configuration is provided in [`default-config.json`](https://github.com/georchestra/header/blob/main/src/default-config.json).
+Here is [an example](https://github.com/georchestra/header/blob/main/public/sample-config.json) of file which can be used to configure the header.
+
+Each object configuration is set [here](https://github.com/georchestra/header/blob/main/src/config-interfaces.ts#L32-L53).
 
 The file must be provided by a web server (e.g. nginx) and must be configured in several files of the datadir:
 - `default.properties` -> [headerConfigFile](https://github.com/georchestra/datadir/blob/25.0/default.properties#L49)
@@ -43,6 +48,19 @@ Example for docker: [here](https://github.com/georchestra/docker/blob/25.0/docke
 After the upgrade (of Geonetwork and Elasticsearch):
 - Delete index and reindex.
 - JS and CSS cache must be cleared.
+
+You can follow [those `upgrade_geonetwork` steps](https://github.com/georchestra/georchestra/blob/master/docsv1/upgrade_geonetwork.md) to update Geonetwork. 
+
+### Xlinks
+
+> Previously on 4.0.6, it was possible to add contacts to an ISO19139 MD using xlinks, after upgrading to 4.2.2 it wasn't possible anymore.
+
+Since this is merge <https://github.com/georchestra/geonetwork/pull/320>
+
+Xlink contacts are enabled by default in geonetwork config-editors. It allows to "reuse" contacts in different metadata records, and to keep the contact information in a single place.
+
+In order to migrate the metadata you can use the following documentation: <https://github.com/georchestra/geonetwork/blob/6ee9f9d357eb2c6c26d4b02827e0c24fa75aa0a8/georchestra-migration/about-xlinks.md>
+
 
 ## LDAP migration
 ### orgUniqueId attribute on the georchestraOrg schema
@@ -97,10 +115,3 @@ Finally, use the following command with the [ldap_migration.ldif](ldap_migration
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
 ```
 
-### Geonetwork
-
-Since this is merge <https://github.com/georchestra/geonetwork/pull/320>
-
-Xlink contacts are enabled by default in geonetwork config-editors
-
-In order to migrate the metadata you can use the following documentation: <https://github.com/georchestra/geonetwork/blob/6ee9f9d357eb2c6c26d4b02827e0c24fa75aa0a8/georchestra-migration/about-xlinks.md>
