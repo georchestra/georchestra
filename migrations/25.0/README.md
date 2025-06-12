@@ -12,7 +12,13 @@ The file must be provided by a web server (e.g. nginx) and must be configured in
 
 The Metadata-editor which comes from Geonetwork-UI suite, needs a small adaptation to work with the geOrchestra header.
 
-[//]: # (TO_WRITE: yet not working on demo.georchestra.org)
+Before the injection of the `<geor-header>` tag, we need to inject a css script (replace `<your-header-height>` with the height of your header):
+
+```css
+body {display: flex;flex-direction: column} 
+body md-editor-root,.h-screen {height: calc(100vh - <your-header-height>px);}
+main {max-height: calc(100vh - <your-header-height>px - 65px) !important}
+```
 
 ## Elasticsearch and Kibana
 
