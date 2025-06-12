@@ -2,12 +2,12 @@
 
 ## Header
 
-[Georchestra WebComponent Header](https://github.com/georchestra/header) can now be [configured](https://github.com/georchestra/header/blob/main/CONFIG.md) using a file at runtime.
+[geOrchestra WebComponent Header](https://github.com/georchestra/header) can now be [configured](https://github.com/georchestra/header/blob/1.1.0/CONFIG.md) using a file at runtime.
 
-The default configuration is provided in [`default-config.json`](https://github.com/georchestra/header/blob/main/src/default-config.json).
-Here is [an example](https://github.com/georchestra/header/blob/main/public/sample-config.json) of file which can be used to configure the header.
+The default configuration is provided in [`default-config.json`](https://github.com/georchestra/header/blob/1.1.0/src/default-config.json).
+Here is [an example](https://github.com/georchestra/header/blob/1.1.0/public/sample-config.json) of file which can be used to configure the header.
 
-Each object configuration is set [here](https://github.com/georchestra/header/blob/main/src/config-interfaces.ts#L32-L53).
+Each object configuration is set [here](https://github.com/georchestra/header/blob/1.1.0/src/config-interfaces.ts#L32-L53).
 
 The file must be provided by a web server (e.g. nginx) and must be configured in several files of the datadir:
 - `default.properties` -> [headerConfigFile](https://github.com/georchestra/datadir/blob/25.0/default.properties#L49)
