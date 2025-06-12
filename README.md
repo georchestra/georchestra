@@ -1,12 +1,15 @@
 <div align="center">
-  <img src="docs/assets/images/georchestra-logo.svg" alt="geOrchestra Logo" width="300"/>
-  <h3>geOrchestra is a complete **Spatial Data Infrastructure** solution.</h3>
+  <img src="georchestra-logo.svg" alt="geOrchestra Logo" width="300"/>
+  <h3>geOrchestra is a complete Spatial Data Infrastructure solution.</h3>
 </div>
---------
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cd93d7fdbd3a44e48991f3146251c79e)](https://www.codacy.com/gh/georchestra/georchestra/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=georchestra/georchestra&amp;utm_campaign=Badge_Grade)
+<p align="center">
+  <a href="https://www.codacy.com/gh/georchestra/georchestra/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=georchestra/georchestra&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/cd93d7fdbd3a44e48991f3146251c79e" alt="Codacy Badge"></a>
+  <a href="https://www.georchestra.org/fr/documentation.html"><img src="https://img.shields.io/badge/docs-latest-blue" alt="Documentation"></a>
+  <a href="https://github.com/georchestra/georchestra/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/georchestra/georchestra" alt="License"></a>
+</p>
 
-geOrchestra is a complete **Spatial Data Infrastructure** solution.
+## Overview
 
 It features a **metadata catalog** (GeoNetwork), an **OGC server** (GeoServer) with fine-grained access control (based on GeoFence), an **advanced viewer and editor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
