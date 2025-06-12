@@ -8,8 +8,8 @@
 
 # Featured tags
 
-- `latest`, `24.0.x`, `23.1.x`
-- `geofence`, `24.0.x-geofence`, `23.1.x-geofence`
+- `latest`, `25.0.x`, `24.0.x`,
+- `geofence`, `25.0.x-geofence`, `24.0.x-geofence`
 
 # Quick reference
 

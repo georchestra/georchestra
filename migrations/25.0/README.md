@@ -1,0 +1,100 @@
+# From 24.0 to 25.0
+
+## Header
+
+[Georchestra WebComponent Header](https://github.com/georchestra) can now be [configured](https://github.com/georchestra/header/blob/main/CONFIG.md) using a file at the runtime.
+
+The file must be provided by a web server (e.g. nginx) and must be configured in several files of datadir:
+- `default.properties` -> [headerConfigFile](https://github.com/georchestra/datadir/blob/25.0/default.properties#L49)
+- `mapstore/config/localConfig.json` -> [header.configFile](https://github.com/georchestra/datadir/blob/docker-25.0/mapstore/configs/localConfig.json#L29)
+
+### Header in Metadata Editor
+
+The Metadata-editor which comes from Geonetwork-UI suite, needs a small adaptation to work with the geOrchestra header.
+
+[//]: # (TO_WRITE: yet not working on demo.georchestra.org)
+
+## Elasticsearch and Kibana
+
+Elasticsearch has been upgraded to 8.14.3.
+
+You may need to set  two environment variables for Elasticsearch to work properly:
+```
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+```
+
+And deactivate the `kibana.index` in [kibana.yaml](https://github.com/georchestra/docker/blob/25.0/resources/kibana/kibana.yml#L3).
+
+Example for docker: [here](https://github.com/georchestra/docker/blob/25.0/docker-compose.yml#L365-L366)
+
+## GeoNetwork 4.2.8 to 4.4.8 migration notes
+
+After the upgrade (of Geonetwork and Elasticsearch) :
+- Delete index and reindex .
+- JS and CSS cache must be cleared.
+
+
+## LDAP migration
+### orgUniqueId attribute on the georchestraOrg schema
+
+The `orgUniqueId` organization attribute was added to the `georchestraOrg` ldap schema.
+
+
+This attribute will contain a unique organization identifier. The difference with existing identifiers is that this is not a system identifier.
+
+This attribute is filled in when an organization is created, or via the console form as others organization attributes.
+This attribute will also contain the OAuth2 organization identifier when user is connected using an external identity provider.
+
+* Adapt georchestra schema definition
+
+To upgrade the ldap, you need first to find the georchestra schema definition using the following command :
+
+```
+ldapsearch -H ldap://localhost:389 -D cn=admin,dc=georchestra,dc=org -w secret -b cn=schema,cn=config '(cn=*georchestra)' dn
+```
+
+Commands provided in [ldap_migration.ldif](ldap_migration.ldif) assume that required `dn` is :
+
+`dn: cn={5}georchestra,cn=schema,cn=config`
+
+If you find a different `dn` (please update Commands provided in [ldap_migration.ldif](ldap_migration.ldif) file.
+
+* Verify georchestraOrg `olcObjectClasses`
+
+Commands provided in [ldap_migration.ldif](ldap_migration.ldif) assume that georchestraOrg `olcObjectClasses` schema is :
+
+```
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
+    NAME 'georchestraOrg'
+    DESC 'georchestra org'
+    SUP top
+    AUXILIARY
+    MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier))
+```
+Please, verify this schema with the following commands (adapt `cn={5}georchestra,cn=schema,cn=config`): 
+
+```
+ldapsearch -Y EXTERNAL -H ldapi:/// -b cn={5}georchestra,cn=schema,cn=config '(objectClass=olcSchemaConfig)' olcObjectClasses
+```
+
+If you find a different olcObjectClasses, please update commands provided in [ldap_migration.ldif](ldap_migration.ldif) file with the correct schema.
+ 
+
+* Apply changes
+
+Please follow previous steps with precaution before running final script.
+
+Finally, use the following command with the [ldap_migration.ldif](ldap_migration.ldif) file:
+
+```
+ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
+```
+
+### Geonetwork
+
+Since this is merge <https://github.com/georchestra/geonetwork/pull/320>
+
+Xlink contacts are enabled by default in geonetwork config-editors
+
+In order to migrate the metadata you can use the following documentation : <https://github.com/georchestra/geonetwork/blob/6ee9f9d357eb2c6c26d4b02827e0c24fa75aa0a8/georchestra-migration/about-xlinks.md>
