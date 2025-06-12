@@ -53,7 +53,7 @@ You can follow [those `upgrade_geonetwork` steps](https://github.com/georchestra
 
 ### Xlinks
 
-> Previously on 4.0.6, it was possible to add contacts to an ISO19139 MD using xlinks, after upgrading to 4.2.2 it wasn't possible anymore.
+> Previously on 4.0.6, it was possible to add contacts to an ISO19139 MD using xlinks, after upgrading to 4.2.2+ it wasn't possible anymore.
 
 Since this is merge <https://github.com/georchestra/geonetwork/pull/320>
 
