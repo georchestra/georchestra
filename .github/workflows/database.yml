@@ -49,12 +49,7 @@ jobs:
         docker tag georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:latest
         docker push georchestra/database:latest
 
-    - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/24.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
-      run: |
-        docker push georchestra/database:${{ steps.version.outputs.VERSION }}
-
-    - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/24.') && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
+    - name: "Pushing release branch or tag to docker.io"
+      if: (endsWith(github.ref, '.x') || contains(github.ref, 'refs/tags/')) && github.repository == 'georchestra/georchestra' && github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       run: |
         docker push georchestra/database:${{ steps.version.outputs.VERSION }}
