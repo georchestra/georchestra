@@ -45,10 +45,10 @@ docker-build-console: build-deps docker-pull-jetty
 docker-build-analytics: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl analytics
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,console,analytics
 
-docker-build: docker-build-gn docker-build-geoserver docker-build-georchestra
+docker-build: docker-build-geoserver docker-build-georchestra
 
 
 # WAR related targets
@@ -68,7 +68,7 @@ war-build-geoserver-geofence: build-deps
 war-build-geowebcache: build-deps
 	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
 
-war-build-georchestra: war-build-gn war-build-geoserver
+war-build-georchestra: war-build-geoserver
 	mvn -Dmaven.test.skip=true -DskipTests clean install
 
 
