@@ -9,7 +9,7 @@
   <properties>
     <skipTests>true</skipTests>
     <gs.version>2.25.7</gs.version>
-    <gt.version>31.3</gt.version>
+    <gt.version>31.7</gt.version>
     <geofence.version>3.7-SNAPSHOT</geofence.version>
     <jetty.version>9.4.52.v20230823</jetty.version>
     <marlin.version>0.9.3</marlin.version>
