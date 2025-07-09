@@ -116,7 +116,7 @@ ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
 This will also ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn.
 
 
-Note that you are free to customize the users (entries under the "users" OrganizationUnit) to fit your needs, provided you keep the required ```geoserver_privileged_user```.
+Note that you are free to customize the users (entries under the "users" OrganizationUnit) to fit your needs.
 
 
 
@@ -142,7 +142,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f ppolicy-rotation.ldif
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f rotationpolicyoverlay.ldif
 ```
-To disable password expire for no humain users (geoserver_privileged_user, idatafeeder), please run the following commands:
+To disable password expiration for non-human users (`idatafeeder`), please run the following commands:
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f pwd_no_expire.ldif
 ```
