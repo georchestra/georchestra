@@ -75,10 +75,10 @@ nav:
           - admin_guide/users_rights_management/acl-cadastrapp.md
         - Datahub:
           - admin_guide/datahub/index.md
+        - Styling: admin_guide/styling.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
-        - Styling: install_guide/styling.md
         - Versions: install_guide/versions.md
 
 markdown_extensions:

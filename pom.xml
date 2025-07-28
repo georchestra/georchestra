@@ -54,7 +54,6 @@
         <gmaven.version>1.0</gmaven.version>
         <gmaven.runtime.version>1.5</gmaven.runtime.version>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-        <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
         <encoding>UTF-8</encoding>
         <log4j1.version>1.2.17</log4j1.version>
         <georchestra.version>${project.version}</georchestra.version>
@@ -868,12 +867,11 @@
                 <file>
                     <!-- this is added so that all will be the default profile -->
                     <!-- one can build only a specific project by doing -->
-                    <!-- -P-all,geoserver -->
+                    <!-- -P-all,console -->
                     <missing>hack_to_make_all_enabled_by_default</missing>
                 </file>
             </activation>
             <modules>
-                <module>geoserver</module>
                 <module>geowebcache-webapp</module>
                 <module>commons</module>
                 <module>ldap-account-management</module>
@@ -887,12 +885,6 @@
             <id>commons</id>
             <modules>
                 <module>commons</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>geoserver</id>
-            <modules>
-                <module>geoserver</module>
             </modules>
         </profile>
         <profile>

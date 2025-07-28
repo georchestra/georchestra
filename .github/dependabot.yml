@@ -47,10 +47,6 @@ updates:
   schedule:
     interval: weekly
 - package-ecosystem: docker
-  directory: /geoserver/webapp/src/docker
-  schedule:
-    interval: weekly
-- package-ecosystem: docker
   directory: /analytics/src/docker
   schedule:
     interval: weekly
