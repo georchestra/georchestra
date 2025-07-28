@@ -79,6 +79,11 @@ javax.servlet.jsp.jstl.core.Config.set(
                 font: normal 12px arial,tahoma,sans-serif;
             }
         </style>
+        <c:choose>
+            <c:when test='${not empty georchestraStylesheet}'>
+                <link rel="stylesheet" type="text/css" href="${georchestraStylesheet}" />
+            </c:when>
+        </c:choose>
     </head>
     <body>
 
