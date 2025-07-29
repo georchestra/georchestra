@@ -1,4 +1,4 @@
-FROM jetty:9.4.46-jre11
+FROM jetty:11.0-jre11-eclipse-temurin
 
 ENV GEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
     GEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles
@@ -9,6 +9,8 @@ COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
+
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir &&                              \
     unzip -d /var/lib/jetty/webapps/geowebcache /var/lib/jetty/webapps/geowebcache.war && \

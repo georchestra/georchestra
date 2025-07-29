@@ -1,10 +1,10 @@
-FROM jetty:9-jre11
+# Distribution is set in order to remember which java version is used.
+FROM jetty:11.0-jre11-eclipse-temurin
 
 # remove jetty embedded "JavaMail", we have our own.
 # fix #3692 : ClassNotFoundException: javax.activation.DataSource
 # https://github.com/eclipse/jetty.docker/issues/10
 USER root
-RUN rm -r /usr/local/jetty/lib/mail
 RUN mkdir -p /docker-entrypoint.d
 RUN chown jetty:jetty /docker-entrypoint.d
 USER jetty
