@@ -5,7 +5,6 @@ FROM jetty:11.0-jre11-eclipse-temurin
 # fix #3692 : ClassNotFoundException: javax.activation.DataSource
 # https://github.com/eclipse/jetty.docker/issues/10
 USER root
-RUN rm -r /usr/local/jetty/lib/mail
 RUN mkdir -p /docker-entrypoint.d
 RUN chown jetty:jetty /docker-entrypoint.d
 USER jetty
