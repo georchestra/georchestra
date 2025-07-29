@@ -62,6 +62,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher impl
 
     private String newGeorHeaderInclude = "<html>\n" + "  <head>\n"
             + "    <title>GeoWebCache - @instanceName@</title>\n" + "    <script src=\"@headerScript@\"></script>\n"
+            + "    <link rel=\"stylesheet\" type=\"text/css\" href=\"@georchestraStylesheet@\" />\n"
             + "  </head>\n" + "  <body>\n"
             + "    <geor-header  active-app=\"geowebcache\" config-file=\"@headerConfigFile@\" legacy-header=\"@useLegacyHeader@\" legacy-url=\"@headerUrl@\" logo-url=\"@logoUrl@\" stylesheet=\"@georchestraStylesheet@\" height=\"@headerHeight@\"></geor-header>";
 
