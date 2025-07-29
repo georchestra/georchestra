@@ -21,6 +21,12 @@
 
 <%@ page language="java" pageEncoding="UTF-8" %>
 
+
+<c:choose>
+    <c:when test='${not empty georchestraStylesheet}'>
+        <link rel="stylesheet" type="text/css" href="${georchestraStylesheet}" />
+    </c:when>
+</c:choose>
 <c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">

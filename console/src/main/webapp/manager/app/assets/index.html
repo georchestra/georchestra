@@ -28,13 +28,12 @@
   <link rel="stylesheet" href="public/libraries.css">
   <link rel="stylesheet" href="public/app.css">
   <link rel="stylesheet" href="public/svg.css" class="svg-styles">
-
   <title>Admin Console</title>
 
 </head>
 
 <body ng-app="manager" ng-strict-di ng-controller="AppController">
-
+  <link rel="stylesheet" type="text/css" href="{{ trustSrc(platformInfos.georchestraStylesheet) }}">
   <geor-header config-file="{{ trustSrc(platformInfos.headerConfigFile) }}" legacy-header="{{ platformInfos.useLegacyHeader }}" legacy-url="{{ platformInfos.headerUrl }}"  logo-url="{{ trustSrc(platformInfos.logoUrl) }}" stylesheet="{{ trustSrc(platformInfos.georchestraStylesheet) }}" height="{{ platformInfos.headerHeight }}" active-app="console"></geor-header>
   <script ng-src="{{ trustSrc(platformInfos.headerScript) }}"></script>
 

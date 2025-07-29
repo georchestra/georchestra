@@ -23,6 +23,11 @@
 <%@ page pageEncoding="UTF-8"%>
 
 <c:choose>
+    <c:when test='${not empty georchestraStylesheet}'>
+        <link rel="stylesheet" type="text/css" href="${georchestraStylesheet}" />
+    </c:when>
+</c:choose>
+<c:choose>
     <c:when test='<%= request.getParameter("noheader") == null %>'>
     <div id="go_head">
         <geor-header config-file="${headerConfigFile}" legacy-header="${useLegacyHeader}" legacy-url="${headerUrl}" logo-url="${logoUrl}" stylesheet="${georchestraStylesheet}" height="${headerHeight}"></geor-header>
