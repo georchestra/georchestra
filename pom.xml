@@ -45,7 +45,7 @@
         <gt.version>29.5</gt.version>
         <guava.version>33.2.1-jre</guava.version>
         <lombok.version>1.18.22</lombok.version>
-        <postgres.version>42.7.4</postgres.version>
+        <postgres.version>42.7.7</postgres.version>
         <json.version>20180813</json.version>
         <camel.version>2.25.0</camel.version>
         <camel-extras.version>2.14.1</camel-extras.version>
