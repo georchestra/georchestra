@@ -1,8 +1,8 @@
 [submodule "geonetwork"]
 	path = geonetwork
 	url = https://github.com/georchestra/geonetwork.git
-	branch = georchestra-gn4.4.x
+	branch = georchestra-gn4.4.8-25.0
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
-	branch = 2.27.1-georchestra
+	branch = 2.27.1-georchestra-25.0
