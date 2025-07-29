@@ -504,7 +504,7 @@ public class EmailController {
         final MimeMessage message = this.emailFactory.createEmptyMessage();
 
         Account recipient = this.accountDao.findByUID(email.getRecipient());
-        InternetAddress[] senders = { new InternetAddress(this.accountDao.findByUID(email.getSender()).getEmail()) };
+        InternetAddress[] senders = { new InternetAddress(this.emailProxyFromAddress) };
 
         message.addFrom(senders);
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient.getEmail()));
