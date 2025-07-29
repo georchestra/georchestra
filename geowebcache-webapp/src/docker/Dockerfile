@@ -1,4 +1,4 @@
-FROM jetty:9.4.46-jre11
+FROM jetty:11.0-jre11-eclipse-temurin
 
 ENV GEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
     GEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles

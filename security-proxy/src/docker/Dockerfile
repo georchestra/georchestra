@@ -1,4 +1,4 @@
-FROM jetty:9-jre11
+FROM jetty:11.0-jre11-eclipse-temurin
 USER root
 RUN mkdir -p /docker-entrypoint.d
 RUN chown jetty:jetty /docker-entrypoint.d

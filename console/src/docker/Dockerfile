@@ -1,4 +1,5 @@
-FROM jetty:9-jre11
+# Distribution is set in order to remember which java version is used.
+FROM jetty:11.0-jre11-eclipse-temurin
 
 # remove jetty embedded "JavaMail", we have our own.
 # fix #3692 : ClassNotFoundException: javax.activation.DataSource
