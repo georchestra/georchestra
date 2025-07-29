@@ -10,6 +10,8 @@ COPY --chown=jetty:jetty . /
 # Temporary switch to root
 USER root
 
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir &&                              \
     unzip -d /var/lib/jetty/webapps/geowebcache /var/lib/jetty/webapps/geowebcache.war && \
     rm -f /var/lib/jetty/webapps/geowebcache.war &&                                       \
