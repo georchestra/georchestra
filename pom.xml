@@ -87,7 +87,6 @@
         <developerConnection>scm:git:git@github.com:georchestra/georchestra.git</developerConnection>
     </scm>
     <modules>
-        <module>ogc-server-statistics</module>
         <module>commons</module>
         <module>security-proxy-spring-integration</module>
         <module>ldap-account-management</module>
