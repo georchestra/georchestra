@@ -28,11 +28,8 @@ docker-build-proxy: build-deps docker-pull-jetty
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
-docker-build-analytics: build-deps docker-pull-jetty
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl analytics
-
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geowebcache
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,console,analytics
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,console
 
 docker-build: docker-build-georchestra
 
@@ -50,7 +47,7 @@ deb-build-geowebcache: war-build-geowebcache
 	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geowebcache
-	mvn package deb:package -pl security-proxy,analytics,console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl security-proxy,console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:
