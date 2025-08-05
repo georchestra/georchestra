@@ -858,7 +858,6 @@
             <modules>
                 <module>console</module>
                 <module>security-proxy</module>
-                <module>analytics</module>
             </modules>
         </profile>
         <profile>
@@ -878,7 +877,6 @@
                 <module>testcontainers</module>
                 <module>console</module>
                 <module>security-proxy</module>
-                <module>analytics</module>
             </modules>
         </profile>
         <profile>
@@ -915,12 +913,6 @@
             <id>proxy</id>
             <modules>
                 <module>security-proxy</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>analytics</id>
-            <modules>
-                <module>analytics</module>
             </modules>
         </profile>
         <profile>
