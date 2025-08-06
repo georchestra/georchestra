@@ -79,7 +79,12 @@ nav:
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
-        - Versions: install_guide/versions.md
+        - Apps:
+          - OpenLDAP: install_guide/apps/openldap.md
+          - Geonetwork: install_guide/apps/geonetwork4.md
+          - Cas: install_guide/apps/cas6.md
+          - Datafeeder: install_guide/apps/datafeeder.md
+#        - Versions: install_guide/versions.md
 
 markdown_extensions:
   - admonition

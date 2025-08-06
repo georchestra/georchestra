@@ -26,11 +26,11 @@ Technically, the web service is split into 2 web applications:
 The second one is actually triggering calls to the first one, both being behind the
 security-proxy.
 
-* The code for the backend is located into the [official geOrchestra repository](https://github.com/georchestra/georchestra/tree/master/datafeeder).
-* The web ui code has its own [separated repository](https://github.com/georchestra/geonetwork-ui/tree/georchestra-datafeeder).
+* The code for the backend is located into the [datafeeder repository](https://github.com/georchestra/datafeeder).
+* The web ui code has its own [separated repository](hhttps://github.com/georchestra/datafeeder-ui).
 
-A [maven module](https://github.com/georchestra/georchestra/tree/master/datafeeder-ui) has been created
-into the main geOrchestra repository, so that we can generate a webapp out of the UI source code.
+A [maven module](https://github.com/georchestra/datafeeder-ui) has been created
+into the repository, so that we can generate a webapp out of the UI source code.
 
 ## Artifacts
 
