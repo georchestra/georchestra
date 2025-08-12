@@ -52,8 +52,8 @@ extra_javascript:
 
 nav:
     - Home: index.md 
-    - User guide:
-        - Summary: user_guide/index.md
+#    - User guide:
+#        - Summary: user_guide/index.md
     - Administration guide:
         - Summary: admin_guide/index.md
         - Architecture: admin_guide/architecture/index.md
