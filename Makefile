@@ -19,34 +19,25 @@ docker-build-database:
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
-docker-build-geowebcache: docker-pull-jetty
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests -pl geowebcache-webapp
-
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geowebcache
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,console
 
 docker-build: docker-build-georchestra
 
 
 # WAR related targets
-war-build-geowebcache: build-deps
-	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
-
 war-build-georchestra:
 	mvn -Dmaven.test.skip=true -DskipTests clean install
 
 
 # DEB related targets
-deb-build-geowebcache: war-build-geowebcache
-	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
-
-deb-build-georchestra: war-build-georchestra build-deps deb-build-geowebcache
+deb-build-georchestra: war-build-georchestra build-deps
 	mvn package deb:package -pl security-proxy,console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules

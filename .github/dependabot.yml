@@ -50,8 +50,3 @@ updates:
   directory: /security-proxy/src/docker
   schedule:
     interval: weekly
-- package-ecosystem: docker
-  directory: /geowebcache-webapp/src/docker
-  schedule:
-    interval: weekly
-

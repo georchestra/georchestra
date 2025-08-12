@@ -871,7 +871,6 @@
                 </file>
             </activation>
             <modules>
-                <module>geowebcache-webapp</module>
                 <module>commons</module>
                 <module>ldap-account-management</module>
                 <module>testcontainers</module>
@@ -883,18 +882,6 @@
             <id>commons</id>
             <modules>
                 <module>commons</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>geowebcache</id>
-            <modules>
-                <module>geowebcache-webapp</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>gwc</id>
-            <modules>
-                <module>geowebcache-webapp</module>
             </modules>
         </profile>
         <profile>
