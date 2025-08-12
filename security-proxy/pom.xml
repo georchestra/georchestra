@@ -112,9 +112,9 @@
       <artifactId>spring-security-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.georchestra</groupId>
       <artifactId>ogc-server-statistics</artifactId>
-      <version>${project.version}</version>
+      <version>25.1.0</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
