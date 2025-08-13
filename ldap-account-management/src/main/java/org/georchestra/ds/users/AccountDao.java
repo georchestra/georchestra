@@ -65,16 +65,16 @@ public interface AccountDao {
     Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
 
     /**
-     * Returns the account that contains the OAuth2 provider provided as parameter.
+     * Returns the account that contains the External provider provided as parameter.
      *
-     * @param oAuth2Provider
-     * @param oAuth2Uid
+     * @param externalProvider
+     * @param externalUid
      * @return {@link Account}
      *
      * @throws DataServiceException
      * @throws NameNotFoundException
      */
-    Account findByOAuth2Uid(final String oAuth2Provider, final String oAuth2Uid)
+    Account findByExternalUid(final String externalProvider, final String externalUid)
             throws DataServiceException, NameNotFoundException;
 
     /**

@@ -127,7 +127,7 @@
   "role.updated"          : "Rol modificada",
   "role.deleted"          : "Rol eliminada",
   "role.created"          : "Rol creada",
-  "logs.oauth2usercreated": "Usuario OAuth2 creado",
+  "logs.externalusercreated": "Usuario External creado",
   "role.error"            : "Error al crear un rol",
   "role.warning"          : "Cuidado, esta acción no se puede deshacer — ",
   "role.delete"           : "Eliminar rol",

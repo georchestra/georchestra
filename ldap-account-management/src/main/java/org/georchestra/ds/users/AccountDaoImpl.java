@@ -273,13 +273,13 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public Account findByOAuth2Uid(final String oAuth2Provider, final String oAuth2Uid)
+    public Account findByExternalUid(final String externalProvider, final String externalUid)
             throws DataServiceException, NameNotFoundException {
-        List<Account> accountList = new AccountSearcher().and(new EqualsFilter(UserSchema.OAUTH2_UID_KEY, oAuth2Uid))
-                .and(new EqualsFilter(UserSchema.OAUTH2_PROVIDER_KEY, oAuth2Provider)).getActiveOrPendingAccounts();
+        List<Account> accountList = new AccountSearcher().and(new EqualsFilter(UserSchema.EXTERNAL_UID_KEY, externalUid))
+                .and(new EqualsFilter(UserSchema.EXTERNAL_PROVIDER_KEY, externalProvider)).getActiveOrPendingAccounts();
         if (accountList.isEmpty()) {
             throw new NameNotFoundException(
-                    "There is no user with this oAuth2Provider: " + oAuth2Provider + " and oAuth2Uid: " + oAuth2Uid);
+                    "There is no user with this externalProvider: " + externalProvider + " and externalUid: " + externalUid);
         }
         return accountList.get(0);
     }
@@ -493,8 +493,8 @@ public class AccountDaoImpl implements AccountDao {
             setAccountField(context, UserSchema.USER_PASSWORD_KEY, saslAccountAsPassword);
         }
 
-        setAccountField(context, UserSchema.OAUTH2_PROVIDER_KEY, account.getOAuth2Provider());
-        setAccountField(context, UserSchema.OAUTH2_UID_KEY, account.getOAuth2Uid());
+        setAccountField(context, UserSchema.EXTERNAL_PROVIDER_KEY, account.getExternalProvider());
+        setAccountField(context, UserSchema.EXTERNAL_UID_KEY, account.getExternalUid());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -556,8 +556,8 @@ public class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
                     sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]), null,
-                    context.getStringAttribute(UserSchema.OAUTH2_PROVIDER_KEY),
-                    context.getStringAttribute(UserSchema.OAUTH2_UID_KEY));
+                    context.getStringAttribute(UserSchema.EXTERNAL_PROVIDER_KEY),
+                    context.getStringAttribute(UserSchema.EXTERNAL_UID_KEY));
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {

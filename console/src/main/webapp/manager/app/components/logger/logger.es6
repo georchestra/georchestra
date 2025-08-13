@@ -41,7 +41,7 @@ class LoggerController {
       'roleremoved',
       'emailrecoverysent',
       'rolecreated',
-      'oauth2usercreated'
+      'externalusercreated'
     ].forEach(tr => this.$injector.get('translate')('logs.' + tr, this.i18n))
     // manage query params to get user's or complete logs
     let typeQuery = 'Logs'

@@ -21,12 +21,12 @@
     <property name="newAccountRequiresModerationEmailSubject" value="[georTest]] New account waiting for validation"/>
     <property name="changePasswordEmailFile" value="changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="[georTest] Update your password}"/>
-    <property name="changePasswordOAuth2EmailFile" value="changepasswordoauth2-email-template.txt"/>
-    <property name="changePasswordOAuth2EmailSubject" value="[georTest] Update your password}"/>
+    <property name="changePasswordExternalEmailFile" value="changepasswordexternal-email-template.txt"/>
+    <property name="changePasswordExternalEmailSubject" value="[georTest] Update your password}"/>
     <property name="accountUidRenamedEmailFile" value="account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="[georTest] New login for your account" />
     <property name="newAccountNotificationEmailFile" value="newaccount-notification-template.txt"/>
-    <property name="newOAuth2AccountNotificationEmailFile" value="new-oauth2-account-notification-template.txt"/>
+    <property name="newExternalAccountNotificationEmailFile" value="new-external-account-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="[georTest]] New account created"/>
     <property name="publicUrl" value="https://georchestra.mydomain.org"/>
     <property name="instanceName" value="georchestra test"/>
