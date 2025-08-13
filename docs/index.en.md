@@ -8,7 +8,7 @@ hide:
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 4), an **OGC server** (GeoServer 2.25) with fine-grained access control (based on GeoFence), an **advanced viewer and editor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 4), an **OGC server** (GeoServer 2.27) with fine-grained access control (based on GeoFence), an **advanced viewer and editor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 ## Releases
 
@@ -16,7 +16,7 @@ There are major and patch releases:
 * Major releases are supported during 12 months.
 * Migrating from one patch release to another does not require any configuration change. It is highly recommended.
 
-Have a look at the [version numbering scheme](releases.md) and the [release notes](https://github.com/georchestra/georchestra/releases) for more information.
+Have a look at the [version numbering scheme](developer_guide/version_number.en.md) and the [release notes](https://github.com/georchestra/georchestra/releases) for more information.
 
 
 ## Community

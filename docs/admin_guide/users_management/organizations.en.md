@@ -9,7 +9,7 @@ It is basically assumed that they will represent companies, NGOs, administration
 ## Users and organizations
 A given user can be member of only one organization. This is a design choice.
 
-But be reassured, roles will give you a lot of flexibility in access rights management. See [rights management page](rights_management/index.md).
+But be reassured, roles will give you a lot of flexibility in access rights management. See [rights management page](../rights_management/index.md).
 
 ## Creation of a new organization
 There are two scenarios where an organization can be created:
@@ -27,4 +27,4 @@ There are two scenarios where an organization can be created:
 You can select on a map the entities on which the organization is active/ has a competence.
 
 This is a concept that is used on several applications, but not all.  
-Some applications will use this information to filter some privileged accesses. Please see [rights management page](rights_management/index.md).
+Some applications will use this information to filter some privileged accesses. Please see [rights management page](../rights_management/index.md).

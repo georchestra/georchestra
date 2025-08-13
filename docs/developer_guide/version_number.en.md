@@ -9,7 +9,7 @@ geOrchestra releases are named `YY.V.P` where:
 
 Upgrading from a version to another, which only differ by the patch number, does not require any configuration change, and is considered safe.
 
-Upgrading from a major version `YY.V` to another one, like `YY.W` or `ZZ.*` requires a [migration process](../migrations).
+Upgrading from a major version `YY.V` to another one, like `YY.W` or `ZZ.*` requires a [migration process](https://github.com/georchestra/georchestra/blob/master/migrations).
 
 ## Branches, versions, tags
 

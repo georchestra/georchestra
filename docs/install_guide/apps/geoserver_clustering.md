@@ -20,7 +20,7 @@ The most common setup is based on **NFS shares**, and that's the one we describe
 
 Every "slave" machine should host one tomcat instance containing a single webapp, deployed from the same GeoServer WAR.
 
-We also take for granted that instances have been setup according to the [documentation regarding tomcat-geoserver](../setup/tomcat.md#tomcat-geoserver) and that the recommended [optimizations](../optimizations.md) have been applied (Marlin Renderer, JAI / ImageIO, TurboJPEG, ControlFlow, etc).
+We also take for granted that instances have been setup according to the [documentation regarding tomcat-geoserver](../servers/tomcat.md#tomcat-geoserver) and that the recommended optimizations (already shipped with georchestra's geoserver) have been applied (Marlin Renderer, JAI / ImageIO, TurboJPEG, ControlFlow, etc).
 
 
 

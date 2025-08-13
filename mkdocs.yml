@@ -55,8 +55,8 @@ nav:
 #    - User guide:
 #        - Summary: user_guide/index.md
     - Administration guide:
-        - Summary: admin_guide/index.md
-        - Architecture: admin_guide/architecture/index.md
+#        - Summary: admin_guide/index.md
+
         - Global rights management:
           - admin_guide/rights_management/index.md
           - admin_guide/rights_management/acl-sp.md
@@ -76,15 +76,35 @@ nav:
         - Datahub:
           - admin_guide/datahub/index.md
         - Styling: admin_guide/styling.md
+        - Architecture: admin_guide/architecture/index.md
+        - Post-deploy config: admin_guide/post-deploy_config.md
+        - Geonetwork:
+          - Synchronization: admin_guide/geonetwork_synchronization.md
+          - Custom Form: admin_guide/gn_custom_form/gn_custom_form.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md
+        - Configuration: install_guide/configuration.md
+        - Setup DB: install_guide/postgresql.md
+        - SASL configuration: install_guide/sasl.md
         - Apps:
+          - Geoserver:
+            - Clustering: install_guide/apps/geoserver_clustering.md
+            - Datadir: install_guide/apps/geoserver_data_dir_versioning.md
           - OpenLDAP: install_guide/apps/openldap.md
-          - Geonetwork: install_guide/apps/geonetwork4.md
+          - Geonetwork:
+            - Setup: install_guide/apps/geonetwork4.md
+            - Upgrade: install_guide/apps/upgrade_geonetwork.md
           - Cas: install_guide/apps/cas6.md
           - Datafeeder: install_guide/apps/datafeeder.md
 #        - Versions: install_guide/versions.md
+        - Servers:
+            - Apache: install_guide/servers/apache.md
+            - Tomcat:
+              - Setup: install_guide/servers/tomcat.md
+              - Deploy wars: install_guide/servers/tomcat_deploy_wars.md
+    - Developer guide:
+        - Version number: developer_guide/version_number.md
 
 markdown_extensions:
   - admonition
