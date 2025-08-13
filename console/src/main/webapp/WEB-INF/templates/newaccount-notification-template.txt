@@ -1,6 +1,6 @@
 Dear admin,
 
-A new {oauth2} user signed up on {publicUrl}/ !
+A new {external} user signed up on {publicUrl}/ !
 
 User name: {name}
 User email: {email}
