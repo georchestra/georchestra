@@ -1,6 +1,6 @@
 # User rights management
 
-Rights management is done using the [roles](../roles.md) assigned to a [user](../users.md). By creating new roles, you can design more access rules.
+Rights management is done using the [roles](../users_management/roles.md) assigned to a [user](../users_management/users.md). By creating new roles, you can design more access rules.
 
 This is on a per-applications basis. Some applications are likely to make use of new roles, others not so much.
 

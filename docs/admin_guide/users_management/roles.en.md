@@ -55,5 +55,5 @@ Then, it is possible to assign this new role to users. There are 2 ways to do it
 
 This is on a per-applications basis. Some applications are likely to make use of new roles, others not so much.
 
-On the [Rights management](rights_management/index.md) section is a list of core applications that can use new roles and how to leverage it.
+On the [Rights management](../rights_management/index.md) section is a list of core applications that can use new roles and how to leverage it.
 

@@ -3,7 +3,7 @@
 CAS6, as the former version, is a regular spring-boot based webapp which can be deployed into
 a servlet container. Though, Java11 is now mandatory to make it run. If you followed the
 current installation guide, make sure that the `tomcat-proxycas` is launched with a Java 11
-runtime (see [tomcat.md](./tomcat.md)).
+runtime (see [tomcat.md](../servers/tomcat.md)).
 
 ## Environment variables
 

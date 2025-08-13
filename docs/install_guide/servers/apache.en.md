@@ -255,4 +255,4 @@ ProxyPassReverse /console/ http://localhost:8180/console/
 
 A SSL certificate is now absolutely required, as the security-proxy is configured to provide "secured" cookie (i.e. which are discarded by the browser if not transmitted over a https connection).
 
-We recommend using a certificate issued by [Let's Encrypt](https://letsencrypt.org/), but one may also use a [self-signed certificate](../tutorials/self-signed-certificate.md).
+We recommend using a certificate issued by [Let's Encrypt](https://letsencrypt.org/).

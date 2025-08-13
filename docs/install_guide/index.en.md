@@ -12,10 +12,4 @@ Depending on your goals and skills, there are several ways to install geOrchestr
  * [Debian packages](https://packages.georchestra.org/) are perfect to create complex production architectures, but you'll have to [install and configure the middleware](https://github.com/georchestra/georchestra/blob/master/docsv1/setup.md) first. The community provides these packages on a "best effort" basis, with no warranty at all.
  * you could also use the [generic wars](https://packages.georchestra.org/) with their "[datadir](https://github.com/georchestra/datadir)", as an alternate method. The above packages provide both.
 
-</br>
-
-![image info](../images/installation.jpg)
-
-[Image de vectorjuice sur Freepik](<https://fr.freepik.com/vecteurs-libre/protection-ecologique-preservation-environnement-conservation-nature-idee-mecanisme-ecologique-roues-dentees-feuilles-pieces-mecaniques-feuillage_11667019.htm#fromView=search&page=1&position=46&uuid=3e4456b1-6401-4fa5-b3e1-b14bc37fe1a4)
-
 

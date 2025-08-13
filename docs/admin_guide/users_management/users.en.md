@@ -69,4 +69,4 @@ TODO
 
 geOrchestra is binding together several web applications, some of which are internal to the project, others external projects, integrated into geOrchestra. How users are managed depends on the platform we are talking about. 
 
-Please consult the [access rights management documentation](rights_management/index.md) to know more about how the applications leverage the users information.
+Please consult the [access rights management documentation](../rights_management/index.md) to know more about how the applications leverage the users information.
