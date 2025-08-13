@@ -11,6 +11,7 @@ on:
       - "commons/**"
       - "ldap-account-management/**"
       - "security-proxy/**"
+      - "pom.xml"
 
 jobs:
   build:
