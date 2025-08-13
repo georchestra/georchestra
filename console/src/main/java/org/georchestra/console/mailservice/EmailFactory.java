@@ -231,12 +231,12 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewExternalAccountNotificationEmail(ServletContext context, List<String> recipients, String fullName,
-            String localUid, String emailAddress, String providerName, String providerUid, String userOrg,
-            boolean reallySend) throws MessagingException {
+    public void sendNewExternalAccountNotificationEmail(ServletContext context, List<String> recipients,
+            String fullName, String localUid, String emailAddress, String providerName, String providerUid,
+            String userOrg, boolean reallySend) throws MessagingException {
 
-        Email email = new Email(recipients, this.newExternalAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, emailAddress, // Reply-to
+        Email email = new Email(recipients, this.newExternalAccountNotificationEmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
                 this.newExternalAccountNotificationEmailFile, context, this.georConfig, this.publicUrl,
                 this.instanceName);

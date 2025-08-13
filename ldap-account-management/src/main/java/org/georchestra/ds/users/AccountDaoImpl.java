@@ -275,11 +275,12 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public Account findByExternalUid(final String externalProvider, final String externalUid)
             throws DataServiceException, NameNotFoundException {
-        List<Account> accountList = new AccountSearcher().and(new EqualsFilter(UserSchema.EXTERNAL_UID_KEY, externalUid))
+        List<Account> accountList = new AccountSearcher()
+                .and(new EqualsFilter(UserSchema.EXTERNAL_UID_KEY, externalUid))
                 .and(new EqualsFilter(UserSchema.EXTERNAL_PROVIDER_KEY, externalProvider)).getActiveOrPendingAccounts();
         if (accountList.isEmpty()) {
-            throw new NameNotFoundException(
-                    "There is no user with this externalProvider: " + externalProvider + " and externalUid: " + externalUid);
+            throw new NameNotFoundException("There is no user with this externalProvider: " + externalProvider
+                    + " and externalUid: " + externalUid);
         }
         return accountList.get(0);
     }

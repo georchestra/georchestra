@@ -65,7 +65,8 @@ public interface AccountDao {
     Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
 
     /**
-     * Returns the account that contains the External provider provided as parameter.
+     * Returns the account that contains the External provider provided as
+     * parameter.
      *
      * @param externalProvider
      * @param externalUid
