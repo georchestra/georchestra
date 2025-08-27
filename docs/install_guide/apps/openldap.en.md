@@ -6,7 +6,7 @@ There are 2 main ways of having OpenLDAP configured :
 
 We document here the second case (slapd.d-style configuration).
 
-Note : It's also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the [SASL Doc page](../tutorials/sasl.md).
+Note : It's also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the [SASL Doc page](../sasl.md).
 
 ## Prerequisites
 
@@ -17,13 +17,13 @@ sudo apt-get install slapd ldap-utils
 You will need to provide the LDAP administrator password. Choose a strong one.
 
 
-Before creating the LDAP tree, you should have a look at the [users and groups](../../ldap/README.md) we'll be adding.
+Before creating the LDAP tree, you should have a look at the [users and groups](https://github.com/georchestra/georchestra/blob/master/ldap/README.md) we'll be adding.
 
 
 
 ## Database entry
 
-The file [bootstrap.ldif](../../ldap/bootstrap.ldif) creates the database and an administrator account (```cn=admin,dc=georchestra,dc=org```) with a password set by default to ```secret```. You should change it.
+The file [bootstrap.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/bootstrap.ldif) creates the database and an administrator account (```cn=admin,dc=georchestra,dc=org```) with a password set by default to ```secret```. You should change it.
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f bootstrap.ldif
@@ -34,7 +34,7 @@ If successful, the above command should display: ```adding new entry "olcDatabas
 
 ## Root DN
 
-To create the root DN, use the [root.ldif](../../ldap/root.ldif) file:
+To create the root DN, use the [root.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/root.ldif) file:
 
 ```
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f root.ldif
@@ -46,7 +46,7 @@ This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, whic
 ## groupOfMembers objectClass
 
 Groups in geOrchestra are instances of groupOfMembers objects, which allows empty groups (contrary to groupOfNames, which were used in previous geOrchestra releases).
-This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the [groupofmembers.ldif](../../ldap/docker-root/groupofmembers.ldif) file:
+This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the [groupofmembers.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/groupofmembers.ldif) file:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
@@ -73,7 +73,7 @@ The overlay ldif files should match the expected database number in OpenLDAP, an
 ### The "memberof" overlay
 
 The `memberof` overlay is required to check if a user is a member of a given group.
-Use the [memberof.ldif](../../ldap/docker-root/memberof.ldif) file to add the module and configure the overlay.
+Use the [memberof.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/memberof.ldif) file to add the module and configure the overlay.
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
@@ -82,7 +82,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
 ### The "lastbind" overlay
 
 The `lastbind` overlay is required to record last user connection to the platform. It also depends on the `ppolicy` overlay.
-Use the [lastbind.ldif](../../ldap/docker-root/lastbind.ldif) file to add the modules and configure the overlay.
+Use the [lastbind.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/lastbind.ldif) file to add the modules and configure the overlay.
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f lastbind.ldif
@@ -90,7 +90,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f lastbind.ldif
 
 ## Add "sshPublicKey" objectClass
 
-The [openssh.ldif](../../ldap/docker-root/openssh.ldif) file optionally creates the "sshPublicKey" objectClass, which is interesting to store `sshPublicKey` in the LDAP:
+The [openssh.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/openssh.ldif) file optionally creates the "sshPublicKey" objectClass, which is interesting to store `sshPublicKey` in the LDAP:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
@@ -98,7 +98,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
 
 ## Add the "georchestra-specific" LDAP schemas
 
-The required [georchestraSchema.ldif](../../ldap/docker-root/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
+The required [georchestraSchema.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
@@ -107,7 +107,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
 
 ## geOrchestra users and groups
 
-The [georchestra.ldif](../../ldap/docker-root/georchestra.ldif) file creates the default geOrchestra users & groups:
+The [georchestra.ldif](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestra.ldif) file creates the default geOrchestra users & groups:
 
 ```
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
@@ -131,7 +131,7 @@ ldapvi --host localhost -D "cn=admin,dc=georchestra,dc=org" -w "secret" -b "dc=g
 ```
 
  * [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
- * our own [console](/console/README.md) web application, available at ```/console/manager/``` to  members of the ```SUPERUSER``` group, is probably the easiest one.
+ * our own [console](https://github.com/georchestra/georchestra/blob/master/console/README.md) web application, available at ```/console/manager/``` to  members of the ```SUPERUSER``` group, is probably the easiest one.
 
 # Enabling rotation policy for passwords management 
 

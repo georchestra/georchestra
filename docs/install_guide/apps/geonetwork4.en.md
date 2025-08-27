@@ -9,8 +9,8 @@ necessary to set it up.
 The first thing _GeoNetwork4_ will require is an Elasticsearch server to store
 the metadata index.
 
-The advised version to use is the `7.14.0` one, you can refer to the
-[official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/7.14/deb.html)
+The advised version to use is the `8.14.0` one, you can refer to the
+[official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/8.14/deb.html)
 to set ip up.
 
 ## Kibana

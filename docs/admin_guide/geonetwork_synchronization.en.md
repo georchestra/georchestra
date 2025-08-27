@@ -2,7 +2,7 @@
 
 GeoNetwork requires to create some objects in its database to function
 correctly, this mainly to ensure referential integrity. As a result, a
-[process](https://github.com/georchestra/datadir/blob/master/geonetwork/config/config-security-georchestra.xml#L108-L124)
+[process](https://github.com/georchestra/datadir/blob/master/geonetwork/geonetwork.properties#L25-L57)
 is configured to run at a regular pace, which ensures groups are created from
 some LDAP objects.
 
@@ -36,3 +36,7 @@ to tell the synchronization process to use the `roles` of the LDAP and set the `
 +geonetwork.syncRolesFilter=EL_(.*)
 ```
 
+## If you use datafeeder too
+
+Datafeeder is a tool to ingest data into GeoNetwork and Geoserver. 
+In order to be compliant with the new synchronization mode, you need to set the `datafeeder.publishing.geonetwork.syncMode` to `roles` in the [`datafeeder.properties`](https://github.com/georchestra/datadir/blob/master/datafeeder/datafeeder.properties#L80-L83) file.
