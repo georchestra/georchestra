@@ -27,7 +27,7 @@ The second one is actually triggering calls to the first one, both being behind 
 security-proxy.
 
 * The code for the backend is located into the [datafeeder repository](https://github.com/georchestra/datafeeder).
-* The web ui code has its own [separated repository](hhttps://github.com/georchestra/datafeeder-ui).
+* The web ui code has its own [separated repository](https://github.com/georchestra/datafeeder-ui).
 
 A [maven module](https://github.com/georchestra/datafeeder-ui) has been created
 into the repository, so that we can generate a webapp out of the UI source code.
