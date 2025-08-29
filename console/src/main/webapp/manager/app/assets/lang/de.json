@@ -127,7 +127,7 @@
   "role.updated"          : "Rolle aktualisiert",
   "role.deleted"          : "Rolle gelöscht",
   "role.created"          : "Rolle erstellt",
-  "logs.oauth2usercreated": "OAuth2-Benutzer erstellt",
+  "logs.externalusercreated": "External-Benutzer erstellt",
   "role.error"            : "Fehler beim Erstellen der Rolle",
   "role.warning"          : "Achtung, diese Aktion kann nicht rückgängig gemacht werden — ",
   "role.delete"           : "Role löschen",

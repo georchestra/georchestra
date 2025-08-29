@@ -392,8 +392,8 @@ public class Proxy {
             georUsr.put("title", finalUser.getTitle());
             georUsr.put("ldapWarn", finalUser.getLdapWarn());
             georUsr.put("ldapRemainingDays", finalUser.getLdapRemainingDays());
-            georUsr.put("oauth2Provider", finalUser.getOAuth2Provider());
-            georUsr.put("oauth2Uid", finalUser.getOAuth2Uid());
+            georUsr.put("externalProvider", finalUser.getExternalProvider());
+            georUsr.put("externalUid", finalUser.getExternalUid());
             ret.put("GeorchestraUser", georUsr);
         } else {
             ret.put("GeorchestraUser", JSONObject.NULL);

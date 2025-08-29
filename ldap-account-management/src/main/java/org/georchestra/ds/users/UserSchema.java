@@ -66,9 +66,9 @@ public interface UserSchema {
     public static final String PENDING = "pending";
     public static final String ORG_KEY = "org";
     public static final String ORG_ID_KEY = "orgId";
-    public static final String OAUTH2_PROVIDER_KEY = "oAuth2Provider";
-    public static final String OAUTH2_UID_KEY = "oAuth2Uid";
-    public static final String OAUTH2_ORGID_KEY = "oAuth2OrgId";
+    public static final String EXTERNAL_PROVIDER_KEY = "externalProvider";
+    public static final String EXTERNAL_UID_KEY = "externalUid";
+    public static final String EXTERNAL_ORGID_KEY = "externalOrgId";
 
     public static final String[] ATTR_TO_RETRIEVE = { UUID_KEY, UID_KEY, COMMON_NAME_KEY, SURNAME_KEY, GIVEN_NAME_KEY,
             STREET_KEY, HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY,
@@ -76,6 +76,6 @@ public interface UserSchema {
             MOBILE_KEY, ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
             REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, LASTLOGIN_KEY, CREATIONDATE_KEY,
             PRIVACY_POLICY_AGREEMENT_DATE_KEY, MANAGER_KEY, CONTEXT_KEY, MEMBER_OF, SSH_KEY, NOTE_KEY, PENDING,
-            OAUTH2_PROVIDER_KEY, OAUTH2_UID_KEY, OAUTH2_ORGID_KEY };
+            EXTERNAL_PROVIDER_KEY, EXTERNAL_UID_KEY, EXTERNAL_ORGID_KEY };
 
 }
