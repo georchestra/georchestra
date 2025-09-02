@@ -237,8 +237,11 @@ public class UsersController {
         // Check delegation
         this.checkAuthorization(uid);
 
-        return this.accountDao.findByUID(uid);
-
+        Account a = this.accountDao.findByUID(uid);
+        if (!StringUtils.isEmpty(a.getOrg()){
+            a.setOrgDisplayName(this.orgDao.findByUser(a).getName());
+        }
+        return a;
     }
 
     /**
