@@ -238,7 +238,7 @@ public class UsersController {
         this.checkAuthorization(uid);
 
         Account a = this.accountDao.findByUID(uid);
-        if (!StringUtils.isEmpty(a.getOrg()){
+        if (StringUtils.hasText(a.getOrg())) {
             a.setOrgDisplayName(this.orgDao.findByUser(a).getName());
         }
         return a;
