@@ -168,6 +168,7 @@ public class AccountImpl implements Serializable, Account {
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
+    private String orgDisplayName;
     private boolean pending;
     private boolean isExternalAuth;
 
@@ -556,6 +557,16 @@ public class AccountImpl implements Serializable, Account {
             return "";
         else
             return this.org;
+    }
+
+    @Override
+    public String getOrgDisplayName() {
+        return orgDisplayName;
+    }
+
+    @Override
+    public void setOrgDisplayName(String orgDisplayName) {
+        this.orgDisplayName = orgDisplayName;
     }
 
     public int compareTo(Account o) {
