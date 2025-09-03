@@ -196,4 +196,8 @@ public interface Account extends Comparable<Account> {
     boolean getIsExternalAuth();
 
     void setIsExternalAuth(boolean isExternalAuth);
+
+    String getOrgDisplayName();
+
+    void setOrgDisplayName(String orgDisplayName);
 }
