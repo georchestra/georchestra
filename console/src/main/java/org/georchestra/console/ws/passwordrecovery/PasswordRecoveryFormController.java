@@ -171,7 +171,7 @@ public class PasswordRecoveryFormController {
             }
 
             ServletContext servletContext = request.getSession().getServletContext();
-            if ((account.getOAuth2Provider() == null) && !account.getIsExternalAuth()) {
+            if ((account.getExternalProvider() == null) && !account.getIsExternalAuth()) {
                 String token = UUID.randomUUID().toString();
 
                 // if there is a previous token it is removed
@@ -190,7 +190,7 @@ public class PasswordRecoveryFormController {
                 // log role deleted
                 logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
             } else {
-                this.emailFactory.sendChangePasswordOAuth2Email(servletContext, account.getEmail(),
+                this.emailFactory.sendChangePasswordExternalEmail(servletContext, account.getEmail(),
                         account.getCommonName());
             }
         } catch (DataServiceException | MessagingException e) {

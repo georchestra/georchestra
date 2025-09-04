@@ -16,7 +16,7 @@
         <property name="eventTemplate" ref="eventTemplate"/>
     </bean>
 
-    <!-- create a bean which can send message to OAUTH2-EXCHANGE for the Java program to call -->
-    <rabbit:template id="eventTemplate" connection-factory="connectionFactory"  exchange="OAUTH2-EXCHANGE-GATEWAY"/>
+    <!-- create a bean which can send message to EXTERNAL-EXCHANGE for the Java program to call -->
+    <rabbit:template id="eventTemplate" connection-factory="connectionFactory"  exchange="EXTERNAL-EXCHANGE-GATEWAY"/>
 
 </beans>
