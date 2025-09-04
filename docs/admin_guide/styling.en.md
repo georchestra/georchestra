@@ -19,6 +19,14 @@ Steps :
 The css content tries to split each app in order to have a fine control of style within each of them.
 
 ```css
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(...) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
 /* This file is used to override the default geOrchestra theme colors */
 /* This body part is for all apps. It helps to set global base variables */
 body {
@@ -31,9 +39,7 @@ body {
 /** The header needs georchestra-header-* variables */
 header {
   --georchestra-header-primary: #8c8c8c;
-  --georchestra-header-secondary: white;
   --georchestra-header-primary-light: white;
-  --georchestra-header-secondary-light: #eee;
 }
 
 /* Datafeeder can be tricked using those variables*/
@@ -303,3 +309,8 @@ Geonetwork-ui apps (Datahub, Metadata-editor, datafeeder) aren't inside georches
 You can check `georchestra/docker` or `georchestra/ansible` repos to have a glimpse of how we can do it.
 
 Datahub comes with his own configuration and can be found in the datadir : [default.toml]https://github.com/georchestra/datadir/blob/master/datahub/conf/default.toml
+
+### Geoserver 
+
+Geoserver may have CSP enabled and so we can't use @import statement in css file. 
+For details, please see PR: https://github.com/georchestra/geoserver/pull/43
