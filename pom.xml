@@ -603,7 +603,6 @@
             </build>
             <modules>
                 <module>console</module>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
@@ -621,7 +620,6 @@
                 <module>ldap-account-management</module>
                 <module>testcontainers</module>
                 <module>console</module>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
@@ -634,18 +632,6 @@
             <id>console</id>
             <modules>
                 <module>console</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>security-proxy</id>
-            <modules>
-                <module>security-proxy</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>proxy</id>
-            <modules>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
