@@ -72,6 +72,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -103,6 +104,7 @@
         <dependency>
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
+            <version>4.0.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -131,6 +133,7 @@
             <artifactId>apache-log4j-extras</artifactId>
             <type>jar</type>
             <scope>runtime</scope>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -156,6 +159,7 @@
         <dependency>
             <groupId>net.sf.flexjson</groupId>
             <artifactId>flexjson</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -169,6 +173,7 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
+            <version>1.7</version>
         </dependency>
         <!-- Spring dependencies -->
         <dependency>
@@ -286,11 +291,13 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
+            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>el-api</artifactId>
             <scope>provided</scope>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -301,6 +308,7 @@
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <scope>provided</scope>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -309,10 +317,12 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
+            <version>1.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
+            <version>2.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -330,6 +340,7 @@
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
+            <version>0.10.1</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -340,14 +351,17 @@
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
+            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.ez-vcard</groupId>
             <artifactId>ez-vcard</artifactId>
+            <version>0.10.5</version>
         </dependency>
         <dependency>
             <groupId>commons-pool</groupId>
@@ -383,11 +397,13 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <scope>test</scope>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
             <scope>test</scope>
+            <version>1.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
@@ -416,6 +432,11 @@
             <artifactId>rabbitmq</artifactId>
             <version>1.16.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
         </dependency>
     </dependencies>
     <build>
