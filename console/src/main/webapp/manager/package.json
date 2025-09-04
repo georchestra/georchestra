@@ -35,7 +35,7 @@
     "babel-eslint": "^10.0.3",
     "bootstrap": "3.4.1",
     "bootstrap-datepicker": "1.9.0",
-    "brunch": "^3.0.0",
+    "brunch": "4.0.2",
     "chartist": "^0.11.4",
     "chosen-npm": "1.4.2",
     "css-brunch": "^2.10.0",
