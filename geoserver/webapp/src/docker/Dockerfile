@@ -33,6 +33,7 @@ VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_til
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 ENV LD_LIBRARY_PATH=/mnt/geoserver_native_libs:/opt/libjpeg-turbo/lib64
+ENV GEOSERVER_FILESYSTEM_SANDBOX=/mnt/
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \
