@@ -19,26 +19,21 @@ docker-build-database:
 	cd postgresql; \
 	docker build -t georchestra/database:${BTAG} .
 
-docker-build-proxy: build-deps docker-pull-jetty
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
-
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy,console
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
 docker-build: docker-build-georchestra
-
 
 # WAR related targets
 war-build-georchestra:
 	mvn -Dmaven.test.skip=true -DskipTests clean install
 
-
 # DEB related targets
 deb-build-georchestra: war-build-georchestra build-deps
-	mvn package deb:package -pl security-proxy,console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+	mvn package deb:package -pl console -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:
