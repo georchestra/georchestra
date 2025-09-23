@@ -65,6 +65,8 @@ In order to migrate the metadata you can use the following documentation: <https
 ## LDAP migration
 ### orgUniqueId attribute on the georchestraOrg schema
 
+If you are using docker deploy it can be difficult to migration as followed, please consider the [the next section](#migration-from-docker-environment)
+
 The `orgUniqueId` organization attribute was added to the `georchestraOrg` LDAP schema.
 
 This attribute will contain a unique organization identifier. The difference from existing identifiers is that this is not a system identifier.
@@ -114,4 +116,24 @@ Finally, use the following command with the [ldap_migration.ldif](ldap_migration
 ```
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
 ```
+### migration from docker environment
+
+It can be hard to do this migration in docker environment as we are editing ObjectClasses that are normally in read only.
+
+In this section we describe a way to migrate in the most simply way to avoid strange bug and breaking your ldap (we don't want/need that).
+
+**Warning** This remove your customization inside the ldap config (eg number of request handle, password policies, ..etc)
+
+**First you should make a copy/backup of all the files in the two volume (ldap_data and ldap_config)** if something goes wrong it will be easier to retrieve your users/orgs/roles.
+
+Now you can follow the steps :
+1. In the ldap container run as root : `slapcat > /var/lib/ldap/slaped_24.0` (the destination might change depending on your deployment, but it should be a persistent volume)
+2. Then stop the container
+3. Remove the content of your volumes ldap_data and ldap_config (except your backups and step 1 !!!)
+4. Change the tag of ldap in your deployment (to 25.something)
+5. Start the ldap, it should load the default georchestra users/roles/orgs with the changes of v25 (as you empty the volumes)
+6. Run the command (as root in ldap container) to delete all this default data : `ldapdelete -r -Dcn=admin,dc=georchestra,dc=org -x -W dc=georchestra,dc=org` , this command will ask you the password, also it can take a while be patient
+7. Now you can import back your users/roles/orgs using the command (as root in ldap container) : `slapadd < /var/lib/ldap/slaped_24.0`
+
+All done you should have a ldap running the 25 version schema.
 
