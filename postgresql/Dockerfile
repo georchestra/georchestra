@@ -2,7 +2,7 @@
 # Dockerfile for the geOrchestra database service
 #
 
-FROM postgres:15
+FROM postgres:18
 
 LABEL maintainer="psc@georchestra.org"
 
