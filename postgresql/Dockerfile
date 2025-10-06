@@ -2,7 +2,7 @@
 # Dockerfile for the geOrchestra database service
 #
 
-FROM postgres:17
+FROM postgres:18
 
 LABEL maintainer="psc@georchestra.org"
 
@@ -12,8 +12,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        postgresql-17-postgis-3 \
-        postgresql-17-postgis-3-scripts && \
+        postgresql-18-postgis-3 \
+        postgresql-18-postgis-3-scripts && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --chown=postgres . /
