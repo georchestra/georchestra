@@ -20,14 +20,14 @@ The Metadata-editor, which comes from the Geonetwork-UI suite, needs a small ada
 Before the injection of the `<geor-header>` tag, we need to inject a CSS script (replace `<your-header-height>` with the height of your header):
 
 ```css
-body {display: flex; flex-direction: column} 
+body {display: flex; flex-direction: column}
 body md-editor-root, .h-screen {height: calc(100vh - <your-header-height>px);}
 main {max-height: calc(100vh - <your-header-height>px - 65px) !important}
 ```
 
 ## Elasticsearch and Kibana
 
-Since Geonetwork [4.4.3](https://docs.geonetwork-opensource.org/4.4/overview/change-log/version-4.4.3/#index-changes), Elasticsearch 8.x is supported. 
+Since Geonetwork [4.4.3](https://docs.geonetwork-opensource.org/4.4/overview/change-log/version-4.4.3/#index-changes), Elasticsearch 8.x is supported.
 
 ### ES v7 to v8 upgrade
 
@@ -49,7 +49,7 @@ After the upgrade (of Geonetwork and Elasticsearch):
 - Delete index and reindex.
 - JS and CSS cache must be cleared.
 
-You can follow [those `upgrade_geonetwork` steps](https://github.com/georchestra/georchestra/blob/master/docsv1/upgrade_geonetwork.md) to update Geonetwork. 
+You can follow [those `upgrade_geonetwork` steps](https://github.com/georchestra/georchestra/blob/master/docsv1/upgrade_geonetwork.md) to update Geonetwork.
 
 ### Xlinks
 
@@ -64,6 +64,10 @@ In order to migrate the metadata you can use the following documentation: <https
 
 ## LDAP migration
 ### orgUniqueId attribute on the georchestraOrg schema
+
+Note: There are basically two ways of backing up and restoring an OpenLDAP tree. Using ldapsearch to backup & restore ones openldap server, as described in the current section,
+is the recommended way as it goes through the LDAP server, but can be insufficient in some cases (e.g. it will wipe out some openLDAP proprietary openldap attributes on the objects).
+As a result, before following this section, make sure you also consider the [the next section](#Using-slapcat).
 
 The `orgUniqueId` organization attribute was added to the `georchestraOrg` LDAP schema.
 
@@ -96,14 +100,14 @@ olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
     AUXILIARY
     MAY (jpegphoto $ labeledURI $ knowledgeInformation $ georchestraObjectIdentifier))
 ```
-Please, verify this schema with the following commands (adapt `cn={5}georchestra,cn=schema,cn=config`): 
+Please, verify this schema with the following commands (adapt `cn={5}georchestra,cn=schema,cn=config`):
 
 ```
 ldapsearch -Y EXTERNAL -H ldapi:/// -b cn={5}georchestra,cn=schema,cn=config '(objectClass=olcSchemaConfig)' olcObjectClasses
 ```
 
 If you find a different olcObjectClasses, please update commands provided in [ldap_migration.ldif](ldap_migration.ldif) file with the correct schema.
- 
+
 
 * Apply changes
 
@@ -114,4 +118,29 @@ Finally, use the following command with the [ldap_migration.ldif](ldap_migration
 ```
 ldapmodify -H "ldap://ldap:389" -D "cn=admin,dc=georchestra,dc=org" -w "secret" -f ldap_migration.ldif
 ```
+### Using slapcat
 
+Sometimes, restarting from a freshly generated `/etc/ldap/slapd.d` can be more convenient than trying to migrate the existing `slapd` configuration by hand.
+Nevertheless some LDAP attributes being used in geOrchesta can be "OpenLDAP proprietary" (the one storing the last login date for example).
+In this case, dumping the LDAP using `ldapsearch` is not an option, as it will strip the attributes from the generated LDIF dump.
+
+In this section, we describe the use of `slapcat` / `slapadd` to backup / restore our LDAP tree. Basically these 2 tools will bypass the OpenLDAP server
+and deal directly with the files under `/var/lib/ldap`.
+
+**Warning** This removes your customizations inside the ldap config if there are any (e.g. password policies, max number of objects
+returned for non-admin search queries ...)
+
+Before doing, so it is advised to copy the openldap configuration as well as the current state of its database. For docker users, it means the
+content of both the `ldap_config` (`/etc/ldap/slapd.d`) and the `ldap_data` (`/var/lib/ldap`) volumes.
+
+Assuming you are using the `georchestra/ldap` docker image:
+
+1. Generate a (textual) LDIF dump of the database: `slapcat > /var/lib/ldap/slaped_24.0`
+2. Then stop the container
+3. Remove the content of both volumes mentioned above (`ldap_config`, `ldap_data`)
+4. upgrade the docker image tag
+5. Restart the LDAP container, it should load the default georchestra users/roles/orgs, but also set up an upgraded version of the LDAP schemas
+6. Run the command as root in ldap container to delete all this default data : `ldapdelete -r -Dcn=admin,dc=georchestra,dc=org -x -W dc=georchestra,dc=org` , this command will prompt for the LDAP administrator password.
+7. Import back your users/roles/orgs from the previous slapcat dump using the command (as root in ldap container) : `slapadd < /var/lib/ldap/slaped_24.0`
+
+In case of using a regular setup of OpenLDAP, the procedure will differ a bit, but should resemble (e.g. remove LDAP using your package manager, reinstall, insert the custom geOrchestra schema, then finally restore the database using `slapadd`).
