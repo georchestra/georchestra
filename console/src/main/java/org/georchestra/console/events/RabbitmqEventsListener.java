@@ -62,7 +62,7 @@ public class RabbitmqEventsListener implements MessageListener, ServletContextAw
         String uid = jsonObj.getString("uid");
         String subject = jsonObj.getString("subject");
 
-        if (subject.equals("OAUTH2-ACCOUNT-CREATION")) {
+        if (subject.equals("EXTERNAL-ACCOUNT-CREATION")) {
             try {
                 String fullName = jsonObj.getString("fullName");
                 String localUid = jsonObj.getString("localUid");
@@ -82,12 +82,12 @@ public class RabbitmqEventsListener implements MessageListener, ServletContextAw
                             }
                         }).collect(Collectors.toList());
 
-                this.emailFactory.sendNewOAuth2AccountNotificationEmail(context, superUserAdmins, fullName, localUid,
+                this.emailFactory.sendNewExternalAccountNotificationEmail(context, superUserAdmins, fullName, localUid,
                         email, providerName, providerUid, organization, true);
 
-                logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
+                logUtils.createExternalLog(localUid, AdminLogType.EXTERNAL_USER_CREATED, null);
                 rabbitmqEventsSender.sendAcknowledgementMessageToGateway(
-                        "new OAuth2 account creation notification for " + email + " has been received by console");
+                        "new External account creation notification for " + email + " has been received by console");
             } catch (Exception e) {
                 log.error("Error while processing rabbitMq message, message will be discarded for future processing.",
                         e);

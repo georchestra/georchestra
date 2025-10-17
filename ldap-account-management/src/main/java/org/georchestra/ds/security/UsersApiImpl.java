@@ -84,9 +84,9 @@ public class UsersApiImpl implements UsersApi {
     }
 
     @Override
-    public Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
+    public Optional<GeorchestraUser> findByExternalUid(String externalProvider, String externalUid) {
         try {
-            return Optional.of(this.accountsDao.findByOAuth2Uid(oauth2Provider, oauth2Uid))//
+            return Optional.of(this.accountsDao.findByExternalUid(externalProvider, externalUid))//
                     .filter(notPending().and(notProtected()))//
                     .map(mapper::map);
         } catch (NameNotFoundException e) {

@@ -144,7 +144,7 @@
         <label class="col-sm-4" for="uid" ng-if="!model.isExternalAuth" translate>user.login</label>
         <label class="col-sm-4" for="uid" ng-if="model.isExternalAuth" translate>account.external</label>
         <div class="col-sm-8 break-word" ng-if="!view.edit_login">
-          <div ng-if="model.isExternalAuth"><b>{{ model.oAuth2Provider }} :</b><br></div>
+          <div ng-if="model.isExternalAuth"><b>{{ model.externalProvider }} :</b><br></div>
           {{model.uid}} <span ng-if="!model.isExternalAuth">(<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)</span>
         </div>
         <div class="col-sm-8" ng-if="view.edit_login">

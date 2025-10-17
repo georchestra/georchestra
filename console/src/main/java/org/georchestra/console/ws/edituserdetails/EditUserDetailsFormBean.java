@@ -35,7 +35,7 @@ public class EditUserDetailsFormBean implements java.io.Serializable {
     private String org;
     private String description;
     private String postalAddress;
-    private boolean isOAuth2;
+    private boolean isExternal;
     private boolean isExternalAuth;
 
     @Override
@@ -125,12 +125,12 @@ public class EditUserDetailsFormBean implements java.io.Serializable {
         this.postalAddress = postalAddress;
     }
 
-    public boolean getIsOAuth2() {
-        return isOAuth2;
+    public boolean getIsExternal() {
+        return isExternal;
     }
 
-    public void setIsOAuth2(boolean isOAuth2) {
-        this.isOAuth2 = isOAuth2;
+    public void setIsExternal(boolean isExternal) {
+        this.isExternal = isExternal;
     }
 
     public boolean getIsExternalAuth() {
