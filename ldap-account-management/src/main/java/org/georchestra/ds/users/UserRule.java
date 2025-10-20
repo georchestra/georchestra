@@ -73,7 +73,7 @@ public class UserRule {
         assert uid != null;
 
         if (this.listOfprotectedUsers.isEmpty()) {
-            UserRule.LOG.warn("There isn't any protected user configured");
+            UserRule.LOG.debug("There isn't any protected user configured");
         }
 
         return this.listOfprotectedUsers.contains(uid);
@@ -86,7 +86,7 @@ public class UserRule {
     public List<String> getListUidProtected() {
 
         if (this.listOfprotectedUsers.isEmpty()) {
-            UserRule.LOG.warn("There isn't any protected user configured");
+            UserRule.LOG.debug("There isn't any protected user configured");
         }
         LinkedList<String> res = new LinkedList<String>();
         res.addAll(this.listOfprotectedUsers);
