@@ -58,7 +58,7 @@ public class RoleProtected {
     public boolean isProtected(final String uid) {
 
         if (this.listOfprotectedRoles.isEmpty())
-            RoleProtected.LOG.warn("There isn't any protected roles configured");
+            RoleProtected.LOG.debug("There isn't any protected roles configured");
 
         for (String reg : listOfprotectedRoles) {
             if (Pattern.matches(reg, uid))
