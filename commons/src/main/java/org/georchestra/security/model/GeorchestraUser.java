@@ -86,14 +86,14 @@ public class GeorchestraUser implements Serializable {
     /** Provided by request header {@code sec-ldap-remaining-days} */
     private String ldapRemainingDays;
 
-    /** Maps to Account.getOAuth2Provider */
-    private String oAuth2Provider;
+    /** Maps to Account.getExternalProvider */
+    private String externalProvider;
 
-    /** Maps to Account.getOAuth2Uid */
-    private String oAuth2Uid;
+    /** Maps to Account.getExternalUid */
+    private String externalUid;
 
-    /** Maps to Account.getOAuth2OrgId */
-    private String oAuth2OrgId;
+    /** Maps to Account.getExternalOrgId */
+    private String externalOrgId;
 
     /** Provided by request header {@code sec-external-authentication} */
     private Boolean isExternalAuth = false;

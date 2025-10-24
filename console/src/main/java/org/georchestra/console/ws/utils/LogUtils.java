@@ -94,7 +94,7 @@ public class LogUtils {
         return log;
     }
 
-    public AdminLogEntry createOAuth2Log(String target, AdminLogType type, String values) {
+    public AdminLogEntry createExternalLog(String target, AdminLogType type, String values) {
 
         AdminLogEntry log = new AdminLogEntry();
         String admin = "anonymousUser";
