@@ -89,7 +89,7 @@ public class EditUserDetailsFormControllerTest {
         formBean.setSurname("misterTest");
         formBean.setTitle("test engineer");
         formBean.setUid("mtester");
-        formBean.setIsOAuth2(false);
+        formBean.setIsExternal(false);
 
         // Mock mtester user
         this.mtesterAccount = AccountFactory.createBrief("mtester", "12345", "testFirst", "misterTest", "email",

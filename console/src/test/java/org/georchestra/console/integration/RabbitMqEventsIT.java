@@ -83,7 +83,7 @@ public class RabbitMqEventsIT extends ConsoleIntegrationTest {
 
         CachingConnectionFactory fac = new CachingConnectionFactory("localhost", rabbitmq.getAmqpPort());
         admin = new RabbitAdmin(fac);
-        TopicExchange ex = new TopicExchange("OAUTH2-EXCHANGE-GATEWAY");
+        TopicExchange ex = new TopicExchange("EXTERNAL-EXCHANGE-GATEWAY");
         admin.declareExchange(ex);
         Queue q = new AnonymousQueue();
         admin.declareQueue(q);
@@ -107,35 +107,35 @@ public class RabbitMqEventsIT extends ConsoleIntegrationTest {
     }
 
     public @Test void testReceiveEvent() {
-        sendGatewayOauth2MessageCreationToRabbitMq();
+        sendGatewayExternalMessageCreationToRabbitMq();
 
         await().atMost(30, SECONDS).until(() -> {
-            return emailFactory.sendNewOAuth2AccountNotificationEmailCalled;
+            return emailFactory.sendNewExternalAccountNotificationEmailCalled;
         });
     }
 
-    private void sendGatewayOauth2MessageCreationToRabbitMq() {
+    private void sendGatewayExternalMessageCreationToRabbitMq() {
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("uid", UUID.randomUUID());
-        jsonObj.put("subject", "OAUTH2-ACCOUNT-CREATION");
+        jsonObj.put("subject", "EXTERNAL-ACCOUNT-CREATION");
         jsonObj.put("fullName", "flup");
         jsonObj.put("localUid", "aaa");
         jsonObj.put("email", "martinh@thefiddlingcompany.com");
         jsonObj.put("organization", "thefiddlingcompany");
-        jsonObj.put("providerName", "myoauth2provider");
-        jsonObj.put("providerUid", "martinhoauth2");
+        jsonObj.put("providerName", "myexternalprovider");
+        jsonObj.put("providerUid", "martinhexternal");
 
-        eventTemplate.convertAndSend("OAUTH2-EXCHANGE", "routing-gateway", jsonObj.toString());
+        eventTemplate.convertAndSend("EXTERNAL-EXCHANGE", "routing-gateway", jsonObj.toString());
     }
 
     private static class MockEmailFactory extends EmailFactory {
-        public boolean sendNewOAuth2AccountNotificationEmailCalled = false;
+        public boolean sendNewExternalAccountNotificationEmailCalled = false;
 
         @Override
-        public void sendNewOAuth2AccountNotificationEmail(ServletContext context, List<String> recipients,
+        public void sendNewExternalAccountNotificationEmail(ServletContext context, List<String> recipients,
                 String fullName, String localUid, String emailAddress, String providerName, String providerUid,
                 String userOrg, boolean reallySend) throws MessagingException {
-            sendNewOAuth2AccountNotificationEmailCalled = true;
+            sendNewExternalAccountNotificationEmailCalled = true;
         }
     }
 }

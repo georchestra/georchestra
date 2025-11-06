@@ -81,17 +81,17 @@ public class AccountFactory {
      * @param email
      * @param phone
      * @param description
-     * @param oAuth2Provider
-     * @param oAuth2Uid
+     * @param externalProvider
+     * @param externalUid
      * @return
      */
 
     public static Account createBrief(String uid, String password, String firstName, String surname, String email,
-            String phone, String title, String description, String oAuth2Provider, String oAuth2Uid) {
+            String phone, String title, String description, String externalProvider, String externalUid) {
 
         Account account = createBrief(uid, password, firstName, surname, email, phone, title, description);
-        account.setOAuth2Provider(oAuth2Provider);
-        account.setOAuth2Uid(oAuth2Uid);
+        account.setExternalProvider(externalProvider);
+        account.setExternalUid(externalUid);
         return account;
     }
 
@@ -125,8 +125,8 @@ public class AccountFactory {
      * @param org
      * @param sshKeys
      * @param saslUser
-     * @param oAuth2Provider
-     * @param oAuth2Uid
+     * @param externalProvider
+     * @param externalUid
      *
      * @return {@link Account}
      */
@@ -135,7 +135,7 @@ public class AccountFactory {
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
             String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys,
-            String saslUser, String oAuth2Provider, String oAuth2Uid) {
+            String saslUser, String externalProvider, String externalUid) {
 
         Account a = new AccountImpl();
         a.setUniqueIdentifier(uuid);
@@ -165,9 +165,9 @@ public class AccountFactory {
         a.setOrg(org);
         a.setSshKeys(sshKeys);
         a.setSASLUser(saslUser);
-        a.setOAuth2Provider(oAuth2Provider);
-        a.setOAuth2Uid(oAuth2Uid);
-        a.setIsExternalAuth(oAuth2Provider != null && !oAuth2Provider.isEmpty());
+        a.setExternalProvider(externalProvider);
+        a.setExternalUid(externalUid);
+        a.setIsExternalAuth(externalProvider != null && !externalProvider.isEmpty());
         return a;
     }
 
@@ -212,8 +212,8 @@ public class AccountFactory {
         a.setPending(o.isPending());
         a.setSshKeys(o.getSshKeys());
         a.setSASLUser(o.getSASLUser());
-        a.setOAuth2Provider(o.getOAuth2Provider());
-        a.setOAuth2Uid(o.getOAuth2Uid());
+        a.setExternalProvider(o.getExternalProvider());
+        a.setExternalUid(o.getExternalUid());
         return a;
     }
 

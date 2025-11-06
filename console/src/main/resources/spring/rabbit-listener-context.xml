@@ -11,19 +11,19 @@
 
     <rabbit:connection-factory id="connectionFactory" host="${rabbitmqHost}" port="${rabbitmqPort}" username="${rabbitmqUser}" password="${rabbitmqPassword}" />
     <rabbit:admin connection-factory="connectionFactory" />
-    <!-- Create OAuth2Queue queue -->
-    <rabbit:queue id="OAuth2Queue" />
-    <!-- create OAuth2Exchange and bind OAuth2Queue with routing-console to the OAUTH2-EXCHANGE-->
-    <rabbit:topic-exchange id="OAuth2Exchange" name="OAUTH2-EXCHANGE">
+    <!-- Create ExternalQueue queue -->
+    <rabbit:queue id="ExternalQueue" />
+    <!-- create ExternalExchange and bind ExternalQueue with routing-console to the EXTERNAL-EXCHANGE-->
+    <rabbit:topic-exchange id="ExternalExchange" name="EXTERNAL-EXCHANGE">
         <rabbit:bindings>
-            <rabbit:binding queue="OAuth2Queue" pattern="routing-gateway"></rabbit:binding>
+            <rabbit:binding queue="ExternalQueue" pattern="routing-gateway"></rabbit:binding>
         </rabbit:bindings>
     </rabbit:topic-exchange>
     <!-- instantiate eventsListener -->
     <bean id="eventsListener" class="org.georchestra.console.events.RabbitmqEventsListener" />
 
-    <!-- glue the listener and OAuth2Queue to the container-->
+    <!-- glue the listener and ExternalQueue to the container-->
     <rabbit:listener-container connection-factory="connectionFactory">
-        <rabbit:listener ref="eventsListener" queues="OAuth2Queue" />
+        <rabbit:listener ref="eventsListener" queues="ExternalQueue" />
     </rabbit:listener-container>
 </beans>

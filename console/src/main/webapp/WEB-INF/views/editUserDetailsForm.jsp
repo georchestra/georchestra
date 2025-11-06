@@ -78,7 +78,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
     <fieldset>
       <legend><s:message code="editUserDetailsForm.fieldset.userDetails"/></legend>
       <c:choose>
-        <c:when test="${editUserDetailsFormBean.isOAuth2}">
+        <c:when test="${editUserDetailsFormBean.isExternal}">
           <div class="form-group">
             <label class="col-lg-4 control-label"><s:message code="firstName.label"/></label>
             <div class="col-lg-8">
@@ -150,7 +150,7 @@ var gdprAllowAccountDeletion = ${gdprAllowAccountDeletion};
       </t:textarea>
     </fieldset>
 
-    <c:if test="${!editUserDetailsFormBean.isOAuth2 && !editUserDetailsFormBean.isExternalAuth}">
+    <c:if test="${!editUserDetailsFormBean.isExternal && !editUserDetailsFormBean.isExternalAuth}">
       <fieldset>
         <legend><s:message code="editUserDetailsForm.fieldset.credentials"/></legend>
         <div class="form-group">

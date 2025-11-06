@@ -60,8 +60,8 @@ public class EmailFactory {
     private String changePasswordEmailFile;
     private String changePasswordEmailSubject;
 
-    private String changePasswordOAuth2EmailFile;
-    private String changePasswordOAuth2EmailSubject;
+    private String changePasswordExternalEmailFile;
+    private String changePasswordExternalEmailSubject;
 
     private String changeEmailAddressEmailFile;
     private String changeEmailAddressEmailSubject;
@@ -71,11 +71,11 @@ public class EmailFactory {
 
     private String newAccountNotificationEmailFile;
 
-    private String newOAuth2AccountNotificationEmailFile;
+    private String newExternalAccountNotificationEmailFile;
 
     private String newAccountNotificationEmailSubject;
 
-    private String newOAuth2AccountNotificationEmailSubject;
+    private String newExternalAccountNotificationEmailSubject;
 
     private String publicUrl;
     private String instanceName;
@@ -159,16 +159,16 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName)
+    public void sendChangePasswordExternalEmail(ServletContext servletContext, String recipient, String userName)
             throws MessagingException {
-        sendChangePasswordOAuth2Email(servletContext, recipient, userName, true);
+        sendChangePasswordExternalEmail(servletContext, recipient, userName, true);
     }
 
-    public void sendChangePasswordOAuth2Email(ServletContext servletContext, String recipient, String userName,
+    public void sendChangePasswordExternalEmail(ServletContext servletContext, String recipient, String userName,
             boolean reallySend) throws MessagingException {
-        Email email = new Email(singletonList(recipient), this.changePasswordOAuth2EmailSubject, this.smtpHost,
+        Email email = new Email(singletonList(recipient), this.changePasswordExternalEmailSubject, this.smtpHost,
                 this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
-                this.templateEncoding, this.changePasswordOAuth2EmailFile, servletContext, this.georConfig,
+                this.templateEncoding, this.changePasswordExternalEmailFile, servletContext, this.georConfig,
                 this.publicUrl, this.instanceName);
         email.set("name", userName);
         email.send(reallySend);
@@ -231,14 +231,14 @@ public class EmailFactory {
         email.send(reallySend);
     }
 
-    public void sendNewOAuth2AccountNotificationEmail(ServletContext context, List<String> recipients, String fullName,
-            String localUid, String emailAddress, String providerName, String providerUid, String userOrg,
-            boolean reallySend) throws MessagingException {
+    public void sendNewExternalAccountNotificationEmail(ServletContext context, List<String> recipients,
+            String fullName, String localUid, String emailAddress, String providerName, String providerUid,
+            String userOrg, boolean reallySend) throws MessagingException {
 
-        Email email = new Email(recipients, this.newOAuth2AccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
-                this.emailHtml, emailAddress, // Reply-to
+        Email email = new Email(recipients, this.newExternalAccountNotificationEmailSubject, this.smtpHost,
+                this.smtpPort, this.emailHtml, emailAddress, // Reply-to
                 this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
-                this.newOAuth2AccountNotificationEmailFile, context, this.georConfig, this.publicUrl,
+                this.newExternalAccountNotificationEmailFile, context, this.georConfig, this.publicUrl,
                 this.instanceName);
         email.set("name", fullName);
         email.set("uid", localUid);
@@ -332,12 +332,12 @@ public class EmailFactory {
         this.changePasswordEmailSubject = changePasswordEmailSubject;
     }
 
-    public void setChangePasswordOAuth2EmailSubject(String changePasswordOAuth2EmailSubject) {
-        this.changePasswordOAuth2EmailSubject = changePasswordOAuth2EmailSubject;
+    public void setChangePasswordExternalEmailSubject(String changePasswordExternalEmailSubject) {
+        this.changePasswordExternalEmailSubject = changePasswordExternalEmailSubject;
     }
 
-    public void setChangePasswordOAuth2EmailFile(String changePasswordOAuth2EmailFile) {
-        this.changePasswordOAuth2EmailFile = changePasswordOAuth2EmailFile;
+    public void setChangePasswordExternalEmailFile(String changePasswordExternalEmailFile) {
+        this.changePasswordExternalEmailFile = changePasswordExternalEmailFile;
     }
 
     public void setChangeEmailAddressEmailFile(String changePasswordEmailFile) {
@@ -360,16 +360,16 @@ public class EmailFactory {
         this.newAccountNotificationEmailFile = newAccountNotificationEmailFile;
     }
 
-    public void setNewOAuth2AccountNotificationEmailFile(String newOAuth2AccountNotificationEmailFile) {
-        this.newOAuth2AccountNotificationEmailFile = newOAuth2AccountNotificationEmailFile;
+    public void setNewExternalAccountNotificationEmailFile(String newExternalAccountNotificationEmailFile) {
+        this.newExternalAccountNotificationEmailFile = newExternalAccountNotificationEmailFile;
     }
 
     public void setNewAccountNotificationEmailSubject(String newAccountNotificationEmailSubject) {
         this.newAccountNotificationEmailSubject = newAccountNotificationEmailSubject;
     }
 
-    public void setNewOAuth2AccountNotificationEmailSubject(String newOAuth2AccountNotificationEmailSubject) {
-        this.newOAuth2AccountNotificationEmailSubject = newOAuth2AccountNotificationEmailSubject;
+    public void setNewExternalAccountNotificationEmailSubject(String newExternalAccountNotificationEmailSubject) {
+        this.newExternalAccountNotificationEmailSubject = newExternalAccountNotificationEmailSubject;
     }
 
     public void setPublicUrl(String publicUrl) {

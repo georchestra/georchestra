@@ -40,7 +40,7 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByEmail(String email);
 
-    default Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
+    default Optional<GeorchestraUser> findByExternalUid(String externalProvider, String externalUid) {
         return Optional.empty();
     };
 

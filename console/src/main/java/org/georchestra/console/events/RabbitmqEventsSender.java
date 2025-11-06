@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.UUID;
 
 public class RabbitmqEventsSender {
-    public static final String OAUTH2_ACCOUNT_CREATION_RECEIVED = "OAUTH2-ACCOUNT-CREATION-RECEIVED";
+    public static final String EXTERNAL_ACCOUNT_CREATION_RECEIVED = "EXTERNAL-ACCOUNT-CREATION-RECEIVED";
 
     @Autowired
     private AmqpTemplate eventTemplate;
@@ -44,7 +44,7 @@ public class RabbitmqEventsSender {
         // beans
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("uid", UUID.randomUUID());
-        jsonObj.put("subject", OAUTH2_ACCOUNT_CREATION_RECEIVED);
+        jsonObj.put("subject", EXTERNAL_ACCOUNT_CREATION_RECEIVED);
         jsonObj.put("msg", msg); // bean
         eventTemplate.convertAndSend("routing-console", jsonObj.toString());// send
     }

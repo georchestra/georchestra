@@ -81,13 +81,13 @@ public class PasswordRecoveryFormControllerTest {
         prepareLegitRequest(false, false);
     }
 
-    private void prepareLegitRequest(boolean isPending, boolean isOAuth2) throws Exception {
+    private void prepareLegitRequest(boolean isPending, boolean isExternal) throws Exception {
         request = new MockHttpServletRequest();
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
         Account account = Mockito.mock(Account.class);
         Mockito.when(account.getUid()).thenReturn("1");
         Mockito.when(account.isPending()).thenReturn(isPending);
-        Mockito.when(account.getOAuth2Provider()).thenReturn(isOAuth2 ? "provider" : null);
+        Mockito.when(account.getExternalProvider()).thenReturn(isExternal ? "provider" : null);
         Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
         Mockito.when(utd.exist(Mockito.anyString())).thenReturn(true);
     }
@@ -208,17 +208,17 @@ public class PasswordRecoveryFormControllerTest {
     }
 
     /**
-     * test for recovery password when user is an OAuth2 user
+     * test for recovery password when user is an External user
      *
      * @throws Exception
      */
     @Test
-    public void testPasswordRecoveryWithOAuth2User() throws Exception {
+    public void testPasswordRecoveryWithExternalUser() throws Exception {
         prepareLegitRequest(false, true);
         Mockito.when(result.hasErrors()).thenReturn(false);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
-        Mockito.verify(efi).sendChangePasswordOAuth2Email(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(efi).sendChangePasswordExternalEmail(Mockito.any(), Mockito.any(), Mockito.any());
         assertEquals("emailWasSentForPasswordChange", ret);
     }
 
