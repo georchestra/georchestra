@@ -34,7 +34,7 @@
         </repository>
     </distributionManagement>
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <formatter-maven-plugin.version>2.20.0</formatter-maven-plugin.version>
         <fmt.skip>false</fmt.skip>
         <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
@@ -42,17 +42,7 @@
         <skipUT>false</skipUT>
         <!-- flag to disable integration tests -->
         <skipIT>false</skipIT>
-        <gt.version>29.5</gt.version>
         <guava.version>33.2.1-jre</guava.version>
-        <lombok.version>1.18.22</lombok.version>
-        <postgres.version>42.7.7</postgres.version>
-        <json.version>20180813</json.version>
-        <camel.version>2.25.0</camel.version>
-        <camel-extras.version>2.14.1</camel-extras.version>
-        <mapfish.version>3.5.0</mapfish.version>
-        <metrics.version>3.0.2</metrics.version>
-        <gmaven.version>1.0</gmaven.version>
-        <gmaven.runtime.version>1.5</gmaven.runtime.version>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <encoding>UTF-8</encoding>
         <log4j1.version>1.2.17</log4j1.version>
@@ -95,82 +85,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-csv</artifactId>
-                <version>1.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mchange</groupId>
-                <artifactId>c3p0</artifactId>
-                <version>0.10.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.el</groupId>
-                <artifactId>el-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-                <version>1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tiles</groupId>
-                <artifactId>tiles-jsp</artifactId>
-                <version>2.2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib-nodep</artifactId>
-                <version>3.3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.googlecode.ez-vcard</groupId>
-                <artifactId>ez-vcard</artifactId>
-                <version>0.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>1.6.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
-                <version>1.6.4</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.flexjson</groupId>
-                <artifactId>flexjson</artifactId>
-                <version>2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-validator</groupId>
-                <artifactId>commons-validator</artifactId>
-                <version>1.7</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>1.4</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.8.0</version>
@@ -182,42 +96,21 @@
                 <type>jar</type>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>apache-log4j-extras</artifactId>
-                <version>1.1</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.tuckey</groupId>
-                <artifactId>urlrewritefilter</artifactId>
-                <version>4.0.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>servlet-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-impl</artifactId>
-                <version>1.2.5</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-net</groupId>
-                <artifactId>commons-net</artifactId>
-                <version>3.6</version>
             </dependency>
             <dependency>
                 <groupId>org.georchestra</groupId>
                 <artifactId>georchestra-testcontainers</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <scope>test</scope>
+                <version>1.10.19</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -603,7 +496,6 @@
             </build>
             <modules>
                 <module>console</module>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
@@ -621,7 +513,6 @@
                 <module>ldap-account-management</module>
                 <module>testcontainers</module>
                 <module>console</module>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
@@ -634,18 +525,6 @@
             <id>console</id>
             <modules>
                 <module>console</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>security-proxy</id>
-            <modules>
-                <module>security-proxy</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>proxy</id>
-            <modules>
-                <module>security-proxy</module>
             </modules>
         </profile>
         <profile>
