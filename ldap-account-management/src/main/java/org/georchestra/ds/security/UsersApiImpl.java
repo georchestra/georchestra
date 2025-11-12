@@ -98,10 +98,17 @@ public class UsersApiImpl implements UsersApi {
 
     @Override
     public Optional<GeorchestraUser> findByEmail(String email) {
+        return findByEmail(email, true);
+    }
+
+    public Optional<GeorchestraUser> findByEmail(String email, boolean filterPending) {
         try {
-            return Optional.of(this.accountsDao.findByEmail(email))//
-                    .filter(notPending().and(notProtected()))//
-                    .map(mapper::map);
+            Predicate<Account> predicate = notProtected();
+            if (filterPending) {
+                predicate = predicate.and(notPending());
+            }
+
+            return Optional.ofNullable(accountsDao.findByEmail(email)).filter(predicate).map(mapper::map);
         } catch (NameNotFoundException e) {
             return Optional.empty();
         } catch (DataServiceException e) {
