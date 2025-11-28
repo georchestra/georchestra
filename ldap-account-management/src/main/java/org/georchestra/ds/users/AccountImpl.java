@@ -169,6 +169,8 @@ public class AccountImpl implements Serializable, Account {
     // Json export is defined on the getter getOrg()
     private String org;
     private String orgDisplayName;
+
+    @JsonProperty(UserSchema.PENDING)
     private boolean pending;
     private boolean isExternalAuth;
 

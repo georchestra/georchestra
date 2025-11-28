@@ -40,6 +40,11 @@ public interface UsersApi {
      */
     Optional<GeorchestraUser> findByEmail(String email);
 
+    /**
+     * Find pending and validated user by {@link GeorchestraUser#getEmail() email}
+     */
+    Optional<GeorchestraUser> findByEmail(String email, boolean filterPending);
+
     default Optional<GeorchestraUser> findByOAuth2Uid(String oauth2Provider, String oauth2Uid) {
         return Optional.empty();
     };
