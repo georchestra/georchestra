@@ -89,9 +89,6 @@ public class GeorchestraUser implements Serializable {
     /** Maps to Account.getOAuth2Provider */
     private String oAuth2Provider;
 
-    /** Maps to Account.isPending */
-    private Boolean pending;
-
     /** Maps to Account.getOAuth2Uid */
     private String oAuth2Uid;
 
@@ -103,9 +100,5 @@ public class GeorchestraUser implements Serializable {
 
     public void setRoles(List<String> roles) {
         this.roles = roles == null ? new ArrayList<>() : roles;
-    }
-
-    public Boolean isPending() {
-        return this.pending;
     }
 }
