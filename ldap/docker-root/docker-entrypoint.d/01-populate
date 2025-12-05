@@ -7,6 +7,7 @@ if [ ! -f /etc/ldap/slapd.d/initialized ]; then
 
     # start slapd in background
     echo -n "Starting slapd daemon in background..."
+    mkdir -p /var/run/slapd && chown ${RUN_AS_UID}:${RUN_AS_GID} /var/run/slapd
     slapd -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h "ldapi:/// ldap://127.0.0.1/"
     echo "Started: OK"
 
