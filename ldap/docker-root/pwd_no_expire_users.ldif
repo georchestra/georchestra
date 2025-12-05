@@ -1,8 +1,3 @@
-dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
-changetype: modify
-add: pwdPolicySubentry
-pwdPolicySubentry: cn=pwd-no-expire,ou=pwpolicy,dc=georchestra,dc=org
-
 dn: uid=idatafeeder,ou=users,dc=georchestra,dc=org
 changetype: modify
 add: pwdPolicySubentry
