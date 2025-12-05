@@ -32,5 +32,5 @@ ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 CMD [ "sh", "-c", "exec slapd -d ${SLAPD_LOG_LEVEL:-32768} -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h 'ldapi:/// ldap:///'" ]
 
-HEALTHCHECK --interval=30s --timeout=10s \
+HEALTHCHECK --interval=15s --timeout=10s \
   CMD ldapsearch -xLLL -s one ou=users | grep  '^dn:' || exit 1
