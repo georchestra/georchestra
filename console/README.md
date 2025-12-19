@@ -149,6 +149,19 @@ protectedUsersList=geoserver_privileged_user
 
 ## Developer's corner
 
+### JSP templates testing
+
+In order to test the JSP templates, you one can launch the `jetty-jspc`
+maven plugin using the following command:
+
+```
+$ mvn frontend:npm jetty-jspc:jspc
+```
+Please note that the `frontend:npm` goal has to be called first, as
+the generated `manager/public/index.html` file is referenced into the
+templates, so it needs to be generated prior to leverage the jspc
+maven plugin.
+
 ### Integration Testing
 
 > TL;DR: run integration tests with `mvn verify`. 
