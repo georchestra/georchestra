@@ -12,6 +12,7 @@ olcDbIndex: mail eq,sub,subfinal
 olcDbIndex: member eq
 olcDbIndex: uid eq
 olcLastMod: TRUE
+olcLastBindPrecision: 14400
 olcDbCheckpoint: 512 30
 olcDbMaxSize: 1073741824
 olcAccess: to attrs=userPassword by dn="cn=admin,dc=georchestra,dc=org" write by anonymous auth by self write by * none
