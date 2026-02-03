@@ -143,7 +143,7 @@ public class RoleDaoImplIT {
         DirContextOperations dco = ldapTemplate.lookupContext(format("cn=%s,ou=roles", roleName));
         Attributes atts = dco.getAttributes();
         Attribute member = atts.get("member");
-        assertEquals(format("cn=%s,ou=orgs,%s", org.getId(), ldapDaoProperties.getBasePath()), member.get());
+        assertEquals(orgsDao.buildFullOrgDn(org), member.get());
     }
 
     @Test
