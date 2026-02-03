@@ -1,0 +1,36 @@
+name: "test-dependencies"
+permissions:
+  contents: read
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "commons/**"
+      - "ldap-account-management/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "ldap-account-management/**"
+      - "pom.xml"
+
+jobs:
+  build:
+    if: "!startsWith(github.event.head_commit.message, '[skip ci] ')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: "Checking out"
+        uses: actions/checkout@v6
+
+      - name: "Setting up Java"
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+          cache: 'maven'
+          server-id: geOrchestra-artifactory
+          server-username: ARTIFACTORY_USERNAME_REF
+          server-password: ARTIFACTORY_TOKEN_REF
+
+      - name: "Installing & checking formatting"
+        run: ./mvnw -pl commons,ldap-account-management -am verify -Pcommons,ldap-account-management
