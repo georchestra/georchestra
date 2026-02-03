@@ -32,7 +32,7 @@ deb-build-georchestra: war-build-georchestra build-deps
 # Base geOrchestra common modules
 build-deps:
 	mvn -Dmaven.test.failure.ignore clean install --non-recursive
-	mvn clean install -pl commons -Dmaven.javadoc.failOnError=false
+	mvn clean install -pl commons,ldap-account-management -Dmaven.javadoc.failOnError=false -DskipTests
 
 # all
 all: war-build-georchestra deb-build-georchestra docker-build

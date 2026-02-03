@@ -19,6 +19,7 @@
 
 package org.georchestra.ds.roles;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
@@ -30,10 +31,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.DuplicatedCommonNameException;
+import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.users.Account;
@@ -65,6 +70,7 @@ public class RoleDaoImplIT {
     private @Autowired RoleDaoImpl roleDao;
     private @Autowired OrgsDaoImpl orgsDao;
     private @Autowired LdapTemplate ldapTemplate;
+    private @Autowired LdapDaoProperties ldapDaoProperties;
 
     private Account account;
     private Role role;
@@ -125,6 +131,19 @@ public class RoleDaoImplIT {
         Role actualRole = roleDao.findByCommonName(roleName);
         assertEquals(1, actualRole.getOrgList().size());
         assertEquals(0, actualRole.getUserList().size());
+    }
+
+    @Test
+    public void verifyOrgMembershipAndDn() throws DuplicatedCommonNameException, DataServiceException, NamingException {
+        String roleName = createRole();
+        Org org = createOrg();
+
+        roleDao.addOrg(roleName, org);
+
+        DirContextOperations dco = ldapTemplate.lookupContext(format("cn=%s,ou=roles", roleName));
+        Attributes atts = dco.getAttributes();
+        Attribute member = atts.get("member");
+        assertEquals(orgsDao.buildFullOrgDn(org), member.get());
     }
 
     @Test

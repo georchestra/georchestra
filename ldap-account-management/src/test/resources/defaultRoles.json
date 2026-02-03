@@ -3,9 +3,8 @@
 		"id": "6b98583f-0ff0-465f-bb29-e9696a634c74",
 		"name": "ADMINISTRATOR",
 		"description": "This role grants admin access to GeoServer",
-		"lastUpdated": "3a33e37f8ca3dcd35e6806001da8b1da827ede7bbdba15032270031677770aa7",
+		"lastUpdated": "a6b91cb99562bfb4ec20a1ff24b5c387b98d926eae0211b6b61357e5985d170b",
 		"members": [
-			"geoserver_privileged_user",
 			"testadmin"
 		]
 	},
