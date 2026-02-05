@@ -1,6 +1,6 @@
 # GeoNetwork in geOrchestra
 
-[GeoNetwork]([url](https://www.geonetwork-opensource.org/)) is one of the main components of geOrchestra. It allows you to document datasets.
+[GeoNetwork](https://www.geonetwork-opensource.org/) is one of the main components of geOrchestra. It allows you to document datasets.
 
 Creating metadata is essential for accessing data services. It is also a legal requirement for some organizations.
 

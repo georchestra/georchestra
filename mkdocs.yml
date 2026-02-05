@@ -55,8 +55,7 @@ nav:
 #    - User guide:
 #        - Summary: user_guide/index.md
     - Administration guide:
-#        - Summary: admin_guide/index.md
-
+        - admin_guide/index.md
         - Global rights management:
           - admin_guide/rights_management/index.md
           - admin_guide/rights_management/acl-sp.md
