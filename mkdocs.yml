@@ -79,8 +79,9 @@ nav:
         - Architecture: admin_guide/architecture/index.md
         - Post-deploy config: admin_guide/post-deploy_config.md
         - Geonetwork:
-          - Synchronization: admin_guide/geonetwork_synchronization.md
-          - Custom Form: admin_guide/gn_custom_form/gn_custom_form.md
+          - admin_guide/geonetwork/index.md
+          - admin_guide/geonetwork/users_synchronization.md
+          - admin_guide/geonetwork/metadata_edition_form_customization.md
     - Installation guide:
         - Summary: install_guide/index.md
         - Prerequisites: install_guide/prerequisites.md

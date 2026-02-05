@@ -1,4 +1,4 @@
-# Custom edition form in GeoNetwork
+# Metadata custom edition form in GeoNetwork
 
 It is possible to use a custom edition form, for metadata edition, in GeoNetwork. Possible, and even [documented](https://geonetwork-opensource.org/manuals/4.0.x/en/customizing-application/editor-ui/creating-custom-editor.html), but not so simple.
 
@@ -13,8 +13,8 @@ Geo2france, a French region, asked for a simplified, flat form, close to what pe
 - And, of course, the form should behave correctly with existing records.
 
 The expected result would look like this:
-<!-- ![visuel3](gn_custom_form/visuel3.png) -->
-<a href="gn_custom_form/visuel3.png"><img src="gn_custom_form/visuel3.png" width="400px"/></a>
+
+<a href="../images/gn_custom_form_example.png"><img src="../images/gn_custom_form_example.png" width="400px"/></a>
 
 ## Add an edition form
 
@@ -115,7 +115,7 @@ For instance, for the gmd:status field, it would look like:
 
 ```
 
-![add-button](gn_custom_form/add-button.png)
+![add-button](images/add-button.png)
 
 #### Add the PointofContact block
 ```xml
@@ -282,7 +282,7 @@ And the buttons underneath it will allow you, once you have selected one or more
 
 ### Have this thesaurus available in the extent block
 In the extent block, you have a form field allowing to 'choose a region', either from geonames or from a few lists of very large entities (countries, oceans, etc).
-![choose a region](gn_custom_form/choose-a-region.png)
+![choose a region](images/choose-a-region.png)
 Those large entities are taken from the `regions.rdf` thesaurus. Most of the time, for regional platforms, it won't be of any use.
 
 If you want, you can replace it by your geo-thesaurus. Unfortunately at the time of writing this, the name of the thesaurus is hardcoded, so you will have to rename or import a second time your thesaurus under the name `regions.rdf` to get it available on this widget.
@@ -291,6 +291,6 @@ If you want, you can replace it by your geo-thesaurus. Unfortunately at the time
 ## Resources
 
 Here are the resulting files:
-- [config-editor.xml](gn_custom_form/config-editor.xml)
-- [strings.xml](gn_custom_form/strings.xml)
-- [gn_editor_default.less](gn_custom_form/gn_editor_default.less)
+- [config-editor.xml](images/config-editor.xml)
+- [strings.xml](images/strings.xml)
+- [gn_editor_default.less](images/gn_editor_default.less)
