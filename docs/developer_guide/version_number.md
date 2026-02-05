@@ -1,6 +1,5 @@
-# Releases
 
-## Version Numbering Scheme
+# Version Numbering Scheme
 
 geOrchestra releases are named `YY.V.P` where:
  * `YY` are the latest two digits of the year (eg `20` for 2020)
@@ -17,7 +16,8 @@ Upgrading from a major version `YY.V` to another one, like `YY.W` or `ZZ.*` requ
 
 Patch releases use the same datadir branch name. For instance, versions 20.0.0 and 20.0.1 expect a [datadir branch 20.0](https://github.com/georchestra/datadir/tree/20.0)
 
-## Applications that use georchestra core librairies
+
+# Applications that use georchestra core librairies
 
 Some applications use georchestra core libraries, and are versioned with the following scheme.
 
