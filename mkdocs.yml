@@ -102,7 +102,8 @@ nav:
               - Setup: install_guide/servers/tomcat.md
               - Deploy wars: install_guide/servers/tomcat_deploy_wars.md
     - Developer guide:
-        - Version number: developer_guide/version_number.md
+        - developer_guide/index.md
+        - developer_guide/version_number.md
 
 markdown_extensions:
   - admonition
