@@ -51,9 +51,7 @@ extra_javascript:
 # Here do not put .fr or .en in the name of the markdown : the i18n plugin manage this for you
 
 nav:
-    - Home: index.md 
-#    - User guide:
-#        - Summary: user_guide/index.md
+    - Home: index.md
     - Administration guide:
         - admin_guide/index.md
         - Global rights management:
