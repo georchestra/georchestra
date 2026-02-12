@@ -42,10 +42,10 @@ import lombok.NonNull;
 
 public class CSVAccountExporter {
 
-    static enum OutlookCSVHeaderField {
-        FIRST_NAME("First Name", Account::getCommonName), //
+    static enum CSVHeaderField {
+        FIRST_NAME("First Name", Account::getGivenName), //
         MIDDLE_NAME("Middle Name"), //
-        LAST_NAME("Last Name", Account::getSurname), //
+        LAST_NAME("Last Name", Account::getCommonName), //
         TITLE("Title", Account::getTitle), //
         SUFFIX("Suffix"), //
         INITIALS("Initials"), //
@@ -57,6 +57,8 @@ public class CSVAccountExporter {
         LANG("Language"), //
         INTERNET_FREE_BUSY("Internet Free Busy"), //
         NOTES("Notes", (a, o) -> o == null ? null : o.getDescription()), //
+        CREATION_DATE("Creation date", (a -> a.getCreationDate() != null ? a.getCreationDate().toString() : null)), //
+        LAST_LOGIN_DATE("Last login date", (a -> a.getLastLogin() != null ? a.getLastLogin().toString() : null)), //
         EMAIL("E-mail Address", Account::getEmail), //
         EMAIL2("E-mail 2 Address"), //
         EMAIL3("E-mail 3 Address"), //
@@ -140,17 +142,17 @@ public class CSVAccountExporter {
         private final @NonNull @Getter String name;
         private final BiFunction<Account, Org, String> valueExtractor;
 
-        private OutlookCSVHeaderField(String name) {
+        private CSVHeaderField(String name) {
             this.name = name;
             this.valueExtractor = (a, o) -> null;
         }
 
-        private OutlookCSVHeaderField(@NonNull String name, @NonNull Function<Account, String> valueExtractor) {
+        private CSVHeaderField(@NonNull String name, @NonNull Function<Account, String> valueExtractor) {
             this.name = name;
             this.valueExtractor = (a, o) -> valueExtractor.apply(a);
         }
 
-        private OutlookCSVHeaderField(@NonNull String name, @NonNull BiFunction<Account, Org, String> valueExtractor) {
+        private CSVHeaderField(@NonNull String name, @NonNull BiFunction<Account, Org, String> valueExtractor) {
             this.name = name;
             this.valueExtractor = valueExtractor;
         }
@@ -176,7 +178,7 @@ public class CSVAccountExporter {
     }
 
     private static final String[] headerNames() {
-        return Arrays.stream(OutlookCSVHeaderField.values()).map(OutlookCSVHeaderField::getName).toArray(String[]::new);
+        return Arrays.stream(CSVHeaderField.values()).map(CSVHeaderField::getName).toArray(String[]::new);
     }
 
     /**
@@ -196,13 +198,13 @@ public class CSVAccountExporter {
 
     private Iterable<String> toRecord(@NonNull Account account, @Nullable Org org) {
         List<String> values = new ArrayList<>();
-        for (OutlookCSVHeaderField header : OutlookCSVHeaderField.values()) {
+        for (CSVHeaderField header : CSVHeaderField.values()) {
             values.add(header.apply(account, org));
         }
         return values;
     }
 
     public static void main(String... args) {
-        Arrays.asList(OutlookCSVHeaderField.values()).forEach(f -> System.err.println(f.getName()));
+        Arrays.asList(CSVHeaderField.values()).forEach(f -> System.err.println(f.getName()));
     }
 }

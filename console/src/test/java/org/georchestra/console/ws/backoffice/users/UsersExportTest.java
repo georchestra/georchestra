@@ -19,94 +19,94 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ACCOUNT;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ANNIVERSARY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ASSISTANT_NAME;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ASSISTANT_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BDAY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BILLING_INFO;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_ADDRESS;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_ADDR_POBOX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_ADDR_STREET;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_ADDR_STREET2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_ADDR_STREET3;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_CITY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_COUNTRY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_FAX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_PC;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_PHONE2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.BIZ_STATE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.CALLBACK;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.CAR_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.CATEGORIES;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.CHILDREN;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.COMPANY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.COMPANY_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.DEPARTMENT;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.DIRECTORY_SERVER;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.EMAIL;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.EMAIL2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.EMAIL3;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.FIRST_NAME;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.GENDER;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOBBY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_ADDRESS;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_CITY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_COUNTRY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_FAX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_PC;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_PHONE2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_POBOX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_STATE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_STREET;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_STREET2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.HOME_STREET3;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.INITIALS;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.INTERNET_FREE_BUSY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ISDN;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.JOB_TITLE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.KEYWORDS;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.LANG;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.LAST_NAME;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.LOCATION;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.MANAGER_NAME;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.MIDDLE_NAME;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.MILEAGE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.MOBILE_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.NOTES;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OFFICE_LOCATION;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.ORG_ID;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_ADDR;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_CITY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_COUNTRY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_FAX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_PC;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_POBOX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_ST;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_ST2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_ST3;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.OTHER_STATE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.PAGER;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.PRIORITY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.PRIVATE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.PROFESSION;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.RADIO_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.REFERRED_BY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.SENSITIVITY;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.SPOUSE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.SUFFIX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.TELEX;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.TITLE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.TTY_PHONE;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER1;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER2;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER3;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.USER4;
-import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField.WEBPAGE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ACCOUNT;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ANNIVERSARY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ASSISTANT_NAME;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ASSISTANT_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BDAY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BILLING_INFO;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_ADDRESS;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_ADDR_POBOX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_ADDR_STREET;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_ADDR_STREET2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_ADDR_STREET3;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_CITY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_COUNTRY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_FAX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_PC;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_PHONE2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.BIZ_STATE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.CALLBACK;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.CAR_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.CATEGORIES;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.CHILDREN;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.COMPANY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.COMPANY_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.DEPARTMENT;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.DIRECTORY_SERVER;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.EMAIL;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.EMAIL2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.EMAIL3;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.FIRST_NAME;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.GENDER;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOBBY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_ADDRESS;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_CITY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_COUNTRY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_FAX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_PC;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_PHONE2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_POBOX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_STATE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_STREET;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_STREET2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.HOME_STREET3;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.INITIALS;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.INTERNET_FREE_BUSY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ISDN;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.JOB_TITLE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.KEYWORDS;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.LANG;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.LAST_NAME;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.LOCATION;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.MANAGER_NAME;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.MIDDLE_NAME;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.MILEAGE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.MOBILE_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.NOTES;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OFFICE_LOCATION;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.ORG_ID;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_ADDR;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_CITY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_COUNTRY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_FAX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_PC;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_POBOX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_ST;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_ST2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_ST3;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.OTHER_STATE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.PAGER;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.PRIORITY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.PRIVATE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.PROFESSION;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.RADIO_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.REFERRED_BY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.SENSITIVITY;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.SPOUSE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.SUFFIX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.TELEX;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.TITLE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.TTY_PHONE;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.USER1;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.USER2;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.USER3;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.USER4;
+import static org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField.WEBPAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -125,7 +125,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.georchestra.console.dao.AdvancedDelegationDao;
-import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.OutlookCSVHeaderField;
+import org.georchestra.console.ws.backoffice.users.CSVAccountExporter.CSVHeaderField;
 import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
@@ -149,15 +149,8 @@ public class UsersExportTest {
     private AccountImpl account1, account2;
     private Org org1, org2;
 
-    private static final String headers = "First Name,Middle Name,Last Name,Title,Suffix,Initials,Web Page,Gender,Birthday,Anniversary,"
-            + "Location,Language,Internet Free Busy,Notes,E-mail Address,E-mail 2 Address,E-mail 3 Address,Primary Phone,Home Phone,"
-            + "Home Phone 2,Mobile Phone,Pager,Home Fax,Home Address,Home Street,Home Street 2,Home Street 3,Home Address PO Box,Home City,"
-            + "Home State,Home Postal Code,Home Country,Spouse,Children,Manager's Name,Assistant's Name,Referred By,Company Main Phone,"
-            + "Business Phone,Business Phone 2,Business Fax,Assistant's Phone,Company,Job Title,Department,Office Location,Organizational ID Number,"
-            + "Profession,Account,Business Address,Business Street,Business Street 2,Business Street 3,Business Address PO Box,Business City,"
-            + "Business State,Business Postal Code,Business Country,Other Phone,Other Fax,Other Address,Other Street,Other Street 2,Other Street 3,"
-            + "Other Address PO Box,Other City,Other State,Other Postal Code,Other Country,Callback,Car Phone,ISDN,Radio Phone,TTY/TDD Phone,Telex,"
-            + "User 1,User 2,User 3,User 4,Keywords,Mileage,Hobby,Billing Information,Directory Server,Sensitivity,Priority,Private,Categories";
+    private static final String headers = Arrays.stream(CSVHeaderField.values()).map(a -> a.getName())
+            .collect(Collectors.joining(","));
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -167,8 +160,8 @@ public class UsersExportTest {
         account1 = new AccountImpl();
         account1.setUid("pmauduit");
         account1.setOrg("c2c");
-        account1.setCommonName("Pierre");
-        account1.setSurname("Mauduit");
+        account1.setGivenName("Pierre");
+        account1.setCommonName("Mauduit");
         account1.setEmail("abc@example.com");
 
         org1 = new Org();
@@ -178,8 +171,8 @@ public class UsersExportTest {
         account2 = new AccountImpl();
         account2.setUid("jdoe");
         account2.setOrg("org2");
-        account2.setCommonName("John");
-        account2.setSurname("Doe");
+        account2.setGivenName("John");
+        account2.setCommonName("Doe");
         account2.setEmail("jdoe@example.com");
 
         org2 = new Org();
@@ -206,10 +199,10 @@ public class UsersExportTest {
     @Test
     public void testGetUsersAsCsv() throws Exception {
         String s = us.getUsersAsCsv("[\"pmauduit\"]");
-        String expected = "Pierre,,Mauduit,,,,,,,,,,,,abc@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,,,CampToCamp,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+        String expected = "Pierre,,Mauduit,,,,,,,,,,,,,,abc@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,,,CampToCamp,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
 
         String[] splitted = s.split("\r\n");
-        System.err.println(splitted[1]);
+
         assertFalse(s.contains("null"), "The CSV contains \"null\", unexpected");
         assertTrue(s.contains("abc@example.com"), "The CSV should contain \"abc@example.com\"");
         assertEquals(splitted[0], headers, "The CSV should have the headers");
@@ -220,8 +213,8 @@ public class UsersExportTest {
     public void testCsvValueExtract() throws Exception {
         setUpAllMappedFields();
         // mapped fields
-        assertEquals(account1.getCommonName(), FIRST_NAME.apply(account1, org1));
-        assertEquals(account1.getSurname(), LAST_NAME.apply(account1, org1));
+        assertEquals(account1.getGivenName(), FIRST_NAME.apply(account1, org1));
+        assertEquals(account1.getCommonName(), LAST_NAME.apply(account1, org1));
         assertEquals(account1.getTitle(), TITLE.apply(account1, org1));
         assertEquals(org1.getDescription(), NOTES.apply(account1, org1));
         assertEquals(account1.getEmail(), EMAIL.apply(account1, org1));
@@ -400,7 +393,7 @@ public class UsersExportTest {
         assertField(acc, org, record, HOME_CITY);
     }
 
-    private void assertField(AccountImpl acc, Org org, CSVRecord record, OutlookCSVHeaderField field) {
+    private void assertField(AccountImpl acc, Org org, CSVRecord record, CSVHeaderField field) {
         String expected = field.apply(acc, org);
         if (null == expected) {
             expected = "";
