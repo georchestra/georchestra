@@ -18,6 +18,16 @@
  */
 package org.georchestra.console.ws.backoffice.users;
 
+import lombok.Getter;
+import lombok.NonNull;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
+import org.georchestra.ds.orgs.Org;
+import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.users.Account;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,18 +37,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
-import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDao;
-import org.georchestra.ds.users.Account;
-
-import lombok.Getter;
-import lombok.NonNull;
 
 public class CSVAccountExporter {
 
@@ -57,6 +55,8 @@ public class CSVAccountExporter {
         LANG("Language"), //
         INTERNET_FREE_BUSY("Internet Free Busy"), //
         NOTES("Notes", (a, o) -> o == null ? null : o.getDescription()), //
+        CREATION_DATE("Creation date", (a -> a.getCreationDate() != null ? a.getCreationDate().toString() : null)), //
+        LAST_LOGIN_DATE("Last login date", (a -> a.getLastLogin() != null ? a.getLastLogin().toString() : null)), //
         EMAIL("E-mail Address", Account::getEmail), //
         EMAIL2("E-mail 2 Address"), //
         EMAIL3("E-mail 3 Address"), //
