@@ -19,16 +19,7 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.servlet.http.HttpServletResponse;
-
+import lombok.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.ds.DataServiceException;
@@ -47,7 +38,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import lombok.NonNull;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 public class UsersExport {
