@@ -89,7 +89,7 @@
             <jsp:attribute name="label"><s:message code="mail.label"/></jsp:attribute>
           </t:input>
           <t:input path="orgUniqueId" required="${orgUniqueIdRequired}">
-            <jsp:attribute name="orgUniqueId"><s:message code="orgUniqueId.label"/></jsp:attribute>
+            <jsp:attribute name="label"><s:message code="orgUniqueId.label"/></jsp:attribute>
           </t:input>
           <div class="form-group">
             <label for="logo" class="control-label col-lg-4"><s:message
