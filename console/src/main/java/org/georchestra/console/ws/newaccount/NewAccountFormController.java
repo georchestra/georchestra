@@ -300,6 +300,10 @@ public final class NewAccountFormController {
             accountDao.insert(account);
             roleDao.addUser(Role.USER, account);
             orgDao.linkUser(account);
+            if (!formBean.getOrg().equals("-")) {
+                List<Role> r = roleDao.findAllForOrg(orgDao.findByCommonName(account.getOrg()));
+                roleDao.addUsersInRoles(r.stream().map(Role::getName).collect(Collectors.toList()), List.of(account));
+            }
 
             final ServletContext servletContext = request.getSession().getServletContext();
 

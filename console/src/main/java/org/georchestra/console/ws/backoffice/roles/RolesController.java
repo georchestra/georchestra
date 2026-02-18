@@ -494,6 +494,8 @@ public class RolesController {
         this.roleDao.addOrgsInRoles(putRole, orgs);
         this.roleDao.deleteOrgsInRoles(deleteRole, orgs);
 
+        logUtils.logRolesOrgsAction(putRole, deleteRole, orgs);
+
         ResponseUtil.writeSuccess(response);
     }
 
