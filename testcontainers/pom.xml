@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <name>www.testcontainers.org containers for some geOrchestra dockerized apps</name>
   <properties>
-    <testcontainers.version>1.16.0</testcontainers.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
   <dependencies>
   <dependency>
