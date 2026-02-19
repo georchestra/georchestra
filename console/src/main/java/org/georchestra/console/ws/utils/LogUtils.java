@@ -228,6 +228,33 @@ public class LogUtils {
     }
 
     /**
+     * Parse a list of roles to log for each org if a role was added or removed
+     *
+     * @param putRole    String role uid
+     * @param deleteRole String role uid
+     * @param orgs       List of orgs
+     */
+    public void logRolesOrgsAction(List<String> putRole, List<String> deleteRole, List<Org> orgs) {
+        boolean addAction = putRole != null && !putRole.isEmpty();
+        List<String> roles = addAction ? putRole : deleteRole;
+        AdminLogType type = addAction ? AdminLogType.CUSTOM_ROLE_ADDED : AdminLogType.CUSTOM_ROLE_REMOVED;
+        JSONObject details;
+        String oldValue;
+        String newValue;
+        for (String r : roles) {
+            for (Org o : orgs) {
+                details = addAction ? getLogDetails(r, null, r, type) : getLogDetails(r, r, null, type);
+                details.put("isRole", true);
+                oldValue = addAction ? "" : r;
+                newValue = addAction ? r : "";
+                createAndLogDetails(o.getShortName(), r, oldValue, newValue, type);
+
+            }
+        }
+
+    }
+
+    /**
      * Log org update found in json object.
      *
      * @param org  Org instance to update

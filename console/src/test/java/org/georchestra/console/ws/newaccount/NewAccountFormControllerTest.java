@@ -31,6 +31,7 @@ import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
+import org.georchestra.ds.roles.Role;
 import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.*;
 import org.junit.Before;
@@ -201,6 +202,62 @@ public class NewAccountFormControllerTest {
         verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
         assertFalse(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
+    }
+
+    @Test
+    public void createUserWithOrgRoles()
+            throws IOException, SQLException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
+        configureFormBean();
+
+        // Setup mock organization
+        Org mockOrg = new Org();
+        mockOrg.setId(orgName);
+        mockOrg.setName(orgName);
+
+        // Setup mock roles for the organization
+        Role role1 = mock(Role.class);
+        when(role1.getName()).thenReturn("ROLE_ORG_ADMIN");
+        Role role2 = mock(Role.class);
+        when(role2.getName()).thenReturn("ROLE_ORG_MEMBER");
+        List<Role> orgRoles = Arrays.asList(role1, role2);
+
+        // Configure mocks
+        when(mockOrgDao.findByCommonName(eq(orgName))).thenReturn(mockOrg);
+        RoleDao mockRoleDao = mock(RoleDao.class);
+        when(mockRoleDao.findAllForOrg(eq(mockOrg))).thenReturn(orgRoles);
+        toTest.setRoleDao(mockRoleDao);
+
+        String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
+
+        assertTrue(ret.equals("welcomeNewUser"));
+
+        // Verify that the user was added to the USER role
+        ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
+        verify(mockRoleDao).addUser(eq(Role.USER), accountCaptor.capture());
+
+        // Verify that organization was linked to the user
+        verify(mockOrgDao).linkUser(accountCaptor.getValue());
+
+        // Verify that findAllForOrg was called with the correct organization
+        verify(mockRoleDao).findAllForOrg(eq(mockOrg));
+
+        // Verify that addUsersInRoles was called with the organization's roles
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List> rolesCaptor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List> usersCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mockRoleDao).addUsersInRoles(rolesCaptor.capture(), usersCaptor.capture());
+
+        // Validate the captured role names
+        List<String> capturedRoleNames = rolesCaptor.getValue();
+        assertEquals(2, capturedRoleNames.size());
+        assertTrue(capturedRoleNames.contains("ROLE_ORG_ADMIN"));
+        assertTrue(capturedRoleNames.contains("ROLE_ORG_MEMBER"));
+
+        // Validate the captured user
+        List<Account> capturedUsers = usersCaptor.getValue();
+        assertEquals(1, capturedUsers.size());
+        assertEquals(accountCaptor.getValue(), capturedUsers.get(0));
     }
 
     /**
