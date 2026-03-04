@@ -19,10 +19,9 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,11 +43,8 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.UserDataBun
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 import org.mockito.Mockito;
@@ -71,8 +67,7 @@ public class GDPRAccountWorkerTest {
     private GDPRAccountWorker worker;
     private AccountGDPRDaoStub daoStub;
 
-    public @Rule TemporaryFolder tmpFolder = new TemporaryFolder();
-    public @Rule ExpectedException ex = ExpectedException.none();
+    public File tmpFolder = Files.createTempDirectory("junit").toFile();
 
     private static String ogcstatsHeader = "date,organization,roles,layer,service,request";
 
@@ -101,7 +96,7 @@ public class GDPRAccountWorkerTest {
 
     }
 
-    public @Before void before() throws Exception {
+    public @BeforeEach void before() throws Exception {
         ghostAccount = new AccountImpl();
         ghostAccount.setUid(AccountGDPRDao.DELETED_ACCOUNT_USERNAME);
         account1 = new AccountImpl();
@@ -141,14 +136,14 @@ public class GDPRAccountWorkerTest {
     }
 
     public @Test void testBuildUserDataBundle() throws Exception {
-        Path bundleFolder = tmpFolder.newFolder(account1.getUid()).toPath();
+        Path bundleFolder = newFolder(tmpFolder, account1.getUid()).toPath();
         UserDataBundle bundle = worker.buildUserDataBundle(account1, bundleFolder);
         assertNotNull(bundle);
         assertEquals(bundleFolder, bundle.getFolder());
         assertBundle(bundle, 3);
         assertEquals(bundleFolder, bundle.getFolder());
 
-        bundleFolder = tmpFolder.newFolder(account2.getUid()).toPath();
+        bundleFolder = newFolder(tmpFolder, account2.getUid()).toPath();
         bundle = worker.buildUserDataBundle(account2, bundleFolder);
         assertNotNull(bundle);
         assertEquals(bundleFolder, bundle.getFolder());
@@ -156,7 +151,7 @@ public class GDPRAccountWorkerTest {
 
         Account nonexistentuser = new AccountImpl();
         nonexistentuser.setUid("nonexistentuser");
-        bundleFolder = tmpFolder.newFolder("nonexistentuser").toPath();
+        bundleFolder = newFolder(tmpFolder, "nonexistentuser").toPath();
         bundle = worker.buildUserDataBundle(nonexistentuser, bundleFolder);
         assertNotNull(bundle);
         assertEquals(bundleFolder, bundle.getFolder());
@@ -183,7 +178,7 @@ public class GDPRAccountWorkerTest {
         mdContent = null;
         stub.metadataRecords.put(uid1, new MetadataRecord(3, mdCreatedAt, null, mdContent, null, null));
 
-        Path bundleFolder = tmpFolder.newFolder(account1.getUid()).toPath();
+        Path bundleFolder = newFolder(tmpFolder, account1.getUid()).toPath();
         UserDataBundle bundle = worker.buildUserDataBundle(account1, bundleFolder);
         assertNotNull(bundle);
 
@@ -199,7 +194,7 @@ public class GDPRAccountWorkerTest {
         assertNotNull(zipResource);
         File zipFile = zipResource.getFile();
         assertNotNull(zipFile);
-        File outputDir = tmpFolder.newFolder("extracted");
+        File outputDir = newFolder(tmpFolder, "extracted");
         ZipUtil.unpack(zipFile, outputDir);
         assertBundle(outputDir.toPath(), 4);
     }
@@ -226,7 +221,7 @@ public class GDPRAccountWorkerTest {
         final @Cleanup DirectoryStream<Path> mdfiles = Files.newDirectoryStream(metadataDirectory);
         List<Path> files = Streams.stream(mdfiles).map(Path::getFileName).filter(p -> p.toString().endsWith(".xml"))
                 .collect(Collectors.toList());
-        assertEquals(files.toString(), recordsPerUnit, files.size());
+        assertEquals(recordsPerUnit, files.size(), files.toString());
     }
 
     private void assertNumCsvRecords(Path csvFile, int expectedRecords, String expectedHeader) throws IOException {
@@ -261,9 +256,24 @@ public class GDPRAccountWorkerTest {
     }
 
     public @Test void testDisposeNotAZipFile() throws IOException {
-        File file = tmpFolder.newFile("notAZipFile.zip");
-        ex.expect(IllegalArgumentException.class);
-        ex.expectMessage("provided resource is not a ZIP file");
-        worker.dispose(new FileSystemResource(file));
+        File file = newFile(tmpFolder, "notAZipFile.zip");
+        Throwable exception = assertThrows(IllegalArgumentException.class, () ->
+            worker.dispose(new FileSystemResource(file)));
+        assertThat(exception.getMessage(), containsString("provided resource is not a ZIP file"));
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
+    }
+
+    private static File newFile(File parent, String child) throws IOException {
+        File result = new File(parent, child);
+        result.createNewFile();
+        return result;
     }
 }

@@ -19,7 +19,7 @@
 
 package org.georchestra.console.ws.passwordrecovery;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,9 +29,9 @@ import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.AccountDao;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ui.Model;
@@ -39,8 +39,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 public class NewPasswordFormControllerTest {
 
@@ -48,12 +48,12 @@ public class NewPasswordFormControllerTest {
     private UserTokenDao userTokenDao = Mockito.mock(UserTokenDao.class);
     private NewPasswordFormController ctrl = new NewPasswordFormController(accountDao, userTokenDao);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ctrl.passwordUtils = new PasswordUtils();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 

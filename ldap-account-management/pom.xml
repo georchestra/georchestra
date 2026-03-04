@@ -11,7 +11,9 @@
     <packaging>jar</packaging>
     <name>LDAP users and groups management library</name>
     <properties>
-        <mapstruct.version>1.6.0</mapstruct.version>
+    <jakarta-annotation.version>2.0.0</jakarta-annotation.version>
+    <lombok.version>1.18.42</lombok.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
     <dependencies>
         <!-- geOrchestra commons -->
@@ -72,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -110,6 +112,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.mapstruct</groupId>
@@ -118,8 +121,6 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
                     <annotationProcessorPaths>
                         <path>
@@ -135,6 +136,7 @@
                     </annotationProcessorPaths>
                     <generatedSourcesDirectory>${project.build.directory}/generated-sources/mapstruct
                     </generatedSourcesDirectory>
+                    <release>${java.version}</release>
                 </configuration>
             </plugin>
             <plugin>

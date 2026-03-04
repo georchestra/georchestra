@@ -18,8 +18,6 @@
  */
 package org.georchestra.console.bs.areas;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +26,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

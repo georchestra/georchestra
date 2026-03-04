@@ -39,8 +39,7 @@ public class GeorchestraSecurityProxyAuthenticationManager implements Authentica
             throws AuthenticationException {
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof GeorchestraUserDetails) {
-            GeorchestraUserDetails user = (GeorchestraUserDetails) principal;
+        if (principal instanceof GeorchestraUserDetails user) {
             PreAuthenticatedAuthenticationToken auth;
             if (user.isAnonymous()) {
                 auth = createAnonymousAuthenticationToken();

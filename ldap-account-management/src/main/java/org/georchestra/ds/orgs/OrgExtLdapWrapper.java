@@ -21,7 +21,7 @@ package org.georchestra.ds.orgs;
 
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -93,7 +93,7 @@ public class OrgExtLdapWrapper extends LdapWrapper<OrgExt> {
 
     private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
         try {
-            if (StringUtils.isEmpty(value)) {
+            if (ObjectUtils.isEmpty(value)) {
                 Attribute attributeToDelete = context.getAttributes().get(fieldName);
                 if (attributeToDelete != null) {
                     Collections.list(attributeToDelete.getAll()).stream()

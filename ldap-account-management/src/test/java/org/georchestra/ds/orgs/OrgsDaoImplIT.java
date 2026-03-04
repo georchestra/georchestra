@@ -24,17 +24,15 @@ import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -46,10 +44,9 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.lang.String.format;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
+@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
 public class OrgsDaoImplIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
@@ -62,7 +59,7 @@ public class OrgsDaoImplIT {
 
     Org pendingOrg;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         org = new Org();
         org.setId("torg");
@@ -84,7 +81,7 @@ public class OrgsDaoImplIT {
         dao.insert(pendingOrg);
     }
 
-    @After
+    @AfterEach
     public void cleanLdap() {
         dao.delete(org);
         dao.delete(pendingOrg);
@@ -221,7 +218,7 @@ public class OrgsDaoImplIT {
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
 
-        assertTrue("Expected 3 cities", org.getCities().size() == 3);
+        assertTrue(org.getCities().size() == 3, "Expected 3 cities");
     }
 
     @Test
@@ -234,7 +231,7 @@ public class OrgsDaoImplIT {
         AttributesMapper<Org> toTest = orgLdapWrapper.getAttributeMapper(true);
 
         Org org = toTest.mapFromAttributes(orgToDeserialize);
-        assertTrue("Expected 6 cities", org.getCities().size() == 6);
+        assertTrue(org.getCities().size() == 6, "Expected 6 cities");
     }
 
     @Test

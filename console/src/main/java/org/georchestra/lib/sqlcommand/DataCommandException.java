@@ -19,6 +19,7 @@
 
 package org.georchestra.lib.sqlcommand;
 
+import java.io.Serial;
 import java.sql.SQLException;
 
 public class DataCommandException extends Exception {
@@ -26,6 +27,7 @@ public class DataCommandException extends Exception {
     /**
      * for serialization
      */
+    @Serial
     private static final long serialVersionUID = -5196425322579527757L;
 
     public DataCommandException(String message) {

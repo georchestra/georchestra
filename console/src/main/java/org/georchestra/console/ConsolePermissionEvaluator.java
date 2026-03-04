@@ -57,22 +57,16 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
             }
 
             // Filter based on object type
-            if (targetDomainObject instanceof Role) {
-                // Filter users in role and role itself
-                Role r = (Role) targetDomainObject;
+            if (targetDomainObject instanceof Role r) {
                 List<String> userList = r.getUserList();
                 // Remove users not under delegation
                 userList.retainAll(this.advancedDelegationDao.findUsersUnderDelegation(username));
                 r.setFavorite(true);
                 // Remove role not under delegation
                 return Arrays.asList(delegation.getRoles()).contains(r.getName());
-            } else if (targetDomainObject instanceof Org) {
-                // Filter org
-                Org org = (Org) targetDomainObject;
+            } else if (targetDomainObject instanceof Org org) {
                 return Arrays.asList(delegation.getOrgs()).contains(org.getId());
-            } else if (targetDomainObject instanceof SimpleAccount) {
-                // filter account
-                SimpleAccount account = (SimpleAccount) targetDomainObject;
+            } else if (targetDomainObject instanceof SimpleAccount account) {
                 return Arrays.asList(delegation.getOrgs()).contains(account.getOrgId());
             }
         }

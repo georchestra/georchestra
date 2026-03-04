@@ -19,11 +19,10 @@
 
 package org.georchestra.ds.roles;
 
-import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,21 +47,18 @@ import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.DuplicatedUidException;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.google.common.collect.Lists;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
+@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
 public class RoleDaoImplIT {
     public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
@@ -75,7 +71,7 @@ public class RoleDaoImplIT {
     private Account account;
     private Role role;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         account = AccountFactory.createBrief("userforrolestest", "monkey123", "userforrolestest", "userforrolestest123",
                 "userforrolestest@localhost", "+33123456789", "UnknownPomPom", "");
@@ -84,7 +80,7 @@ public class RoleDaoImplIT {
         roleDao.insert(role);
     }
 
-    @After
+    @AfterEach
     public void cleanLdap() throws Exception {
         accountDao.delete(account);
         roleDao.delete("TEST_ROLE");

@@ -20,8 +20,8 @@ package org.georchestra.console.integration;
 
 import org.geonetwork.testcontainers.postgres.GeorchestraDatabaseContainer;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Base integration tests class to set up and tear down testcontainers for
@@ -34,7 +34,7 @@ public class ConsoleIntegrationTest {
     public static GeorchestraLdapContainer ldap;
     public static GeorchestraDatabaseContainer database;
 
-    public static @BeforeClass void setUpTestContainers() {
+    public static @BeforeAll void setUpTestContainers() {
         ldap = new GeorchestraLdapContainer();
         database = new GeorchestraDatabaseContainer();
         ldap.start();
@@ -43,7 +43,7 @@ public class ConsoleIntegrationTest {
         System.setProperty("pgsqlPort", String.valueOf(dbport));
     }
 
-    public static @AfterClass void tearDownTestContainers() {
+    public static @AfterAll void tearDownTestContainers() {
         System.clearProperty("pgsqlPort");
         database.stop();
         ldap.stop();

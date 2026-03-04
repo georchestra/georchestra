@@ -19,20 +19,17 @@
 
 package org.georchestra.console.integration.ws.backoffice.users;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.ws.backoffice.users.UserInfoExporter;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
 public class UserInfoExporterIT extends ConsoleIntegrationTest {
 
     private @Autowired UserInfoExporter ldifExporter;

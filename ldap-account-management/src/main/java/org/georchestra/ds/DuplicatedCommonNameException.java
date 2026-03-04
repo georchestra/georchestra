@@ -19,6 +19,8 @@
 
 package org.georchestra.ds;
 
+import java.io.Serial;
+
 /**
  * Throws if the common name is present in the LDAP.
  *
@@ -27,6 +29,7 @@ package org.georchestra.ds;
  */
 public class DuplicatedCommonNameException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 6399369489493455851L;
 
     public DuplicatedCommonNameException(String msg) {

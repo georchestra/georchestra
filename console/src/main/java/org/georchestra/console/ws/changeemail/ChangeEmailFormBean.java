@@ -19,10 +19,12 @@
 
 package org.georchestra.console.ws.changeemail;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class ChangeEmailFormBean implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -153576513543313510L;
     private String newEmail;
 

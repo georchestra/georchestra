@@ -19,6 +19,8 @@
 
 package org.georchestra.ds.users;
 
+import java.io.Serial;
+
 /**
  * Throws this exception when an existent account contains the user identifier
  * of the new account.
@@ -31,6 +33,7 @@ public class DuplicatedUidException extends Exception {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -11146356841108209L;
 
     public DuplicatedUidException(String msg) {

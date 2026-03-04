@@ -18,11 +18,11 @@
  */
 package org.georchestra.console.integration;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,14 +34,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
@@ -50,9 +48,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * connection pool works as expected in the event of a server
  * restart/connections dropped
  */
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
 public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
@@ -63,7 +60,7 @@ public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
 
     private @Value("jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}") String pgConnectionUrl;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         assertTrue(maxPoolSize > 0);
     }
 

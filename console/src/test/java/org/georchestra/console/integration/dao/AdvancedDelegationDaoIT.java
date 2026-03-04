@@ -19,9 +19,9 @@
 package org.georchestra.console.integration.dao;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,23 +34,20 @@ import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
 @PropertySource("classpath:/console-it.properties")
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
 public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;
@@ -62,7 +59,7 @@ public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
     private @Value("${dataSource.maxPoolSize:10}") int maxConnections;
     private @Value("${dataSource.timeout:1000}") int timeoutMillis;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         assertThat(timeoutMillis, Matchers.greaterThan(0));
     }
 

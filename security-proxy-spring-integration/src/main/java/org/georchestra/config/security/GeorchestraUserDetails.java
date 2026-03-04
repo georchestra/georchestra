@@ -19,6 +19,7 @@
 package org.georchestra.config.security;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j(topic = "org.georchestra.config.security")
 public class GeorchestraUserDetails implements UserDetails {
 
+    @Serial
     private static final long serialVersionUID = -8672954222635750682L;
 
     /**
@@ -88,19 +90,19 @@ public class GeorchestraUserDetails implements UserDetails {
     /** {@code true} if request header {@code sec-username} is {@code null} */
     private boolean anonymous;
 
-    @Getter(onMethod = @__({ @Override }))
+    @Getter(onMethod_ = { @Override })
     private final String password = null;
 
-    @Getter(onMethod = @__({ @Override }))
+    @Getter(onMethod_ = { @Override })
     private final boolean accountNonExpired = true;
 
-    @Getter(onMethod = @__({ @Override }))
+    @Getter(onMethod_ = { @Override })
     private final boolean accountNonLocked = true;
 
-    @Getter(onMethod = @__({ @Override }))
+    @Getter(onMethod_ = { @Override })
     private final boolean credentialsNonExpired = true;
 
-    @Getter(onMethod = @__({ @Override }))
+    @Getter(onMethod_ = { @Override })
     private final boolean enabled = true;
 
     /**

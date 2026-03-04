@@ -21,18 +21,18 @@ package org.georchestra.console.mailservice;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletContext;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
@@ -110,7 +110,7 @@ public class Email {
 
         if ((georConfig != null) && (georConfig.activated())) {
             try {
-                File fileTmpl = Paths.get(georConfig.getContextDataDir(), "templates", fileName).toFile();
+                File fileTmpl = Path.of(georConfig.getContextDataDir(), "templates", fileName).toFile();
 
                 return FileUtils.readFileToString(fileTmpl, templateEncoding);
             } catch (IOException e) {
@@ -120,7 +120,7 @@ public class Email {
         }
         /* Trying to resolve the templates from inside the webapp */
         String tmplFromWebapp = this.servletContext
-                .getRealPath(Paths.get("/WEB-INF", "templates", fileName).toString());
+                .getRealPath(Path.of("/WEB-INF", "templates", fileName).toString());
 
         String body = null;
         try {
@@ -144,7 +144,7 @@ public class Email {
 
         final Session session = Session.getInstance(System.getProperties(), null);
         session.getProperties().setProperty("mail.smtp.host", smtpHost);
-        session.getProperties().setProperty("mail.smtp.port", (new Integer(smtpPort)).toString());
+        session.getProperties().setProperty("mail.smtp.port", (Integer.valueOf(smtpPort)).toString());
 
         final MimeMessage message = new MimeMessage(session);
 

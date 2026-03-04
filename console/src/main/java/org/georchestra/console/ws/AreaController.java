@@ -24,9 +24,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,8 +83,8 @@ public class AreaController {
      * be just `area.json` could be /the/whole/path/to/datadir/
      */
     private File lookForAreaUrl() {
-        String[] possiblePath = { areasUrl, Paths.get(datadir, areasUrl).toString(),
-                Paths.get(datadir, "/console/", areasUrl).toString(), };
+        String[] possiblePath = { areasUrl, Path.of(datadir, areasUrl).toString(),
+                Path.of(datadir, "/console/", areasUrl).toString(), };
         File f = null;
         for (String p : possiblePath) {
             f = new File(p);

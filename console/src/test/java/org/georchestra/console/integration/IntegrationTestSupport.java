@@ -18,23 +18,23 @@
  */
 package org.georchestra.console.integration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.junit.rules.ExternalResource;
-import org.junit.rules.TestName;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     private @Value("${pgsqlUser}") String psqlUser;
     private @Value("${pgsqlPassword}") String psqlPassword;
 
-    private TestName testName = new TestName();
+    private String testName;
 
     private Set<String> createdUsers;
 
@@ -137,12 +137,12 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     }
 
     public String testName() {
-        return testName.getMethodName();
+        return testName;
     }
 
     public String readResourceToString(String name) throws URISyntaxException, IOException {
         java.net.URL url = this.getClass().getResource(name);
-        java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
+        Path resPath = Path.of(url.toURI());
         return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
     }
 
@@ -169,5 +169,13 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     public ResultActions deleteUser(String userName) throws Exception {
         this.createdUsers.remove(userName);
         return perform(delete("/private/users/" + userName));
+    }
+
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        if (testMethod.isPresent()) {
+            this.testName = testMethod.get().getName();
+        }
     }
 }

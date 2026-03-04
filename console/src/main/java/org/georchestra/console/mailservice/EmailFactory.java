@@ -23,10 +23,10 @@ import static java.util.Collections.singletonList;
 
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import javax.servlet.ServletContext;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.ServletContext;
 
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -256,7 +256,7 @@ public class EmailFactory {
         // Instanciate MimeMessage
         final Session session = Session.getInstance(System.getProperties(), null);
         session.getProperties().setProperty("mail.smtp.host", this.smtpHost);
-        session.getProperties().setProperty("mail.smtp.port", (new Integer(this.smtpPort)).toString());
+        session.getProperties().setProperty("mail.smtp.port", (Integer.valueOf(this.smtpPort)).toString());
         return new MimeMessage(session);
     }
 

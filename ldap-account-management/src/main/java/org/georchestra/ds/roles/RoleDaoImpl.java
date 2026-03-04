@@ -401,7 +401,7 @@ public class RoleDaoImpl implements RoleDao {
     private boolean isNullValue(Object value) {
         if (value == null)
             return true;
-        if (value instanceof String && (((String) value).length() == 0)) {
+        if (value instanceof String string && (string.length() == 0)) {
             return true;
         }
         return false;

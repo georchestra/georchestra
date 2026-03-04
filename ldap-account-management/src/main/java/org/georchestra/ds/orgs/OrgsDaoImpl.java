@@ -38,7 +38,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * This class manage organization membership
@@ -143,7 +143,7 @@ public class OrgsDaoImpl implements OrgsDao {
      */
     @Override
     public Org findByCommonName(String commonName) {
-        if (StringUtils.isEmpty(commonName)) {
+        if (ObjectUtils.isEmpty(commonName)) {
             return null;
         }
         return addExt(orgLdapWrapper.findById(commonName));
@@ -216,7 +216,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void linkUser(Account user) {
-        if (StringUtils.isEmpty(user.getOrg())) {
+        if (ObjectUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());
@@ -227,7 +227,7 @@ public class OrgsDaoImpl implements OrgsDao {
 
     @Override
     public void unlinkUser(Account user) {
-        if (StringUtils.isEmpty(user.getOrg())) {
+        if (ObjectUtils.isEmpty(user.getOrg())) {
             return;
         }
         Org org = findByCommonName(user.getOrg());

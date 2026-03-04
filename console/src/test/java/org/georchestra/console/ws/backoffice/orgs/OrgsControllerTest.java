@@ -20,12 +20,11 @@
 package org.georchestra.console.ws.backoffice.orgs;
 
 import static org.mockito.AdditionalMatchers.aryEq;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,7 +33,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
@@ -45,8 +44,9 @@ import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -59,6 +59,8 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 public class OrgsControllerTest {
 
+    private AutoCloseable mocks;
+
     private DelegationEntry mockEntry1;
     private DelegationEntry mockEntry2;
     private Org mockOrg;
@@ -66,9 +68,9 @@ public class OrgsControllerTest {
     private DelegationDao delegationDaoMock;
     private LogUtils mockLogUtils;
 
-    @Before
+    @BeforeEach
     public void grantRight() {
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
@@ -116,8 +118,8 @@ public class OrgsControllerTest {
         OrgsController toTest = createToTest();
         when(mockOrg.getId()).thenReturn("c2c42");
         when(mockOrgsDao.reGenerateId("c2c", "csc")).thenReturn("c2c42");
-        when(mockEntry1.getOrgs()).thenReturn(new String[] { "momorg" });
-        when(mockEntry2.getOrgs()).thenReturn(new String[] {});
+        when(mockEntry1.getOrgs()).thenReturn(new String[]{"momorg"});
+        when(mockEntry2.getOrgs()).thenReturn(new String[]{});
         JSONObject reqUsr = new JSONObject().put("shortName", "c2c");
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(reqUsr.toString().getBytes());
@@ -129,9 +131,9 @@ public class OrgsControllerTest {
 
         verify(mockOrgsDao).update(mockOrg);
         verify(mockEntry1).removeOrg("csc");
-        verify(mockEntry1).setOrgs(aryEq(new String[] { "momorg", "c2c42" }));
+        verify(mockEntry1).setOrgs(aryEq(new String[]{"momorg", "c2c42"}));
         verify(mockEntry2).removeOrg("csc");
-        verify(mockEntry2).setOrgs(aryEq(new String[] { "c2c42" }));
+        verify(mockEntry2).setOrgs(aryEq(new String[]{"c2c42"}));
         verify(delegationDaoMock).save(mockEntry1);
         verify(delegationDaoMock).save(mockEntry2);
     }
@@ -157,7 +159,12 @@ public class OrgsControllerTest {
         mockEntry1 = mock(DelegationEntry.class);
         mockEntry2 = mock(DelegationEntry.class);
         Mockito.when(advancedDelegationDaoMock.findByOrg("csc"))
-                .thenReturn(Arrays.asList(new DelegationEntry[] { mockEntry1, mockEntry2 }));
+                .thenReturn(Arrays.asList(new DelegationEntry[]{mockEntry1, mockEntry2}));
         return toTest;
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mocks.close();
     }
 }

@@ -29,8 +29,8 @@ import java.util.UUID;
 
 import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
 import org.springframework.validation.MapBindingResult;
 
@@ -52,7 +52,7 @@ public class ValidationTest {
         requiredUserFields.add("password");
         requiredUserFields.add("confirmPassword");
 
-        Assert.assertEquals(validation.getRequiredUserFields(), requiredUserFields);
+        Assertions.assertEquals(validation.getRequiredUserFields(), requiredUserFields);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ValidationTest {
         expected.add("shortName");
         expected.add("type");
 
-        Assert.assertEquals(validation.getRequiredOrgFields(), expected);
+        Assertions.assertEquals(validation.getRequiredOrgFields(), expected);
 
     }
 
@@ -73,34 +73,34 @@ public class ValidationTest {
     public void testConfiguredUserFields() {
         Validation validation = new Validation("homePostalAddress, telephoneNumber , roomNumber");
 
-        Assert.assertTrue(validation.isUserFieldRequired("homePostalAddress"));
-        Assert.assertTrue(validation.isUserFieldRequired("telephoneNumber"));
-        Assert.assertTrue(validation.isUserFieldRequired("roomNumber"));
+        Assertions.assertTrue(validation.isUserFieldRequired("homePostalAddress"));
+        Assertions.assertTrue(validation.isUserFieldRequired("telephoneNumber"));
+        Assertions.assertTrue(validation.isUserFieldRequired("roomNumber"));
 
-        Assert.assertFalse(validation.isUserFieldRequired("description"));
+        Assertions.assertFalse(validation.isUserFieldRequired("description"));
     }
 
     @Test
     public void testConfiguredOrgFields() {
         Validation validation = new Validation("orgType, orgShortName, org, orgOtherField");
 
-        Assert.assertTrue(validation.isOrgFieldRequired("type"));
-        Assert.assertTrue(validation.isOrgFieldRequired("shortName"));
-        Assert.assertTrue(validation.isOrgFieldRequired("otherField"));
+        Assertions.assertTrue(validation.isOrgFieldRequired("type"));
+        Assertions.assertTrue(validation.isOrgFieldRequired("shortName"));
+        Assertions.assertTrue(validation.isOrgFieldRequired("otherField"));
 
-        Assert.assertFalse(validation.isOrgFieldRequired(""));
-        Assert.assertFalse(validation.isOrgFieldRequired("org"));
+        Assertions.assertFalse(validation.isOrgFieldRequired(""));
+        Assertions.assertFalse(validation.isOrgFieldRequired("org"));
     }
 
     @Test
     public void testFormat() {
         Validation validation = new Validation("  ,,  ,,#,ça devrait être utilisé, 100€,,-");
 
-        Assert.assertTrue(validation.isUserFieldRequired("ça devrait être utilisé"));
-        Assert.assertTrue(validation.isUserFieldRequired("100€"));
-        Assert.assertTrue(validation.isUserFieldRequired("#"));
+        Assertions.assertTrue(validation.isUserFieldRequired("ça devrait être utilisé"));
+        Assertions.assertTrue(validation.isUserFieldRequired("100€"));
+        Assertions.assertTrue(validation.isUserFieldRequired("#"));
         int defaultFieldCount = (new Validation("")).getRequiredUserFields().size();
-        Assert.assertTrue(validation.getRequiredUserFields().size() == defaultFieldCount + 4);
+        Assertions.assertTrue(validation.getRequiredUserFields().size() == defaultFieldCount + 4);
 
     }
 
@@ -109,34 +109,34 @@ public class ValidationTest {
         Validation v = new Validation("required_field, orgRequired_org_field");
 
         // non required user field
-        Assert.assertTrue(v.validateUserField("name", "josé"));
-        Assert.assertTrue(v.validateUserField("name", ""));
-        Assert.assertTrue(v.validateUserField("name", (String) null));
+        Assertions.assertTrue(v.validateUserField("name", "josé"));
+        Assertions.assertTrue(v.validateUserField("name", ""));
+        Assertions.assertTrue(v.validateUserField("name", (String) null));
 
         // required user field (default)
-        Assert.assertTrue(v.validateUserField("uid", "josé"));
-        Assert.assertFalse(v.validateUserField("uid", ""));
-        Assert.assertFalse(v.validateUserField("uid", (String) null));
+        Assertions.assertTrue(v.validateUserField("uid", "josé"));
+        Assertions.assertFalse(v.validateUserField("uid", ""));
+        Assertions.assertFalse(v.validateUserField("uid", (String) null));
 
         // required user field (configured)
-        Assert.assertTrue(v.validateUserField("required_field", "josé"));
-        Assert.assertFalse(v.validateUserField("required_field", ""));
-        Assert.assertFalse(v.validateUserField("required_field", (String) null));
+        Assertions.assertTrue(v.validateUserField("required_field", "josé"));
+        Assertions.assertFalse(v.validateUserField("required_field", ""));
+        Assertions.assertFalse(v.validateUserField("required_field", (String) null));
 
         // non required org field
-        Assert.assertTrue(v.validateOrgField("type", "Association"));
-        Assert.assertFalse(v.validateOrgField("type", (String) null));
-        Assert.assertFalse(v.validateOrgField("type", ""));
+        Assertions.assertTrue(v.validateOrgField("type", "Association"));
+        Assertions.assertFalse(v.validateOrgField("type", (String) null));
+        Assertions.assertFalse(v.validateOrgField("type", ""));
 
         // required org field (default)
-        Assert.assertTrue(v.validateOrgField("name", "josé"));
-        Assert.assertFalse(v.validateOrgField("name", ""));
-        Assert.assertFalse(v.validateOrgField("name", (String) null));
+        Assertions.assertTrue(v.validateOrgField("name", "josé"));
+        Assertions.assertFalse(v.validateOrgField("name", ""));
+        Assertions.assertFalse(v.validateOrgField("name", (String) null));
 
         // required org field (configured)
-        Assert.assertTrue(v.validateOrgField("required_org_field", "josé"));
-        Assert.assertFalse(v.validateOrgField("required_org_field", ""));
-        Assert.assertFalse(v.validateOrgField("required_org_field", (String) null));
+        Assertions.assertTrue(v.validateOrgField("required_org_field", "josé"));
+        Assertions.assertFalse(v.validateOrgField("required_org_field", ""));
+        Assertions.assertFalse(v.validateOrgField("required_org_field", (String) null));
 
     }
 
@@ -146,11 +146,11 @@ public class ValidationTest {
 
         Errors errors = new MapBindingResult(new HashMap<>(), "errors");
 
-        Assert.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "", errors));
+        Assertions.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "", errors));
 
-        Assert.assertFalse(v.validateUrlFieldWithSpecificMsg("orgUrl", "radada", errors));
+        Assertions.assertFalse(v.validateUrlFieldWithSpecificMsg("orgUrl", "radada", errors));
 
-        Assert.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "http://www.hereisthefish.org", errors));
+        Assertions.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "http://www.hereisthefish.org", errors));
     }
 
     @Test
@@ -180,27 +180,27 @@ public class ValidationTest {
         mockChanges.put("orgType", "Non profit");
 
         // create org without orguniqueId + without uuid
-        Assert.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+        Assertions.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
 
         // create org but orgUniqueId already exists
         mockChanges.put("orgUniqueId", fakeOrgUniqueId);
-        Assert.assertFalse(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+        Assertions.assertFalse(v.validateOrgUnicity(mockOrgsDao, mockChanges));
 
         // create org with orgUniqueId that not exists
         mockChanges.put("orgUniqueId", "11113513");
-        Assert.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+        Assertions.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
 
         // update org - no UUID and orgUniqueId already exists
         mockChanges.put("orgUniqueId", fakeOrgUniqueId);
-        Assert.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+        Assertions.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
 
         // update org - unknown UUID + orgUniqueId not already exists
         mockChanges.put("uuid", UUID.randomUUID().toString());
-        Assert.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+        Assertions.assertFalse(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
 
         // update org - verified UUID + orgUniqueId not already exists
         mockChanges.put("uuid", fakeUUID.toString());
-        Assert.assertTrue(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
+        Assertions.assertTrue(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
 
     }
 }
