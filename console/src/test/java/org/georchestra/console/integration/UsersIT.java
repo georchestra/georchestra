@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -70,12 +71,12 @@ public class UsersIT extends ConsoleIntegrationTest {
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         support.createUser(userName);
 
-        support.perform(put("/private/users/" + userName)
+        support.perform(put("/private/users/" + userName).contentType(MediaType.APPLICATION_JSON)
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
                         .replace("psc", "C2C")));
 
-        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
-                .andExpect(jsonPath("$.uid").value(newUserName));
+        support.perform(get("/private/users/" + newUserName)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.org").value("C2C")).andExpect(jsonPath("$.uid").value(newUserName));
     }
 
     @WithMockRandomUidUser
@@ -112,19 +113,24 @@ public class UsersIT extends ConsoleIntegrationTest {
 
         String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
                 userName1, userName2, role1Name, role3Name, role2Name, role4Name);
-        support.perform(post("/private/roles_users").content(body));
+        support.perform(post("/private/roles_users").contentType(MediaType.APPLICATION_JSON).content(body));
 
-        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role1Name)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role1Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role3Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role3Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[1]").value(userName2));
         support.perform(get("/private/roles/" + role2Name)).andDo(print()).andExpect(jsonPath("$.users").isEmpty());
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws Exception {
         support.createUser("user1");
 
@@ -145,7 +151,8 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteUserAsSuperAdminDoesNotDeleteGDPRAccountRecords() throws Exception {
         support.createUser("user1");
 
@@ -161,14 +168,14 @@ public class UsersIT extends ConsoleIntegrationTest {
     private String createRole() throws Exception {
         String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
         String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-        support.perform(post("/private/roles").content(body));
+        support.perform(post("/private/roles").contentType(MediaType.APPLICATION_JSON).content(body));
         return roleName;
     }
 
     private void setRole(String userName, String role1Name, String role2Name) throws Exception {
         String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
                 + "\"],\"DELETE\":[]}";
-        support.perform(post("/private/roles_users").content(body));
+        support.perform(post("/private/roles_users").contentType(MediaType.APPLICATION_JSON).content(body));
     }
 
     private boolean isEmpty(DeletedAccountSummary summary) {

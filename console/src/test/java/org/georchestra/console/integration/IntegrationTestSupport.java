@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
@@ -89,6 +90,16 @@ public @Service class IntegrationTestSupport {
 
     private MockMvc mockMvc;
 
+    private void ensureInitialized() {
+        if (this.createdUsers == null) {
+            this.createdUsers = new HashSet<>();
+        }
+        if (this.mockMvc == null) {
+            assertNotNull(ldapTemplate.lookup("ou=users"));
+            this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        }
+    }
+
     @BeforeEach
     public void setup(TestInfo testInfo) {
         Optional<Method> testMethod = testInfo.getTestMethod();
@@ -130,6 +141,7 @@ public @Service class IntegrationTestSupport {
     }
 
     public ResultActions perform(RequestBuilder requestBuilder) throws Exception {
+        ensureInitialized();
         return mockMvc.perform(requestBuilder);
     }
 
@@ -144,7 +156,7 @@ public @Service class IntegrationTestSupport {
     }
 
     public ResultActions createUser(String userName) throws Exception {
-        ResultActions perform = perform(post("/private/users")
+        ResultActions perform = perform(post("/private/users").contentType(MediaType.APPLICATION_JSON)
                 .content(readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
         this.createdUsers.add(userName);
         return perform;
@@ -158,7 +170,7 @@ public @Service class IntegrationTestSupport {
             date.add(Calendar.YEAR, 10);
         }
         String dateAsString = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
-        return perform(post("/private/users")
+        return perform(post("/private/users").contentType(MediaType.APPLICATION_JSON)
                 .content(readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)
                         .replaceAll("\"shadowExpire\": null,", String.format("\"shadowExpire\": %s,", dateAsString))));
     }

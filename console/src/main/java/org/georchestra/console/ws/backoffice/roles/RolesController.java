@@ -179,7 +179,7 @@ public class RolesController {
      */
     @GetMapping(value = REQUEST_MAPPING + "/{cn:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Role findByCN(@PathVariable String cn) throws DataServiceException {
+    public Role findByCN(@PathVariable("cn") String cn) throws DataServiceException {
         if (ObjectUtils.isEmpty(cn)) {
             throw new IllegalArgumentException("name is empty");
         }

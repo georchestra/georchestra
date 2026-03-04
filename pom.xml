@@ -182,6 +182,7 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <release>${java.version}</release>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
