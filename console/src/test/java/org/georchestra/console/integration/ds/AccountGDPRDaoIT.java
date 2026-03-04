@@ -77,7 +77,8 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws DataServiceException {
         DeletedRecords summary = dao.deleteAccountRecords(user1);
         assertEquals(user1.getUid(), summary.getAccountId());
@@ -91,7 +92,8 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteMetadataRecordsObfuscatesUserNameAndSurname() throws DataServiceException {
         List<MetadataRecord> user1Records = new ArrayList<>();
         dao.visitMetadataRecords(user1, user1Records::add);
@@ -119,7 +121,7 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/ogcstatistics.ogc_services_log.csv")
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = "dbunit/ogcstatistics.ogc_services_log.csv")
     public @Test void testVisitOgcStatisticsRecords() {
         List<OgcStatisticsRecord> user1Records = new ArrayList<>();
         List<OgcStatisticsRecord> user2Records = new ArrayList<>();
@@ -131,7 +133,7 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/geonetwork.metadata.csv")
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = "dbunit/geonetwork.metadata.csv")
     public @Test void testVisitMetadataRecords() {
         List<MetadataRecord> user1Records = new ArrayList<>();
         List<MetadataRecord> user2Records = new ArrayList<>();
