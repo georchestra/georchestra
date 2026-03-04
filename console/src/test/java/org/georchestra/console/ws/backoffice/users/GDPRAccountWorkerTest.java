@@ -71,6 +71,9 @@ public class GDPRAccountWorkerTest {
 
     private static String ogcstatsHeader = "date,organization,roles,layer,service,request";
 
+    public GDPRAccountWorkerTest() throws IOException {
+    }
+
     private static class AccountGDPRDaoStub implements AccountGDPRDao {
 
         private final ListMultimap<String, OgcStatisticsRecord> ogcstatsRecords = ArrayListMultimap.create();

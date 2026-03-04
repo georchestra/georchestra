@@ -23,7 +23,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;
 
-public @Data class Response {
+@Data
+public class Response {
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     private boolean success;

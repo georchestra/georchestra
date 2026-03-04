@@ -18,6 +18,8 @@
  */
 package org.georchestra.console.bs.areas;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;

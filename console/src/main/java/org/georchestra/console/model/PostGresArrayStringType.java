@@ -26,90 +26,79 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
-public class PostGresArrayStringType implements UserType {
-    protected static final int[] SQL_TYPES = { Types.ARRAY };
+public class PostGresArrayStringType implements UserType<String[]> {
+    protected static final int SQL_TYPE = Types.ARRAY;
 
     @Override
-    public final Object deepCopy(final Object value) throws HibernateException {
-        return value;
+    public int getSqlType() {
+        return SQL_TYPE;
     }
 
     @Override
-    public final boolean isMutable() {
-        return false;
+    public Class<String[]> returnedClass() {
+        return String[].class;
     }
 
     @Override
-    public final Object assemble(final Serializable arg0, final Object arg1) throws HibernateException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public final Serializable disassemble(final Object arg0) throws HibernateException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public final boolean equals(final Object x, final Object y) throws HibernateException {
+    public boolean equals(String[] x, String[] y) {
         if (x == y) {
             return true;
         } else if (x == null || y == null) {
             return false;
         } else {
-            return x.equals(y);
+            return java.util.Arrays.equals(x, y);
         }
     }
 
     @Override
-    public final int hashCode(final Object x) throws HibernateException {
-        return x.hashCode();
+    public int hashCode(String[] x) {
+        return java.util.Arrays.hashCode(x);
     }
 
     @Override
-    public final Object replace(final Object original, final Object target, final Object owner)
-            throws HibernateException {
-        return original;
-    }
-
-    @Override
-    public int[] sqlTypes() {
-        return SQL_TYPES;
-    }
-
-    @Override
-    public Class returnedClass() {
-        return String[].class;
-    }
-
-    @Override
-    public Object nullSafeGet(ResultSet resultSet, String[] strings,
-            SharedSessionContractImplementor sharedSessionContractImplementor, Object object)
-            throws HibernateException, SQLException {
-        if (resultSet.wasNull()) {
+    public String[] nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner)
+            throws SQLException {
+        Array array = rs.getArray(position);
+        if (array == null || rs.wasNull()) {
             return null;
         }
-
-        String[] array = (String[]) resultSet.getArray(strings[0]).getArray();
-        return array;
+        return (String[]) array.getArray();
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement preparedStatement, Object object, int index,
-            SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
-        if (object == null) {
-            preparedStatement.setNull(index, SQL_TYPES[0]);
+    public void nullSafeSet(PreparedStatement st, String[] value, int index, SharedSessionContractImplementor session)
+            throws SQLException {
+        if (value == null) {
+            st.setNull(index, SQL_TYPE);
         } else {
-            String[] castObject = (String[]) object;
-            Array array = sharedSessionContractImplementor.connection().createArrayOf("text", castObject);
-            preparedStatement.setArray(index, array);
+            Array array = session.getJdbcConnectionAccess().obtainConnection().createArrayOf("text", value);
+            st.setArray(index, array);
         }
     }
 
+    @Override
+    public String[] deepCopy(String[] value) {
+        if (value == null) {
+            return null;
+        }
+        return value.clone();
+    }
+
+    @Override
+    public boolean isMutable() {
+        return true;
+    }
+
+    @Override
+    public Serializable disassemble(String[] value) {
+        return value == null ? null : value.clone();
+    }
+
+    @Override
+    public String[] assemble(Serializable cached, Object owner) {
+        return cached == null ? null : ((String[]) cached).clone();
+    }
 }

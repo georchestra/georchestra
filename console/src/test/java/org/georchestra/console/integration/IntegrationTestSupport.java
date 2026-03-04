@@ -31,12 +31,9 @@ import java.util.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
-import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.rules.ExternalResource;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.LdapTemplate;
@@ -72,7 +69,7 @@ import org.springframework.web.context.WebApplicationContext;
  * </code>
  * </pre>
  */
-public @Service class IntegrationTestSupport extends ExternalResource {
+public @Service class IntegrationTestSupport {
     private static Logger LOGGER = Logger.getLogger(IntegrationTestSupport.class);
 
     private @Autowired LdapTemplate ldapTemplate;
@@ -92,21 +89,21 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     private MockMvc mockMvc;
 
-    public @Override Statement apply(Statement base, Description description) {
-        testName.apply(base, description);
-        return super.apply(base, description);
-    }
-
-    public @Override void before() {
+    @BeforeEach
+    public void setup(TestInfo testInfo) {
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        if (testMethod.isPresent()) {
+            this.testName = testMethod.get().getName();
+        }
         this.createdUsers = new HashSet<>();
-        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName.getMethodName(),
-                psqlPort, ldapPort));
+        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName, psqlPort, ldapPort));
         // pre-flight sanity check
         assertNotNull(ldapTemplate.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
-    public @Override void after() {
+    @AfterEach
+    public void cleanup() {
         for (String user : new HashSet<>(createdUsers)) {
             try {
                 deleteUser(user);
@@ -169,13 +166,5 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     public ResultActions deleteUser(String userName) throws Exception {
         this.createdUsers.remove(userName);
         return perform(delete("/private/users/" + userName));
-    }
-
-    @BeforeEach
-    public void setup(TestInfo testInfo) {
-        Optional<Method> testMethod = testInfo.getTestMethod();
-        if (testMethod.isPresent()) {
-            this.testName = testMethod.get().getName();
-        }
     }
 }

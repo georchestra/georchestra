@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import javax.sql.DataSource;
 
 import org.georchestra.ds.DataServiceException;

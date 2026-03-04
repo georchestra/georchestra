@@ -20,11 +20,13 @@
 package org.georchestra.console.dao;
 
 import org.georchestra.console.model.DelegationEntry;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DelegationDao extends PagingAndSortingRepository<DelegationEntry, String> {
+public interface DelegationDao
+        extends PagingAndSortingRepository<DelegationEntry, String>, CrudRepository<DelegationEntry, String> {
 
     DelegationEntry findFirstByUid(String uid);
 }

@@ -22,7 +22,7 @@ package org.georchestra.console.ws.backoffice.utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;

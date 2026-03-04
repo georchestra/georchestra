@@ -24,7 +24,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.orgs.OrgsDao;

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import jakarta.annotation.Nullable;
+import org.springframework.lang.Nullable;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -90,7 +90,9 @@ public class GDPRAccountWorker {
     private @Autowired @Setter(AccessLevel.PACKAGE) UserInfoExporter userInfoExporter;
     private @Autowired @Setter(AccessLevel.PACKAGE) AccountDao accountDao;
 
-    public static @Value @Builder class DeletedAccountSummary {
+    @Value
+    @Builder
+    public static class DeletedAccountSummary {
         private String accountId;
         private int metadataRecords;
         private int ogcStatsRecords;
@@ -163,7 +165,9 @@ public class GDPRAccountWorker {
         }
     }
 
-    public @VisibleForTesting static @Value class UserDataBundle {
+    @VisibleForTesting
+    @Value
+    public static class UserDataBundle {
         private Path folder;
         private Path metadataDirectory;
         private Path ogcstatsCsvFile;
@@ -201,8 +205,8 @@ public class GDPRAccountWorker {
      * }
      * </pre>
      */
-    public @VisibleForTesting UserDataBundle buildUserDataBundle(@NonNull Account account, @NonNull Path bundleFolder)
-            throws Exception {
+    @VisibleForTesting
+    public UserDataBundle buildUserDataBundle(@NonNull Account account, @NonNull Path bundleFolder) throws Exception {
         log.info("Creating GDPR data bundle for account {}", account.getUid());
         final String lidfContent = userInfoExporter.exportAsLdif(account);
 
@@ -291,7 +295,8 @@ public class GDPRAccountWorker {
         protected abstract List<Object> encode(T record);
     }
 
-    private @RequiredArgsConstructor static class MetadataProducer implements ContentProducer<MetadataRecord> {
+    @RequiredArgsConstructor
+    private static class MetadataProducer implements ContentProducer<MetadataRecord> {
 
         /**
          * Directory where to save one metadata file per record

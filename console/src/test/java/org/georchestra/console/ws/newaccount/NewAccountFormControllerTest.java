@@ -523,12 +523,13 @@ public class NewAccountFormControllerTest {
     private void mockRecaptchaSucess() throws Exception {
         try (MockedConstruction<DataOutputStream> mockDataOutputStream = Mockito
                 .mockConstruction(DataOutputStream.class)) {
-            try (MockedConstruction<URL> mockURL = Mockito.mockConstruction(URL.class)) {
-                HttpsURLConnection hucMock = mock(HttpsURLConnection.class);
+            try (MockedConstruction<URL> mockURL = Mockito.mockConstruction(URL.class, (urlMock, context) -> {
+                HttpsURLConnection hucMock = Mockito.mock(HttpsURLConnection.class);
                 BufferedInputStream successInputStream = new BufferedInputStream(
                         new ReaderInputStream(new StringReader("{\"success\": true}")));
                 when(hucMock.getInputStream()).thenReturn(successInputStream);
                 when(urlMock.openConnection()).thenReturn(hucMock);
+            })) {
             }
         }
     }
