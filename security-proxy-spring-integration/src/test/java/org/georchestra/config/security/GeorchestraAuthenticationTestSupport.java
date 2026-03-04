@@ -40,9 +40,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.georchestra.commons.security.SecurityHeaders;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.http.HttpHeaders;
 
 import lombok.Data;
@@ -50,7 +49,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true, fluent = true)
-public class GeorchestraAuthenticationTestSupport implements TestRule {
+public class GeorchestraAuthenticationTestSupport implements BeforeEachCallback {
 
     private String secProxy;
     private String secUserId;
@@ -71,7 +70,7 @@ public class GeorchestraAuthenticationTestSupport implements TestRule {
     private String secOrgDescription;
 
     @Override
-    public Statement apply(Statement base, Description description) {
+    public void beforeEach(ExtensionContext context) {
         secProxy = "true";
         secUserId = UUID.randomUUID().toString();
         secUsername = "testUser";
@@ -89,7 +88,6 @@ public class GeorchestraAuthenticationTestSupport implements TestRule {
         secOrgAddress = "Test organization address";
         secOrgCategory = "Testcategory";
         secOrgDescription = "Test org description";
-        return base;
     }
 
     public GeorchestraUserDetails buildUserDetails() {

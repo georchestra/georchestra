@@ -130,13 +130,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -528,9 +527,9 @@
             </dependencies>
         </profile>
         <profile>
-            <id>jdk17+</id>
+            <id>jdk11+</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <jdk>[11,)</jdk>
             </activation>
             <properties>
                 <java.version>17</java.version>

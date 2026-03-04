@@ -11,7 +11,7 @@
   <artifactId>security-proxy-spring-integration</artifactId>
   <packaging>jar</packaging>
   <properties>
-    <jakarta-servlet.version>5.0.0</jakarta-servlet.version>
+    <jakarta-servlet.version>6.1.0</jakarta-servlet.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
@@ -82,7 +82,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.11.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
