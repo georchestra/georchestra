@@ -83,6 +83,7 @@ public class PasswordRecoveryFormControllerTest {
     private void prepareLegitRequest(boolean isPending, boolean isOAuth2) throws Exception {
         request = new MockHttpServletRequest();
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
+        Mockito.when(formBean.getEmail()).thenReturn("test@localhost.com");
         Account account = Mockito.mock(Account.class);
         Mockito.when(account.getUid()).thenReturn("1");
         Mockito.when(account.isPending()).thenReturn(isPending);

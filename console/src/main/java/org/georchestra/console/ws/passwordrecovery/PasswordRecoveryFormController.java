@@ -207,6 +207,9 @@ public class PasswordRecoveryFormController {
      * @return a new URL to change password
      */
     protected String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
+        if (publicUrl == null || (!publicUrl.startsWith("http://") && !publicUrl.startsWith("https://"))) {
+            throw new IllegalArgumentException("publicUrl must be a valid HTTP or HTTPS URL: " + publicUrl);
+        }
         String url = UriComponentsBuilder.fromHttpUrl(publicUrl).path(contextPath).path("/account/newPassword")
                 .query("token={token}").buildAndExpand(token).toUriString();
 

@@ -39,6 +39,7 @@ import org.georchestra.ds.LdapDaoProperties;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.Account;
+import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountDaoImpl;
 import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.ds.users.UserSchema;
@@ -154,9 +155,17 @@ public class ChangePasswordControllerTest {
             formBean.setPassword("monkey123");
             formBean.setConfirmPassword("monkey123");
             when(result.hasErrors()).thenReturn(false);
-            Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) any());
 
-            ctrlToTest.changePassword(model, formBean, result);
+            AccountDao mockDao = mock(AccountDao.class);
+            Mockito.doThrow(DataServiceException.class).when(mockDao).changePassword(Mockito.anyString(),
+                    Mockito.anyString());
+            Account mockAccount = mock(Account.class);
+            Mockito.when(mockDao.findByUID(Mockito.anyString())).thenReturn(mockAccount);
+            ChangePasswordFormController ctrlWithMockDao = new ChangePasswordFormController(mockDao);
+            ctrlWithMockDao.passwordUtils = new PasswordUtils();
+            ctrlWithMockDao.logUtils = mock(LogUtils.class);
+
+            ctrlWithMockDao.changePassword(model, formBean, result);
         });
     }
 

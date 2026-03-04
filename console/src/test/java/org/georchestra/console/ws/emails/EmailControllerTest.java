@@ -249,7 +249,7 @@ public class EmailControllerTest {
             this.ctrl.emailProxy(jsonPayload, this.request);
             Assertions.fail();
         } catch (AddressException ex) {
-            Assertions.assertEquals("Missing final '@domain'", ex.getMessage());
+            Assertions.assertEquals("Empty address", ex.getMessage());
         }
 
         jsonPayload = "{ \"to\": [], " + "\"cc\": [], " + "\"bcc\": [], " + "\"subject\": \"Hello\","

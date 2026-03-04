@@ -305,7 +305,7 @@ public class RolesControllerTest {
     @Test
     public void testDeleteException() throws Exception {
 
-        doThrow(Exception.class).when(roleDao).delete(eq("ADMINISTRATOR"));
+        doThrow(RuntimeException.class).when(roleDao).delete(eq("ADMINISTRATOR"));
 
         try {
             roleCtrl.delete(response, "ADMINISTRATOR");
