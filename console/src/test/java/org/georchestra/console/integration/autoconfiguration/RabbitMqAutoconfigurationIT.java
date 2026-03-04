@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @TestPropertySource(properties = { "enableRabbitmqEvents = true", "rabbitmqPort =  1234", "rabbitmqHost = my-rabbit" })
 public class RabbitMqAutoconfigurationIT extends ConsoleIntegrationTest {
 

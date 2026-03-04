@@ -148,8 +148,7 @@ public class RolesControllerTest {
 
     @Test
     public void testFindByCNEmpty() throws Exception {
-        assertThrows(IllegalArgumentException.class, () ->
-            roleCtrl.findByCN(""));
+        assertThrows(IllegalArgumentException.class, () -> roleCtrl.findByCN(""));
     }
 
     @Test
@@ -548,22 +547,19 @@ public class RolesControllerTest {
 
     @Test
     public void testCheckAuthorizationIllegalUser() {
-        assertThrows(AccessDeniedException.class, () ->
-            roleCtrl.checkAuthorization("testuser", List.of("testuser", "testreviewer"), List.of("GN_REVIEWER"),
-                    List.of("GN_EDITOR")));
+        assertThrows(AccessDeniedException.class, () -> roleCtrl.checkAuthorization("testuser",
+                List.of("testuser", "testreviewer"), List.of("GN_REVIEWER"), List.of("GN_EDITOR")));
     }
 
     @Test
     public void testCheckAuthorizationIllegalRolePut() {
-        assertThrows(AccessDeniedException.class, () ->
-            roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_ADMIN"),
-                    List.of("GN_EDITOR")));
+        assertThrows(AccessDeniedException.class, () -> roleCtrl.checkAuthorization("testuser",
+                List.of("testeditor", "testreviewer"), List.of("GN_ADMIN"), List.of("GN_EDITOR")));
     }
 
     @Test
     public void testCheckAuthorizationIllegalRoleDelete() {
-        assertThrows(AccessDeniedException.class, () ->
-            roleCtrl.checkAuthorization("testuser", List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"),
-                    List.of("GN_ADMIN")));
+        assertThrows(AccessDeniedException.class, () -> roleCtrl.checkAuthorization("testuser",
+                List.of("testeditor", "testreviewer"), List.of("GN_REVIEWER"), List.of("GN_ADMIN")));
     }
 }

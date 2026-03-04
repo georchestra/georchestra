@@ -76,8 +76,7 @@ public class EmailControllerTest {
      */
 
     @Test
-    public void testJSONParse()
-            throws MessagingException, DataServiceException, UnsupportedEncodingException {
+    public void testJSONParse() throws MessagingException, DataServiceException, UnsupportedEncodingException {
         assertThrows(JSONException.class, () -> {
 
             String jsonPayload = "{ \"to\": [\"you@rm.fr\", \"another-guy@rm.fr\"], " + "\"cc\": [\"him@rm.fr\"], "
@@ -92,8 +91,7 @@ public class EmailControllerTest {
      * This test checks that JSON contains an array under 'to', 'cc' or 'bbc' key
      */
     @Test
-    public void testJSONParse2()
-            throws MessagingException, DataServiceException, UnsupportedEncodingException {
+    public void testJSONParse2() throws MessagingException, DataServiceException, UnsupportedEncodingException {
         assertThrows(JSONException.class, () -> {
 
             String jsonPayload = "{ \"to\": [\"you@rm.fr\", \"another-guy@rm.fr\"], " + "\"cc\": [\"him@rm.fr\"], "

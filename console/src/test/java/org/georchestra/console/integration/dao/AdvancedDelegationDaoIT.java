@@ -47,7 +47,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @WebAppConfiguration
 @PropertySource("classpath:/console-it.properties")
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class AdvancedDelegationDaoIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;

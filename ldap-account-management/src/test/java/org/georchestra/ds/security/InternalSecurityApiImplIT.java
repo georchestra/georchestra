@@ -37,18 +37,21 @@ import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.georchestra.security.model.Role;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@Testcontainers
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class InternalSecurityApiImplIT {
 
-    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();// .withLogToStdOut();
+    @Container
+    public static GeorchestraLdapContainer ldap = new GeorchestraLdapContainer();// .withLogToStdOut();
 
     private @Autowired UsersApi users;
     private @Autowired OrganizationsApi orgs;

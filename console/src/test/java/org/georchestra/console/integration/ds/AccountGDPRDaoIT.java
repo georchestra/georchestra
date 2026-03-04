@@ -61,7 +61,7 @@ import com.github.database.rider.spring.api.DBRider;
  *
  */
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @DBRider
 public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
 

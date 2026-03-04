@@ -48,7 +48,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @TestPropertySource(properties = { "enableRabbitmqEvents = true" })
 public class RabbitMqEventsIT extends ConsoleIntegrationTest {
 

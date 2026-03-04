@@ -257,8 +257,8 @@ public class GDPRAccountWorkerTest {
 
     public @Test void testDisposeNotAZipFile() throws IOException {
         File file = newFile(tmpFolder, "notAZipFile.zip");
-        Throwable exception = assertThrows(IllegalArgumentException.class, () ->
-            worker.dispose(new FileSystemResource(file)));
+        Throwable exception = assertThrows(IllegalArgumentException.class,
+                () -> worker.dispose(new FileSystemResource(file)));
         assertThat(exception.getMessage(), containsString("provided resource is not a ZIP file"));
     }
 

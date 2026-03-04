@@ -54,7 +54,7 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 
 @EnableWebMvc
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 @DBRider

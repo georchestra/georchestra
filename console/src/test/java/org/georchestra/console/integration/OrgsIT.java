@@ -47,7 +47,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 public class OrgsIT extends ConsoleIntegrationTest {

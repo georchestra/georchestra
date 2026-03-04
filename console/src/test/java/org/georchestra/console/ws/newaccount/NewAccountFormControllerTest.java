@@ -480,7 +480,8 @@ public class NewAccountFormControllerTest {
         acc3.setEmail("");
         Account acc4 = new AccountImpl();
         acc4.setEmail("flup@georchestra.org");
-        when(accountDao.findByRole(nullable(String.class))).thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
+        when(accountDao.findByRole(nullable(String.class)))
+                .thenReturn(Arrays.asList(new Account[] { acc1, acc2, acc3, acc4 }));
         toTest.setAccountDao(accountDao);
 
         List<String> ret = toTest.getSuperUserEmailAddresses();
@@ -520,7 +521,8 @@ public class NewAccountFormControllerTest {
     }
 
     private void mockRecaptchaSucess() throws Exception {
-        try (MockedConstruction<DataOutputStream> mockDataOutputStream = Mockito.mockConstruction(DataOutputStream.class)) {
+        try (MockedConstruction<DataOutputStream> mockDataOutputStream = Mockito
+                .mockConstruction(DataOutputStream.class)) {
             try (MockedConstruction<URL> mockURL = Mockito.mockConstruction(URL.class)) {
                 HttpsURLConnection hucMock = mock(HttpsURLConnection.class);
                 BufferedInputStream successInputStream = new BufferedInputStream(

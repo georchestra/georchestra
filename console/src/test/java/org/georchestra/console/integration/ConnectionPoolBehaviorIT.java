@@ -49,7 +49,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * restart/connections dropped
  */
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class ConnectionPoolBehaviorIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;

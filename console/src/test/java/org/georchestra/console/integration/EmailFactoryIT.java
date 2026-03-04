@@ -39,7 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.google.common.io.Files;
 
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/mail-factory-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/mail-factory-test.xml" })
 public class EmailFactoryIT {
 
     @Autowired

@@ -119,8 +119,7 @@ public class Email {
             }
         }
         /* Trying to resolve the templates from inside the webapp */
-        String tmplFromWebapp = this.servletContext
-                .getRealPath(Path.of("/WEB-INF", "templates", fileName).toString());
+        String tmplFromWebapp = this.servletContext.getRealPath(Path.of("/WEB-INF", "templates", fileName).toString());
 
         String body = null;
         try {

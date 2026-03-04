@@ -153,8 +153,7 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUidProtected() throws Exception {
-        assertThrows(AccessDeniedException.class, () ->
-            usersCtrl.findByUid("geoserver_privileged_user"));
+        assertThrows(AccessDeniedException.class, () -> usersCtrl.findByUid("geoserver_privileged_user"));
     }
 
     @Test
@@ -192,7 +191,7 @@ public class UsersControllerTest {
                     .put("postalCode", "73000").put("l", "Chambéry").put("postOfficeBox", "1234").put("o", "GeoServer");
             request.setRequestURI("/console/users/geoserver");
             // geoserver_privileged_user is not a valid username automatically generated
-            userRule.setListOfprotectedUsers(new String[]{"geoserver_privileged_user", "ggeoserverprivilegeduser"});
+            userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user", "ggeoserverprivilegeduser" });
             request.setContent(reqUsr.toString().getBytes());
 
             usersCtrl.create(request);
@@ -337,8 +336,7 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateUserProtected() throws Exception {
-        assertThrows(AccessDeniedException.class, () ->
-            usersCtrl.update("geoserver_privileged_user", request));
+        assertThrows(AccessDeniedException.class, () -> usersCtrl.update("geoserver_privileged_user", request));
     }
 
     @Test

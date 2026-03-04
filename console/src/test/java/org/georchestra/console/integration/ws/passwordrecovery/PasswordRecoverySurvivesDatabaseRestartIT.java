@@ -58,7 +58,7 @@ import org.springframework.web.bind.support.SessionStatus;
  * https://github.com/georchestra/georchestra/issues/2195
  */
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class PasswordRecoverySurvivesDatabaseRestartIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;

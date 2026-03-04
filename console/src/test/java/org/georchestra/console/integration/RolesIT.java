@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  * Integration tests for {@code /private/roles} role management API.
  */
 @WebAppConfiguration
-@SpringJUnitConfig(locations = {"classpath:/webmvc-config-test.xml"})
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT extends ConsoleIntegrationTest {
 
     public @Rule @Autowired IntegrationTestSupport support;

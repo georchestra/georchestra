@@ -118,8 +118,8 @@ public class OrgsControllerTest {
         OrgsController toTest = createToTest();
         when(mockOrg.getId()).thenReturn("c2c42");
         when(mockOrgsDao.reGenerateId("c2c", "csc")).thenReturn("c2c42");
-        when(mockEntry1.getOrgs()).thenReturn(new String[]{"momorg"});
-        when(mockEntry2.getOrgs()).thenReturn(new String[]{});
+        when(mockEntry1.getOrgs()).thenReturn(new String[] { "momorg" });
+        when(mockEntry2.getOrgs()).thenReturn(new String[] {});
         JSONObject reqUsr = new JSONObject().put("shortName", "c2c");
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(reqUsr.toString().getBytes());
@@ -131,9 +131,9 @@ public class OrgsControllerTest {
 
         verify(mockOrgsDao).update(mockOrg);
         verify(mockEntry1).removeOrg("csc");
-        verify(mockEntry1).setOrgs(aryEq(new String[]{"momorg", "c2c42"}));
+        verify(mockEntry1).setOrgs(aryEq(new String[] { "momorg", "c2c42" }));
         verify(mockEntry2).removeOrg("csc");
-        verify(mockEntry2).setOrgs(aryEq(new String[]{"c2c42"}));
+        verify(mockEntry2).setOrgs(aryEq(new String[] { "c2c42" }));
         verify(delegationDaoMock).save(mockEntry1);
         verify(delegationDaoMock).save(mockEntry2);
     }
@@ -159,7 +159,7 @@ public class OrgsControllerTest {
         mockEntry1 = mock(DelegationEntry.class);
         mockEntry2 = mock(DelegationEntry.class);
         Mockito.when(advancedDelegationDaoMock.findByOrg("csc"))
-                .thenReturn(Arrays.asList(new DelegationEntry[]{mockEntry1, mockEntry2}));
+                .thenReturn(Arrays.asList(new DelegationEntry[] { mockEntry1, mockEntry2 }));
         return toTest;
     }
 

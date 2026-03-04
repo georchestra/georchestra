@@ -229,7 +229,7 @@ public class PasswordRecoveryFormControllerTest {
 
     @Test
     public void testMakeChangePasswordURLWronglyformated() {
-        assertThrows(IllegalArgumentException.class, () ->
-            ctrl.makeChangePasswordURL("pompom", "https://blabla.com", "https://pompom"));
+        assertThrows(IllegalArgumentException.class,
+                () -> ctrl.makeChangePasswordURL("pompom", "https://blabla.com", "https://pompom"));
     }
 }

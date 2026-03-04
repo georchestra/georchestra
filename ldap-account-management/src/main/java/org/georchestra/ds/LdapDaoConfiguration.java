@@ -24,6 +24,7 @@ import org.georchestra.ds.orgs.OrgLdapWrapper;
 import org.georchestra.ds.orgs.OrgsDaoImpl;
 import org.georchestra.ds.roles.RoleDaoImpl;
 import org.georchestra.ds.users.AccountDaoImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.ContextSource;
@@ -33,7 +34,7 @@ import org.springframework.ldap.core.LdapTemplate;
 public class LdapDaoConfiguration {
 
     @Bean
-    public LdapTemplate ldapTemplate(ContextSource contextSource) {
+    public LdapTemplate ldapTemplate(@Qualifier("contextSource") ContextSource contextSource) {
         return new LdapTemplate(contextSource);
     }
 

@@ -109,7 +109,8 @@ public class UserTokenDaoTest {
             when(rs.next()).thenReturn(true, true, false);
             when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
             when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
             when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", "additionalInfo");
             when(preparedStatement.executeQuery()).thenReturn(rs);
 
@@ -139,7 +140,8 @@ public class UserTokenDaoTest {
             when(rs.next()).thenReturn(true, true, false);
             when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
             when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
             when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
             when(preparedStatement.executeQuery()).thenReturn(rs);
 
@@ -154,7 +156,8 @@ public class UserTokenDaoTest {
             when(rs.next()).thenReturn(true, true, false);
             when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
             when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
             when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn(null, null);
             when(preparedStatement.executeQuery()).thenReturn(rs);
 

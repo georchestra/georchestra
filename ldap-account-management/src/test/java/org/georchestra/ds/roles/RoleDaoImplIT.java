@@ -19,6 +19,7 @@
 
 package org.georchestra.ds.roles;
 
+import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,6 @@ import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.ds.users.DuplicatedEmailException;
 import org.georchestra.ds.users.DuplicatedUidException;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,12 +55,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.google.common.collect.Lists;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@Testcontainers
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class RoleDaoImplIT {
-    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
+    @Container
+    public static GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
     private @Autowired AccountDaoImpl accountDao;
     private @Autowired RoleDaoImpl roleDao;
@@ -226,7 +230,7 @@ public class RoleDaoImplIT {
     private Account createAccount() throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
         String accountName = "IT_ACCOUNT_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
         Account account = AccountFactory.createBrief(accountName, "123", "fname", "sname",
-                String.format("%s@localhost", accountName), "+33123456789", "title", "");
+                format("%s@localhost", accountName), "+33123456789", "title", "");
         accountDao.insert(account);
         return account;
     }

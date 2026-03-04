@@ -31,7 +31,6 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,13 +39,17 @@ import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.google.common.collect.Lists;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@Testcontainers
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class AccountDaoImplIT {
 
-    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
+    @Container
+    public static GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
     private @Autowired AccountDaoImpl accountDao;
     private @Autowired LdapTemplate ldapTemplate;

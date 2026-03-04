@@ -24,7 +24,6 @@ import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountImpl;
 import org.georchestra.testcontainers.ldap.GeorchestraLdapContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,8 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -46,9 +47,11 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringJUnitConfig(locations = {"classpath:testApplicationContext.xml"})
+@Testcontainers
+@SpringJUnitConfig(locations = { "classpath:testApplicationContext.xml" })
 public class OrgsDaoImplIT {
-    public static @ClassRule GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
+    @Container
+    public static GeorchestraLdapContainer ldap = new GeorchestraLdapContainer().withLogToStdOut();
 
     private @Autowired OrgsDao dao;
     private @Autowired LdapWrapper<Org> orgLdapWrapper;
