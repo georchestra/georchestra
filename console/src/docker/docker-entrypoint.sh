@@ -13,8 +13,9 @@ fi
 
 if [[ -d "$DIR" ]]
 then
-  # Regex is needed to execute all kind of files, including sh files. Warning : --regex not available in alpine images.
-  /bin/run-parts --verbose "$DIR" --regex='.*'
+  # Run all executable files in the directory.
+  # Avoid --verbose and --regex as they are not available in BusyBox run-parts (e.g. Alpine images).
+  /bin/run-parts "$DIR"
 fi
 
 exec "$@"

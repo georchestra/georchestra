@@ -322,11 +322,8 @@
     <property name="favorPathExtension" value="false" />
   </bean>
 
-  <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-    <property name="maxUploadSize" value="${maxUploadSize:8388608}"/>
-    <property name="maxInMemorySize" value="${maxInMemorySize:10240}"/>
-  </bean>
+    <bean id="multipartResolver"
+      class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 
   <bean id="logUtils" class="org.georchestra.console.ws.utils.LogUtils"/>
 

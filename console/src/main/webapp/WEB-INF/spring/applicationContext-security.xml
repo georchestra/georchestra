@@ -8,6 +8,7 @@
             http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<security:http auto-config="true">
+      <security:intercept-url pattern="/**" access="permitAll" />
 	    <security:custom-filter position="PRE_AUTH_FILTER" ref="preAuthenticationFilter" />
         <security:csrf disabled="true" />
 	</security:http>
