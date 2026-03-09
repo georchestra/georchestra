@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
@@ -45,8 +44,7 @@ import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.WKTReader;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -67,12 +65,9 @@ public class GDPRAccountWorkerTest {
     private GDPRAccountWorker worker;
     private AccountGDPRDaoStub daoStub;
 
-    public File tmpFolder = Files.createTempDirectory("junit").toFile();
+    public @TempDir File tmpFolder;
 
     private static String ogcstatsHeader = "date,organization,roles,layer,service,request";
-
-    public GDPRAccountWorkerTest() throws IOException {
-    }
 
     private static class AccountGDPRDaoStub implements AccountGDPRDao {
 

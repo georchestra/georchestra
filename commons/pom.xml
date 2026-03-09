@@ -11,10 +11,6 @@
   <name>geOrchestra Commons</name>
   <url>http://www.georchestra.org</url>
   <description>Common classes shared across geOrchestra apps</description>
-  <properties>
-    <jakarta-annotation.version>2.0.0</jakarta-annotation.version>
-    <jakarta-servlet.version>5.0.0</jakarta-servlet.version>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -100,7 +96,6 @@
         <dependency>
           <groupId>jakarta.annotation</groupId>
           <artifactId>jakarta.annotation-api</artifactId>
-          <version>2.1.1</version>
         </dependency>
       </dependencies>
     </profile>

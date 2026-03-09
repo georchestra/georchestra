@@ -30,7 +30,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.naming.Name;
@@ -142,7 +141,7 @@ public abstract class LdapWrapper<T extends ReferenceAware> {
 
     protected String asString(Attribute att) throws NamingException {
         String v = att == null ? null : (String) att.get();
-        return ObjectUtils.isEmpty(v) ? "" : v;
+        return StringUtils.hasText(v) ? v : "";
     }
 
     protected UUID asUuid(Attribute att) throws NamingException {
