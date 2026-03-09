@@ -160,7 +160,7 @@ public class ChangePasswordControllerTest {
             Mockito.doThrow(DataServiceException.class).when(mockDao).changePassword(Mockito.anyString(),
                     Mockito.anyString());
             Account mockAccount = mock(Account.class);
-            Mockito.when(mockDao.findByUID(Mockito.anyString())).thenReturn(mockAccount);
+            when(mockDao.findByUID(Mockito.anyString())).thenReturn(mockAccount);
             ChangePasswordFormController ctrlWithMockDao = new ChangePasswordFormController(mockDao);
             ctrlWithMockDao.passwordUtils = new PasswordUtils();
             ctrlWithMockDao.logUtils = mock(LogUtils.class);

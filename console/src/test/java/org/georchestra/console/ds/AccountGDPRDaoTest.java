@@ -132,10 +132,10 @@ public class AccountGDPRDaoTest {
         assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
     }
 
-    public @Test void testCreateMetadataRecord_invaliddate() throws SQLException {
+    public @Test void testCreateMetadataRecordInvaliddate() throws SQLException {
         assertThrows(RuntimeException.class, () -> {
             ResultSet rs = Mockito.mock(ResultSet.class);
-            Mockito.when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
+            when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
             AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
 
             assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
