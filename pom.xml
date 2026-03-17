@@ -9,7 +9,7 @@
           to work well with that spring version -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>2.7.18</version>
+        <version>3.5.11</version>
     </parent>
 
     <groupId>org.georchestra</groupId>
@@ -34,7 +34,7 @@
         </repository>
     </distributionManagement>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <formatter-maven-plugin.version>2.20.0</formatter-maven-plugin.version>
         <fmt.skip>false</fmt.skip>
         <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
@@ -108,9 +108,9 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <scope>test</scope>
-                <version>1.10.19</version>
+                <version>5.22.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -120,22 +120,22 @@
             <artifactId>hamcrest-junit</artifactId>
             <version>2.0.0.0</version>
             <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>5.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -178,10 +178,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                     <encoding>UTF-8</encoding>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
             <plugin>
@@ -334,7 +335,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -354,7 +355,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -405,7 +406,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -423,17 +424,6 @@
                 <version>2.4</version>
                 <configuration>
                     <targetJdk>1.6</targetJdk>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <check/>
-                    <formats>
-                        <format>html</format>
-                    </formats>
                 </configuration>
             </plugin>
             <plugin>
@@ -461,7 +451,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.5</version>
+                        <version>0.8.14</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -543,14 +533,14 @@
                 <jdk>[11,)</jdk>
             </activation>
             <properties>
-                <java.version>11</java.version>
+                <java.version>17</java.version>
             </properties>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
-                        <groupId>javax.annotation</groupId>
-                        <artifactId>javax.annotation-api</artifactId>
-                        <version>1.3.2</version>
+                        <groupId>jakarta.annotation</groupId>
+                        <artifactId>jakarta.annotation-api</artifactId>
+                        <version>2.0.0</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
@@ -559,10 +549,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.15.0</version>
                         <configuration>
-                            <source>11</source>
-                            <target>11</target>
                             <encoding>UTF-8</encoding>
+                            <release>${java.version}</release>
                         </configuration>
                     </plugin>
                 </plugins>

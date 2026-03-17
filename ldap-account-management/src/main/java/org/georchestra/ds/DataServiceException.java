@@ -19,6 +19,8 @@
 
 package org.georchestra.ds;
 
+import java.io.Serial;
+
 /**
  *
  * @author Mauricio Pazos
@@ -29,6 +31,7 @@ public class DataServiceException extends Exception {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 7285966167139584662L;
 
     public DataServiceException(Throwable e) {

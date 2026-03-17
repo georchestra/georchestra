@@ -1,15 +1,17 @@
-FROM jetty:9-jre11
+FROM jetty:11-jre17
 
 # remove jetty embedded "JavaMail", we have our own.
 # fix #3692 : ClassNotFoundException: javax.activation.DataSource
 # https://github.com/eclipse/jetty.docker/issues/10
 USER root
-RUN rm -r /usr/local/jetty/lib/mail
+RUN #rm -r /usr/local/jetty/lib/mail
 RUN mkdir -p /docker-entrypoint.d
 RUN chown jetty:jetty /docker-entrypoint.d
+#install bash for entrypoint script
+RUN #apk add --no-cache bash
 USER jetty
 
-RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
+RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-modules=jmx,jmx-remote,http-forwarded
 
 COPY --chown=jetty:jetty . /
 

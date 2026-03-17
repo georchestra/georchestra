@@ -23,31 +23,32 @@ import org.georchestra.console.events.RabbitmqEventsListener;
 import org.georchestra.console.events.RabbitmqEventsSender;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.json.JSONObject;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import javax.mail.MessagingException;
-import javax.servlet.ServletContext;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.ServletContext;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @TestPropertySource(properties = { "enableRabbitmqEvents = true" })
 public class RabbitMqEventsIT extends ConsoleIntegrationTest {
 
@@ -66,7 +67,7 @@ public class RabbitMqEventsIT extends ConsoleIntegrationTest {
 
     private static final MockEmailFactory emailFactory = new MockEmailFactory();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         rabbitmq.start();
         System.setProperty("rabbitmqHost", "localhost");
@@ -91,12 +92,12 @@ public class RabbitMqEventsIT extends ConsoleIntegrationTest {
         admin.declareBinding(b);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() {
         rabbitmq.stop();
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         // the test should success and stop everything before giving a chance to send an
         // event to the gateway via rabbitMq, mocking the object sounds good enough

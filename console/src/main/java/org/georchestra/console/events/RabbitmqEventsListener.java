@@ -33,7 +33,7 @@ import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ServletContextAware;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.List;
 import java.util.stream.Collectors;
 

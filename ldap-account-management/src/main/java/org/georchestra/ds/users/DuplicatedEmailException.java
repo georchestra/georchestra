@@ -19,6 +19,8 @@
 
 package org.georchestra.ds.users;
 
+import java.io.Serial;
+
 /**
  * Throws this exception if the e-mail field is present in an existent ldap
  * account.
@@ -26,6 +28,7 @@ package org.georchestra.ds.users;
  * @author Mauricio Pazos
  */
 public class DuplicatedEmailException extends Exception {
+    @Serial
     private static final long serialVersionUID = -3664679290591393089L;
 
     public DuplicatedEmailException(String msg) {

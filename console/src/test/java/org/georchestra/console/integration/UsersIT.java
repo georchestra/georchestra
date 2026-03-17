@@ -21,7 +21,7 @@ package org.georchestra.console.integration;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -38,16 +38,15 @@ import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAcco
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -55,9 +54,8 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 
-@RunWith(SpringRunner.class)
 @EnableWebMvc
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 @DBRider
@@ -73,12 +71,12 @@ public class UsersIT extends ConsoleIntegrationTest {
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         support.createUser(userName);
 
-        support.perform(put("/private/users/" + userName)
+        support.perform(put("/private/users/" + userName).contentType(MediaType.APPLICATION_JSON)
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
                         .replace("psc", "C2C")));
 
-        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("C2C"))
-                .andExpect(jsonPath("$.uid").value(newUserName));
+        support.perform(get("/private/users/" + newUserName)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.org").value("C2C")).andExpect(jsonPath("$.uid").value(newUserName));
     }
 
     @WithMockRandomUidUser
@@ -115,19 +113,24 @@ public class UsersIT extends ConsoleIntegrationTest {
 
         String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
                 userName1, userName2, role1Name, role3Name, role2Name, role4Name);
-        support.perform(post("/private/roles_users").content(body));
+        support.perform(post("/private/roles_users").contentType(MediaType.APPLICATION_JSON).content(body));
 
-        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role1Name)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role1Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role3Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role3Name)).andDo(print()).andExpect(status().isOk())
+                .andExpect(jsonPath("$.users[1]").value(userName2));
         support.perform(get("/private/roles/" + role2Name)).andDo(print()).andExpect(jsonPath("$.users").isEmpty());
         support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
     }
 
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws Exception {
         support.createUser("user1");
 
@@ -148,7 +151,8 @@ public class UsersIT extends ConsoleIntegrationTest {
 
     @WithMockRandomUidUser
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteUserAsSuperAdminDoesNotDeleteGDPRAccountRecords() throws Exception {
         support.createUser("user1");
 
@@ -164,14 +168,14 @@ public class UsersIT extends ConsoleIntegrationTest {
     private String createRole() throws Exception {
         String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
         String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-        support.perform(post("/private/roles").content(body));
+        support.perform(post("/private/roles").contentType(MediaType.APPLICATION_JSON).content(body));
         return roleName;
     }
 
     private void setRole(String userName, String role1Name, String role2Name) throws Exception {
         String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
                 + "\"],\"DELETE\":[]}";
-        support.perform(post("/private/roles_users").content(body));
+        support.perform(post("/private/roles_users").contentType(MediaType.APPLICATION_JSON).content(body));
     }
 
     private boolean isEmpty(DeletedAccountSummary summary) {

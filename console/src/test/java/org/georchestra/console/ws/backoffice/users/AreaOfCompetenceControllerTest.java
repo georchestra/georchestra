@@ -18,18 +18,18 @@
  */
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.georchestra.console.bs.areas.AreasService;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.io.ParseException;
@@ -52,11 +52,11 @@ public class AreaOfCompetenceControllerTest {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public @BeforeClass static void beforeAll() {
+    public @BeforeAll static void beforeAll() {
         mapper.registerModule(new JtsModule());
     }
 
-    public @Before void setup() throws Exception {
+    public @BeforeEach void setup() throws Exception {
         accountsMock = mock(AccountDao.class);
         areasMock = mock(AreasService.class);
         controller = new AreaOfCompetenceController(accountsMock, areasMock);

@@ -19,9 +19,13 @@
 
 package org.georchestra.console.ws.editorgdetails;
 
+import java.io.Serial;
+
 import lombok.Data;
 
-final @Data class EditOrgDetailsFormBean implements java.io.Serializable {
+@Data
+public class EditOrgDetailsFormBean implements java.io.Serializable {
+    @Serial
     private static final long serialVersionUID = -5836489312467203512L;
     private String id;
     private String name;

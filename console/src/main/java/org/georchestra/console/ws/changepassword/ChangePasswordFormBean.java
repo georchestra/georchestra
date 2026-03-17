@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.changepassword;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -30,6 +31,7 @@ public class ChangePasswordFormBean implements Serializable {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = -546015147230737054L;
     private String confirmPassword;
     private String password;

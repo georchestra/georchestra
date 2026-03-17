@@ -20,7 +20,7 @@
 package org.georchestra.console.integration.ds;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +34,10 @@ import org.georchestra.console.integration.ConsoleIntegrationTest;
 import org.georchestra.ds.DataServiceException;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.github.database.rider.core.api.configuration.DBUnit;
@@ -62,16 +60,15 @@ import com.github.database.rider.spring.api.DBRider;
  * startup.
  *
  */
-@RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
+@SpringJUnitConfig(locations = { "classpath:/webmvc-config-test.xml" })
 @DBRider
 public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
 
     private @Autowired AccountGDPRDao dao;
     private Account user1, user2;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         user1 = new AccountImpl();
         user1.setUid("user1");
 
@@ -80,7 +77,8 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteAccountRecords() throws DataServiceException {
         DeletedRecords summary = dao.deleteAccountRecords(user1);
         assertEquals(user1.getUid(), summary.getAccountId());
@@ -94,7 +92,8 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = {
+            "dbunit/all.csv" })
     public @Test void testDeleteMetadataRecordsObfuscatesUserNameAndSurname() throws DataServiceException {
         List<MetadataRecord> user1Records = new ArrayList<>();
         dao.visitMetadataRecords(user1, user1Records::add);
@@ -122,7 +121,7 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/ogcstatistics.ogc_services_log.csv")
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = "dbunit/ogcstatistics.ogc_services_log.csv")
     public @Test void testVisitOgcStatisticsRecords() {
         List<OgcStatisticsRecord> user1Records = new ArrayList<>();
         List<OgcStatisticsRecord> user2Records = new ArrayList<>();
@@ -134,7 +133,7 @@ public class AccountGDPRDaoIT extends ConsoleIntegrationTest {
     }
 
     @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = "dbunit/geonetwork.metadata.csv")
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, useSequenceFiltering = false, value = "dbunit/geonetwork.metadata.csv")
     public @Test void testVisitMetadataRecords() {
         List<MetadataRecord> user1Records = new ArrayList<>();
         List<MetadataRecord> user2Records = new ArrayList<>();

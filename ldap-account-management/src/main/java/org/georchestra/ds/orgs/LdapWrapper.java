@@ -141,7 +141,7 @@ public abstract class LdapWrapper<T extends ReferenceAware> {
 
     protected String asString(Attribute att) throws NamingException {
         String v = att == null ? null : (String) att.get();
-        return StringUtils.isEmpty(v) ? "" : v;
+        return StringUtils.hasText(v) ? v : "";
     }
 
     protected UUID asUuid(Attribute att) throws NamingException {

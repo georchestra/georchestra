@@ -89,11 +89,10 @@ public class PostgresExtendedDataTypeFactory extends PostgresqlDataTypeFactory {
             if (object == null) {
                 return null;
             }
-            if (object instanceof Array) {
-                return (Array) object;
+            if (object instanceof Array array) {
+                return array;
             }
-            if (object instanceof String) {
-                String str = (String) object;
+            if (object instanceof String str) {
                 List<String> list = Splitter.on(',').splitToList(str);
                 Object[] value = new Object[list.size()];
                 for (int i = 0; i < list.size(); i++) {

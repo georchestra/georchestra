@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.Pair;
@@ -179,7 +179,7 @@ public class RolesController {
      */
     @GetMapping(value = REQUEST_MAPPING + "/{cn:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Role findByCN(@PathVariable String cn) throws DataServiceException {
+    public Role findByCN(@PathVariable("cn") String cn) throws DataServiceException {
         if (ObjectUtils.isEmpty(cn)) {
             throw new IllegalArgumentException("name is empty");
         }

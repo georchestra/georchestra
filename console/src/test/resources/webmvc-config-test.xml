@@ -19,9 +19,9 @@
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <security:global-method-security pre-post-annotations="enabled" >
+    <security:method-security pre-post-enabled="true">
 	  <security:expression-handler ref="expressionHandler"/>
-	</security:global-method-security>
+	</security:method-security>
 
 	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
@@ -196,7 +196,7 @@
        </property>
        <property name="jpaProperties">
            <props>
-               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+               <prop key="hibernate.dialect">org.hibernate.community.dialect.PostgreSQL94Dialect</prop>
                <prop key="hibernate.show_sql">false</prop>
                <prop key="hibernate.format_sql">false</prop>
                <prop key="hibernate.hbm2ddl.auto">update</prop>

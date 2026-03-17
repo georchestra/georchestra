@@ -20,10 +20,8 @@
 package org.georchestra.console.ds;
 
 import static org.georchestra.console.ds.AccountGDPRDaoImpl.GEONETWORK_DATE_FORMAT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,8 +42,8 @@ import java.util.List;
 import org.georchestra.console.ds.AccountGDPRDao.MetadataRecord;
 import org.georchestra.console.ds.AccountGDPRDao.OgcStatisticsRecord;
 import org.georchestra.console.integration.ds.AccountGDPRDaoIT;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
@@ -63,7 +61,7 @@ public class AccountGDPRDaoTest {
     private LocalDateTime ldt1, ldt2;
     private Timestamp ts1, ts2;
 
-    public @Before void before() {
+    public @BeforeEach void before() {
         ldt1 = LocalDateTime.now().withNano(0);
         ldt2 = LocalDateTime.now().withNano(0);
         ZoneId zoneId = ZoneId.systemDefault();
@@ -110,10 +108,12 @@ public class AccountGDPRDaoTest {
         assertTrue(parsed.get(ChronoField.DAY_OF_MONTH) == 11 && parsed.get(ChronoField.SECOND_OF_MINUTE) == 38);
     }
 
-    public @Test(expected = DateTimeParseException.class) void testParseISO8601Date() {
-        String date = "2024-04-09T11:38:57.658245Z";
+    public @Test void testParseISO8601Date() {
+        assertThrows(DateTimeParseException.class, () -> {
+            String date = "2024-04-09T11:38:57.658245Z";
 
-        GEONETWORK_DATE_FORMAT.parse(date);
+            GEONETWORK_DATE_FORMAT.parse(date);
+        });
     }
 
     public @Test void testCreateMetadataRecord_iso8601date() throws SQLException {
@@ -132,12 +132,14 @@ public class AccountGDPRDaoTest {
         assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
     }
 
-    public @Test(expected = RuntimeException.class) void testCreateMetadataRecord_invaliddate() throws SQLException {
-        ResultSet rs = Mockito.mock(ResultSet.class);
-        Mockito.when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
-        AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
+    public @Test void testCreateMetadataRecordInvaliddate() throws SQLException {
+        assertThrows(RuntimeException.class, () -> {
+            ResultSet rs = Mockito.mock(ResultSet.class);
+            when(rs.getString(eq("createdate"))).thenReturn("unparseable_junk");
+            AccountGDPRDao.MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
 
-        assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
+            assertTrue(record.getCreatedDate().getDayOfMonth() == 11 && record.getCreatedDate().getYear() == 2019);
+        });
     }
 
     // Test resiliency to unexpected null values, see GSHDF-291

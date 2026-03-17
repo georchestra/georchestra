@@ -93,7 +93,7 @@ public class OrgExtLdapWrapper extends LdapWrapper<OrgExt> {
 
     private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
         try {
-            if (StringUtils.isEmpty(value)) {
+            if (!StringUtils.hasText(value)) {
                 Attribute attributeToDelete = context.getAttributes().get(fieldName);
                 if (attributeToDelete != null) {
                     Collections.list(attributeToDelete.getAll()).stream()

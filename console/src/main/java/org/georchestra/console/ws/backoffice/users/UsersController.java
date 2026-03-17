@@ -28,10 +28,10 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -227,7 +227,7 @@ public class UsersController {
      */
     @GetMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Account findByUid(@PathVariable String uid)
+    public Account findByUid(@PathVariable("uid") String uid)
             throws AccessDeniedException, NameNotFoundException, DataServiceException {
 
         // Check for protected accounts
@@ -419,7 +419,7 @@ public class UsersController {
      */
     @PutMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json; charset=utf-8")
     @ResponseBody
-    public Account update(@PathVariable String uid, HttpServletRequest request)
+    public Account update(@PathVariable("uid") String uid, HttpServletRequest request)
             throws IOException, NameNotFoundException, DataServiceException, DuplicatedEmailException, ParseException,
             JSONException, MessagingException {
 
@@ -509,7 +509,7 @@ public class UsersController {
      * </pre>
      */
     @DeleteMapping(value = REQUEST_MAPPING + "/{uid:.+}", produces = "application/json")
-    public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
+    public void delete(@PathVariable("uid") String uid, HttpServletRequest request, HttpServletResponse response)
             throws IOException, DataServiceException, NameNotFoundException {
 
         if (this.userRule.isProtected(uid)) {

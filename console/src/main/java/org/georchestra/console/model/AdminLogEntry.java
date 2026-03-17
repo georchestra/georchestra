@@ -23,29 +23,27 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 
 @Entity
 @Table(schema = "console", name = "admin_log")
 @NamedQueries({
         @NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC"),
         @NamedQuery(name = "AdminLogEntry.myFindByTargets", query = "SELECT l FROM AdminLogEntry l WHERE l.target IN :targets ORDER BY l.date DESC") })
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class AdminLogEntry {
 
     @Id
@@ -58,7 +56,7 @@ public class AdminLogEntry {
     private AdminLogType type;
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
     private String changed;
 

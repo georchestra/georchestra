@@ -22,8 +22,8 @@ package org.georchestra.console.ws.backoffice.utils;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.lang.Nullable;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -19,9 +19,7 @@
 
 package org.georchestra.console.ds;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -37,9 +35,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.georchestra.ds.DataServiceException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 
@@ -50,7 +48,7 @@ public class UserTokenDaoTest {
     private Connection connection = Mockito.mock(Connection.class);
     private PreparedStatement preparedStatement = Mockito.mock(PreparedStatement.class);
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         userTokenDao = new UserTokenDao();
         userTokenDao.setDataSource(dataSource);
@@ -58,7 +56,7 @@ public class UserTokenDaoTest {
         when(connection.prepareStatement(Mockito.anyString())).thenReturn(preparedStatement);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -104,17 +102,20 @@ public class UserTokenDaoTest {
         assertTrue(ret.equals("pmauduit"));
     }
 
-    @Test(expected = NameNotFoundException.class)
+    @Test
     public void findUidUnexpectedAdditionalInfoTest() throws Exception {
-        ResultSet rs = Mockito.mock(ResultSet.class);
-        when(rs.next()).thenReturn(true, true, false);
-        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
-        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
-        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", "additionalInfo");
-        when(preparedStatement.executeQuery()).thenReturn(rs);
+        assertThrows(NameNotFoundException.class, () -> {
+            ResultSet rs = Mockito.mock(ResultSet.class);
+            when(rs.next()).thenReturn(true, true, false);
+            when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+            when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
+            when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", "additionalInfo");
+            when(preparedStatement.executeQuery()).thenReturn(rs);
 
-        userTokenDao.findUidWithoutAdditionalInfo("abcde");
+            userTokenDao.findUidWithoutAdditionalInfo("abcde");
+        });
     }
 
     @Test
@@ -132,30 +133,36 @@ public class UserTokenDaoTest {
         assertTrue(ret.equals("additionalInfo"));
     }
 
-    @Test(expected = NameNotFoundException.class)
+    @Test
     public void findAdditionalInfoWrongUidTest() throws Exception {
-        ResultSet rs = Mockito.mock(ResultSet.class);
-        when(rs.next()).thenReturn(true, true, false);
-        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
-        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
-        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
-        when(preparedStatement.executeQuery()).thenReturn(rs);
+        assertThrows(NameNotFoundException.class, () -> {
+            ResultSet rs = Mockito.mock(ResultSet.class);
+            when(rs.next()).thenReturn(true, true, false);
+            when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+            when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
+            when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn("additionalInfo", null);
+            when(preparedStatement.executeQuery()).thenReturn(rs);
 
-        userTokenDao.findAdditionalInfo("wrong_uid", "abcde");
+            userTokenDao.findAdditionalInfo("wrong_uid", "abcde");
+        });
     }
 
-    @Test(expected = NameNotFoundException.class)
+    @Test
     public void findAdditionalInfoMissingInfoTest() throws Exception {
-        ResultSet rs = Mockito.mock(ResultSet.class);
-        when(rs.next()).thenReturn(true, true, false);
-        when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
-        when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
-        when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234), new Timestamp(5678));
-        when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn(null, null);
-        when(preparedStatement.executeQuery()).thenReturn(rs);
+        assertThrows(NameNotFoundException.class, () -> {
+            ResultSet rs = Mockito.mock(ResultSet.class);
+            when(rs.next()).thenReturn(true, true, false);
+            when(rs.getString(DatabaseSchema.UID_COLUMN)).thenReturn("pmauduit", "fvanderbiest");
+            when(rs.getString(DatabaseSchema.TOKEN_COLUMN)).thenReturn("mytoken1", "mytoken2");
+            when(rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN)).thenReturn(new Timestamp(1234),
+                    new Timestamp(5678));
+            when(rs.getString(DatabaseSchema.ADDITIONAL_INFO)).thenReturn(null, null);
+            when(preparedStatement.executeQuery()).thenReturn(rs);
 
-        userTokenDao.findAdditionalInfo("pmauduit", "abcde");
+            userTokenDao.findAdditionalInfo("pmauduit", "abcde");
+        });
     }
 
     @Test

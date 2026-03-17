@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;

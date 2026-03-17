@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.passwordrecovery;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
  */
 public class NewPasswordFormBean implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3239632432961416372L;
 
     private String uid;

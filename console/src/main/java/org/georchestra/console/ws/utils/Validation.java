@@ -32,7 +32,6 @@ import org.georchestra.ds.orgs.Org;
 import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -46,7 +47,13 @@ public class RestClient {
 
         HttpComponentsClientHttpRequestFactory httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
         httpRequestFactory.setConnectionRequestTimeout(3000);
+        // Manual migration to `ConnectionConfig.Builder.setConnectTimeout(Timeout)`
+        // necessary; see:
+        // https://github.com/spring-projects/spring-framework/issues/35748
         httpRequestFactory.setConnectTimeout(3000);
+        // Manual migration to `SocketConfig.Builder.setSoTimeout(Timeout)` necessary;
+        // see:
+        // https://docs.spring.io/spring-framework/docs/6.0.0/javadoc-api/org/springframework/http/client/HttpComponentsClientHttpRequestFactory.html#setReadTimeout(int)
         httpRequestFactory.setReadTimeout(60000);
 
         this.restTemplate = new RestTemplate(httpRequestFactory);
@@ -83,8 +90,8 @@ public class RestClient {
     }
 
     private <T> T getBodyOrFail(ResponseEntity<T> response) {
-        final HttpStatus statusCode = response.getStatusCode();
-        if (HttpStatus.NOT_FOUND.equals(statusCode)) {
+        final HttpStatusCode statusCode = response.getStatusCode();
+        if (HttpStatus.NOT_FOUND.isSameCodeAs(statusCode)) {
             return null;
         }
         if (statusCode.is5xxServerError() || statusCode.is4xxClientError()) {

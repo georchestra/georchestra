@@ -19,6 +19,7 @@
 
 package org.georchestra.ds.users;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 public class AccountImpl implements Serializable, Account {
 
+    @Serial
     private static final long serialVersionUID = -8022496448991887664L;
 
     private @Getter @Setter UUID uniqueIdentifier;

@@ -20,9 +20,7 @@
 package org.georchestra.console.ws.edituserdetails;
 
 import static org.georchestra.commons.security.SecurityHeaders.SEC_USERNAME;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -38,9 +36,9 @@ import org.georchestra.ds.roles.RoleDao;
 import org.georchestra.ds.users.Account;
 import org.georchestra.ds.users.AccountDao;
 import org.georchestra.ds.users.AccountFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -74,7 +72,7 @@ public class EditUserDetailsFormControllerTest {
     private Account mtesterAccount;
     private Account mtesterAccountNoOrg;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao, new Validation(""));
         ctrl.logUtils = mockLogUtils;
@@ -109,7 +107,7 @@ public class EditUserDetailsFormControllerTest {
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
     }
 
@@ -166,10 +164,10 @@ public class EditUserDetailsFormControllerTest {
         verify(model).addAttribute(Mockito.eq("isReferentOrSuperUser"), refOrSuCaptor.capture());
         verify(model).addAttribute(Mockito.eq("org"), orgWithExtCaptor.capture());
         assertEquals("editUserDetailsForm", ret);
-        assertNotNull("expected a isReferentOrSuperUser in the model, null returned", refOrSuCaptor.getValue());
+        assertNotNull(refOrSuCaptor.getValue(), "expected a isReferentOrSuperUser in the model, null returned");
         ObjectNode node = orgWithExtCaptor.getValue();
         String desc = node.get("description").asText();
-        assertEquals("Description unexpected, missing OrgExt attributes ?", desc, incredibleDesc);
+        assertEquals(desc, incredibleDesc, "Description unexpected, missing OrgExt attributes ?");
     }
 
     @Test

@@ -19,10 +19,8 @@
 
 package org.georchestra.console.bs.areas;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.same;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,9 +40,9 @@ import org.geotools.data.geojson.store.GeoJSONDataStore;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.store.FeatureIteratorIterator;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.opengis.feature.simple.SimpleFeature;
@@ -64,7 +62,7 @@ public class AreasServiceTest {
 
     private static Map<String, Geometry> geomsByInseeComId = new HashMap<>();
 
-    public static @BeforeClass void loadTestData() throws IOException {
+    public static @BeforeAll void loadTestData() throws IOException {
         SimpleFeatureSource featureSource = new GeoJSONDataStore(AreasServiceTest.class.getResource("cities.geojson"))
                 .getFeatureSource();
 
@@ -76,7 +74,7 @@ public class AreasServiceTest {
         assertEquals(Set.of("2B298", "2A322", "2B277"), geomsByInseeComId.keySet());
     }
 
-    public @Before void beforeEach() {
+    public @BeforeEach void beforeEach() {
         georConfig = new GeorchestraConfiguration("console");
         accountMock = mock(Account.class);
         orgMock = mock(Org.class);

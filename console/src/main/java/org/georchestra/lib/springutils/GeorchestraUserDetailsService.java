@@ -5,7 +5,7 @@ import static org.georchestra.commons.security.SecurityHeaders.SEC_ROLES;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.georchestra.commons.security.SecurityHeaders;
 import org.springframework.security.core.Authentication;
@@ -26,7 +26,7 @@ public class GeorchestraUserDetailsService
         implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
 
     public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token) throws AuthenticationException {
-        Assert.notNull(token.getDetails());
+        Assert.notNull(token.getDetails(), "must not be null");
         return createUserDetails(token, null);
     }
 

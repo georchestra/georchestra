@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
