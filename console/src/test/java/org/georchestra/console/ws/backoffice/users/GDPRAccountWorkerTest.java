@@ -224,7 +224,7 @@ public class GDPRAccountWorkerTest {
 
     private void assertNumCsvRecords(Path csvFile, int expectedRecords, String expectedHeader) throws IOException {
         List<String> lines = Files.readAllLines(csvFile, Charsets.UTF_8);
-        assertEquals(expectedHeader, lines.get(0));
+        assertEquals(expectedHeader, lines.getFirst());
         assertEquals(1 + expectedRecords, lines.size());
     }
 

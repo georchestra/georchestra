@@ -81,7 +81,7 @@ public final class PasswordUtils {
             if (pwd1.length() < minimumLength) {
                 errors.rejectValue("password", "password.error.sizeError",
                         new String[] { Integer.toString(minimumLength) },
-                        String.format("%s%s%s", "The password must have at least ", minimumLength, " characters"));
+                        "%s%s%s".formatted("The password must have at least ", minimumLength, " characters"));
             }
             if (requireLowers && !LOWERS_PATTERN.matcher(pwd1).find()) {
                 errors.rejectValue("password", "password.error.requireLowers", "The password must contain lower cases");

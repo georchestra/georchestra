@@ -18,8 +18,6 @@
  */
 package org.georchestra.console.bs.areas;
 
-import static java.lang.String.format;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -78,9 +76,9 @@ public class AreasService {
 
     @PostConstruct
     void initialize() throws IOException {
-        LOG.info(format("Initializing %s from %s", getClass().getSimpleName(), areasURI));
+        LOG.info("Initializing %s from %s".formatted(getClass().getSimpleName(), areasURI));
         URL areasLocation = resolveAreasLocation();
-        LOG.info(format("Areas URI resolved to %s", areasLocation));
+        LOG.info("Areas URI resolved to %s".formatted(areasLocation));
         this.dataStore = new AreasDataStore(areasLocation);
     }
 
@@ -113,7 +111,7 @@ public class AreasService {
     public Geometry getAreaOfCompetence(@NonNull Account account) throws IOException {
         final List<String> cityIds = getCityIds(account);
         if (null == cityIds || cityIds.isEmpty()) {
-            LOG.debug(format("User %s has no area of competence set", account.getUid()));
+            LOG.debug("User %s has no area of competence set".formatted(account.getUid()));
             return null;
         }
 
@@ -127,7 +125,7 @@ public class AreasService {
     private List<Geometry> getGeometries(List<String> cityIds) throws IOException {
         Stopwatch sw = Stopwatch.createStarted();
         List<Geometry> geometries = dataStore.findAreasById(cityIds);
-        String msg = String.format("Queried %,d geometries in %s", geometries.size(), sw.stop());
+        String msg = "Queried %,d geometries in %s".formatted(geometries.size(), sw.stop());
         LOG.debug(msg);
         return geometries;
     }
@@ -137,7 +135,7 @@ public class AreasService {
         Geometry union = geometries.stream().parallel().filter(Objects::nonNull).map(g -> g.buffer(0d)).reduce(EMPTY,
                 Geometry::union);
 
-        String msg = String.format("Unioned %,d geometries in %s", geometries.size(), sw.stop());
+        String msg = "Unioned %,d geometries in %s".formatted(geometries.size(), sw.stop());
         LOG.debug(msg);
         return union;
     }
@@ -148,7 +146,7 @@ public class AreasService {
             return null;
         }
 
-        LOG.debug(format("Computing area of competence for user %s, org %s", account.getUid(), org.getName()));
+        LOG.debug("Computing area of competence for user %s, org %s".formatted(account.getUid(), org.getName()));
         return org.getCities();
     }
 

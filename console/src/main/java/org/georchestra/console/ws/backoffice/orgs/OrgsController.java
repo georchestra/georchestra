@@ -227,7 +227,7 @@ public class OrgsController {
         }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
-            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+            throw new IOException("bad org url format: %s".formatted(json.optString(Org.JSON_URL)));
         }
 
         // Retrieve current orgs state from ldap
@@ -293,7 +293,7 @@ public class OrgsController {
         }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
-            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+            throw new IOException("bad org url format: %s".formatted(json.optString(Org.JSON_URL)));
         }
 
         Org org = new Org();

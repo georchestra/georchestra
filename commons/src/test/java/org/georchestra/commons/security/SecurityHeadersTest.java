@@ -118,11 +118,11 @@ public class SecurityHeadersTest {
 
         String encoded = encodeBase64(givenName, lastName, fullName);
         String decoded = decode(encoded);
-        assertEquals(String.format("%s,%s,%s", givenName, lastName, fullName), decoded);
+        assertEquals("%s,%s,%s".formatted(givenName, lastName, fullName), decoded);
 
         List<String> values = decodeAsList(encoded);
         assertEquals(3, values.size());
-        assertEquals(givenName, values.get(0));
+        assertEquals(givenName, values.getFirst());
         assertEquals(lastName, values.get(1));
         assertEquals(fullName, values.get(2));
     }
@@ -134,11 +134,11 @@ public class SecurityHeadersTest {
 
         String encoded = encodeBase64("", givenName, "", lastName, "");
         String decoded = decode(encoded);
-        assertEquals(String.format(",%s,,%s,", givenName, lastName), decoded);
+        assertEquals(",%s,,%s,".formatted(givenName, lastName), decoded);
 
         List<String> values = decodeAsList(encoded);
         assertEquals(5, values.size());
-        assertEquals("", values.get(0));
+        assertEquals("", values.getFirst());
         assertEquals(givenName, values.get(1));
         assertEquals("", values.get(2));
         assertEquals(lastName, values.get(3));

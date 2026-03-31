@@ -13,7 +13,7 @@
     <name>Console</name>
     <url>http://www.georchestra.org</url>
     <properties>
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <roo.version>1.1.5.RELEASE</roo.version>
         <context.name>${project.artifactId}</context.name>
@@ -883,12 +883,12 @@
             </build>
         </profile>
         <profile>
-            <id>jdk17+</id>
+            <id>jdk21+</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <jdk>[21,)</jdk>
             </activation>
             <properties>
-                <java.version>17</java.version>
+                <java.version>21</java.version>
             </properties>
             <dependencies>
                 <dependency>

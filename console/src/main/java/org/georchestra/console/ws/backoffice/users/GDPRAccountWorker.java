@@ -310,7 +310,7 @@ public class GDPRAccountWorker {
             }
             LocalDateTime createdAt = createdDate.atZone(ZoneId.systemDefault()).toLocalDateTime();
             String date = FILENAME_DATE_FORMAT.format(createdAt);
-            String fileName = String.format("%s_%s_%d.xml", date, record.getSchemaId(), record.getId());
+            String fileName = "%s_%s_%d.xml".formatted(date, record.getSchemaId(), record.getId());
             Path targetFile = directory.resolve(fileName);
             try {
                 Files.write(targetFile, Collections.singleton(record.getDocumentContent()));

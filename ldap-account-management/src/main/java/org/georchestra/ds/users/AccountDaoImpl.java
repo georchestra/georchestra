@@ -228,7 +228,6 @@ public class AccountDaoImpl implements AccountDao {
                 }
             } catch (Exception ex) {
             }
-            ;
         }
         throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
     }
@@ -249,7 +248,7 @@ public class AccountDaoImpl implements AccountDao {
         // georchestraObjectIdentifier);
         List<Account> matches = this.findAll(a -> id.equals(a.getUniqueIdentifier()));
         if (matches.size() == 1)
-            return matches.get(0);
+            return matches.getFirst();
         if (matches.isEmpty()) {
             throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
         }
@@ -269,7 +268,7 @@ public class AccountDaoImpl implements AccountDao {
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
         }
-        return accountList.get(0);
+        return accountList.getFirst();
     }
 
     @Override
@@ -281,7 +280,7 @@ public class AccountDaoImpl implements AccountDao {
             throw new NameNotFoundException(
                     "There is no user with this oAuth2Provider: " + oAuth2Provider + " and oAuth2Uid: " + oAuth2Uid);
         }
-        return accountList.get(0);
+        return accountList.getFirst();
     }
 
     @Override
@@ -340,7 +339,7 @@ public class AccountDaoImpl implements AccountDao {
     }
 
     public String buildFullUserDn(Account account) {
-        return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), props.getBasePath());
+        return "%s,%s".formatted(buildUserDn(account.getUid(), account.isPending()), props.getBasePath());
     }
 
     private LdapName buildUserDn(Account account) {
@@ -521,8 +520,7 @@ public class AccountDaoImpl implements AccountDao {
 
         public AccountContextMapper(LdapName pendingUserSearchBaseDN, String orgBasePath, String pendingOrgBasePath) {
             this.pendingUserSearchBaseDN = pendingUserSearchBaseDN;
-            this.pattern = Pattern
-                    .compile(String.format("([^=,]+)=([^=,]+),((%s)|(%s))$", orgBasePath, pendingOrgBasePath));
+            this.pattern = Pattern.compile("([^=,]+)=([^=,]+),((%s)|(%s))$".formatted(orgBasePath, pendingOrgBasePath));
         }
 
         @Override

@@ -95,12 +95,9 @@ final public class ResponseUtil {
         response.setContentType("application/json");
         response.setStatus(sc);
 
-        PrintWriter out = response.getWriter();
-        try {
+        try (PrintWriter out = response.getWriter()) {
             out.println(jsonData);
 
-        } finally {
-            out.close();
         }
     }
 

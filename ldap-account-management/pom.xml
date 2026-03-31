@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
     <name>LDAP users and groups management library</name>
     <properties>
-        <lombok.version>1.18.42</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
     </properties>
     <dependencies>

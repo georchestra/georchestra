@@ -19,7 +19,6 @@
 
 package org.georchestra.ds.roles;
 
-import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -140,7 +139,7 @@ public class RoleDaoImplIT {
 
         roleDao.addOrg(roleName, org);
 
-        DirContextOperations dco = ldapTemplate.lookupContext(format("cn=%s,ou=roles", roleName));
+        DirContextOperations dco = ldapTemplate.lookupContext("cn=%s,ou=roles".formatted(roleName));
         Attributes atts = dco.getAttributes();
         Attribute member = atts.get("member");
         assertEquals(orgsDao.buildFullOrgDn(org), member.get());
@@ -157,7 +156,7 @@ public class RoleDaoImplIT {
         roleDao.deleteOrg(roleName, orgA);
 
         Role actualRole = roleDao.findByCommonName(roleName);
-        assertTrue(actualRole.getOrgList().get(0).contains(orgB.getId()));
+        assertTrue(actualRole.getOrgList().getFirst().contains(orgB.getId()));
         assertEquals(1, actualRole.getOrgList().size());
     }
 
@@ -230,7 +229,7 @@ public class RoleDaoImplIT {
     private Account createAccount() throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
         String accountName = "IT_ACCOUNT_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
         Account account = AccountFactory.createBrief(accountName, "123", "fname", "sname",
-                format("%s@localhost", accountName), "+33123456789", "title", "");
+                "%s@localhost".formatted(accountName), "+33123456789", "title", "");
         accountDao.insert(account);
         return account;
     }

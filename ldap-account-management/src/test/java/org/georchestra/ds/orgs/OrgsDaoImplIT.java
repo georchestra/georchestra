@@ -44,7 +44,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
@@ -128,7 +127,7 @@ public class OrgsDaoImplIT {
         Org org = dao.findByCommonName(pendingOrg.getId());
         assertEquals(Collections.singletonList(account.getUid()), org.getMembers());
 
-        DirContextOperations dco = ldapTemplate.lookupContext(format("cn=%s,ou=pendingorgs", org.getId()));
+        DirContextOperations dco = ldapTemplate.lookupContext("cn=%s,ou=pendingorgs".formatted(org.getId()));
         Attributes atts = dco.getAttributes();
         Attribute member = atts.get("member");
         assertEquals("uid=iamnotpending,ou=users,dc=georchestra,dc=org", member.get());
@@ -155,7 +154,7 @@ public class OrgsDaoImplIT {
         Org org = dao.findByCommonName(notPendingOrg.getId());
         assertEquals(Collections.singletonList(pendingAccount.getUid()), org.getMembers());
 
-        DirContextOperations dco = ldapTemplate.lookupContext(format("cn=%s,ou=orgs", org.getId()));
+        DirContextOperations dco = ldapTemplate.lookupContext("cn=%s,ou=orgs".formatted(org.getId()));
         Attributes atts = dco.getAttributes();
         Attribute member = atts.get("member");
         assertEquals("uid=iampending,ou=pendingusers,dc=georchestra,dc=org", member.get());

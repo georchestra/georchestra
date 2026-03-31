@@ -101,7 +101,7 @@ public class RestClient {
     }
 
     private String targetUri(String path) {
-        return String.format("%s%s", this.baseUri, path);
+        return "%s%s".formatted(this.baseUri, path);
 //        return this.baseUri.resolve(path);
     }
 

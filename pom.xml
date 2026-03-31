@@ -34,7 +34,7 @@
         </repository>
     </distributionManagement>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <formatter-maven-plugin.version>2.20.0</formatter-maven-plugin.version>
         <fmt.skip>false</fmt.skip>
         <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
@@ -528,12 +528,12 @@
             </dependencies>
         </profile>
         <profile>
-            <id>jdk11+</id>
+            <id>jdk21+</id>
             <activation>
-                <jdk>[11,)</jdk>
+                <jdk>[21,)</jdk>
             </activation>
             <properties>
-                <java.version>17</java.version>
+                <java.version>21</java.version>
             </properties>
             <dependencyManagement>
                 <dependencies>

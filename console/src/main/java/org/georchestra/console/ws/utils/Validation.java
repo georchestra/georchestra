@@ -143,7 +143,7 @@ public class Validation {
 
     public boolean validateUserFieldWithSpecificMsg(String field, String value, Errors errors) {
         if (!validateUserField(field, value)) {
-            errors.rejectValue(field, String.format("%s.error.required", field), "required");
+            errors.rejectValue(field, "%s.error.required".formatted(field), "required");
             return false;
         }
         return true;
@@ -168,7 +168,7 @@ public class Validation {
 
     public void validateOrgField(String field, String value, Errors errors) {
         if (!validateOrgField(field, value)) {
-            errors.rejectValue(String.format("org%s", StringUtils.capitalize(field)), "error.required", "required");
+            errors.rejectValue("org%s".formatted(StringUtils.capitalize(field)), "error.required", "required");
         }
     }
 

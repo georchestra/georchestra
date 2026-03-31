@@ -567,7 +567,7 @@ public class UsersController {
         if (this.userRule.isProtected(account.getUid()))
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + account.getUid());
 
-        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
+        LOG.info("GDPR: user %s requested to delete his records".formatted(accountId));
 
         deleteAccount(account);
 

@@ -57,7 +57,7 @@ public class GeorchestraConfiguration {
         this.contextName = context;
         globalDatadir = System.getProperty("georchestra.datadir");
         if (globalDatadir != null) {
-            contextDataDir = new File(String.format("%s%s%s%s", globalDatadir, File.separator, context, File.separator))
+            contextDataDir = new File("%s%s%s%s".formatted(globalDatadir, File.separator, context, File.separator))
                     .getAbsolutePath();
 
             // Simple check that the path exists

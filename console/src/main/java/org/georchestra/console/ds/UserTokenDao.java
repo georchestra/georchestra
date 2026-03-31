@@ -134,7 +134,7 @@ public class UserTokenDao {
             throw new NameNotFoundException("the token " + token + " wasn't found.");
         }
 
-        return result.get(0);
+        return result.getFirst();
     }
 
     public List<Map<String, Object>> findBeforeDate(Date expired) throws DataServiceException {

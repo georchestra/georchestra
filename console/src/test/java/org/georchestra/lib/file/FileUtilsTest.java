@@ -120,7 +120,7 @@ public class FileUtilsTest {
         FileInputStream in = new FileInputStream(zipF);
         ZipInputStream zin = new ZipInputStream(in);
         List<String> actual = new ArrayList<String>();
-        try {
+        try (zin) {
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 StringBuilder unzipped = new StringBuilder();
@@ -131,8 +131,6 @@ public class FileUtilsTest {
                 actual.add(unzipped.toString());
             }
         } finally {
-            if (zin != null)
-                zin.close();
             if (in != null)
                 in.close();
         }
