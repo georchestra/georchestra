@@ -289,7 +289,7 @@ public class UsersControllerTest {
         ArgumentCaptor<List<String>> roleArgumentCaptor = ArgumentCaptor.forClass(stringListClass);
         verify(roleDao).addUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
         assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolea", "roleb"));
-        assertEquals("guserwithrolefromorg", accountArgumentCaptor.getValue().getFirst().getUid());
+        assertEquals("guserwithrolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
     }
 
     @Test
@@ -311,10 +311,10 @@ public class UsersControllerTest {
         ArgumentCaptor<List<String>> roleArgumentCaptor = ArgumentCaptor.forClass(stringListClass);
         verify(roleDao).deleteUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
         assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolea", "roleb"));
-        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().getFirst().getUid());
+        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
         verify(roleDao).addUsersInRoles(roleArgumentCaptor.capture(), accountArgumentCaptor.capture());
         assertThat(roleArgumentCaptor.getValue(), containsInAnyOrder("rolec", "roleb"));
-        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().getFirst().getUid());
+        assertEquals("updaterolefromorg", accountArgumentCaptor.getValue().get(0).getUid());
     }
 
     @Test

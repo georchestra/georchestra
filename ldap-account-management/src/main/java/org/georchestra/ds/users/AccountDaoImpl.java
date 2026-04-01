@@ -248,7 +248,7 @@ public class AccountDaoImpl implements AccountDao {
         // georchestraObjectIdentifier);
         List<Account> matches = this.findAll(a -> id.equals(a.getUniqueIdentifier()));
         if (matches.size() == 1)
-            return matches.getFirst();
+            return matches.get(0);
         if (matches.isEmpty()) {
             throw new NameNotFoundException(UserSchema.UUID_KEY + " not found: " + id);
         }
@@ -268,7 +268,7 @@ public class AccountDaoImpl implements AccountDao {
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
         }
-        return accountList.getFirst();
+        return accountList.get(0);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class AccountDaoImpl implements AccountDao {
             throw new NameNotFoundException(
                     "There is no user with this oAuth2Provider: " + oAuth2Provider + " and oAuth2Uid: " + oAuth2Uid);
         }
-        return accountList.getFirst();
+        return accountList.get(0);
     }
 
     @Override

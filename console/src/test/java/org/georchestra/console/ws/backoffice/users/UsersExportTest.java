@@ -327,9 +327,9 @@ public class UsersExportTest {
         List<CSVRecord> records = parser.getRecords();
         assertEquals(2, records.size());
         // first record is the header
-        CSVRecord header = records.getFirst();
+        CSVRecord header = records.get(0);
         // but just to be sure
-        assertEquals(headerNames.getFirst(), header.get(0));
+        assertEquals(headerNames.get(0), header.get(0));
 
         CSVRecord record = records.get(1);
         assertCsvRecord(account1, org1, record);
@@ -371,9 +371,9 @@ public class UsersExportTest {
         List<CSVRecord> records = parser.getRecords();
         assertEquals(3, records.size());
         // first record is the header
-        CSVRecord header = records.getFirst();
+        CSVRecord header = records.get(0);
         // but just to be sure
-        assertEquals(headerNames.getFirst(), header.get(0));
+        assertEquals(headerNames.get(0), header.get(0));
 
         assertCsvRecord(account1, org1, records.get(1));
         assertCsvRecord(account2, org2, records.get(2));

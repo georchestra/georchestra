@@ -122,7 +122,7 @@ public class SecurityHeadersTest {
 
         List<String> values = decodeAsList(encoded);
         assertEquals(3, values.size());
-        assertEquals(givenName, values.getFirst());
+        assertEquals(givenName, values.get(0));
         assertEquals(lastName, values.get(1));
         assertEquals(fullName, values.get(2));
     }
@@ -138,7 +138,7 @@ public class SecurityHeadersTest {
 
         List<String> values = decodeAsList(encoded);
         assertEquals(5, values.size());
-        assertEquals("", values.getFirst());
+        assertEquals("", values.get(0));
         assertEquals(givenName, values.get(1));
         assertEquals("", values.get(2));
         assertEquals(lastName, values.get(3));
