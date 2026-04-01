@@ -20,22 +20,31 @@ package org.georchestra.console.ws.security.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.utils.LogUtils;
+import org.georchestra.ds.DataServiceException;
+import org.georchestra.ds.roles.RoleDao;
+import org.georchestra.ds.users.AccountDao;
 import org.georchestra.security.api.OrganizationsApi;
 import org.georchestra.security.api.RolesApi;
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.georchestra.security.model.Role;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/internal", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecurityApiController {
@@ -43,6 +52,14 @@ public class SecurityApiController {
     private @Autowired RolesApi roles;
     private @Autowired OrganizationsApi orgs;
     private @Autowired UsersApi users;
+
+    private @Autowired @Setter LogUtils logUtils;
+
+    private @Autowired @Setter RoleDao roleDao;
+
+    private @Autowired @Setter AccountDao accountDao;
+
+    private @Autowired @Setter EmailFactory emailFactory;
 
     /**
      * Return a list of available users as a json array.
@@ -131,6 +148,40 @@ public class SecurityApiController {
     @GetMapping(value = "/roles/name/{name}")
     public ResponseEntity<Role> findRoleByName(@PathVariable String name) {
         return toEntityOrNotFound(roles.findByName(name));
+    }
+
+    @PostMapping(value = "/events/accountcreated", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<GeorchestraUser> createUser(HttpServletRequest request, @RequestBody String rawRequest) {
+        JSONObject jsonObj = new JSONObject(rawRequest);
+        try {
+            String fullName = jsonObj.getString("fullName");
+            String localUid = jsonObj.getString("localUid");
+            String email = jsonObj.getString("email");
+            String providerName = jsonObj.getString("providerName");
+            String providerUid = jsonObj.getString("providerUid");
+            String organization = null;
+            if (jsonObj.has("organization")) {
+                organization = jsonObj.getString("organization");
+            }
+            List<String> superUserAdmins = this.roleDao.findByCommonName("SUPERUSER").getUserList().stream()
+                    .map(user -> {
+                        try {
+                            return this.accountDao.findByUID(user).getEmail();
+                        } catch (DataServiceException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList());
+
+            final ServletContext servletContext = request.getSession().getServletContext();
+            this.emailFactory.sendNewOAuth2AccountNotificationEmail(servletContext, superUserAdmins, fullName,
+                    localUid, email, providerName, providerUid, organization, true);
+
+            logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
+        } catch (Exception e) {
+            log.error("Error while processing rabbitMq message, message will be discarded for future processing.",
+                    e);
+        }
+        return ResponseEntity.ok().build();
     }
 
     private <T> ResponseEntity<T> toEntityOrNotFound(Optional<T> found) {
