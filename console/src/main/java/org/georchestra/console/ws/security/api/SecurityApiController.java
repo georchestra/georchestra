@@ -173,13 +173,12 @@ public class SecurityApiController {
                     }).collect(Collectors.toList());
 
             final ServletContext servletContext = request.getSession().getServletContext();
-            this.emailFactory.sendNewOAuth2AccountNotificationEmail(servletContext, superUserAdmins, fullName,
-                    localUid, email, providerName, providerUid, organization, true);
+            this.emailFactory.sendNewOAuth2AccountNotificationEmail(servletContext, superUserAdmins, fullName, localUid,
+                    email, providerName, providerUid, organization, true);
 
             logUtils.createOAuth2Log(localUid, AdminLogType.OAUTH2_USER_CREATED, null);
         } catch (Exception e) {
-            log.error("Error while processing rabbitMq message, message will be discarded for future processing.",
-                    e);
+            log.error("Error while processing rabbitMq message, message will be discarded for future processing.", e);
         }
         return ResponseEntity.ok().build();
     }
