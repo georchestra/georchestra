@@ -107,7 +107,7 @@ public @Service class IntegrationTestSupport {
             this.testName = testMethod.get().getName();
         }
         this.createdUsers = new HashSet<>();
-        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName, psqlPort, ldapPort));
+        LOGGER.debug("############# %s: pgsqlPort: %s, ldapPort: %s\n".formatted(testName, psqlPort, ldapPort));
         // pre-flight sanity check
         assertNotNull(ldapTemplate.lookup("ou=users"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
@@ -172,7 +172,7 @@ public @Service class IntegrationTestSupport {
         String dateAsString = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
         return perform(post("/private/users").contentType(MediaType.APPLICATION_JSON)
                 .content(readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)
-                        .replaceAll("\"shadowExpire\": null,", String.format("\"shadowExpire\": %s,", dateAsString))));
+                        .replaceAll("\"shadowExpire\": null,", "\"shadowExpire\": %s,".formatted(dateAsString))));
     }
 
     public ResultActions deleteUser(String userName) throws Exception {

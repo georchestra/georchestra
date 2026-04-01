@@ -137,7 +137,7 @@ public class ChangeEmailFormController {
         try {
             this.accountDao.findByEmail(newEmail);
             result.rejectValue("newEmail", "email.error.exist",
-                    new String[] { String.format("%s%s", publicContextPath, "/account/changeEmail") },
+                    new String[] { "%s%s".formatted(publicContextPath, "/account/changeEmail") },
                     "there is a user with this e-mail");
             return "changeEmailForm";
         } catch (NameNotFoundException e) {

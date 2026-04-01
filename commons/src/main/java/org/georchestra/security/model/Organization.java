@@ -18,6 +18,7 @@
  */
 package org.georchestra.security.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import lombok.With;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @With
 public class Organization implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1;
 
     /** Provided by request header {@code sec-orgid}, usually stable UUID */

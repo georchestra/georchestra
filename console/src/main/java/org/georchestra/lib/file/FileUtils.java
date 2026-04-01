@@ -76,11 +76,8 @@ public final class FileUtils {
             String relativeName = file.getPath().substring(baseFile.getParent().length() + 1);
             ZipEntry next = new ZipEntry(relativeName);
             zip.putNextEntry(next);
-            FileInputStream in = new FileInputStream(file);
-            try {
+            try (FileInputStream in = new FileInputStream(file)) {
                 in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));
-            } finally {
-                in.close();
             }
         }
     }
@@ -168,15 +165,13 @@ public final class FileUtils {
     public static String asString(InputStream inputStream) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder buffer = new StringBuilder();
-        try {
+        try (in) {
             String line = in.readLine();
             while (line != null) {
                 buffer.append(line);
                 buffer.append("\n");
                 line = in.readLine();
             }
-        } finally {
-            in.close();
         }
 
         return buffer.toString();

@@ -86,7 +86,7 @@ public class UserInfoExporterImpl implements UserInfoExporter {
                 new BindConnectionInitializer(this.ldapUserName, new Credential(this.ldapPassword)));
         ConnectionFactory cf = new DefaultConnectionFactory(connConfig);
         SearchResult result;
-        final String filter = String.format("(uid=%s)", account.getUid());
+        final String filter = "(uid=%s)".formatted(account.getUid());
         try {
             SearchExecutor executor = new SearchExecutor();
             executor.setBaseDn(this.userSearchBaseDn);

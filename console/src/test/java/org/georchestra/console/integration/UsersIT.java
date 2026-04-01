@@ -111,8 +111,8 @@ public class UsersIT extends ConsoleIntegrationTest {
         setRole(userName1, role1Name, role2Name);
         setRole(userName1, role3Name, role4Name);
 
-        String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
-                userName1, userName2, role1Name, role3Name, role2Name, role4Name);
+        String body = "{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}"
+                .formatted(userName1, userName2, role1Name, role3Name, role2Name, role4Name);
         support.perform(post("/private/roles_users").contentType(MediaType.APPLICATION_JSON).content(body));
 
         support.perform(get("/private/roles/" + role1Name)).andExpect(status().isOk())

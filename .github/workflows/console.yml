@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-java@v5
       with:
         distribution: 'adopt'
-        java-version: '17'
+        java-version: '21'
         cache: 'maven'
         server-id: geOrchestra-artifactory
         server-username: ARTIFACTORY_USERNAME_REF

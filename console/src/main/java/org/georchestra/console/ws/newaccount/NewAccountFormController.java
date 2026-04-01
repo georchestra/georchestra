@@ -349,7 +349,7 @@ public final class NewAccountFormController {
         } catch (DuplicatedEmailException e) {
 
             result.rejectValue("email", "email.error.exist",
-                    new String[] { String.format("%s%s", publicContextPath, "/account/passwordRecovery") },
+                    new String[] { "%s%s".formatted(publicContextPath, "/account/passwordRecovery") },
                     "there is a user with this e-mail");
             return "createAccountForm";
 

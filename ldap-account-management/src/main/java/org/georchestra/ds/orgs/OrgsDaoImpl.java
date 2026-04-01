@@ -270,6 +270,6 @@ public class OrgsDaoImpl implements OrgsDao {
     }
 
     public String buildFullOrgDn(Org org) {
-        return String.format("%s,%s", orgLdapWrapper.buildOrgDN(org), props.getBasePath());
+        return "%s,%s".formatted(orgLdapWrapper.buildOrgDN(org), props.getBasePath());
     }
 }
