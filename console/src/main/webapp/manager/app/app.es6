@@ -186,7 +186,7 @@ angular.module('manager', [
     require: 'ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
-      const regexp = ('shortnameLower' in attrs) ? /^[A-Za-z0-9-_]+$/ : /^[A-Z0-9-_]+$/
+      const regexp = ('shortnameLower' in attrs) ? /^[A-Za-z0-9-:_]+$/ : /^[A-Z0-9-:_]+$/
       const alphanum = v => v && v.match(regexp)
       ctrl.$validators.shortname = alphanum
     }
