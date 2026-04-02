@@ -156,7 +156,7 @@ public class RoleDaoImplIT {
         roleDao.deleteOrg(roleName, orgA);
 
         Role actualRole = roleDao.findByCommonName(roleName);
-        assertTrue(actualRole.getOrgList().getFirst().contains(orgB.getId()));
+        assertTrue(actualRole.getOrgList().get(0).contains(orgB.getId()));
         assertEquals(1, actualRole.getOrgList().size());
     }
 

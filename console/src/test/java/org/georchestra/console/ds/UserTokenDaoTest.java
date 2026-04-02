@@ -177,14 +177,14 @@ public class UserTokenDaoTest {
         when(preparedStatement.executeQuery()).thenReturn(rs);
 
         List<Map<String, Object>> ret = userTokenDao.findBeforeDate(new Date());
-        assertTrue(ret.getFirst().size() == 4);
-        assertTrue(ret.getFirst().get(DatabaseSchema.UID_COLUMN).equals("1"));
+        assertTrue(ret.get(0).size() == 4);
+        assertTrue(ret.get(0).get(DatabaseSchema.UID_COLUMN).equals("1"));
         assertTrue(ret.get(1).get(DatabaseSchema.UID_COLUMN).equals("2"));
-        assertTrue(ret.getFirst().get(DatabaseSchema.TOKEN_COLUMN).equals("mytoken1"));
+        assertTrue(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN).equals("mytoken1"));
         assertTrue(ret.get(1).get(DatabaseSchema.TOKEN_COLUMN).equals("mytoken2"));
-        assertTrue(ret.getFirst().get(DatabaseSchema.CREATION_DATE_COLUMN).equals(new Timestamp(1234)));
+        assertTrue(ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN).equals(new Timestamp(1234)));
         assertTrue(ret.get(1).get(DatabaseSchema.CREATION_DATE_COLUMN).equals(new Timestamp(5678)));
-        assertTrue(ret.getFirst().get(DatabaseSchema.ADDITIONAL_INFO).equals("additionalInfo"));
+        assertTrue(ret.get(0).get(DatabaseSchema.ADDITIONAL_INFO).equals("additionalInfo"));
         assertTrue(ret.get(1).get(DatabaseSchema.ADDITIONAL_INFO) == null);
 
     }

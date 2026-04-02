@@ -183,8 +183,8 @@ public class NewAccountFormControllerTest {
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
         verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
-        assertTrue(orgCaptor.getAllValues().getFirst().isPending());
-        assertTrue(orgCaptor.getAllValues().getFirst().getClass().equals(Org.class));
+        assertTrue(orgCaptor.getAllValues().get(0).isPending());
+        assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
     }
 
     @Test
@@ -199,8 +199,8 @@ public class NewAccountFormControllerTest {
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
         verify(mockOrgDao, times(1)).insert(orgCaptor.capture());
-        assertFalse(orgCaptor.getAllValues().getFirst().isPending());
-        assertTrue(orgCaptor.getAllValues().getFirst().getClass().equals(Org.class));
+        assertFalse(orgCaptor.getAllValues().get(0).isPending());
+        assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
     }
 
     @Test
@@ -256,7 +256,7 @@ public class NewAccountFormControllerTest {
         // Validate the captured user
         List<Account> capturedUsers = usersCaptor.getValue();
         assertEquals(1, capturedUsers.size());
-        assertEquals(accountCaptor.getValue(), capturedUsers.getFirst());
+        assertEquals(accountCaptor.getValue(), capturedUsers.get(0));
     }
 
     /**
