@@ -78,7 +78,7 @@ public class GeorchestraConfiguration {
                 try {
                     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
                     loggerContext.reset();
-                    JoranConfigurator configurator =                     new JoranConfigurator();
+                    JoranConfigurator configurator = new JoranConfigurator();
                     configurator.setContext(loggerContext);
                     configurator.doConfigure(logbackXml);
                     LOGGER.info("Loaded logback configuration from {}", logbackXml.getAbsolutePath());
