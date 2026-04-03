@@ -32,10 +32,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 
 public class GeorchestraConfiguration {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeorchestraConfiguration.class);
 
     protected String globalDatadir;
     protected String contextDataDir;
@@ -66,16 +72,19 @@ public class GeorchestraConfiguration {
                 return;
             }
 
-            // log4j configuration
-            File log4jProperties = new File(contextDataDir, "log4j" + File.separator + "log4j.properties");
-            File log4jXml = new File(contextDataDir, "log4j" + File.separator + "log4j.xml");
-            String log4jConfigurationFile = null;
-            if (log4jProperties.exists()) {
-                log4jConfigurationFile = log4jProperties.getAbsolutePath();
-                PropertyConfigurator.configure(log4jConfigurationFile);
-            } else if (log4jXml.exists()) {
-                log4jConfigurationFile = log4jXml.getAbsolutePath();
-                DOMConfigurator.configure(log4jConfigurationFile);
+            // logback configuration
+            File logbackXml = new File(contextDataDir, "logback" + File.separator + "logback.xml");
+            if (logbackXml.exists()) {
+                try {
+                    LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+                    loggerContext.reset();
+                    JoranConfigurator configurator = new JoranConfigurator();
+                    configurator.setContext(loggerContext);
+                    configurator.doConfigure(logbackXml);
+                    LOGGER.info("Loaded logback configuration from {}", logbackXml.getAbsolutePath());
+                } catch (JoranException e) {
+                    LOGGER.error("Failed to load logback configuration from {}", logbackXml.getAbsolutePath(), e);
+                }
             }
             // everything went well
             activated = true;
