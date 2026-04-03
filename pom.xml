@@ -45,7 +45,6 @@
         <guava.version>33.2.1-jre</guava.version>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <encoding>UTF-8</encoding>
-        <log4j1.version>1.2.17</log4j1.version>
         <georchestra.version>${project.version}</georchestra.version>
         <server>generic</server>
         <packageDatadirScmVersion>master</packageDatadirScmVersion>
@@ -88,12 +87,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>2.8.0</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j1.version}</version>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -435,16 +428,6 @@
     </reporting>
     <profiles>
         <profile>
-            <id>sentry-log4j</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.sentry</groupId>
-                    <artifactId>sentry-log4j</artifactId>
-                    <version>1.7.30</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>jacocoCoverage</id>
             <build>
                 <plugins>
@@ -516,16 +499,6 @@
             <modules>
                 <module>console</module>
             </modules>
-        </profile>
-        <profile>
-            <id>log4j-logstash</id>
-            <dependencies>
-                <dependency>
-                    <groupId>net.logstash.log4j</groupId>
-                    <artifactId>jsonevent-layout</artifactId>
-                    <version>1.7</version>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>jdk17+</id>

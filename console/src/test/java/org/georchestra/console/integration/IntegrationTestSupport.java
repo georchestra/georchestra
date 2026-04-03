@@ -30,7 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -71,7 +72,7 @@ import org.springframework.web.context.WebApplicationContext;
  * </pre>
  */
 public @Service class IntegrationTestSupport {
-    private static Logger LOGGER = Logger.getLogger(IntegrationTestSupport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTestSupport.class);
 
     private @Autowired LdapTemplate ldapTemplate;
 
