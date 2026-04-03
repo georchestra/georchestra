@@ -57,6 +57,8 @@ public class CSVAccountExporter {
         LANG("Language"), //
         INTERNET_FREE_BUSY("Internet Free Busy"), //
         NOTES("Notes", (a, o) -> o == null ? null : o.getDescription()), //
+        CREATION_DATE("Creation date", (a -> a.getCreationDate() != null ? a.getCreationDate().toString() : null)), //
+        LAST_LOGIN_DATE("Last login date", (a -> a.getLastLogin() != null ? a.getLastLogin().toString() : null)), //
         EMAIL("E-mail Address", Account::getEmail), //
         EMAIL2("E-mail 2 Address"), //
         EMAIL3("E-mail 3 Address"), //
