@@ -8,7 +8,9 @@ The volume used by postgres to store data is now `/var/lib/postgresql/` instead 
 
 ⚠️ RabbitMQ support is dropped since https://github.com/georchestra/georchestra-gateway/pull/264
 
-If you use Gateway 2.1+, you need to switch configuration of the gateway to point to console's endpoint instead of RabbitMQ. 
+**Only compatible with GW 3.0+
+
+If you use Gateway 3.0+, you need to switch configuration of the gateway to point to console's endpoint instead of RabbitMQ. 
 
 ```yaml
 georchestra:
