@@ -10,3 +10,21 @@ All librairies and console are now using logback (which is embedded with spring 
 
 Folders use in georchestra datadir now use <georchestra.datadir>/<context>/logback/logback.xml. E.g: /etc/georchestra/console/logback/logback.xml
 
+# Drop RabbitMQ support 
+
+⚠️ RabbitMQ support is dropped since https://github.com/georchestra/georchestra-gateway/pull/264
+
+**Only compatible with GW 3.0+
+
+If you use Gateway 3.0+, you need to switch configuration of the gateway to point to console's endpoint instead of RabbitMQ. 
+
+```yaml
+georchestra:
+  gateway:
+    security:
+#      events:
+#        accountcreated:
+#          # Set this url to console's endpoint to be able to receive an email when a new user logs in
+#          #  for the first time and is created in LDAP.
+#          url: "http://console:8080/console/internal/events/accountcreated"
+```
