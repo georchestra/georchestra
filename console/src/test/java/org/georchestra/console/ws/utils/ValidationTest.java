@@ -203,4 +203,83 @@ public class ValidationTest {
         Assertions.assertTrue(v.validateOrgUnicityByUniqueId(mockOrgsDao, mockChanges));
 
     }
+
+    @Test
+    public void validateOrgUnicityByShortName() {
+        Validation v = new Validation("");
+
+        UUID fakeUUID = UUID.randomUUID();
+        String fakeShortName = "testorg";
+
+        mockOrgsDao = mock(OrgsDao.class);
+
+        Org mockOrg = new Org();
+        mockOrg.setId("testorg");
+        mockOrg.setName("Test Organization");
+        mockOrg.setShortName(fakeShortName);
+        mockOrg.setOrgType("Non profit");
+        mockOrg.setAddress("fake address");
+        mockOrg.setUrl("https://georchestra.org");
+        mockOrg.setDescription("A test desc");
+        mockOrg.setUniqueIdentifier(fakeUUID);
+
+        when(mockOrgsDao.findByShortName(fakeShortName)).thenReturn(mockOrg);
+
+        /** Fake JSON from request */
+        JSONObject mockChanges = new JSONObject();
+        mockChanges.put("name", "foo");
+        mockChanges.put("orgType", "Non profit");
+
+        // create org without shortName
+        Assertions.assertTrue(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+
+        // create org but shortName already exists
+        mockChanges.put("shortName", fakeShortName);
+        Assertions.assertFalse(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+
+        // create org with shortName that does not exist
+        mockChanges.put("shortName", "neworg");
+        Assertions.assertTrue(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+
+        // update org - no UUID and shortName already exists
+        mockChanges.put("shortName", fakeShortName);
+        Assertions.assertFalse(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+
+        // update org - unknown UUID + shortName already exists
+        mockChanges.put("uuid", UUID.randomUUID().toString());
+        Assertions.assertFalse(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+
+        // update org - verified UUID + shortName already exists (same org)
+        mockChanges.put("uuid", fakeUUID.toString());
+        Assertions.assertTrue(v.validateOrgUnicityByShortName(mockOrgsDao, mockChanges));
+    }
+
+    @Test
+    public void validateOrgUnicityIncludesShortName() {
+        Validation v = new Validation("");
+
+        UUID fakeUUID = UUID.randomUUID();
+        String fakeShortName = "existingorg";
+
+        mockOrgsDao = mock(OrgsDao.class);
+
+        Org mockOrg = new Org();
+        mockOrg.setId("existingorg");
+        mockOrg.setName("Existing Organization");
+        mockOrg.setShortName(fakeShortName);
+        mockOrg.setUniqueIdentifier(fakeUUID);
+
+        when(mockOrgsDao.findByShortName(fakeShortName)).thenReturn(mockOrg);
+
+        JSONObject mockChanges = new JSONObject();
+        mockChanges.put("name", "New Org");
+        mockChanges.put("shortName", fakeShortName);
+
+        // validateOrgUnicity should fail when shortName already exists
+        Assertions.assertFalse(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+
+        // validateOrgUnicity should pass when shortName doesn't exist
+        mockChanges.put("shortName", "brandneworg");
+        Assertions.assertTrue(v.validateOrgUnicity(mockOrgsDao, mockChanges));
+    }
 }
