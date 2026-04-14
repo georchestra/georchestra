@@ -38,10 +38,9 @@ import org.springframework.validation.Errors;
 
 /**
  * Validation class for user and org forms Possible values: * There are
- * hardcoded mandatory fields for user and organizations creation: mandatory
- * user fields: * email * uid * password * confirmPassword mandatory org fields:
- * * name
- *
+ * hardcoded mandatory fields for user and organizations creation: 
+ * mandatory user fields: * email * uid * password * confirmPassword 
+ * mandatory org fields: * name
  */
 public class Validation {
 
