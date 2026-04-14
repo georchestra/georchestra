@@ -37,11 +37,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 /**
- * Validation class for user and org forms
- * Possible values: *
- * There are hardcoded mandatory fields for user and organizations creation:
- * mandatory user fields: * email * uid * password * confirmPassword
- * mandatory org fields: * name
+ * Validation class for user and org forms Possible values: * There are
+ * hardcoded mandatory fields for user and organizations creation: mandatory
+ * user fields: * email * uid * password * confirmPassword mandatory org fields:
+ * * name
  *
  */
 public class Validation {
@@ -201,10 +200,7 @@ public class Validation {
         return validateOrgUnicityByField(changes, "orgUniqueId", orgDao::findByOrgUniqueId);
     }
 
-
-    private boolean validateOrgUnicityByField(JSONObject changes,
-                                              String fieldName,
-                                              Function<String, Org> findByField) {
+    private boolean validateOrgUnicityByField(JSONObject changes, String fieldName, Function<String, Org> findByField) {
         if (changes == null) {
             return true;
         }
@@ -243,7 +239,6 @@ public class Validation {
         // Control if this is same org update
         return Objects.equals(existingOrg.getUniqueIdentifier(), UUID.fromString(uuid));
     }
-
 
     public boolean validateOrgShortNameField(OrgsDao orgDao, JSONObject changes, Errors errors) {
         Boolean isValid = true;
