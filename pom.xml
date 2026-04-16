@@ -9,7 +9,7 @@
           to work well with that spring version -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.5.11</version>
+        <version>3.5.13</version>
     </parent>
 
     <groupId>org.georchestra</groupId>
