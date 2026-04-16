@@ -43,11 +43,6 @@
             <version>${gt.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-            <version>3.5.11</version>
-        </dependency>
-        <dependency>
             <!-- upgrade version to match gt-geojson-store's expected one -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
