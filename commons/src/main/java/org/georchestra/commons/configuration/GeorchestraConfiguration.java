@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import jakarta.servlet.ServletContext;
@@ -67,13 +69,13 @@ public class GeorchestraConfiguration {
                     .getAbsolutePath();
 
             // Simple check that the path exists
-            if (new File(contextDataDir).exists() == false) {
+            if (!new File(contextDataDir).exists()) {
                 contextDataDir = null;
                 return;
             }
 
             // logback configuration
-            File logbackXml = new File(contextDataDir, "logback" + File.separator + "logback.xml");
+            File logbackXml = Paths.get(contextDataDir, "logback", "logback.xml").toFile();
             if (logbackXml.exists()) {
                 try {
                     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -104,15 +106,9 @@ public class GeorchestraConfiguration {
 
     private Properties loadPropertiesFile(File path) throws IOException {
         Properties prop = new Properties();
-        FileInputStream fisProp = null;
-        try {
-            fisProp = new FileInputStream(path);
-            InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
+        try (FileInputStream fisProp = new FileInputStream(path)) {
+            InputStreamReader isrProp = new InputStreamReader(fisProp, StandardCharsets.UTF_8);
             prop.load(isrProp);
-        } finally {
-            if (fisProp != null) {
-                fisProp.close();
-            }
         }
         return prop;
     }
