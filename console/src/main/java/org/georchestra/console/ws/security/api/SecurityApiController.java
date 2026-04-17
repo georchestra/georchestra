@@ -76,7 +76,7 @@ public class SecurityApiController {
     }
 
     /**
-     * Fetch users by a list of IDs with optional field projection.
+     * Fetch users by a list of usernames with optional field projection.
      * <p>
      * Request body example:
      *
@@ -89,18 +89,18 @@ public class SecurityApiController {
      *
      * If {@code fields} is null or empty, all user fields are returned.
      *
-     * @param request the batch request containing IDs and optional fields
+     * @param request the batch request containing usernames and optional fields
      * @return a list of users (as maps if fields are specified, or full objects
      *         otherwise)
      */
-    @PostMapping(value = "/users/fetch-by-ids")
+    @PostMapping(value = "/users/fetch-by-usernames")
     @ResponseBody
     public List<?> findUsersByUsernames(@RequestBody UserBatchRequest request) {
-        Set<String> ids = request.getUsernames() != null ? new HashSet<>(request.getUsernames()) : Set.of();
-        if (ids.isEmpty()) {
+        Set<String> usernames = request.getUsernames() != null ? new HashSet<>(request.getUsernames()) : Set.of();
+        if (usernames.isEmpty()) {
             return List.of();
         }
-        List<GeorchestraUser> userList = users.findAll().stream().filter(user -> ids.contains(user.getUsername()))
+        List<GeorchestraUser> userList = users.findAll().stream().filter(user -> usernames.contains(user.getUsername()))
                 .collect(Collectors.toList());
 
         List<String> fields = request.getFields();
