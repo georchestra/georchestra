@@ -20,6 +20,7 @@ package org.georchestra.console.ws.security.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletContext;
@@ -70,6 +71,12 @@ public class SecurityApiController {
     @ResponseBody
     public List<GeorchestraUser> findUsers() {
         return users.findAll();
+    }
+
+    @PostMapping(value = "/users/fetch-by-ids")
+    @ResponseBody
+    public List<GeorchestraUser> findUsersByIds(@RequestBody Set<String> ids) {
+        return users.findAllBy(user -> ids.contains(user.getId()));
     }
 
     /**

@@ -22,6 +22,7 @@ import org.georchestra.security.model.GeorchestraUser;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public interface UsersApi {
 
@@ -50,4 +51,13 @@ public interface UsersApi {
     }
 
     List<GeorchestraUser> findAll();
+
+    /**
+     * Find all users matching the provided filter. The filter is applied on the
+     * user properties, not on the underlying data source.
+     *
+     * @param filter a predicate to filter users
+     * @return a list of users matching the provided filter
+     */
+    List<GeorchestraUser> findAllBy(Predicate<GeorchestraUser> filter);
 }
