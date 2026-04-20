@@ -21,6 +21,7 @@ package org.georchestra.security.client.console;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.georchestra.security.api.UsersApi;
 import org.georchestra.security.model.GeorchestraUser;
@@ -43,6 +44,11 @@ public class GeorchestraConsoleUsersApiImpl implements UsersApi {
     @Override
     public List<GeorchestraUser> findAll() {
         return client.getAll("/console/internal/users", GeorchestraUser.class);
+    }
+
+    @Override
+    public List<GeorchestraUser> findAllBy(Predicate<GeorchestraUser> filter) {
+        return client.getAll("/console/internal/users", GeorchestraUser.class).stream().filter(filter).toList();
     }
 
     @Override

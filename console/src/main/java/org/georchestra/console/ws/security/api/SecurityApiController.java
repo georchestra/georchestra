@@ -18,8 +18,11 @@
  */
 package org.georchestra.console.ws.security.api;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletContext;
@@ -70,6 +73,41 @@ public class SecurityApiController {
     @ResponseBody
     public List<GeorchestraUser> findUsers() {
         return users.findAll();
+    }
+
+    /**
+     * Fetch users by a list of usernames with optional field projection.
+     * <p>
+     * Request body example:
+     *
+     * <pre>
+     * {
+     *   "usernames": ["testadmin", "testuser"],
+     *   "fields": ["firstName", "lastName", "email"]
+     * }
+     * </pre>
+     *
+     * If {@code fields} is null or empty, all user fields are returned.
+     *
+     * @param request the batch request containing usernames and optional fields
+     * @return a list of users (as maps if fields are specified, or full objects
+     *         otherwise)
+     */
+    @PostMapping(value = "/users/fetch-by-usernames")
+    @ResponseBody
+    public List<?> findUsersByUsernames(@RequestBody UserBatchRequest request) {
+        Set<String> usernames = request.getUsernames() != null ? new HashSet<>(request.getUsernames()) : Set.of();
+        if (usernames.isEmpty()) {
+            return List.of();
+        }
+        List<GeorchestraUser> userList = users.findAll().stream().filter(user -> usernames.contains(user.getUsername()))
+                .collect(Collectors.toList());
+
+        List<String> fields = request.getFields();
+        if (fields != null && !fields.isEmpty()) {
+            return UserFieldsProjector.projectAll(userList, fields);
+        }
+        return userList;
     }
 
     /**

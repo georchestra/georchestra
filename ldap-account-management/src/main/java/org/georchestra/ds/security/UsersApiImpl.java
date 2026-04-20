@@ -56,6 +56,19 @@ public class UsersApiImpl implements UsersApi {
     }
 
     @Override
+    public List<GeorchestraUser> findAllBy(Predicate<GeorchestraUser> filter) {
+        try {
+            return this.accountsDao.findAll(notPending().and(notProtected()))//
+                    .stream()//
+                    .map(mapper::map)//
+                    .filter(filter)//
+                    .collect(Collectors.toList());
+        } catch (DataServiceException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public Optional<GeorchestraUser> findById(String id) {
         try {
             UUID uuid = UUID.fromString(id);
