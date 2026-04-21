@@ -21,6 +21,7 @@ package org.georchestra.console.ws.utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Function;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,16 +37,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 /**
- * Validation class for user and org forms
- *
- * Possible values: *
- *
- * There are hardcoded mandatory fields for user and organizations creation:
- *
- * mandatory user fields: * email * uid * password * confirmPassword
- *
+ * Validation class for user and org forms Possible values: * There are
+ * hardcoded mandatory fields for user and organizations creation: 
+ * mandatory user fields: * email * uid * password * confirmPassword 
  * mandatory org fields: * name
- *
  */
 public class Validation {
 
@@ -196,45 +191,61 @@ public class Validation {
         return true;
     }
 
-    public boolean validateOrgUnicityByUniqueId(OrgsDao orgDao, JSONObject changes) {
-        String orgUniqueId = "";
-        String uuid = "";
+    public boolean validateOrgUnicityByShortName(OrgsDao orgDao, JSONObject changes) {
+        return validateOrgUnicityByField(changes, "shortName", orgDao::findByShortName);
+    }
 
+    public boolean validateOrgUnicityByUniqueId(OrgsDao orgDao, JSONObject changes) {
+        return validateOrgUnicityByField(changes, "orgUniqueId", orgDao::findByOrgUniqueId);
+    }
+
+    private boolean validateOrgUnicityByField(JSONObject changes, String fieldName, Function<String, Org> findByField) {
         if (changes == null) {
             return true;
         }
-        // case - not value to verify
-        if (!changes.has("orgUniqueId")) {
+
+        // case - no value to verify
+        if (!changes.has(fieldName)) {
             return true;
         }
 
-        orgUniqueId = changes.getString("orgUniqueId");
+        String fieldValue = changes.getString(fieldName);
 
-        if (orgUniqueId == null || orgUniqueId.isEmpty()) {
+        if (fieldValue == null || fieldValue.isEmpty()) {
             return true;
         }
 
         // test if org with same value already exists
-        Org findByOrgUniqueId = orgDao.findByOrgUniqueId(orgUniqueId);
+        Org existingOrg = findByField.apply(fieldValue);
+
         // No org exists with this field value
-        if (findByOrgUniqueId == null) {
+        if (existingOrg == null) {
             return true;
         }
 
         // No uuid to compare means that's an org creation
-        // and at this step, an org already exists with this orgUniqueId
+        // and at this step, an org already exists with this field value
         if (!changes.has("uuid")) {
-            // we can't validate this orgUniqueId that already exists
             return false;
         }
 
-        uuid = changes.getString("uuid");
+        String uuid = changes.getString("uuid");
 
-        if (uuid.isEmpty() || uuid == null) {
+        if (uuid == null || uuid.isEmpty()) {
             return false;
         }
+
         // Control if this is same org update
-        return Objects.equals(findByOrgUniqueId.getUniqueIdentifier(), UUID.fromString(uuid));
+        return Objects.equals(existingOrg.getUniqueIdentifier(), UUID.fromString(uuid));
+    }
+
+    public boolean validateOrgShortNameField(OrgsDao orgDao, JSONObject changes, Errors errors) {
+        Boolean isValid = true;
+        if (changes.has("shortName") && !this.validateOrgUnicityByShortName(orgDao, changes)) {
+            errors.rejectValue("orgShortName", "error.shortNameExists", "shortNameExists");
+            isValid = false;
+        }
+        return isValid;
     }
 
     public boolean validateOrgUniqueIdField(OrgsDao orgDao, JSONObject changes, Errors errors) {
@@ -249,6 +260,9 @@ public class Validation {
     public boolean validateOrgUnicity(OrgsDao orgDao, JSONObject changes) {
         Boolean isValid = true;
         if (changes.has("orgUniqueId") && !this.validateOrgUnicityByUniqueId(orgDao, changes)) {
+            isValid = false;
+        }
+        if (changes.has("shortName") && !this.validateOrgUnicityByShortName(orgDao, changes)) {
             isValid = false;
         }
         return isValid;

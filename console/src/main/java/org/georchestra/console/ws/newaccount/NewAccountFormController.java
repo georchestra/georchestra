@@ -429,6 +429,9 @@ public final class NewAccountFormController {
 
             JSONObject orgToValidate = new JSONObject().put("orgUniqueId", formBean.getOrgUniqueId());
             validation.validateOrgUniqueIdField(this.orgDao, orgToValidate, result);
+
+            JSONObject orgShortNameToValidate = new JSONObject().put("shortName", formBean.getOrgShortName());
+            validation.validateOrgShortNameField(this.orgDao, orgShortNameToValidate, result);
         } else {
             validation.validateUserField("org", formBean.getOrg(), result);
         }

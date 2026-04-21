@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.CustomMatcher;
+import org.json.JSONObject;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,10 +153,12 @@ public class OrgsIT extends ConsoleIntegrationTest {
         String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
 
-        String payloadWithEmptyDesc = Pattern
-                .compile("\"description\": \".*\"").matcher(support
-                        .readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
-                .replaceAll("\"description\": \"\"");
+        String uuid = new JSONObject(
+                support.perform(get("/private/orgs/" + orgName)).andReturn().getResponse().getContentAsString())
+                .get("uuid").toString();
+        String payloadWithEmptyDesc = new JSONObject(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD))
+                .put("uuid", uuid).put("shortName", orgName).put("description", "").toString();
+
         support.perform(put("/private/orgs/" + orgName).content(payloadWithEmptyDesc));
 
         support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.description").value(""));
@@ -165,10 +168,11 @@ public class OrgsIT extends ConsoleIntegrationTest {
     public @Test void deleteUrl() throws Exception {
         String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
-
-        String payloadWithEmptyDesc = Pattern.compile("\"url\": \".*\"").matcher(
-                support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
-                .replaceAll("\"url\": \"\"");
+        String uuid = new JSONObject(
+                support.perform(get("/private/orgs/" + orgName)).andReturn().getResponse().getContentAsString())
+                .get("uuid").toString();
+        String payloadWithEmptyDesc = new JSONObject(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD))
+                .put("uuid", uuid).put("shortName", orgName).put("url", "").toString();
         support.perform(put("/private/orgs/" + orgName).content(payloadWithEmptyDesc));
 
         support.perform(get("/private/orgs/" + orgName)).andExpect(jsonPath("$.url").value(""));
@@ -183,9 +187,11 @@ public class OrgsIT extends ConsoleIntegrationTest {
         StringCaptor withLogolastUpdatedCaptor = new StringCaptor();
         support.perform(get("/internal/organizations/id/" + uuidCaptor.getValue()))
                 .andExpect(jsonPath("$.lastUpdated").value(withLogolastUpdatedCaptor));
-        String payloadWithEmptyDesc = Pattern.compile("\"logo\": \".*\"").matcher(
-                support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
-                .replaceAll("\"logo\": \"\"");
+        String uuid = new JSONObject(
+                support.perform(get("/private/orgs/" + orgName)).andReturn().getResponse().getContentAsString())
+                .get("uuid").toString();
+        String payloadWithEmptyDesc = new JSONObject(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD))
+                .put("uuid", uuid).put("shortName", orgName).put("logo", "").toString();
 
         support.perform(put("/private/orgs/" + orgName).content(payloadWithEmptyDesc));
 
