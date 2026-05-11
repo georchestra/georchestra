@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hamcrest.CustomMatcher;

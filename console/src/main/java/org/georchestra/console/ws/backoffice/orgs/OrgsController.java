@@ -218,7 +218,7 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         if (!this.validation.validateOrgUnicity(orgDao, json)) {
-            throw new IOException("Organization : shortName or identication number already exists");
+            throw new IOException("Organization : shortName or identification number already exists");
         }
 
         // Validate request against required fields for admin part
