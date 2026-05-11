@@ -584,7 +584,7 @@ public class RolesController {
             Pattern p = Pattern.compile("[A-Z0-9_:-]+");
             if (!p.matcher(commonName).matches())
                 throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY
-                        + " should only contain uppercased letters, digits, dashes and underscores");
+                        + " should only contain uppercased letters, digits, dashes, underscores and colons");
 
             String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
             Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
