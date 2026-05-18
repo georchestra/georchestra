@@ -231,7 +231,7 @@ public class Validation {
 
         String uuid = changes.getString("uuid");
 
-        if (uuid == null || uuid.isEmpty()) {
+        if (!StringUtils.hasText(uuid)) {
             return false;
         }
 
