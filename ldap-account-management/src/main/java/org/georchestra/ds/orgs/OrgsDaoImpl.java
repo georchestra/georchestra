@@ -167,7 +167,14 @@ public class OrgsDaoImpl implements OrgsDao {
     @Override
     public Org findByOrgUniqueId(String orgUniqueId) {
         return findAllWithExt().filter(o -> orgUniqueId.equals(o.getOrgUniqueId())).findFirst().orElse(null);
+    }
 
+    @Override
+    public Org findByShortName(String shortName) {
+        if (ObjectUtils.isEmpty(shortName)) {
+            return null;
+        }
+        return findAllWithExt().filter(o -> shortName.equalsIgnoreCase(o.getShortName())).findFirst().orElse(null);
     }
 
     private Org addExt(Org org) {

@@ -40,6 +40,8 @@ public interface OrgsDao {
 
     Org findByOrgUniqueId(String orgUniqueId);
 
+    Org findByShortName(String shortName);
+
     Org findById(UUID uuid);
 
     void insert(Org org);
