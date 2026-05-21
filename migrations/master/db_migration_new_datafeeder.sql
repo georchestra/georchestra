@@ -1,3 +1,5 @@
+BEGIN;
+
 --
 -- IMPORTANT: DO NOT EDIT THIS FILE.
 -- Database edits should now be made with Alembic migrations
@@ -69,3 +71,5 @@ ALTER TABLE datafeeder.integrity_link_rules
     ADD CONSTRAINT uq_integrity_link_rules_link_type_group
     UNIQUE (integrity_link_id, rule_type, group_or_role);
 
+
+COMMIT;
