@@ -1,22 +1,23 @@
-# Postgresql docker image
+# PostgreSQL Docker Image
 
-⚠️ If you use postgresql in docker, there's a change since https://github.com/georchestra/georchestra/pull/4574
+⚠️ If you use PostgreSQL in Docker, there is a change since https://github.com/georchestra/georchestra/pull/4574
 
-The volume used by postgres to store data is now `/var/lib/postgresql/` instead of `/var/lib/postgresql/data`.
+The volume used by PostgreSQL to store data is now `/var/lib/postgresql/` instead of `/var/lib/postgresql/data`.
 
-# Usage of logabck
+# Logback Usage
 
-All librairies and console are now using logback (which is embedded with spring parent).
+All libraries and Console now use Logback (embedded with the Spring parent).
 
-Folders use in georchestra datadir now use <georchestra.datadir>/<context>/logback/logback.xml. E.g: /etc/georchestra/console/logback/logback.xml
+Folders in the geOrchestra data directory now use `<georchestra.datadir>/<context>/logback/logback.xml`. For example: `/etc/georchestra/console/logback/logback.xml`
 
-# Drop RabbitMQ support 
+# Gateway
+## RabbitMQ Support Removed
 
-⚠️ RabbitMQ support is dropped since https://github.com/georchestra/georchestra-gateway/pull/264
+⚠️ RabbitMQ support was dropped in https://github.com/georchestra/georchestra-gateway/pull/264
 
-**Only compatible with GW 3.0+
+**Only compatible with GW 3.0+**
 
-If you use Gateway 3.0+, you need to switch configuration of the gateway to point to console's endpoint instead of RabbitMQ. 
+If you use Gateway 3.0+, you need to switch the Gateway configuration to point to the Console endpoint instead of RabbitMQ.
 
 ```yaml
 georchestra:
@@ -24,7 +25,19 @@ georchestra:
     security:
 #      events:
 #        accountcreated:
-#          # Set this url to console's endpoint to be able to receive an email when a new user logs in
-#          #  for the first time and is created in LDAP.
+#          # Set this URL to the Console endpoint to receive an email when a new user logs in
+#          # for the first time and is created in LDAP.
 #          url: "http://console:8080/console/internal/events/accountcreated"
 ```
+
+# Removal of data-api and Java header
+
+As GeoServer now provides a better implementation of OGC API Features, the data-api is no longer supported.
+
+The Java header is now fully replaced by the web component one, embedded since geOrchestra 25.
+
+# New datafeeder and analytics
+
+https://github.com/georchestra/datafeeder replaces the older datafeeder, allowing data imports from more formats and sources.
+
+https://github.com/georchestra/analytics/ also replaces the old analytics module, and is now compatible with SP and Gateway.
