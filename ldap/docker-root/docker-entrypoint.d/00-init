@@ -10,6 +10,8 @@ source /docker-entrypoint.d/utils/load_secrets.sh
 
 SLAPD_FORCE_RECONFIGURE="${SLAPD_FORCE_RECONFIGURE:-false}"
 
+mkdir -p /var/run/slapd && chown ${RUN_AS_UID}:${RUN_AS_GID} /var/run/slapd
+
 first_run=true
 
 if [[ -f "/var/lib/ldap/DB_CONFIG" || -f "/var/lib/ldap/data.mdb" ]]; then
@@ -82,10 +84,10 @@ EOF
             slapadd -n0 -F /etc/ldap/slapd.d -l "/etc/ldap/schema/${schema}.ldif"
         done
     fi
-    
+
     if [ "$SLAPD_PASSWORD_MGT_POLICY" == 'rotation' ]; then
     	cp /etc/ldap/modules/ppolicy-rotation.ldif /etc/ldap/modules/ppolicy.ldif
-    else 
+    else
     	cp /etc/ldap/modules/ppolicy-default.ldif /etc/ldap/modules/ppolicy.ldif
     fi
 
