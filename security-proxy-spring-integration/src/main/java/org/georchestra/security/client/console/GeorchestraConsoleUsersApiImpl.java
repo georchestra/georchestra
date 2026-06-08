@@ -48,7 +48,8 @@ public class GeorchestraConsoleUsersApiImpl implements UsersApi {
 
     @Override
     public List<GeorchestraUser> findAllBy(Predicate<GeorchestraUser> filter) {
-        return client.getAll("/console/internal/users", GeorchestraUser.class).stream().filter(filter).toList();
+        return client.<GeorchestraUser>getAll("/console/internal/users", GeorchestraUser.class).stream().filter(filter)
+                .toList();
     }
 
     @Override
