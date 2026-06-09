@@ -18,6 +18,7 @@
  */
 package org.georchestra.testcontainers.console;
 
+import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.Base58;
@@ -35,7 +36,10 @@ import org.testcontainers.utility.DockerImageName;
  * will automatically set as a {@link System#getProperty System property}
  * {@code console.port=<mapped port>}.
  */
+@Slf4j
 public class GeorchestraConsoleContainer extends GenericContainer<GeorchestraConsoleContainer> {
+
+    private int mappedPort;
 
     public GeorchestraConsoleContainer() {
         this(DockerImageName.parse("georchestra/console:latest"));
@@ -57,20 +61,17 @@ public class GeorchestraConsoleContainer extends GenericContainer<GeorchestraCon
     }
 
     public GeorchestraConsoleContainer withLogToStdOut() {
-        return withLogConsumer(outputFrame -> System.out.print("--- console: " + outputFrame.getUtf8String()));
+        return withLogConsumer(outputFrame -> System.out.println("--- console: " + outputFrame.getUtf8String()));
     }
 
     public int getMappedConsolePort() {
-        return getMappedPort(8080);
+        return mappedPort;
     }
 
     protected @Override void doStart() {
         super.doStart();
-        int mappedPort = getMappedConsolePort();
-        String host = getHost();
-        System.setProperty("console.port", String.valueOf(mappedPort));
-        System.setProperty("console.host", host);
-        System.out.println("Automatically set system property console.port=" + mappedPort);
-        System.out.println("Automatically set system property console.host=" + host);
+        mappedPort = getMappedPort(8080);
+        log.info("console.port=" + mappedPort);
+        log.info("console.host=" + getHost());
     }
 }
