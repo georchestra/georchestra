@@ -1,17 +1,17 @@
-name: "test-dependencies"
+name: Build, test and push dependencies
 permissions:
   contents: read
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "commons/**"
-      - "ldap-account-management/**"
+    branches:
+      - master
+      - '[0-9]+.[0-9]+*'
+    tags:
+      - '*'
   pull_request:
     paths:
-      - "commons/**"
-      - "ldap-account-management/**"
-      - "pom.xml"
+      - "**"
 
 jobs:
   build:
@@ -33,4 +33,11 @@ jobs:
           server-password: ARTIFACTORY_TOKEN_REF
 
       - name: "Installing & checking formatting"
-        run: ./mvnw -pl commons,ldap-account-management -am verify -Pcommons,ldap-account-management
+        run: ./mvnw verify -P-all --no-transfer-progress -B -Dfmt.action=validate -DskipTests
+
+      - name: "Publish all modules in artifactory"
+        run: ./mvnw deploy -P-all --no-transfer-progress -DskipTests
+        if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
+        env:
+          ARTIFACTORY_TOKEN_REF: ${{ secrets.ARTIFACTORY_TOKEN }}
+          ARTIFACTORY_USERNAME_REF: ${{ secrets.ARTIFACTORY_USERNAME }}
