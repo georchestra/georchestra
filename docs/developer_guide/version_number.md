@@ -26,8 +26,8 @@ If the application is a fork of an existing application, it should contain anoth
 
 Forks in geOrchestra's must follow this scheme: 
 
-|                       | Format                                                                           | Example                   |
-|-----------------------|----------------------------------------------------------------------------------|---------------------------|
-| Tag                   | <upstream-version>-georchestra-<two-digit-georchestra-patch>                     | 2.28.2-georchestra-00     |
-| Release Candidate Tag | <upstream-version>-georchestra-<two-digit-georchestra-patch>-<release_candidate> | 2.28.2-georchestra-01-RC1 |
-| Branch                | <upstream-version>-georchestra                                                   | 2.28.x-georchestra        |
+|                       | Format                                                                             | Example                   |
+|-----------------------|------------------------------------------------------------------------------------|---------------------------|
+| Tag                   | `<upstream-version>-georchestra-<two-digit-georchestra-patch>`                     | 2.28.2-georchestra-00     |
+| Release Candidate Tag | `<upstream-version>-georchestra-<two-digit-georchestra-patch>-<release_candidate>` | 2.28.2-georchestra-01-RC1 |
+| Branch                | `<upstream-version>-georchestra`                                                   | 2.28.x-georchestra        |
