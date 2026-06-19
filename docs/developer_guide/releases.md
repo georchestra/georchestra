@@ -56,17 +56,18 @@ From the `master` and `docker-master` branches, create two branches `26.0` and `
 
 #### 2. georchestra/georchestra
 
-1. Checkout master, pull, and launch `./update-licence-headers.sh` to add licence headers and update dates if necessary on files, then commit.
-2. Create a branch finishing with `.x`: `26.0.x`
-3. Ensure that all `migrations/master` notes are up to date:
+1. Checkout master, pull, and launch `./update-licence-headers.sh` to add license headers and update dates if necessary on files, then commit.
+2. Update migration notes in `migrations/master` and move them in a new folder `migrations/26.0`.
+3. Create a branch finishing with `.x`: `26.0.x`
+4. Ensure that all `migrations/master` notes are up to date:
     - Move them to a new folder `migrations/26.0`
     - Remove everything in `migrations/master`
-4. Update `packageDatadirScmVersion` in `pom.xml`
-5. Follow the same manual method as a minor release but with these versions:
+5. Update `packageDatadirScmVersion` in `pom.xml`
+6. Follow the same manual method as a minor release but with these versions:
     - Version will be `26.0.0`
     - Next snapshot will be `26.0.1-SNAPSHOT`
-6. After pushing the newest branch, checkout master again and set the version to the next major release: `26.1-SNAPSHOT`
-7. Follow the [Todo on GitHub](#todo-on-github) steps
+7. After pushing the newest branch, checkout master again and set the version to the next major release: `26.1-SNAPSHOT`
+8. Follow the [Todo on GitHub](#todo-on-github) steps
 
 #### 3. georchestra/docker
 
