@@ -89,7 +89,7 @@ jobs:
         docker push georchestra/console:${{ steps.version.outputs.VERSION }}
 
     - name: "Publish war in artifactory"
-      run: ./mvnw deploy -pl :console --also-make -P-all,console --no-transfer-progress -DskipTests
+      run: ./mvnw deploy -pl :console -P-all,console --no-transfer-progress -DskipTests
       if: github.actor != 'dependabot[bot]' && github.event_name != 'pull_request'
       continue-on-error: true
       env:
