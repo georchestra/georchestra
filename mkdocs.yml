@@ -103,6 +103,7 @@ nav:
               - Deploy wars: install_guide/servers/tomcat_deploy_wars.md
     - Developer guide:
         - developer_guide/index.md
+        - developer_guide/releases.md
         - developer_guide/version_number.md
 
 markdown_extensions:
