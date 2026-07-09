@@ -8,6 +8,8 @@ on:
       - "security-proxy-spring-integration/**"
       - "commons/**"
 
+permissions:
+  contents: read
 
 jobs:
   build:
