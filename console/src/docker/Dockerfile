@@ -33,3 +33,13 @@ ${JAVA_OPTIONS} \
 -Dcom.sun.management.jmxremote.ssl=${JMX_SSL:-false} \
 -Dcom.sun.management.jmxremote.authenticate=${JMX_AUTHENTICATE:-false} \
 -jar /usr/local/jetty/start.jar"]
+
+# OCI image labels (https://github.com/opencontainers/image-spec/blob/main/annotations.md)
+LABEL org.opencontainers.image.title="geOrchestra Console"
+LABEL org.opencontainers.image.description="geOrchestra Console"
+LABEL org.opencontainers.image.authors="PSC <psc@georchestra.org>"
+LABEL org.opencontainers.image.vendor="geOrchestra"
+LABEL org.opencontainers.image.url="https://www.georchestra.org"
+LABEL org.opencontainers.image.documentation="https://docs.georchestra.org/"
+LABEL org.opencontainers.image.source="https://github.com/georchestra/georchestra"
+LABEL org.opencontainers.image.licenses="GPL-3.0-only"
