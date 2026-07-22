@@ -22,6 +22,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 import java.time.Duration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.Base58;
@@ -41,11 +42,14 @@ import org.testcontainers.utility.DockerImageName;
  * {@code jdbc.port=<mapped port>}, and {@code jdbc.host=<host>}, with
  * {@link #getHost()}'s value (may not be the local machine).
  */
+@Slf4j
 public class GeorchestraDatabaseContainer extends GenericContainer<GeorchestraDatabaseContainer> {
 
     public GeorchestraDatabaseContainer() {
         this(DockerImageName.parse("georchestra/database:latest"));
     }
+
+    private int mappedPort;
 
     GeorchestraDatabaseContainer(final DockerImageName dockerImageName) {
         super(dockerImageName);
@@ -68,16 +72,14 @@ public class GeorchestraDatabaseContainer extends GenericContainer<GeorchestraDa
     }
 
     public int getMappedDatabasePort() {
-        return getMappedPort(5432);
+        return mappedPort;
     }
 
     protected @Override void doStart() {
         super.doStart();
-        int mappedPort = getMappedDatabasePort();
+        mappedPort = getMappedPort(5432);
         String host = super.getHost();
-        System.setProperty("jdbc.port", String.valueOf(mappedPort));
-        System.setProperty("jdbc.host", host);
-        System.out.println("Automatically set system property jdbc.port=" + mappedPort);
-        System.out.println("Automatically set system property jdbc.host=" + host);
+        log.info("jdbc.port=" + mappedPort);
+        log.info("jdbc.host=" + host);
     }
 }
