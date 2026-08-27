@@ -19,7 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
-import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +71,6 @@ public class LogController {
 
     @Autowired
     private DelegationDao delegationDao;
-    @Autowired
-    private OrgsDao orgsDao;
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
@@ -113,11 +109,8 @@ public class LogController {
 
         // Filter logs by orgs users if user is not SUPERUSER
         if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-            List<String> users = new ArrayList<String>();
+            Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
             DelegationEntry delegation = this.delegationDao.findFirstByUid(auth.getName());
-            String[] orgs = delegation.getOrgs();
-            for (String org : orgs)
-                users.addAll(this.orgsDao.findByCommonName(org).getMembers());
             if (!users.contains(target))
                 throw new AccessDeniedException("User not under delegation");
 

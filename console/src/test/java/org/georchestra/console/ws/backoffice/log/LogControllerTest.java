@@ -39,8 +39,6 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
-import org.georchestra.ds.orgs.Org;
-import org.georchestra.ds.orgs.OrgsDao;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +65,6 @@ public class LogControllerTest {
 
     private AdminLogDao logDao;
     private DelegationDao delegationDao;
-    private OrgsDao orgsDao;
     private AdvancedDelegationDao advancedDelegationDao;
 
     private static final String DELEGATE = "delegate1";
@@ -78,13 +75,11 @@ public class LogControllerTest {
     public void setUp() {
         logDao = mock(AdminLogDao.class);
         delegationDao = mock(DelegationDao.class);
-        orgsDao = mock(OrgsDao.class);
         advancedDelegationDao = mock(AdvancedDelegationDao.class);
 
         logCtrl = new LogController();
         ReflectionTestUtils.setField(logCtrl, "logDao", logDao);
         ReflectionTestUtils.setField(logCtrl, "delegationDao", delegationDao);
-        ReflectionTestUtils.setField(logCtrl, "orgsDao", orgsDao);
         ReflectionTestUtils.setField(logCtrl, "advancedDelegationDao", advancedDelegationDao);
 
         DelegationEntry delegation = new DelegationEntry();
@@ -92,11 +87,6 @@ public class LogControllerTest {
         delegation.setOrgs(new String[] { "myorg" });
         delegation.setRoles(new String[] { "BAR", "BAZ" });
         when(delegationDao.findFirstByUid(eq(DELEGATE))).thenReturn(delegation);
-
-        Org org = new Org();
-        org.setShortName("myorg");
-        org.setMembers(new LinkedList<>(List.of(TARGET)));
-        when(orgsDao.findByCommonName(eq("myorg"))).thenReturn(org);
 
         Set<String> usersUnderDelegation = new HashSet<>();
         usersUnderDelegation.add(TARGET);
