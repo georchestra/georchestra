@@ -147,11 +147,11 @@ public class LogController {
 
     }
 
-    private List<AdminLogEntry> filterForDelegate(List<AdminLogEntry> entries, String self,
+    private List<AdminLogEntry> filterForDelegate(List<AdminLogEntry> entries, String username,
             DelegationEntry delegation) {
         Set<String> delegatedRoles = delegation == null || delegation.getRoles() == null ? Set.of()
                 : new HashSet<>(Arrays.asList(delegation.getRoles()));
-        return entries.stream().filter(entry -> isVisibleToDelegate(entry, self, delegatedRoles))
+        return entries.stream().filter(entry -> isVisibleToDelegate(entry, username, delegatedRoles))
                 .collect(Collectors.toList());
     }
 
