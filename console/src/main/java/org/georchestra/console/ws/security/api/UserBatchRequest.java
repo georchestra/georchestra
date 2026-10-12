@@ -25,18 +25,15 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 /**
- * Request DTO for batch user retrieval with optional field projection.
+ * Request DTO for batch user retrieval.
  * <p>
  * Example request body:
  *
  * <pre>
  * {
- *   "usernames": ["testadmin", "testuser"],
- *   "fields": ["firstName", "lastName", "email"]
+ *   "usernames": ["testadmin", "testuser"]
  * }
  * </pre>
- *
- * If {@code fields} is null or empty, all fields are returned.
  */
 @Data
 @NoArgsConstructor
@@ -44,15 +41,7 @@ import java.util.List;
 public class UserBatchRequest {
 
     /**
-     * List of user IDs to retrieve.
+     * List of usernames to retrieve.
      */
     private List<String> usernames;
-
-    /**
-     * Optional list of fields to include in the response. If null or empty, all
-     * fields are returned. Valid field names: id, username, firstName, lastName,
-     * email, organization, roles, lastUpdated, postalAddress, telephoneNumber,
-     * title, notes, isExternalAuth
-     */
-    private List<String> fields;
 }

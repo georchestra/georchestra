@@ -76,38 +76,29 @@ public class SecurityApiController {
     }
 
     /**
-     * Fetch users by a list of usernames with optional field projection.
+     * Fetch users by a list of usernames.
      * <p>
      * Request body example:
      *
      * <pre>
      * {
-     *   "usernames": ["testadmin", "testuser"],
-     *   "fields": ["firstName", "lastName", "email"]
+     *   "usernames": ["testadmin", "testuser"]
      * }
      * </pre>
      *
-     * If {@code fields} is null or empty, all user fields are returned.
-     *
-     * @param request the batch request containing usernames and optional fields
-     * @return a list of users (as maps if fields are specified, or full objects
-     *         otherwise)
+     * @param request the batch request containing usernames
+     * @return the list of found users
      */
     @PostMapping(value = "/users/fetch-by-usernames")
     @ResponseBody
-    public List<?> findUsersByUsernames(@RequestBody UserBatchRequest request) {
+    public List<GeorchestraUser> findUsersByUsernames(@RequestBody UserBatchRequest request) {
         Set<String> usernames = request.getUsernames() != null ? new HashSet<>(request.getUsernames()) : Set.of();
         if (usernames.isEmpty()) {
             return List.of();
         }
-        List<GeorchestraUser> userList = users.findAll().stream().filter(user -> usernames.contains(user.getUsername()))
+        return users.findAll().stream() //
+                .filter(user -> usernames.contains(user.getUsername())) //
                 .collect(Collectors.toList());
-
-        List<String> fields = request.getFields();
-        if (fields != null && !fields.isEmpty()) {
-            return UserFieldsProjector.projectAll(userList, fields);
-        }
-        return userList;
     }
 
     /**
@@ -160,6 +151,31 @@ public class SecurityApiController {
     @GetMapping(value = "/organizations/shortname/{name}")
     public ResponseEntity<Organization> findOrganizationByShortName(@PathVariable String name) {
         return toEntityOrNotFound(this.orgs.findByShortName(name));
+    }
+
+    /**
+     * Fetch organizations by a list of {@link Organization#getShortName short
+     * names}. Unknown short names are ignored.
+     * <p>
+     * Request body example:
+     *
+     * <pre>
+     * {
+     *   "shortNames": ["c2c", "psc"]
+     * }
+     * </pre>
+     *
+     * @param request the batch request containing short names
+     * @return the list of found organizations
+     */
+    @PostMapping(value = "/organizations/fetch-by-shortnames")
+    @ResponseBody
+    public List<Organization> findOrganizationsByShortNames(@RequestBody OrgBatchRequest request) {
+        return Optional.ofNullable(request.getShortNames()).orElse(List.of()).stream() //
+                .distinct() //
+                .map(orgs::findByShortName) //
+                .flatMap(Optional::stream) //
+                .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/organizations/id/{id}/logo", produces = "application/octet-stream")
