@@ -18,6 +18,8 @@
  */
 package org.georchestra.testcontainers.ldap;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.Base58;
@@ -36,7 +38,10 @@ import org.testcontainers.utility.DockerImageName;
  * {@code ldapPort=<mapped port>}, following standard georchestra
  * datadirectory's property name.
  */
+@Slf4j
 public class GeorchestraLdapContainer extends GenericContainer<GeorchestraLdapContainer> {
+
+    private int mappedLdapPort;
 
     public GeorchestraLdapContainer() {
         this(DockerImageName.parse("georchestra/ldap:latest"));
@@ -45,7 +50,6 @@ public class GeorchestraLdapContainer extends GenericContainer<GeorchestraLdapCo
     GeorchestraLdapContainer(final DockerImageName dockerImageName) {
         super(dockerImageName);
         withExposedPorts(389);
-//        addFixedExposedPort(hostPort, 389);
         addEnv("SLAPD_ORGANISATION", "georchestra");
         addEnv("SLAPD_DOMAIN", "georchestra.org");
         addEnv("SLAPD_PASSWORD", "secret");
@@ -62,17 +66,21 @@ public class GeorchestraLdapContainer extends GenericContainer<GeorchestraLdapCo
         return withLogConsumer(outputFrame -> System.out.print("--- ldap: " + outputFrame.getUtf8String()));
     }
 
+    /**
+     * Returns the mapped LDAP port. The getter should be called after having started the container
+     * (e.g. `doStart()` having been instanciated).
+     *
+     * @return the port number locally mapped to the usual LDAP port (389).
+     */
     public int getMappedLdapPort() {
-        return getMappedPort(389);
+        return mappedLdapPort;
     }
 
     protected @Override void doStart() {
         super.doStart();
-        int mappedLdapPort = getMappedLdapPort();
-        String host = getHost();
-        System.setProperty("ldapPort", String.valueOf(mappedLdapPort));
-        System.setProperty("ldapHost", host);
-        System.out.println("Automatically set system property ldapPort=" + mappedLdapPort);
-        System.out.println("Automatically set system property ldapHost=" + host);
+        mappedLdapPort = getMappedPort(389);
+
+        log.info("Automatically set system property ldapPort=" + mappedLdapPort);
+        log.info("Automatically set system property ldapHost=" + getHost());
     }
 }

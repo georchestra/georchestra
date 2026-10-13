@@ -18,6 +18,7 @@
  */
 package org.geonetwork.testcontainers.postgres;
 
+import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
@@ -50,9 +51,12 @@ import org.testcontainers.utility.DockerImageName;
  * {@code jdbc.port=<mapped port>}, following standard georchestra
  * datadirectory's property name.
  */
+@Slf4j
 public class GeonetworkPostgresContainer extends PostgreSQLContainer<GeonetworkPostgresContainer> {
 
     static final String INIT_SCRIPT = "testcontainers/GeonetworkPostgresContainer.sql";
+
+    private int mappedPort;
 
     public GeonetworkPostgresContainer() {
         super(DockerImageName.parse("postgres:13-alpine"));
@@ -65,20 +69,17 @@ public class GeonetworkPostgresContainer extends PostgreSQLContainer<GeonetworkP
     }
 
     public GeonetworkPostgresContainer withLogToStdOut() {
-        return withLogConsumer(outputFrame -> System.out.print("--- database: " + outputFrame.getUtf8String()));
+        return withLogConsumer(outputFrame -> System.out.println("--- database: " + outputFrame.getUtf8String()));
     }
 
     public int getMappedPostgresPort() {
-        return getMappedPort(5432);
+        return mappedPort;
     }
 
     protected @Override void doStart() {
         super.doStart();
-        int mappedPort = getMappedPostgresPort();
-        String host = super.getHost();
-        System.setProperty("jdbc.port", String.valueOf(mappedPort));
-        System.setProperty("jdbc.host", host);
-        System.out.println("Automatically set system property jdbc.port=" + mappedPort);
-        System.out.println("Automatically set system property jdbc.host=" + host);
+        mappedPort = getMappedPort(5432);
+        log.info("jdbc.port=" + mappedPort);
+        log.info("jdbc.host=" + getHost());
     }
 }
