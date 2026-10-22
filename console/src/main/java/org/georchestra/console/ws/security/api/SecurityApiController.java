@@ -18,11 +18,9 @@
  */
 package org.georchestra.console.ws.security.api;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.ServletContext;
@@ -76,28 +74,25 @@ public class SecurityApiController {
     }
 
     /**
-     * Fetch users by a list of usernames.
+     * Fetch users by a list of {@link GeorchestraUser#getUsername() usernames}.
+     * Unknown usernames are ignored.
      * <p>
      * Request body example:
      *
      * <pre>
-     * {
-     *   "usernames": ["testadmin", "testuser"]
-     * }
+     * ["testadmin", "testuser"]
      * </pre>
      *
-     * @param request the batch request containing usernames
+     * @param usernames the usernames to look up
      * @return the list of found users
      */
     @PostMapping(value = "/users/fetch-by-usernames")
     @ResponseBody
-    public List<GeorchestraUser> findUsersByUsernames(@RequestBody UserBatchRequest request) {
-        Set<String> usernames = request.getUsernames() != null ? new HashSet<>(request.getUsernames()) : Set.of();
-        if (usernames.isEmpty()) {
-            return List.of();
-        }
-        return users.findAll().stream() //
-                .filter(user -> usernames.contains(user.getUsername())) //
+    public List<GeorchestraUser> findUsersByUsernames(@RequestBody(required = false) List<String> usernames) {
+        return Optional.ofNullable(usernames).orElse(List.of()).stream() //
+                .distinct() //
+                .map(users::findByUsername) //
+                .flatMap(Optional::stream) //
                 .collect(Collectors.toList());
     }
 
@@ -157,24 +152,25 @@ public class SecurityApiController {
      * Fetch organizations by a list of {@link Organization#getShortName short
      * names}. Unknown short names are ignored.
      * <p>
+     * {@link Organization#getMembers() members} are not returned.
+     * <p>
      * Request body example:
      *
      * <pre>
-     * {
-     *   "shortNames": ["c2c", "psc"]
-     * }
+     * ["c2c", "psc"]
      * </pre>
      *
-     * @param request the batch request containing short names
+     * @param shortNames the short names to look up
      * @return the list of found organizations
      */
     @PostMapping(value = "/organizations/fetch-by-shortnames")
     @ResponseBody
-    public List<Organization> findOrganizationsByShortNames(@RequestBody OrgBatchRequest request) {
-        return Optional.ofNullable(request.getShortNames()).orElse(List.of()).stream() //
+    public List<Organization> findOrganizationsByShortNames(@RequestBody(required = false) List<String> shortNames) {
+        return Optional.ofNullable(shortNames).orElse(List.of()).stream() //
                 .distinct() //
                 .map(orgs::findByShortName) //
                 .flatMap(Optional::stream) //
+                .map(org -> org.withMembers(List.of())) //
                 .collect(Collectors.toList());
     }
 

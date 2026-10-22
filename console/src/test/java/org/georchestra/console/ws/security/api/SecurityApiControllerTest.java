@@ -19,6 +19,8 @@
 package org.georchestra.console.ws.security.api;
 
 import org.georchestra.security.api.OrganizationsApi;
+import org.georchestra.security.api.UsersApi;
+import org.georchestra.security.model.GeorchestraUser;
 import org.georchestra.security.model.Organization;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.when;
 class SecurityApiControllerTest {
 
     private @Mock OrganizationsApi orgs;
+    private @Mock UsersApi users;
 
     private @InjectMocks SecurityApiController controller;
 
@@ -47,16 +50,55 @@ class SecurityApiControllerTest {
         when(orgs.findByShortName("unknown")).thenReturn(Optional.empty());
         when(orgs.findByShortName("c2c")).thenReturn(Optional.of(c2c));
 
-        List<Organization> result = controller
-                .findOrganizationsByShortNames(new OrgBatchRequest(List.of("psc", "unknown", "c2c", "psc")));
+        List<Organization> result = controller.findOrganizationsByShortNames(List.of("psc", "unknown", "c2c", "psc"));
 
         assertEquals(List.of(psc, c2c), result);
     }
 
     @Test
+    void findOrganizationsByShortNamesDoesNotReturnMembers() {
+        Organization c2c = org("c2c");
+        c2c.setMembers(List.of("testadmin", "testuser"));
+        when(orgs.findByShortName("c2c")).thenReturn(Optional.of(c2c));
+
+        List<Organization> result = controller.findOrganizationsByShortNames(List.of("c2c"));
+
+        assertEquals(1, result.size());
+        assertEquals("c2c", result.get(0).getShortName());
+        assertTrue(result.get(0).getMembers().isEmpty());
+    }
+
+    @Test
     void findOrganizationsByShortNamesWithNoShortNamesReturnsEmptyList() {
-        assertTrue(controller.findOrganizationsByShortNames(new OrgBatchRequest(null)).isEmpty());
-        assertTrue(controller.findOrganizationsByShortNames(new OrgBatchRequest(List.of())).isEmpty());
+        assertTrue(controller.findOrganizationsByShortNames(null).isEmpty());
+        assertTrue(controller.findOrganizationsByShortNames(List.of()).isEmpty());
+    }
+
+    @Test
+    void findUsersByUsernamesReturnsFoundUsersInRequestOrder() {
+        GeorchestraUser admin = user("testadmin");
+        GeorchestraUser user = user("testuser");
+        when(users.findByUsername("testuser")).thenReturn(Optional.of(user));
+        when(users.findByUsername("unknown")).thenReturn(Optional.empty());
+        when(users.findByUsername("testadmin")).thenReturn(Optional.of(admin));
+
+        List<GeorchestraUser> result = controller
+                .findUsersByUsernames(List.of("testuser", "unknown", "testadmin", "testuser"));
+
+        assertEquals(List.of(user, admin), result);
+    }
+
+    @Test
+    void findUsersByUsernamesWithNoUsernamesReturnsEmptyList() {
+        assertTrue(controller.findUsersByUsernames(null).isEmpty());
+        assertTrue(controller.findUsersByUsernames(List.of()).isEmpty());
+    }
+
+    private static GeorchestraUser user(String username) {
+        GeorchestraUser user = new GeorchestraUser();
+        user.setId(username + "-uuid");
+        user.setUsername(username);
+        return user;
     }
 
     private static Organization org(String shortName) {
